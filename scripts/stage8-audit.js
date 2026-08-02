@@ -333,7 +333,8 @@ for (const entry of [...manifest.entries].sort((a, b) => a.cid - b.cid)) {
         distSha256: distHash,
         hashedAt: new Date().toISOString(),
       },
-      // Human verdict fields — preserved across automated sync
+      // Human / kind fields — preserved across automated sync
+      reviewKind: existing?.reviewKind ?? null,
       verdict: existing?.verdict ?? null,
       reviewedAt: existing?.reviewedAt ?? null,
       reviewer: existing?.reviewer ?? null,
@@ -351,7 +352,8 @@ for (const entry of [...manifest.entries].sort((a, b) => a.cid - b.cid)) {
 
     if (APPLY_PASS && status !== 'block') {
       // Automated audit sync only — never claim a human pass.
-      if (!next.verdict || next.reviewer === 'stage8-audit' || next.reviewer === 'stage8-audit-auto') {
+      if (!next.reviewKind || next.reviewKind === 'audit') {
+        next.reviewKind = 'audit';
         next.verdict = 'audit-clean';
         next.reviewedAt = new Date().toISOString();
         next.reviewer = 'stage8-audit-auto';

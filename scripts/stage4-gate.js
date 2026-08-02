@@ -52,12 +52,76 @@ for (const entry of legacy) {
   }
 }
 
-// Nginx map must not contain self-redirects either (defense in depth).
+// Nginx map must not contain quoted-string self-redirects.
 for (const m of nginx.matchAll(/"([^"]+)"\s+"([^"]+)";/g)) {
   const [, from, to] = m;
   if (from.startsWith('/') && to.startsWith('/') && from === to) {
     check(false, `nginx self-redirect: ${from}`);
   }
+}
+
+/** Decode nginx `~^literal$` map keys produced by generate-nginx.js (escaped literals only). */
+const decodeAnchoredLiteral = (key) => {
+  if (!key.startsWith('~^') || !key.endsWith('$')) return null;
+  const body = key.slice(2, -1);
+  let out = '';
+  for (let i = 0; i < body.length; i += 1) {
+    if (body[i] === '\\' && i + 1 < body.length) {
+      i += 1;
+      out += body[i];
+    } else {
+      out += body[i];
+    }
+  }
+  // Reject non-literal patterns (wildcards / groups). Paths may contain '.'.
+  if (/[*+?|()[\]{}^$]/.test(out)) return null;
+  if (!out.startsWith('/')) return null;
+  return out;
+};
+
+// Path legacy map must use case-sensitive regex keys (~^...$). Plain strings
+// are matched case-insensitively by ngx_http_map_module and turn
+// /category/AI/ → /category/ai/ into a self-redirect for /category/ai/.
+const legacyTargetMatch = /map \$uri \$legacy_target \{([\s\S]*?)\n\}/.exec(nginx);
+check(!!legacyTargetMatch, 'missing map $uri $legacy_target');
+const nginxPathRedirects = new Map();
+if (legacyTargetMatch) {
+  const block = legacyTargetMatch[1];
+  const pathLines = [...block.matchAll(/^\s+(\S+)\s+"(\/[^"]*)";$/gm)];
+  check(pathLines.length > 0, 'legacy_target has no path redirect entries');
+  for (const [, left, to] of pathLines) {
+    check(left.startsWith('~^') && left.endsWith('$'), `legacy_target key must be case-sensitive regex: ${left}`);
+    const literal = decodeAnchoredLiteral(left);
+    check(!!literal, `legacy_target key is not an anchored literal: ${left}`);
+    if (!literal) continue;
+    check(literal !== to, `regex-self redirect forbidden: ${left} → ${to}`);
+    check(!nginxPathRedirects.has(literal), `duplicate nginx path literal ${literal}`);
+    nginxPathRedirects.set(literal, to);
+  }
+  // Negative matrix: lowercase canonicals must not appear as plain quoted keys
+  for (const canon of ['/category/ai/', '/category/dn42/', '/category/nas/']) {
+    check(
+      !new RegExp(`^\\s+"${canon.replace(/\//g, '\\/')}"\\s+`, 'm').test(block),
+      `legacy_target must not use case-insensitive string key for canonical ${canon}`,
+    );
+    // Also reject regex-self for these canonicals specifically
+    check(
+      nginxPathRedirects.get(canon) !== canon,
+      `canonical must not regex-self-redirect: ${canon}`,
+    );
+  }
+}
+
+// Nginx path redirects must match legacy-url-map redirect entries 1:1.
+const legacyPathRedirects = legacy.filter((e) => e.action === 'redirect' && e.oldPath);
+check(
+  nginxPathRedirects.size === legacyPathRedirects.length,
+  `nginx path redirects (${nginxPathRedirects.size}) != legacy path redirects (${legacyPathRedirects.length})`,
+);
+for (const entry of legacyPathRedirects) {
+  const got = nginxPathRedirects.get(entry.oldPath);
+  check(got != null, `nginx missing legacy path ${entry.oldPath}`);
+  check(got === entry.targetPath, `nginx target drift for ${entry.oldPath}: ${got} vs ${entry.targetPath}`);
 }
 
 // Documented query keys only on / and /index.php

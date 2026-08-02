@@ -1,4 +1,4 @@
-﻿# andy-blog
+# andy-blog
 
 Typecho 1.2.1 (headless CMS) → Astro 7 static site for andy-y.cn.
 
@@ -71,17 +71,20 @@ See `docs/baselines/reports/stage7-gates.md` and `stage7-comment-migration.md`. 
 
 ## Stage 8
 
-**Status: automated audit + agent spot-verify for all 15 public CIDs; blockers = 0.**
+**Status: automated audit + agent spot-verify for all 15 public CIDs; blockers = 0. Human Final = 1/15 (friends).**
 
 See `docs/baselines/reports/stage8-gates.md`, `stage8-audit.md`, and `docs/baselines/reviews/cid-*.json`.
-`--sync-audit` only syncs audit fields + hashes (`audit-clean`). Promote with:
+
+Verdict taxonomy:
+
+- `pass` + human reviewer → Final
+- `agent-spot` → automated spot-verify only (gate warns; **not** human Final)
+- `audit-clean` → `--sync-audit` only
 
 ```powershell
 node scripts/spot-verify-reviews.js --write
 node scripts/stage8-gate.js
 ```
-
-Spot-verify checks source/dist SHA-256, canonical, residual shortcodes/legacy archives, and article markers. CID 5 (friends) retains `manual+live-verify`.
 
 ```powershell
 $env:SNAPSHOT_EPOCH = "1785565762"

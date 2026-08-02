@@ -22,6 +22,10 @@ const readJson = async (rel) =>
 const escapeNginx = (value) =>
   String(value).replace(/\\/g, '\\\\').replace(/"/g, '\\"');
 
+/** Escape for nginx map `~` regex keys (case-sensitive). */
+const escapeNginxRegex = (value) =>
+  String(value).replace(/[\\.^$|?*+()[\]{}]/g, '\\$&');
+
 const parseStatus = () => {
   const idx = process.argv.indexOf('--status');
   const raw = idx === -1 ? '302' : process.argv[idx + 1];
@@ -31,11 +35,18 @@ const parseStatus = () => {
   return raw;
 };
 
-const buildMap = (varExpr, mapVar, entries, { boolean = false } = {}) => {
+/**
+ * Build an nginx map.
+ * Path maps use case-sensitive regex keys (`~^...$`) because ngx_http_map_module
+ * matches plain strings case-insensitively — otherwise /category/AI/ → /category/ai/
+ * also matches the lowercase canonical and 302s to itself.
+ */
+const buildMap = (varExpr, mapVar, entries, { boolean = false, caseSensitive = false } = {}) => {
   const lines = [`map ${varExpr} $${mapVar} {`, `  default ${boolean ? '0;' : '"";'}`];
   for (const [key, value] of entries) {
-    if (boolean) lines.push(`  "${escapeNginx(key)}" 1;`);
-    else lines.push(`  "${escapeNginx(key)}" "${escapeNginx(value)}";`);
+    const left = caseSensitive ? `~^${escapeNginxRegex(key)}$` : `"${escapeNginx(key)}"`;
+    if (boolean) lines.push(`  ${left} 1;`);
+    else lines.push(`  ${left} "${escapeNginx(value)}";`);
   }
   lines.push('}');
   return lines.join('\n');
@@ -121,10 +132,10 @@ async function main() {
 `;
 
   const maps = [
-    buildMap('$uri', 'legacy_target', pathRedirect),
+    buildMap('$uri', 'legacy_target', pathRedirect, { caseSensitive: true }),
     buildMap('"$uri:$arg_p"', 'legacy_query_target', queryRedirect),
-    buildMap('$uri', 'legacy_not_found', pathNotFound, { boolean: true }),
-    buildMap('$uri', 'legacy_gone', pathGone, { boolean: true }),
+    buildMap('$uri', 'legacy_not_found', pathNotFound, { boolean: true, caseSensitive: true }),
+    buildMap('$uri', 'legacy_gone', pathGone, { boolean: true, caseSensitive: true }),
     buildMap('"$uri:$arg_p"', 'legacy_query_not_found', queryNotFound, { boolean: true }),
     buildMap('"$uri:$arg_p"', 'legacy_query_gone', queryGone, { boolean: true }),
   ].join('\n\n');

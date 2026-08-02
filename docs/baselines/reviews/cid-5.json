@@ -15,10 +15,10 @@
   "contentHashes": {
     "sourceSha256": "524d0d7fa343e56996be0caf38798fa50561d1b85d18df5bf5ad7045b6927bbf",
     "distSha256": "d738d40f94bfd4af86e396f88ac39b0de353864eb4ed147f495d002e9410852f",
-    "hashedAt": "2026-08-02T09:17:18.493Z"
+    "hashedAt": "2026-08-02T10:50:31.184Z"
   },
   "verdict": "pass",
-  "reviewedAt": "2026-08-02T09:17:18.493Z",
+  "reviewedAt": "2026-08-02T10:50:31.184Z",
   "reviewer": "manual+live-verify",
   "checklist": {
     "sourceFormatOk": true,
@@ -34,7 +34,8 @@
     "legacy /index.php/5.html → /friends/",
     "live verified one friend: 悠笙の开发日记 → https://blog.iyoroy.cn",
     "UI: half-width post-card aligned with home",
-    "spot-verify: source/dist hash, canonical, no residual shortcodes/legacy archives, article markers",
-    "friends: Joe JFriends + live one-link verified earlier"
-  ]
+    "friends: Joe JFriends + live one-link verified earlier",
+    "spot-verify: source/dist hash, canonical, no residual shortcodes/legacy archives, article markers"
+  ],
+  "reviewKind": "human"
 }

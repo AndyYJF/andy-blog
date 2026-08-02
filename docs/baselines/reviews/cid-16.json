@@ -19,10 +19,10 @@
   "contentHashes": {
     "sourceSha256": "4b4b66771ea7fdf0bd4bf392af944e1cec9e9195cc79ee0be40b88353f702991",
     "distSha256": "a2c7fb75a69c2a6e16410c467a67987a9f6e3e794779a0065c15d4e74eeb3c1f",
-    "hashedAt": "2026-08-02T09:17:18.493Z"
+    "hashedAt": "2026-08-02T10:50:31.184Z"
   },
-  "verdict": "pass",
-  "reviewedAt": "2026-08-02T09:17:18.493Z",
+  "verdict": "agent-spot",
+  "reviewedAt": "2026-08-02T10:50:31.184Z",
   "reviewer": "agent-spot-verify",
   "checklist": {
     "sourceFormatOk": true,
@@ -40,5 +40,6 @@
     "auto-noted: heading level skips: 2→4",
     "auto-noted: body contains 1 h1 heading(s) (page title is separate)",
     "spot-verify: source/dist hash, canonical, no residual shortcodes/legacy archives, article markers"
-  ]
+  ],
+  "reviewKind": "agent-spot"
 }

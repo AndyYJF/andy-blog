@@ -18,10 +18,10 @@
   "contentHashes": {
     "sourceSha256": "7831767569fec4230b42187e5144f92d8c8e0093c5ccc3b2e64a2159feea477b",
     "distSha256": "a09dfdb15c15ac24e532dc57a0fe7e0bc5e6d25551f454ef412eb4433c98cd44",
-    "hashedAt": "2026-08-02T09:17:18.493Z"
+    "hashedAt": "2026-08-02T10:50:31.184Z"
   },
-  "verdict": "pass",
-  "reviewedAt": "2026-08-02T09:17:18.493Z",
+  "verdict": "agent-spot",
+  "reviewedAt": "2026-08-02T10:50:31.184Z",
   "reviewer": "agent-spot-verify",
   "checklist": {
     "sourceFormatOk": true,
@@ -37,5 +37,6 @@
     "noted: dist HTML missing — run build before final gate",
     "auto-noted: heading level skips: 2→4",
     "spot-verify: source/dist hash, canonical, no residual shortcodes/legacy archives, article markers"
-  ]
+  ],
+  "reviewKind": "agent-spot"
 }

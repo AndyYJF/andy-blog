@@ -65,6 +65,7 @@ for (const entry of [...manifest.entries].sort((a, b) => a.cid - b.cid)) {
   });
 
   if (WRITE && ok) {
+    const keepHuman = review.reviewKind === 'human' || review.reviewer === 'manual+live-verify';
     const next = {
       ...review,
       contentHashes: {
@@ -74,9 +75,10 @@ for (const entry of [...manifest.entries].sort((a, b) => a.cid - b.cid)) {
       },
       auditStatus: review.warnings?.length ? 'warn' : 'pass',
       blockers: [],
-      verdict: 'pass',
+      reviewKind: keepHuman ? 'human' : 'agent-spot',
+      verdict: keepHuman ? 'pass' : 'agent-spot',
       reviewedAt: now,
-      reviewer: review.reviewer === 'manual+live-verify' ? 'manual+live-verify' : 'agent-spot-verify',
+      reviewer: keepHuman ? review.reviewer || 'manual+live-verify' : 'agent-spot-verify',
       checklist: {
         sourceFormatOk: true,
         tablesListsOk: true,
@@ -88,7 +90,11 @@ for (const entry of [...manifest.entries].sort((a, b) => a.cid - b.cid)) {
       },
       manualNotes: [
         ...new Set([
-          ...(review.manualNotes || []).filter((n) => !String(n).startsWith('automated audit only')),
+          ...(review.manualNotes || []).filter(
+            (n) =>
+              !String(n).startsWith('automated audit only') &&
+              !String(n).startsWith('spot-verify:'),
+          ),
           'spot-verify: source/dist hash, canonical, no residual shortcodes/legacy archives, article markers',
           entry.canonicalPath === '/friends/'
             ? 'friends: Joe JFriends + live one-link verified earlier'
