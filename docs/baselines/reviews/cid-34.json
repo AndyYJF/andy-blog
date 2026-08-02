@@ -1,0 +1,45 @@
+{
+  "cid": 34,
+  "entryId": "silly-tavern-linux",
+  "kind": "post",
+  "title": "Linux环境下的Silly Tavern 云酒馆 AI 搭建与美化完善（几乎0基础？）",
+  "canonicalPath": "/posts/silly-tavern-linux/",
+  "snapshotEpoch": 1785565762,
+  "auditStatus": "warn",
+  "blockers": [],
+  "warnings": [
+    "heading level skips: 2→4",
+    "body contains 2 h1 heading(s) (page title is separate)"
+  ],
+  "notes": [
+    "local uploads ok (1)",
+    "converted shortcodes: 2",
+    "headingFixes during sync: 22",
+    "built body chars≈1572"
+  ],
+  "contentHashes": {
+    "sourceSha256": "3355bdea88010c4335167bc129f330d5baa23c7aa6466ae7b429f214f11e8439",
+    "distSha256": "79cc35c2dcbdf6a1c1eee92edf1b8c26ffbad66dfe201c12dfd76dc0adcaad91",
+    "hashedAt": "2026-08-02T09:17:18.493Z"
+  },
+  "verdict": "pass",
+  "reviewedAt": "2026-08-02T09:17:18.493Z",
+  "reviewer": "agent-spot-verify",
+  "checklist": {
+    "sourceFormatOk": true,
+    "tablesListsOk": true,
+    "multiCategoryOk": true,
+    "shortcodesOk": true,
+    "legacyLinksOk": true,
+    "localUploadsOk": true,
+    "headingsNoted": true
+  },
+  "manualNotes": [
+    "noted: heading level skips: 2→4",
+    "noted: body contains 2 h1 heading(s) (page title is separate)",
+    "noted: dist HTML missing — run build before final gate",
+    "auto-noted: heading level skips: 2→4",
+    "auto-noted: body contains 2 h1 heading(s) (page title is separate)",
+    "spot-verify: source/dist hash, canonical, no residual shortcodes/legacy archives, article markers"
+  ]
+}

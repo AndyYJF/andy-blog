@@ -1,0 +1,158 @@
+{
+  "1": {
+    "type": "category",
+    "routeId": "default",
+    "canonicalPath": "/category/default/",
+    "name": "所有文章",
+    "sourceSlug": "default",
+    "legacyPaths": [
+      "/index.php/category/default/",
+      "/category/default/"
+    ],
+    "state": "active"
+  },
+  "2": {
+    "type": "tag",
+    "routeId": "music",
+    "canonicalPath": "/tag/music/",
+    "name": "音乐分享",
+    "sourceSlug": "music",
+    "legacyPaths": [
+      "/index.php/tag/music/",
+      "/tag/music/"
+    ],
+    "state": "active"
+  },
+  "3": {
+    "type": "tag",
+    "routeId": "app",
+    "canonicalPath": "/tag/app/",
+    "name": "软件分享",
+    "sourceSlug": "app",
+    "legacyPaths": [
+      "/index.php/tag/app/",
+      "/tag/app/"
+    ],
+    "state": "active"
+  },
+  "4": {
+    "type": "tag",
+    "routeId": "tec",
+    "canonicalPath": "/tag/tec/",
+    "name": "技术分享",
+    "sourceSlug": "tec",
+    "legacyPaths": [
+      "/index.php/tag/tec/",
+      "/tag/tec/"
+    ],
+    "state": "active"
+  },
+  "5": {
+    "type": "tag",
+    "routeId": "argue",
+    "canonicalPath": "/tag/argue/",
+    "name": "吐槽",
+    "sourceSlug": "argue",
+    "legacyPaths": [
+      "/index.php/tag/argue/",
+      "/tag/argue/"
+    ],
+    "state": "active"
+  },
+  "6": {
+    "type": "category",
+    "routeId": "nas",
+    "canonicalPath": "/category/nas/",
+    "name": "NAS",
+    "sourceSlug": "NAS",
+    "legacyPaths": [
+      "/index.php/category/NAS/",
+      "/category/NAS/"
+    ],
+    "state": "active"
+  },
+  "7": {
+    "type": "tag",
+    "routeId": "fen-x",
+    "canonicalPath": "/tag/fen-x/",
+    "name": "技术fen'x",
+    "sourceSlug": "技术fen-x",
+    "legacyPaths": [
+      "/index.php/tag/%E5%88%86%E6%9E%90fen-x/",
+      "/tag/fen-x/"
+    ],
+    "state": "active"
+  },
+  "10": {
+    "type": "category",
+    "routeId": "dn42",
+    "canonicalPath": "/category/dn42/",
+    "name": "DN42",
+    "sourceSlug": "DN42",
+    "legacyPaths": [
+      "/index.php/category/DN42/",
+      "/category/DN42/"
+    ],
+    "state": "active"
+  },
+  "11": {
+    "type": "category",
+    "routeId": "opensource",
+    "canonicalPath": "/category/opensource/",
+    "name": "开源项目",
+    "sourceSlug": "opensource",
+    "legacyPaths": [
+      "/index.php/category/opensource/",
+      "/category/opensource/"
+    ],
+    "state": "active"
+  },
+  "12": {
+    "type": "category",
+    "routeId": "ai",
+    "canonicalPath": "/category/ai/",
+    "name": "AI",
+    "sourceSlug": "AI",
+    "legacyPaths": [
+      "/index.php/category/AI/",
+      "/category/AI/"
+    ],
+    "state": "active"
+  },
+  "13": {
+    "type": "category",
+    "routeId": "refine",
+    "canonicalPath": "/category/refine/",
+    "name": "调优",
+    "sourceSlug": "refine",
+    "legacyPaths": [
+      "/index.php/category/refine/",
+      "/category/refine/"
+    ],
+    "state": "active"
+  },
+  "14": {
+    "type": "category",
+    "routeId": "mnt",
+    "canonicalPath": "/category/mnt/",
+    "name": "运维",
+    "sourceSlug": "mnt",
+    "legacyPaths": [
+      "/index.php/category/mnt/",
+      "/category/mnt/"
+    ],
+    "state": "active"
+  },
+  "15": {
+    "type": "category",
+    "routeId": "cyber-safety",
+    "canonicalPath": "/category/cyber-safety/",
+    "name": "网络安全",
+    "sourceSlug": "cyber_safety",
+    "legacyPaths": [
+      "/index.php/category/cyber_safety/",
+      "/category/cyber_safety/"
+    ],
+    "state": "active"
+  }
+}

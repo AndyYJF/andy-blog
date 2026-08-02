@@ -1,0 +1,44 @@
+{
+  "cid": 30,
+  "entryId": "grafana-bird-status",
+  "kind": "post",
+  "title": "搭建Grafana监测Bird运行状态",
+  "canonicalPath": "/posts/grafana-bird-status/",
+  "snapshotEpoch": 1785565762,
+  "auditStatus": "warn",
+  "blockers": [],
+  "warnings": [
+    "heading level skips: 2→4",
+    "body contains 2 h1 heading(s) (page title is separate)"
+  ],
+  "notes": [
+    "converted shortcodes: 1",
+    "headingFixes during sync: 18",
+    "built body chars≈24858"
+  ],
+  "contentHashes": {
+    "sourceSha256": "34c114fbd543ae8fae489a7c857c0284583ab016b886b9dc456e0f4849c57a1e",
+    "distSha256": "27ca962289ce5ce9d2cdfeb152df7c4f082bd761234e25ad25eb1a7ddf7b845c",
+    "hashedAt": "2026-08-02T09:17:18.493Z"
+  },
+  "verdict": "pass",
+  "reviewedAt": "2026-08-02T09:17:18.493Z",
+  "reviewer": "agent-spot-verify",
+  "checklist": {
+    "sourceFormatOk": true,
+    "tablesListsOk": true,
+    "multiCategoryOk": true,
+    "shortcodesOk": true,
+    "legacyLinksOk": true,
+    "localUploadsOk": true,
+    "headingsNoted": true
+  },
+  "manualNotes": [
+    "noted: heading level skips: 2→4",
+    "noted: body contains 2 h1 heading(s) (page title is separate)",
+    "noted: dist HTML missing — run build before final gate",
+    "auto-noted: heading level skips: 2→4",
+    "auto-noted: body contains 2 h1 heading(s) (page title is separate)",
+    "spot-verify: source/dist hash, canonical, no residual shortcodes/legacy archives, article markers"
+  ]
+}

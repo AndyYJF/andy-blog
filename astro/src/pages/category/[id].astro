@@ -1,0 +1,39 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import PostList from "../../components/PostList.astro";
+import { getCollection } from "astro:content";
+import { activeMetaOfType } from "../../lib/meta-routes";
+import { sortPosts } from "../../lib/posts";
+
+export async function getStaticPaths() {
+  return activeMetaOfType("category").map(({ mid, meta }) => ({
+    params: { id: meta.routeId },
+    props: { mid, meta },
+  }));
+}
+
+const { mid, meta } = Astro.props;
+const all = sortPosts(await getCollection("posts"));
+const posts = all.filter((p) => p.data.categories.some((c) => c.mid === mid));
+const titleName =
+  meta.name?.trim() ||
+  posts[0]?.data.categories.find((c) => c.mid === mid)?.name ||
+  meta.sourceSlug;
+---
+<BaseLayout
+  title={`${titleName} · 分类 · AndyYan`}
+  description={`分类「${titleName}」下的文章`}
+  canonicalPath={meta.canonicalPath}
+>
+  <h1>{titleName}</h1>
+  <p class="muted">分类 · {posts.length} 篇</p>
+  <PostList
+    emptyText="该分类暂无文章"
+    posts={posts.map((p) => ({
+      title: p.data.title,
+      canonicalPath: p.data.canonicalPath,
+      pubDate: p.data.pubDate,
+      categories: p.data.categories,
+    }))}
+  />
+</BaseLayout>

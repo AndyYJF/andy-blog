@@ -1,0 +1,13 @@
+[Unit]
+Description=Andy blog rebuild path trigger
+After=network-online.target docker.service
+Wants=network-online.target
+
+[Path]
+PathExists=/var/www/andy-blog/runtime/build/pending
+PathExists=/var/www/andy-blog/runtime/build/dirty
+Unit=blog-rebuild.service
+MakeDirectory=false
+
+[Install]
+WantedBy=multi-user.target

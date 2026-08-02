@@ -1,0 +1,40 @@
+{
+  "cid": 41,
+  "entryId": "screen-tmux-ssh-background",
+  "kind": "post",
+  "title": "使用screen/tmux命令实现SSH中任务后台运行",
+  "canonicalPath": "/posts/screen-tmux-ssh-background/",
+  "snapshotEpoch": 1785565762,
+  "auditStatus": "warn",
+  "blockers": [],
+  "warnings": [
+    "heading level skips: 2→4"
+  ],
+  "notes": [
+    "headingFixes during sync: 10",
+    "built body chars≈526"
+  ],
+  "contentHashes": {
+    "sourceSha256": "c96f5cb92ab38453e45c29d8f283268aed9621c76541a09b25c17394ed7384c5",
+    "distSha256": "2b42d6e5eedf3a4fd6f6154719a32acfd4d2cd9fc5d88b74af1a8116fdbe4b3a",
+    "hashedAt": "2026-08-02T09:17:18.493Z"
+  },
+  "verdict": "pass",
+  "reviewedAt": "2026-08-02T09:17:18.493Z",
+  "reviewer": "agent-spot-verify",
+  "checklist": {
+    "sourceFormatOk": true,
+    "tablesListsOk": true,
+    "multiCategoryOk": true,
+    "shortcodesOk": true,
+    "legacyLinksOk": true,
+    "localUploadsOk": true,
+    "headingsNoted": true
+  },
+  "manualNotes": [
+    "noted: heading level skips: 2→4",
+    "noted: dist HTML missing — run build before final gate",
+    "auto-noted: heading level skips: 2→4",
+    "spot-verify: source/dist hash, canonical, no residual shortcodes/legacy archives, article markers"
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "name": "andy-blog",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "sync": "node scripts/sync-typecho.js",
+    "sync:gate": "node scripts/stage1-gate.js",
+    "legacy:map": "node scripts/build-legacy-url-map.js",
+    "nginx:302": "node scripts/generate-nginx.js --status 302",
+    "nginx:301": "node scripts/generate-nginx.js --status 301",
+    "og:default": "node scripts/generate-og-default.mjs",
+    "render:gate": "node scripts/render-gate.js",
+    "rss:gate": "node scripts/rss-gate.js",
+    "stage4:gate": "node scripts/stage4-gate.js",
+    "stage5:gate": "node scripts/stage5-gate.js",
+    "stage6:gate": "node scripts/stage6-gate.js",
+    "stage7:gate": "node scripts/stage7-gate.js",
+    "stage8:audit": "node scripts/stage8-audit.js",
+    "stage8:gate": "node scripts/stage8-gate.js",
+    "friends:extract": "python scripts/extract-joe-friends.py",
+    "comments:migrate": "node scripts/migrate-comments.js --epoch 1785565762 --backend memory --twice",
+    "build": "npm run sync && npm run legacy:map && npm run nginx:302 && npm --prefix astro run build && npm run render:gate && npm run rss:gate && npm run stage4:gate && npm run stage6:gate && npm run stage7:gate && npm run stage8:gate"
+  },
+  "dependencies": {
+    "js-yaml": "^4.1.0",
+    "mysql2": "^3.23.2",
+    "slugify": "^1.6.9"
+  },
+  "devDependencies": {
+    "pagefind": "^1.5.2"
+  }
+}

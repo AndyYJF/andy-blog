@@ -1,0 +1,37 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import PostList from "../../components/PostList.astro";
+import Pagination from "../../components/Pagination.astro";
+import { getCollection } from "astro:content";
+import { pageSlice, paginate } from "../../lib/posts";
+
+export async function getStaticPaths() {
+  const all = await getCollection("posts");
+  const { totalPages } = paginate(all);
+  const paths = [];
+  for (let n = 2; n <= totalPages; n += 1) {
+    paths.push({ params: { n: String(n) } });
+  }
+  return paths;
+}
+
+const n = Number(Astro.params.n);
+const all = await getCollection("posts");
+const { posts, current, totalPages } = pageSlice(all, n);
+const canonicalPath = `/page/${current}/`;
+---
+<BaseLayout
+  title={`第 ${current} 页 · AndyYan Blog`}
+  description={`AndyYan 博客文章列表第 ${current} 页`}
+  canonicalPath={canonicalPath}
+>
+  <h1>文章列表</h1>
+  <p class="muted">第 {current} / {totalPages} 页</p>
+  <PostList posts={posts.map((p) => ({
+    title: p.data.title,
+    canonicalPath: p.data.canonicalPath,
+    pubDate: p.data.pubDate,
+    categories: p.data.categories,
+  }))} />
+  <Pagination current={current} totalPages={totalPages} />
+</BaseLayout>

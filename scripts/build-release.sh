@@ -1,0 +1,84 @@
+#!/usr/bin/env bash
+# scripts/build-release.sh — runs inside the builder container.
+# stdout: exactly one release ID matching ^[0-9TZ-]+[0-9a-f]{8}$
+# stderr/journal: all build logs
+set -Eeuo pipefail
+umask 027
+
+exec 3>&1
+exec 1>&2
+mkdir -p /runtime/build
+exec 9>/runtime/build/rebuild.lock
+flock 9
+
+RELEASE_ID="$(date -u +%Y%m%dT%H%M%SZ)-$(openssl rand -hex 4)"
+REDIRECT_STATUS="${REDIRECT_STATUS:?host must pass persisted redirect state}"
+case "$REDIRECT_STATUS" in 302|301) ;; *) echo "bad REDIRECT_STATUS=$REDIRECT_STATUS" >&2; exit 64 ;; esac
+COMMENT_WRITE_MODE="${COMMENT_WRITE_MODE:?host must pass persisted comment state}"
+case "$COMMENT_WRITE_MODE" in disabled|enabled) ;; *) echo "bad COMMENT_WRITE_MODE" >&2; exit 64 ;; esac
+SNAPSHOT_EPOCH="${SNAPSHOT_EPOCH:?host must pass persisted job cutoff}"
+[[ "$SNAPSHOT_EPOCH" =~ ^[0-9]{10}$ ]] || { echo "bad SNAPSHOT_EPOCH" >&2; exit 64; }
+export SNAPSHOT_EPOCH REDIRECT_STATUS COMMENT_WRITE_MODE PLAYWRIGHT_BROWSERS_PATH="${PLAYWRIGHT_BROWSERS_PATH:-/ms-playwright}"
+
+WWW_ROOT="${WWW_ROOT:-/var/www/andy-y.cn}"
+STAGE="${WWW_ROOT}/releases/.${RELEASE_ID}.staging"
+FINAL="${WWW_ROOT}/releases/${RELEASE_ID}"
+test ! -e "$STAGE"
+test ! -e "$FINAL"
+
+# Mark in-flight so rebuild-api can flip to dirty.
+printf '%s\n' "{\"releaseId\":\"$RELEASE_ID\",\"startedAt\":\"$(date -u +%Y-%m-%dT%H:%M:%SZ)\"}" \
+  >/runtime/build/building
+
+cleanup_building() {
+  rm -f /runtime/build/building
+}
+trap cleanup_building EXIT
+
+cd /app
+
+# Monorepo layout: /app is the repo root (not just astro/).
+node scripts/sync-typecho.js
+node scripts/build-legacy-url-map.js
+node scripts/generate-nginx.js --status "$REDIRECT_STATUS"
+node scripts/generate-comment-policy.js --mode "$COMMENT_WRITE_MODE" --out .cache/comment-policy.json
+node scripts/generate-comment-policy.js --mode enabled --out .cache/comment-policy.staging.json
+node scripts/finalize-manifest.js \
+  --release-id "$RELEASE_ID" \
+  --redirect-status "$REDIRECT_STATUS" \
+  --comment-write-mode "$COMMENT_WRITE_MODE"
+node scripts/migrate-comments.js --epoch "$SNAPSHOT_EPOCH" --backend memory --twice
+
+npm --prefix astro run build
+node scripts/render-gate.js
+node scripts/rss-gate.js
+# Observation gate asserts 302; skip when flipping to permanent 301.
+if [[ "$REDIRECT_STATUS" == "302" ]]; then
+  node scripts/stage4-gate.js
+fi
+
+mkdir -p "$STAGE/site" "$STAGE/nginx" .cache/release-nginx
+cp -a nginx/release-http.conf "$STAGE/nginx/"
+cp -a nginx/00-release-loader.conf "$STAGE/nginx/" 2>/dev/null || true
+# Candidate full nginx.conf for isolated nginx -t -c
+node scripts/generate-candidate-nginx.js --release-id "$RELEASE_ID" --out "$STAGE/nginx"
+
+cp -a astro/dist/. "$STAGE/site/"
+cp .cache/manifest.json "$STAGE/manifest.json"
+cp .cache/comment-policy.json "$STAGE/comment-policy.json"
+cp .cache/comment-policy.staging.json "$STAGE/comment-policy.staging.json"
+printf '%s\n' "$RELEASE_ID" > "$STAGE/site/release-id.txt"
+
+if find "$STAGE" ! -type f ! -type d -print -quit | grep -q .; then
+  echo "release contains non-file/dir entries" >&2
+  exit 65
+fi
+find "$STAGE" -type d -exec chmod 0755 {} +
+find "$STAGE" -type f -exec chmod 0644 {} +
+(cd "$STAGE" && find . -type f ! -name checksums.sha256 -print0 | sort -z | xargs -0 sha256sum > checksums.sha256)
+chmod 0644 "$STAGE/checksums.sha256"
+mv -T "$STAGE" "$FINAL"
+
+# Clear pending; if dirty was set mid-build, leave it for the host to re-queue.
+rm -f /runtime/build/pending
+printf '%s\n' "$RELEASE_ID" >&3

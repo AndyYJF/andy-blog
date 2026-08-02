@@ -1,0 +1,15 @@
+{
+  "source": "typecho_options.theme:Joe.JFriends + live verify",
+  "snapshotEpoch": 1785565762,
+  "template": "friends.php",
+  "note": "Page body in Typecho is empty; Joe friends.php reads theme option JFriends (title || url || image || description).",
+  "friends": [
+    {
+      "title": "悠笙の开发日记",
+      "url": "https://blog.iyoroy.cn",
+      "image": "https://www.iyoroy.cn/usr/uploads/2024/12/3624090173.png",
+      "description": "愿世间万物都能被温柔以待",
+      "color": "#7367F0"
+    }
+  ]
+}

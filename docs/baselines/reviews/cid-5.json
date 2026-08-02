@@ -1,0 +1,40 @@
+{
+  "cid": 5,
+  "entryId": "friends",
+  "kind": "page",
+  "title": "友链",
+  "canonicalPath": "/friends/",
+  "snapshotEpoch": 1785565762,
+  "auditStatus": "pass",
+  "blockers": [],
+  "warnings": [],
+  "notes": [
+    "page body empty by design; friends render from data/friends.json (Joe JFriends)",
+    "built body chars≈30 (empty source page)"
+  ],
+  "contentHashes": {
+    "sourceSha256": "524d0d7fa343e56996be0caf38798fa50561d1b85d18df5bf5ad7045b6927bbf",
+    "distSha256": "d738d40f94bfd4af86e396f88ac39b0de353864eb4ed147f495d002e9410852f",
+    "hashedAt": "2026-08-02T09:17:18.493Z"
+  },
+  "verdict": "pass",
+  "reviewedAt": "2026-08-02T09:17:18.493Z",
+  "reviewer": "manual+live-verify",
+  "checklist": {
+    "sourceFormatOk": true,
+    "tablesListsOk": true,
+    "multiCategoryOk": true,
+    "shortcodesOk": true,
+    "legacyLinksOk": true,
+    "localUploadsOk": true,
+    "headingsNoted": true
+  },
+  "manualNotes": [
+    "friends from Joe JFriends, not page markdown",
+    "legacy /index.php/5.html → /friends/",
+    "live verified one friend: 悠笙の开发日记 → https://blog.iyoroy.cn",
+    "UI: half-width post-card aligned with home",
+    "spot-verify: source/dist hash, canonical, no residual shortcodes/legacy archives, article markers",
+    "friends: Joe JFriends + live one-link verified earlier"
+  ]
+}

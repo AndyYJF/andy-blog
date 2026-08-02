@@ -1,0 +1,22 @@
+<?php
+/**
+ * Example Typecho config fragments for the headless/CMS split.
+ * Merge into the production config.inc.php — do not commit secrets.
+ *
+ * siteUrl stays https://www.andy-y.cn (public permalinks).
+ * Admin/editor assets are forced onto cms.andy-y.cn.
+ */
+
+/** Public site (permalinks, RSS, visitor links). */
+// define('__TYPECHO_SITE_URL__', 'https://www.andy-y.cn');
+
+/** Plugin + active theme assets must load from the CMS host. */
+define('__TYPECHO_PLUGIN_URL__', 'https://cms.andy-y.cn/usr/plugins');
+// Activity-theme root URL — Typecho does NOT append the theme directory again.
+define('__TYPECHO_THEME_URL__', 'https://cms.andy-y.cn/usr/themes/Joe');
+
+/**
+ * Editor decision (Stage 5): keep the Joe theme as the CMS editor only.
+ * Astro owns the public front-end; shortcodes stay as Typecho/Joe syntax in
+ * the database and are converted at build time (§3.2).
+ */

@@ -1,0 +1,9 @@
+{
+  "snapshotEpoch": "1785565762",
+  "downloadedAt": "20260801T062911Z",
+  "dumpPath": "backups\\mysql\\typecho-1785565762-20260801T062911Z.sql",
+  "dumpBytes": 222233,
+  "dumpSha256": "e71c5fcc481f481530fc7fe52c3ec611deab5314bc2e569e72eb8cd942e71812",
+  "packPath": "backups\\mysql\\stage0-1785565762-20260801T062911Z.tgz",
+  "articlesDir": "backups\\mysql\\articles-1785565762"
+}

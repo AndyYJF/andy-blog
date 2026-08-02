@@ -1,0 +1,28 @@
+﻿# Secrets & local artifacts
+backups/
+*.sql
+!docker/**/*.sql
+!docs/**/*.sql
+.env
+.env.*
+!.env.example
+.cache/
+secrets/
+!secrets/*.example
+*.pem
+*.key
+id_rsa*
+id_ed25519*
+
+# Node / Astro
+node_modules/
+dist/
+.astro/
+public/beoe/
+astro/public/beoe/
+
+# OS / IDE
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

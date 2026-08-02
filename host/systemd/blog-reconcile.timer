@@ -1,0 +1,12 @@
+[Unit]
+Description=Andy blog reconciliation timer (catch timed publish / missed webhooks)
+After=network-online.target
+
+[Timer]
+OnBootSec=3min
+OnUnitActiveSec=5min
+AccuracySec=30s
+Unit=blog-reconcile.service
+
+[Install]
+WantedBy=timers.target

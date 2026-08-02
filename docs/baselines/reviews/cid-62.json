@@ -1,0 +1,44 @@
+{
+  "cid": 62,
+  "entryId": "stable-diffusion-notes-p1",
+  "kind": "post",
+  "title": "StableDiffusion学习札记_P1",
+  "canonicalPath": "/posts/stable-diffusion-notes-p1/",
+  "snapshotEpoch": 1785565762,
+  "auditStatus": "warn",
+  "blockers": [],
+  "warnings": [
+    "heading level skips: 2→4",
+    "body contains 3 h1 heading(s) (page title is separate)"
+  ],
+  "notes": [
+    "converted shortcodes: 4",
+    "headingFixes during sync: 13",
+    "built body chars≈2135"
+  ],
+  "contentHashes": {
+    "sourceSha256": "84739332fa51c2c6c30e350787e59bd04051046b3a197081e98965be3487d458",
+    "distSha256": "21b0189ba58f329e124b9f6a19aee90a3f14979bdb4fcecd7fdc752d636aab5d",
+    "hashedAt": "2026-08-02T09:17:18.493Z"
+  },
+  "verdict": "pass",
+  "reviewedAt": "2026-08-02T09:17:18.493Z",
+  "reviewer": "agent-spot-verify",
+  "checklist": {
+    "sourceFormatOk": true,
+    "tablesListsOk": true,
+    "multiCategoryOk": true,
+    "shortcodesOk": true,
+    "legacyLinksOk": true,
+    "localUploadsOk": true,
+    "headingsNoted": true
+  },
+  "manualNotes": [
+    "noted: heading level skips: 2→4",
+    "noted: body contains 3 h1 heading(s) (page title is separate)",
+    "noted: dist HTML missing — run build before final gate",
+    "auto-noted: heading level skips: 2→4",
+    "auto-noted: body contains 3 h1 heading(s) (page title is separate)",
+    "spot-verify: source/dist hash, canonical, no residual shortcodes/legacy archives, article markers"
+  ]
+}

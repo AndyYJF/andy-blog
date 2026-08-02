@@ -1,0 +1,102 @@
+---
+import { releaseState } from "../generated/release-state";
+
+interface Props {
+  commentKey: string;
+  entryWritable: boolean;
+  productionWriteEnabled?: boolean;
+}
+
+const {
+  commentKey,
+  entryWritable,
+  productionWriteEnabled = releaseState.productionWriteEnabled,
+} = Astro.props;
+---
+<section class="comments" aria-label="评论">
+  <h2>评论</h2>
+  <div
+    id="waline"
+    data-comment-key={commentKey}
+    data-entry-writable={String(entryWritable)}
+    data-production-write-enabled={String(productionWriteEnabled)}
+  ></div>
+</section>
+
+<script>
+  let waline: { destroy?: () => void } | undefined;
+  let observer: IntersectionObserver | undefined;
+  let generation = 0;
+
+  function cleanup() {
+    generation += 1;
+    observer?.disconnect();
+    observer = undefined;
+    waline?.destroy?.();
+    waline = undefined;
+  }
+
+  function mount() {
+    cleanup();
+    const current = generation;
+    const root = document.querySelector<HTMLElement>("#waline[data-comment-key]");
+    if (!root) return;
+    const commentKey = root.dataset.commentKey;
+    if (!commentKey) return;
+
+    observer = new IntersectionObserver(
+      async ([entry]) => {
+        if (!entry.isIntersecting) return;
+        observer?.disconnect();
+        const hostWriteEnabled =
+          root.dataset.productionWriteEnabled === "true" ||
+          window.location.hostname === "new.andy-y.cn";
+        const effectiveWritable =
+          root.dataset.entryWritable === "true" && hostWriteEnabled;
+
+        if (!effectiveWritable) {
+          const { mountReadonlyComments } = await import("../lib/readonly-comments.js");
+          if (current !== generation || !root.isConnected) return;
+          const readonly = await mountReadonlyComments({
+            el: root,
+            serverURL: window.location.origin,
+            path: commentKey,
+          });
+          if (current !== generation || !root.isConnected) {
+            readonly.destroy();
+            return;
+          }
+          waline = readonly;
+          return;
+        }
+
+        const [{ init }, cssMod] = await Promise.all([
+          import("@waline/client"),
+          import("@waline/client/waline.css?url"),
+        ]);
+        if (current !== generation || !root.isConnected) return;
+        const cssHref = typeof cssMod === "string" ? cssMod : (cssMod as { default: string }).default;
+        if (cssHref && !document.querySelector('link[data-waline-css]')) {
+          const link = document.createElement("link");
+          link.rel = "stylesheet";
+          link.href = cssHref;
+          link.dataset.walineCss = "1";
+          document.head.append(link);
+        }
+        waline = init({
+          el: root,
+          // Client appends /api/; Nginx proxies same-origin /api/*.
+          serverURL: window.location.origin,
+          dark: 'html[data-theme="dark"]',
+          path: commentKey,
+          lang: "zh-CN",
+        });
+      },
+      { rootMargin: "300px 0px" },
+    );
+    observer.observe(root);
+  }
+
+  document.addEventListener("astro:page-load", mount);
+  document.addEventListener("astro:before-swap", cleanup);
+</script>

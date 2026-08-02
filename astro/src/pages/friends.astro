@@ -1,0 +1,77 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Comments from "../components/Comments.astro";
+import { existsSync, readFileSync } from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+
+function findRepoRoot(): string {
+  const starts = [
+    path.dirname(fileURLToPath(import.meta.url)),
+    process.cwd(),
+    path.resolve(process.cwd(), ".."),
+  ];
+  for (const start of starts) {
+    let dir = start;
+    for (let i = 0; i < 10; i += 1) {
+      if (existsSync(path.join(dir, "data", "friends.json"))) return dir;
+      const parent = path.dirname(dir);
+      if (parent === dir) break;
+      dir = parent;
+    }
+  }
+  throw new Error("cannot locate data/friends.json from build context");
+}
+
+const friendsData = JSON.parse(
+  readFileSync(path.join(findRepoRoot(), "data/friends.json"), "utf8"),
+) as {
+  friends: {
+    title: string;
+    url: string;
+    image?: string;
+    description?: string;
+    color?: string;
+  }[];
+};
+
+const friends = friendsData.friends || [];
+---
+<BaseLayout
+  title="友链 · AndyYan"
+  description="AndyYan 的友情链接"
+  canonicalPath="/friends/"
+  type="website"
+>
+  <article class="prose" data-article data-pagefind-body>
+    <header class="entry-header">
+      <h1>友链</h1>
+      <p class="muted">互相留下脚印的站点</p>
+    </header>
+
+    {friends.length === 0 ? (
+      <p class="muted">暂无友链</p>
+    ) : (
+      <ul class="friends-list">
+        {friends.map((f) => (
+          <li class="post-card friend-card">
+            <div class="friend-row">
+              {f.image ? (
+                <img class="friend-avatar" src={f.image} alt="" width="48" height="48" loading="lazy" />
+              ) : (
+                <span class="friend-avatar friend-avatar-fallback" aria-hidden="true">{f.title.slice(0, 1)}</span>
+              )}
+              <div class="friend-text">
+                <h2>
+                  <a href={f.url} target="_blank" rel="noopener noreferrer">{f.title}</a>
+                </h2>
+                {f.description && <p class="card-meta">{f.description}</p>}
+              </div>
+            </div>
+          </li>
+        ))}
+      </ul>
+    )}
+  </article>
+  <Comments commentKey="/friends/" entryWritable={true} />
+</BaseLayout>

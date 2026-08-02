@@ -1,0 +1,43 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Comments from "../../components/Comments.astro";
+import { getCollection, render } from "astro:content";
+
+export async function getStaticPaths() {
+  const posts = await getCollection("posts");
+  return posts.map((post) => ({
+    params: { id: post.id },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+const description = `${post.data.title} · AndyYan 的技术博客`;
+---
+<BaseLayout
+  title={`${post.data.title} · AndyYan`}
+  description={description}
+  canonicalPath={post.data.canonicalPath}
+  article
+  type="article"
+  image={post.data.cover}
+  pubDate={post.data.pubDate}
+  updatedDate={post.data.updatedDate}
+>
+  <article class="prose" data-article data-pagefind-body>
+    <header class="entry-header">
+      <h1>{post.data.title}</h1>
+      <p class="entry-meta">
+        <time datetime={post.data.pubDate.toISOString()}>
+          {post.data.pubDate.toISOString().slice(0, 10)}
+        </time>
+        {post.data.categories.length > 0 && (
+          <> · {post.data.categories.map((c) => c.name).join(" / ")}</>
+        )}
+      </p>
+    </header>
+    <Content />
+  </article>
+  <Comments commentKey={post.data.commentKey} entryWritable={post.data.allowComment} />
+</BaseLayout>

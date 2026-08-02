@@ -1,0 +1,79 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { getCollection } from "astro:content";
+import { sortPosts } from "../lib/posts";
+import { activeMetaOfType } from "../lib/meta-routes";
+
+const posts = sortPosts(await getCollection("posts"));
+const categories = activeMetaOfType("category");
+const tags = activeMetaOfType("tag");
+
+const byYear = new Map<number, typeof posts>();
+for (const post of posts) {
+  const year = post.data.pubDate.getUTCFullYear();
+  const list = byYear.get(year) ?? [];
+  list.push(post);
+  byYear.set(year, list);
+}
+const years = [...byYear.keys()].sort((a, b) => b - a);
+
+function countFor(mid: number, type: "category" | "tag") {
+  return posts.filter((p) => {
+    const bag = type === "category" ? p.data.categories : p.data.tags;
+    return bag.some((m) => m.mid === mid);
+  }).length;
+}
+
+function label(meta: { name?: string; sourceSlug: string }) {
+  return meta.name?.trim() || meta.sourceSlug;
+}
+---
+<BaseLayout
+  title="归档 · AndyYan"
+  description="全部文章与分类、标签索引"
+  canonicalPath="/archive/"
+>
+  <h1>归档</h1>
+  <p class="muted">共 {posts.length} 篇文章</p>
+
+  <section class="archive-taxonomies" aria-label="分类与标签">
+    <div>
+      <h2>分类</h2>
+      <ul class="taxonomy-index">
+        {categories.map(({ mid, meta }) => (
+          <li>
+            <a href={meta.canonicalPath}>{label(meta)}</a>
+            <span class="count">{countFor(mid, "category")}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+    <div>
+      <h2>标签</h2>
+      <ul class="taxonomy-index">
+        {tags.map(({ mid, meta }) => (
+          <li>
+            <a href={meta.canonicalPath}>{label(meta)}</a>
+            <span class="count">{countFor(mid, "tag")}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  {years.map((year) => (
+    <section class="archive-year">
+      <h2>{year}</h2>
+      <ul class="archive-list">
+        {(byYear.get(year) ?? []).map((post) => (
+          <li>
+            <time datetime={post.data.pubDate.toISOString()}>
+              {post.data.pubDate.toISOString().slice(5, 10)}
+            </time>
+            <a href={post.data.canonicalPath}>{post.data.title}</a>
+          </li>
+        ))}
+      </ul>
+    </section>
+  ))}
+</BaseLayout>

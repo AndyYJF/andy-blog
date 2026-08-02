@@ -1,0 +1,37 @@
+{
+  "cid": 47,
+  "entryId": "typecho-joe-mermaid",
+  "kind": "post",
+  "title": "Typecho + JOE 主题下 Mermaid 渲染的解决方案",
+  "canonicalPath": "/posts/typecho-joe-mermaid/",
+  "snapshotEpoch": 1785565762,
+  "auditStatus": "pass",
+  "blockers": [],
+  "warnings": [],
+  "notes": [
+    "converted shortcodes: 1",
+    "headingFixes during sync: 1",
+    "built body chars≈9061"
+  ],
+  "contentHashes": {
+    "sourceSha256": "15f7024a3363be19ea1e8d151547d4d1265c7f505e3d5c50392a599117590443",
+    "distSha256": "05a79dd021ea509052a51dd508b7f9dc379e2e4f877d64205ff0d49eb2d39759",
+    "hashedAt": "2026-08-02T09:17:18.493Z"
+  },
+  "verdict": "pass",
+  "reviewedAt": "2026-08-02T09:17:18.493Z",
+  "reviewer": "agent-spot-verify",
+  "checklist": {
+    "sourceFormatOk": true,
+    "tablesListsOk": true,
+    "multiCategoryOk": true,
+    "shortcodesOk": true,
+    "legacyLinksOk": true,
+    "localUploadsOk": true,
+    "headingsNoted": true
+  },
+  "manualNotes": [
+    "noted: dist HTML missing — run build before final gate",
+    "spot-verify: source/dist hash, canonical, no residual shortcodes/legacy archives, article markers"
+  ]
+}

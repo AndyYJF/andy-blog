@@ -1,0 +1,105 @@
+# Base Compose — Stage 5 scaffold. Pin digests in .env before production.
+name: andy-blog
+
+services:
+  typecho:
+    build: ./docker/typecho
+    restart: unless-stopped
+    expose: ['9000']
+    volumes:
+      - ./typecho:/var/www/typecho
+    environment:
+      WEBHOOK_SECRET_FILE: /run/secrets/webhook_secret
+    secrets: [webhook_secret]
+    networks: [app, data_egress]
+
+  nginx:
+    image: ${NGINX_IMAGE:?set a digest-pinned NGINX_IMAGE}
+    restart: unless-stopped
+    depends_on: [typecho, waline]
+    ports:
+      - '80:80'
+      - '443:443'
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+      - ./typecho:/var/www/typecho:ro
+      - '${WWW_ROOT:?set an absolute host WWW_ROOT}:/var/www/andy-y.cn:ro'
+      - /etc/letsencrypt:/etc/letsencrypt:ro
+    networks: [edge, app]
+
+  # Verify HMAC / persist pending+dirty only. Socket access stays on the host unit.
+  rebuild-api:
+    build: ./docker/rebuild-api
+    restart: unless-stopped
+    expose: ['9000']
+    volumes:
+      - ./runtime/build:/runtime/build
+    environment:
+      WEBHOOK_SECRET_FILE: /run/secrets/webhook_secret
+      RUNTIME_DIR: /runtime/build
+    secrets: [webhook_secret]
+    networks: [app]
+
+  builder:
+    build: ./docker/builder
+    profiles: ['build']
+    user: '${DEPLOY_UID:?set host deploy uid}:${DEPLOY_GID:?set host deploy gid}'
+    volumes:
+      - ./:/app
+      - '${WWW_ROOT:?set an absolute host WWW_ROOT}:/var/www/andy-y.cn'
+      - ./runtime/build:/runtime/build
+    working_dir: /app
+    environment:
+      DB_HOST: ${DB_HOST:?DB_HOST is required}
+      DB_USER: ${TYPECHO_RO_DB_USER:?TYPECHO_RO_DB_USER is required}
+      DB_PASSWORD: ${TYPECHO_RO_DB_PASSWORD:?TYPECHO_RO_DB_PASSWORD is required}
+      DB_NAME: ${DB_NAME:?DB_NAME is required}
+      PLAYWRIGHT_BROWSERS_PATH: /ms-playwright
+    networks: [data_egress]
+
+  waline:
+    build: ./docker/waline
+    restart: unless-stopped
+    expose: ['8360']
+    environment:
+      TZ: Asia/Shanghai
+      MYSQL_HOST: ${WALINE_MYSQL_HOST:?WALINE_MYSQL_HOST}
+      MYSQL_PORT: ${WALINE_MYSQL_PORT:-3306}
+      MYSQL_DB: ${WALINE_MYSQL_DB:?WALINE_MYSQL_DB}
+      MYSQL_USER: ${WALINE_MYSQL_USER:?WALINE_MYSQL_USER}
+      MYSQL_PASSWORD: ${WALINE_MYSQL_PASSWORD:?WALINE_MYSQL_PASSWORD}
+      SITE_NAME: AndyYan Blog
+      SITE_URL: https://www.andy-y.cn
+      COMMENT_POLICY_FILE: /var/www/andy-y.cn/current/comment-policy.json
+    volumes:
+      - '${WWW_ROOT:?set an absolute host WWW_ROOT}:/var/www/andy-y.cn:ro'
+    networks: [app, data_egress]
+
+  waline-staging:
+    build: ./docker/waline
+    profiles: ['staging']
+    restart: unless-stopped
+    expose: ['8360']
+    environment:
+      TZ: Asia/Shanghai
+      MYSQL_HOST: ${WALINE_STAGING_MYSQL_HOST:?WALINE_STAGING_MYSQL_HOST}
+      MYSQL_PORT: ${WALINE_STAGING_MYSQL_PORT:-3306}
+      MYSQL_DB: ${WALINE_STAGING_MYSQL_DB:?WALINE_STAGING_MYSQL_DB}
+      MYSQL_USER: ${WALINE_STAGING_MYSQL_USER:?WALINE_STAGING_MYSQL_USER}
+      MYSQL_PASSWORD: ${WALINE_STAGING_MYSQL_PASSWORD:?WALINE_STAGING_MYSQL_PASSWORD}
+      SITE_NAME: AndyYan Blog (staging)
+      SITE_URL: https://new.andy-y.cn
+      COMMENT_POLICY_FILE: /var/www/andy-y.cn/candidate/comment-policy.staging.json
+    volumes:
+      - '${WWW_ROOT:?set an absolute host WWW_ROOT}:/var/www/andy-y.cn:ro'
+    networks: [app, data_egress]
+
+networks:
+  edge: {}
+  app:
+    internal: true
+  data_egress: {}
+
+secrets:
+  webhook_secret:
+    file: ./secrets/webhook_secret

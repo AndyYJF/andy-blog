@@ -1,0 +1,14 @@
+{
+  "typechoVersion": "1.2.1",
+  "original": {
+    "var/Widget/Options/Permalink.php": "10240a79be158a7cffa1ee088300ce7a044b3d43146db073fe2e3d881fddfae9",
+    "var/Widget/Users/Profile.php": "c1fd4dd4fc38af5c22c8310eeda183ef784aaa16db07a08381be0a6cfddf87e1",
+    "var/Widget/Login.php": "b657689ba387215e29608d15c423a7b17c16a32433294b72a5473f5af6a5520f"
+  },
+  "patched": {
+    "var/Widget/Options/Permalink.php": "45860248cbbdbb291ece34e2e5fda2fcd093d671c2d3636fff630b4b5e7b1f86",
+    "var/Widget/Users/Profile.php": "e3e341e93fb391725682c2718fa0aa9efc3572d31479a98685a6827052e0dcb0",
+    "var/Widget/Login.php": "3214392941152e7031c2c047fe1c80bbdf4c0a43f53ee9626838d16a75a0953f"
+  },
+  "patchSha256": "9a381fd5ce48c81938b01de0cf2e46972aaec456cd21fd9fced9fe5b6707de9b"
+}

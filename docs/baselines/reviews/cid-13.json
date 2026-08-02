@@ -1,0 +1,41 @@
+{
+  "cid": 13,
+  "entryId": "maibot-astrbot-napcat",
+  "kind": "post",
+  "title": "MaiBot+AstrBot+Napcat分离部署，实用、稳定且拟人化的QQBot部署方案",
+  "canonicalPath": "/posts/maibot-astrbot-napcat/",
+  "snapshotEpoch": 1785565762,
+  "auditStatus": "warn",
+  "blockers": [],
+  "warnings": [
+    "body contains 3 h1 heading(s) (page title is separate)"
+  ],
+  "notes": [
+    "converted shortcodes: 2",
+    "headingFixes during sync: 6",
+    "built body chars≈5601"
+  ],
+  "contentHashes": {
+    "sourceSha256": "a619a7a972685173d9f130cd054470efaab2cf683e27ce0b7b31755db6a4e751",
+    "distSha256": "14536cebf2622ac983ec20efcf7caf1798b5f8ae40cf45895b8ca913908d46ff",
+    "hashedAt": "2026-08-02T09:17:18.493Z"
+  },
+  "verdict": "pass",
+  "reviewedAt": "2026-08-02T09:17:18.493Z",
+  "reviewer": "agent-spot-verify",
+  "checklist": {
+    "sourceFormatOk": true,
+    "tablesListsOk": true,
+    "multiCategoryOk": true,
+    "shortcodesOk": true,
+    "legacyLinksOk": true,
+    "localUploadsOk": true,
+    "headingsNoted": true
+  },
+  "manualNotes": [
+    "noted: body contains 3 h1 heading(s) (page title is separate)",
+    "noted: dist HTML missing — run build before final gate",
+    "auto-noted: body contains 3 h1 heading(s) (page title is separate)",
+    "spot-verify: source/dist hash, canonical, no residual shortcodes/legacy archives, article markers"
+  ]
+}

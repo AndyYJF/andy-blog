@@ -1,0 +1,19 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+<BaseLayout
+  title="页面未找到 · AndyYan"
+  description="请求的页面不存在"
+  canonicalPath="/"
+  noindex
+>
+  <section class="not-found">
+    <p class="not-found-code" aria-hidden="true">404</p>
+    <h1>页面未找到</h1>
+    <p class="muted">链接可能已失效，或地址写错了。</p>
+    <p class="not-found-actions">
+      <a href="/">返回首页</a>
+      <a href="/archive/">查看归档</a>
+    </p>
+  </section>
+</BaseLayout>

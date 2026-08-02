@@ -1,0 +1,210 @@
+---
+/**
+ * Lazy Pagefind UI.
+ *
+ * First click opens <dialog>; CSS/JS load only then. Mount Promise is cached.
+ * ClientRouter may strip head CSS on swap — reopen re-injects if needed.
+ */
+---
+<button
+  type="button"
+  class="search-toggle"
+  data-search-open
+  aria-haspopup="dialog"
+  aria-controls="site-search"
+  aria-label="搜索文章"
+>
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <circle cx="11" cy="11" r="7"></circle>
+    <path d="m20 20-3.5-3.5"></path>
+  </svg>
+</button>
+
+<dialog id="site-search" class="search-dialog" data-search-dialog>
+  <div class="search-dialog-chrome">
+    <strong>搜索</strong>
+    <button type="button" class="search-close" data-search-close aria-label="关闭搜索">关闭</button>
+  </div>
+  <div id="pagefind-container" data-pagefind-root></div>
+  <p class="search-hint muted" data-search-status hidden></p>
+</dialog>
+
+<script>
+  type PagefindUICtor = new (opts: Record<string, unknown>) => { destroy?: () => void };
+  declare global {
+    interface Window {
+      PagefindUI?: PagefindUICtor;
+      __andySearch?: {
+        loadPromise: Promise<void> | null;
+        mounted: boolean;
+        ui: { destroy?: () => void } | null;
+      };
+    }
+  }
+
+  const state = (window.__andySearch ??= {
+    loadPromise: null as Promise<void> | null,
+    mounted: false,
+    ui: null as { destroy?: () => void } | null,
+  });
+
+  const CSS_HREF = '/pagefind/pagefind-ui.css';
+  const JS_HREF = '/pagefind/pagefind-ui.js';
+
+  function ensureCss(): void {
+    if (document.querySelector(`link[href="${CSS_HREF}"]`)) return;
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = CSS_HREF;
+    document.head.append(link);
+  }
+
+  function loadAssets(): Promise<void> {
+    if (state.loadPromise) return state.loadPromise;
+    state.loadPromise = new Promise<void>((resolve, reject) => {
+      ensureCss();
+      if (window.PagefindUI) {
+        resolve();
+        return;
+      }
+      const existing = document.querySelector(`script[src="${JS_HREF}"]`);
+      if (existing) {
+        existing.addEventListener('load', () => resolve(), { once: true });
+        existing.addEventListener('error', () => reject(new Error('pagefind script failed')), { once: true });
+        return;
+      }
+      const script = document.createElement('script');
+      script.src = JS_HREF;
+      script.async = true;
+      script.addEventListener('load', () => resolve(), { once: true });
+      script.addEventListener('error', () => {
+        state.loadPromise = null;
+        reject(new Error('pagefind script failed'));
+      }, { once: true });
+      document.head.append(script);
+    });
+    return state.loadPromise;
+  }
+
+  function mountUi(): void {
+    if (state.mounted && state.ui) return;
+    const root = document.querySelector('[data-pagefind-root]');
+    if (!root || !window.PagefindUI) return;
+    root.replaceChildren();
+    state.ui = new window.PagefindUI({
+      element: '[data-pagefind-root]',
+      showImages: false,
+      showSubResults: true,
+      excerptLength: 20,
+      translations: {
+        placeholder: '搜索文章…',
+        clear_search: '清除',
+        load_more: '加载更多',
+        search_label: '站内搜索',
+        zero_results: '没有找到「[SEARCH_TERM]」',
+        many_results: '[COUNT] 条结果',
+        one_result: '1 条结果',
+      },
+    });
+    state.mounted = true;
+  }
+
+  async function openSearch(): Promise<void> {
+    const dialog = document.querySelector<HTMLDialogElement>('[data-search-dialog]');
+    const status = document.querySelector<HTMLElement>('[data-search-status]');
+    if (!dialog) return;
+    if (!dialog.open) {
+      // Force a frame so @starting-style open animation can run.
+      dialog.showModal();
+    }
+
+    if (status) {
+      status.hidden = false;
+      status.textContent = '正在加载搜索…';
+    }
+    try {
+      ensureCss();
+      await loadAssets();
+      mountUi();
+      if (status) status.hidden = true;
+      const input = dialog.querySelector<HTMLInputElement>('input');
+      input?.focus();
+    } catch {
+      state.loadPromise = null;
+      state.mounted = false;
+      state.ui = null;
+      if (status) {
+        status.hidden = false;
+        status.textContent = '搜索加载失败，关闭后重试';
+      }
+    }
+  }
+
+  function closeSearch(): void {
+    const dialog = document.querySelector<HTMLDialogElement>('[data-search-dialog]');
+    if (!dialog?.open) return;
+    // Native close still participates in allow-discrete transitions when supported.
+    dialog.close();
+  }
+
+  function onDialogClick(event: MouseEvent): void {
+    // Clicks on the ::backdrop surface target the <dialog> itself.
+    const dialog = event.currentTarget;
+    if (dialog instanceof HTMLDialogElement && event.target === dialog) {
+      closeSearch();
+    }
+  }
+
+  function onClick(event: MouseEvent): void {
+    const target = event.target;
+    if (!(target instanceof Element)) return;
+    if (target.closest('[data-search-open]')) {
+      event.preventDefault();
+      void openSearch();
+      return;
+    }
+    if (target.closest('[data-search-close]')) {
+      closeSearch();
+    }
+  }
+
+  function onKeydown(event: KeyboardEvent): void {
+    if (event.key === 'Escape') closeSearch();
+    if ((event.key === 'k' || event.key === 'K') && (event.metaKey || event.ctrlKey)) {
+      event.preventDefault();
+      void openSearch();
+    }
+  }
+
+  // Focus trap-ish: when dialog closes, return focus to opener if still around.
+  function onDialogClose(): void {
+    document.querySelector<HTMLButtonElement>('[data-search-open]')?.focus();
+  }
+
+  function wireDialog(dialog: Element | null): void {
+    if (!(dialog instanceof HTMLDialogElement)) return;
+    dialog.addEventListener('close', onDialogClose);
+    dialog.addEventListener('click', onDialogClick);
+  }
+
+  function bind(): void {
+    document.addEventListener('click', onClick);
+    document.addEventListener('keydown', onKeydown);
+    wireDialog(document.querySelector('[data-search-dialog]'));
+  }
+
+  // Module scripts re-run on ClientRouter navigations in Astro — guard duplicates
+  // via abortable pattern: only one set of document-level listeners via flag.
+  if (!(window as unknown as { __andySearchBound?: boolean }).__andySearchBound) {
+    (window as unknown as { __andySearchBound?: boolean }).__andySearchBound = true;
+    bind();
+  }
+
+  // After soft navigations, dialog node is new — re-attach listeners.
+  document.addEventListener('astro:page-load', () => {
+    wireDialog(document.querySelector('[data-search-dialog]'));
+    // Force remount into the new container next open.
+    state.mounted = false;
+    state.ui = null;
+  });
+</script>

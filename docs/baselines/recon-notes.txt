@@ -1,0 +1,12 @@
+DB_USER=typecho_QtYkfa
+DB_NAME=typecho_frf6hh
+TYPECHO_DATA=/opt/1panel/apps/typecho/typecho/data
+MYSQL_CONTAINER=1Panel-mysql-RSa9
+TYPECHO_CONTAINER=1Panel-typecho-f31a
+total 16
+drwxr-xr-x 4 www-data www-data 4096 Jun 23  2025 .
+drwxr-xr-x 6 www-data www-data 4096 Jun 23  2025 ..
+drwxr-xr-x 3 www-data www-data 4096 Jun 23  2025 default
+drwxr-xr-x 6 root     root     4096 Jun 23  2025 Joe
+112K	/opt/1panel/apps/typecho/typecho/data/usr/uploads
+2

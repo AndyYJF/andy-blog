@@ -1,0 +1,35 @@
+---
+/**
+ * Shared post list card markup for home / taxonomies / pagination.
+ */
+interface PostItem {
+  title: string;
+  canonicalPath: string;
+  pubDate: Date;
+  categories: { name: string }[];
+}
+
+interface Props {
+  posts: PostItem[];
+  emptyText?: string;
+}
+
+const { posts, emptyText = "暂无文章" } = Astro.props;
+---
+{posts.length === 0 ? (
+  <p class="muted">{emptyText}</p>
+) : (
+  <ul class="post-list">
+    {posts.map((post) => (
+      <li class="post-card">
+        <time datetime={post.pubDate.toISOString()}>
+          {post.pubDate.toISOString().slice(0, 10)}
+        </time>
+        <h2><a href={post.canonicalPath}>{post.title}</a></h2>
+        {post.categories.length > 0 && (
+          <p class="card-meta">{post.categories.map((c) => c.name).join(" / ")}</p>
+        )}
+      </li>
+    ))}
+  </ul>
+)}

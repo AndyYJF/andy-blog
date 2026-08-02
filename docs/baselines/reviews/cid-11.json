@@ -1,0 +1,41 @@
+{
+  "cid": 11,
+  "entryId": "omv-webui-400-bad-request",
+  "kind": "post",
+  "title": "解决OMV登陆WebUI时400 Bad Request错误",
+  "canonicalPath": "/posts/omv-webui-400-bad-request/",
+  "snapshotEpoch": 1785565762,
+  "auditStatus": "warn",
+  "blockers": [],
+  "warnings": [
+    "body contains 3 h1 heading(s) (page title is separate)"
+  ],
+  "notes": [
+    "converted shortcodes: 1",
+    "headingFixes during sync: 5",
+    "built body chars≈557"
+  ],
+  "contentHashes": {
+    "sourceSha256": "f0d01f23231b876ade0868f5ac8a6a2505e7a7639eb3e0a7daf4767d73f5569d",
+    "distSha256": "c22329895d4114dfa761f46178cdce7237d8d28554ff0b78bc202e16b81e9295",
+    "hashedAt": "2026-08-02T09:17:18.493Z"
+  },
+  "verdict": "pass",
+  "reviewedAt": "2026-08-02T09:17:18.493Z",
+  "reviewer": "agent-spot-verify",
+  "checklist": {
+    "sourceFormatOk": true,
+    "tablesListsOk": true,
+    "multiCategoryOk": true,
+    "shortcodesOk": true,
+    "legacyLinksOk": true,
+    "localUploadsOk": true,
+    "headingsNoted": true
+  },
+  "manualNotes": [
+    "noted: body contains 3 h1 heading(s) (page title is separate)",
+    "noted: dist HTML missing — run build before final gate",
+    "auto-noted: body contains 3 h1 heading(s) (page title is separate)",
+    "spot-verify: source/dist hash, canonical, no residual shortcodes/legacy archives, article markers"
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "cid": 61,
+  "entryId": "blog-cover-origin",
+  "kind": "post",
+  "title": "博客封面是怎么来的？",
+  "canonicalPath": "/posts/blog-cover-origin/",
+  "snapshotEpoch": 1785565762,
+  "auditStatus": "pass",
+  "blockers": [],
+  "warnings": [],
+  "notes": [
+    "built body chars≈573"
+  ],
+  "contentHashes": {
+    "sourceSha256": "95924eac1f01119b922c3d671bf90541b3c824d84406b39f3a16676c3a5aead6",
+    "distSha256": "d86fe3bd8ca85cd4549eef1a12f5748e414b23dd16edbbbb14ab54f6bc8c3da9",
+    "hashedAt": "2026-08-02T09:17:18.493Z"
+  },
+  "verdict": "pass",
+  "reviewedAt": "2026-08-02T09:17:18.493Z",
+  "reviewer": "agent-spot-verify",
+  "checklist": {
+    "sourceFormatOk": true,
+    "tablesListsOk": true,
+    "multiCategoryOk": true,
+    "shortcodesOk": true,
+    "legacyLinksOk": true,
+    "localUploadsOk": true,
+    "headingsNoted": true
+  },
+  "manualNotes": [
+    "noted: dist HTML missing — run build before final gate",
+    "spot-verify: source/dist hash, canonical, no residual shortcodes/legacy archives, article markers"
+  ]
+}

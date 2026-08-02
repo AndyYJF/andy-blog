@@ -1,0 +1,21 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import PostList from "../components/PostList.astro";
+import Pagination from "../components/Pagination.astro";
+import { getCollection } from "astro:content";
+import { pageSlice } from "../lib/posts";
+
+const all = await getCollection("posts");
+const { posts, current, totalPages } = pageSlice(all, 1);
+---
+<BaseLayout title="AndyYan Blog" canonicalPath="/">
+  <h1>AndyYan Blog</h1>
+  <p class="muted">技术笔记与折腾记录</p>
+  <PostList posts={posts.map((p) => ({
+    title: p.data.title,
+    canonicalPath: p.data.canonicalPath,
+    pubDate: p.data.pubDate,
+    categories: p.data.categories,
+  }))} />
+  <Pagination current={current} totalPages={totalPages} />
+</BaseLayout>

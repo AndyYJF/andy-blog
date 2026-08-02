@@ -1,0 +1,41 @@
+{
+  "cid": 33,
+  "entryId": "ios-lz4-extract",
+  "kind": "post",
+  "title": "IOS系统解压.lz4格式压缩包",
+  "canonicalPath": "/posts/ios-lz4-extract/",
+  "snapshotEpoch": 1785565762,
+  "auditStatus": "warn",
+  "blockers": [],
+  "warnings": [
+    "heading level skips: 2→4"
+  ],
+  "notes": [
+    "converted shortcodes: 1",
+    "headingFixes during sync: 7",
+    "built body chars≈483"
+  ],
+  "contentHashes": {
+    "sourceSha256": "7831767569fec4230b42187e5144f92d8c8e0093c5ccc3b2e64a2159feea477b",
+    "distSha256": "a09dfdb15c15ac24e532dc57a0fe7e0bc5e6d25551f454ef412eb4433c98cd44",
+    "hashedAt": "2026-08-02T09:17:18.493Z"
+  },
+  "verdict": "pass",
+  "reviewedAt": "2026-08-02T09:17:18.493Z",
+  "reviewer": "agent-spot-verify",
+  "checklist": {
+    "sourceFormatOk": true,
+    "tablesListsOk": true,
+    "multiCategoryOk": true,
+    "shortcodesOk": true,
+    "legacyLinksOk": true,
+    "localUploadsOk": true,
+    "headingsNoted": true
+  },
+  "manualNotes": [
+    "noted: heading level skips: 2→4",
+    "noted: dist HTML missing — run build before final gate",
+    "auto-noted: heading level skips: 2→4",
+    "spot-verify: source/dist hash, canonical, no residual shortcodes/legacy archives, article markers"
+  ]
+}

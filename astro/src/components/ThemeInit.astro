@@ -1,0 +1,51 @@
+---
+// Must render before site CSS so the first paint already has the right theme.
+---
+<script is:inline>
+  (() => {
+    const readTheme = () => {
+      try {
+        const saved = localStorage.getItem('theme');
+        if (saved === 'light' || saved === 'dark') return saved;
+      } catch {}
+      return matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    };
+
+    const applyTheme = (doc, theme) => {
+      doc.documentElement.dataset.theme = theme;
+    };
+
+    const syncButtons = (theme) => {
+      for (const button of document.querySelectorAll('[data-theme-toggle]')) {
+        button.setAttribute('aria-pressed', String(theme === 'dark'));
+      }
+    };
+
+    applyTheme(document, readTheme());
+
+    if (window.__andyThemeControllerInstalled) return;
+    window.__andyThemeControllerInstalled = true;
+
+    document.addEventListener('astro:before-swap', (event) => {
+      applyTheme(
+        event.newDocument,
+        document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light',
+      );
+    });
+
+    document.addEventListener('astro:page-load', () => {
+      syncButtons(document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light');
+    });
+
+    document.addEventListener('click', (event) => {
+      const button = event.target instanceof Element
+        ? event.target.closest('[data-theme-toggle]')
+        : null;
+      if (!button) return;
+      const next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+      applyTheme(document, next);
+      syncButtons(next);
+      try { localStorage.setItem('theme', next); } catch {}
+    });
+  })();
+</script>

@@ -1,0 +1,35 @@
+{
+  "cid": 2,
+  "entryId": "about",
+  "kind": "page",
+  "title": "关于",
+  "canonicalPath": "/about/",
+  "snapshotEpoch": 1785565762,
+  "auditStatus": "pass",
+  "blockers": [],
+  "warnings": [],
+  "notes": [
+    "built body chars≈53"
+  ],
+  "contentHashes": {
+    "sourceSha256": "a068d0bfacc0081c0764ceeded899a31bc87e966a59199ef7aeb007c9a907687",
+    "distSha256": "69e46611c493c6597deed31baaa4b70301a4bc8ae6a2fff845572cc463c9a674",
+    "hashedAt": "2026-08-02T09:17:18.493Z"
+  },
+  "verdict": "pass",
+  "reviewedAt": "2026-08-02T09:17:18.493Z",
+  "reviewer": "agent-spot-verify",
+  "checklist": {
+    "sourceFormatOk": true,
+    "tablesListsOk": true,
+    "multiCategoryOk": true,
+    "shortcodesOk": true,
+    "legacyLinksOk": true,
+    "localUploadsOk": true,
+    "headingsNoted": true
+  },
+  "manualNotes": [
+    "noted: dist HTML missing — run build before final gate",
+    "spot-verify: source/dist hash, canonical, no residual shortcodes/legacy archives, article markers"
+  ]
+}

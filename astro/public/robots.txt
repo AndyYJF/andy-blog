@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+
+Disallow: /admin
+Disallow: /admin/
+Disallow: /ui
+Disallow: /ui/
+Disallow: /api/
+
+Sitemap: https://www.andy-y.cn/sitemap-index.xml

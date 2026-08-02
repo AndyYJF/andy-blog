@@ -1,0 +1,2152 @@
+[
+  {
+    "oldPath": "/16.html",
+    "queryKey": null,
+    "action": "redirect",
+    "targetPath": "/dn42/",
+    "expectedTerminalStatus": 200,
+    "kind": "page",
+    "cid": 16,
+    "source": [
+      "database",
+      "live-crawl",
+      "route-map"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": "/5.html",
+    "queryKey": null,
+    "action": "redirect",
+    "targetPath": "/friends/",
+    "expectedTerminalStatus": 200,
+    "kind": "page",
+    "cid": 5,
+    "source": [
+      "database",
+      "live-crawl",
+      "route-map"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": "/archives/11",
+    "queryKey": null,
+    "action": "redirect",
+    "targetPath": "/posts/omv-webui-400-bad-request/",
+    "expectedTerminalStatus": 200,
+    "kind": "post",
+    "cid": 11,
+    "source": [
+      "database",
+      "live-crawl",
+      "route-map"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": "/archives/11/",
+    "queryKey": null,
+    "action": "redirect",
+    "targetPath": "/posts/omv-webui-400-bad-request/",
+    "expectedTerminalStatus": 200,
+    "kind": "post",
+    "cid": 11,
+    "source": [
+      "database",
+      "live-crawl",
+      "route-map"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": "/archives/13",
+    "queryKey": null,
+    "action": "redirect",
+    "targetPath": "/posts/maibot-astrbot-napcat/",
+    "expectedTerminalStatus": 200,
+    "kind": "post",
+    "cid": 13,
+    "source": [
+      "database",
+      "live-crawl",
+      "route-map"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": "/archives/13/",
+    "queryKey": null,
+    "action": "redirect",
+    "targetPath": "/posts/maibot-astrbot-napcat/",
+    "expectedTerminalStatus": 200,
+    "kind": "post",
+    "cid": 13,
+    "source": [
+      "database",
+      "live-crawl",
+      "route-map"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": "/archives/30",
+    "queryKey": null,
+    "action": "redirect",
+    "targetPath": "/posts/grafana-bird-status/",
+    "expectedTerminalStatus": 200,
+    "kind": "post",
+    "cid": 30,
+    "source": [
+      "database",
+      "live-crawl",
+      "route-map"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": "/archives/30/",
+    "queryKey": null,
+    "action": "redirect",
+    "targetPath": "/posts/grafana-bird-status/",
+    "expectedTerminalStatus": 200,
+    "kind": "post",
+    "cid": 30,
+    "source": [
+      "database",
+      "live-crawl",
+      "route-map"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": "/archives/33",
+    "queryKey": null,
+    "action": "redirect",
+    "targetPath": "/posts/ios-lz4-extract/",
+    "expectedTerminalStatus": 200,
+    "kind": "post",
+    "cid": 33,
+    "source": [
+      "database",
+      "live-crawl",
+      "route-map"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": "/archives/33/",
+    "queryKey": null,
+    "action": "redirect",
+    "targetPath": "/posts/ios-lz4-extract/",
+    "expectedTerminalStatus": 200,
+    "kind": "post",
+    "cid": 33,
+    "source": [
+      "database",
+      "live-crawl",
+      "route-map"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": "/archives/34",
+    "queryKey": null,
+    "action": "redirect",
+    "targetPath": "/posts/silly-tavern-linux/",
+    "expectedTerminalStatus": 200,
+    "kind": "post",
+    "cid": 34,
+    "source": [
+      "database",
+      "live-crawl",
+      "route-map"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": "/archives/34/",
+    "queryKey": null,
+    "action": "redirect",
+    "targetPath": "/posts/silly-tavern-linux/",
+    "expectedTerminalStatus": 200,
+    "kind": "post",
+    "cid": 34,
+    "source": [
+      "database",
+      "live-crawl",
+      "route-map"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": "/archives/41",
+    "queryKey": null,
+    "action": "redirect",
+    "targetPath": "/posts/screen-tmux-ssh-background/",
+    "expectedTerminalStatus": 200,
+    "kind": "post",
+    "cid": 41,
+    "source": [
+      "database",
+      "live-crawl",
+      "route-map"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": "/archives/41/",
+    "queryKey": null,
+    "action": "redirect",
+    "targetPath": "/posts/screen-tmux-ssh-background/",
+    "expectedTerminalStatus": 200,
+    "kind": "post",
+    "cid": 41,
+    "source": [
+      "database",
+      "live-crawl",
+      "route-map"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": "/archives/47",
+    "queryKey": null,
+    "action": "redirect",
+    "targetPath": "/posts/typecho-joe-mermaid/",
+    "expectedTerminalStatus": 200,
+    "kind": "post",
+    "cid": 47,
+    "source": [
+      "database",
+      "live-crawl",
+      "route-map"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": "/archives/47/",
+    "queryKey": null,
+    "action": "redirect",
+    "targetPath": "/posts/typecho-joe-mermaid/",
+    "expectedTerminalStatus": 200,
+    "kind": "post",
+    "cid": 47,
+    "source": [
+      "database",
+      "live-crawl",
+      "route-map"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": "/archives/61",
+    "queryKey": null,
+    "action": "redirect",
+    "targetPath": "/posts/blog-cover-origin/",
+    "expectedTerminalStatus": 200,
+    "kind": "post",
+    "cid": 61,
+    "source": [
+      "database",
+      "live-crawl",
+      "route-map"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": "/archives/61/",
+    "queryKey": null,
+    "action": "redirect",
+    "targetPath": "/posts/blog-cover-origin/",
+    "expectedTerminalStatus": 200,
+    "kind": "post",
+    "cid": 61,
+    "source": [
+      "database",
+      "live-crawl",
+      "route-map"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": "/archives/62",
+    "queryKey": null,
+    "action": "redirect",
+    "targetPath": "/posts/stable-diffusion-notes-p1/",
+    "expectedTerminalStatus": 200,
+    "kind": "post",
+    "cid": 62,
+    "source": [
+      "database",
+      "live-crawl",
+      "route-map"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": "/archives/62/",
+    "queryKey": null,
+    "action": "redirect",
+    "targetPath": "/posts/stable-diffusion-notes-p1/",
+    "expectedTerminalStatus": 200,
+    "kind": "post",
+    "cid": 62,
+    "source": [
+      "database",
+      "live-crawl",
+      "route-map"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": "/archives/66",
+    "queryKey": null,
+    "action": "redirect",
+    "targetPath": "/posts/rp-hub-silly-tavern/",
+    "expectedTerminalStatus": 200,
+    "kind": "post",
+    "cid": 66,
+    "source": [
+      "database",
+      "live-crawl",
+      "route-map"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": "/archives/66/",
+    "queryKey": null,
+    "action": "redirect",
+    "targetPath": "/posts/rp-hub-silly-tavern/",
+    "expectedTerminalStatus": 200,
+    "kind": "post",
+    "cid": 66,
+    "source": [
+      "database",
+      "live-crawl",
+      "route-map"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": "/archives/68",
+    "queryKey": null,
+    "action": "redirect",
+    "targetPath": "/posts/looking-glass-shadow-incident/",
+    "expectedTerminalStatus": 200,
+    "kind": "post",
+    "cid": 68,
+    "source": [
+      "database",
+      "live-crawl",
+      "route-map"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": "/archives/68/",
+    "queryKey": null,
+    "action": "redirect",
+    "targetPath": "/posts/looking-glass-shadow-incident/",
+    "expectedTerminalStatus": 200,
+    "kind": "post",
+    "cid": 68,
+    "source": [
+      "database",
+      "live-crawl",
+      "route-map"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": "/archives/76",
+    "queryKey": null,
+    "action": "redirect",
+    "targetPath": "/posts/asterisk-telephony42/",
+    "expectedTerminalStatus": 200,
+    "kind": "post",
+    "cid": 76,
+    "source": [
+      "database",
+      "live-crawl",
+      "route-map"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": "/archives/76/",
+    "queryKey": null,
+    "action": "redirect",
+    "targetPath": "/posts/asterisk-telephony42/",
+    "expectedTerminalStatus": 200,
+    "kind": "post",
+    "cid": 76,
+    "source": [
+      "database",
+      "live-crawl",
+      "route-map"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": "/blog",
+    "queryKey": null,
+    "action": "redirect",
+    "targetPath": "/",
+    "expectedTerminalStatus": 200,
+    "kind": "archive",
+    "cid": null,
+    "source": [
+      "routing-table"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": "/blog/",
+    "queryKey": null,
+    "action": "redirect",
+    "targetPath": "/",
+    "expectedTerminalStatus": 200,
+    "kind": "archive",
+    "cid": null,
+    "source": [
+      "routing-table"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": "/category/AI",
+    "queryKey": null,
+    "action": "redirect",
+    "targetPath": "/category/ai/",
+    "expectedTerminalStatus": 200,
+    "kind": "category",
+    "cid": 12,
+    "source": [
+      "database",
+      "meta-route-map"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": "/category/AI/",
+    "queryKey": null,
+    "action": "redirect",
+    "targetPath": "/category/ai/",
+    "expectedTerminalStatus": 200,
+    "kind": "category",
+    "cid": 12,
+    "source": [
+      "database",
+      "meta-route-map"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": "/category/cyber_safety",
+    "queryKey": null,
+    "action": "redirect",
+    "targetPath": "/category/cyber-safety/",
+    "expectedTerminalStatus": 200,
+    "kind": "category",
+    "cid": 15,
+    "source": [
+      "database",
+      "meta-route-map"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": "/category/cyber_safety/",
+    "queryKey": null,
+    "action": "redirect",
+    "targetPath": "/category/cyber-safety/",
+    "expectedTerminalStatus": 200,
+    "kind": "category",
+    "cid": 15,
+    "source": [
+      "database",
+      "meta-route-map"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": "/category/default",
+    "queryKey": null,
+    "action": "redirect",
+    "targetPath": "/category/default/",
+    "expectedTerminalStatus": 200,
+    "kind": "category",
+    "cid": 1,
+    "source": [
+      "database",
+      "meta-route-map"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": "/category/DN42",
+    "queryKey": null,
+    "action": "redirect",
+    "targetPath": "/category/dn42/",
+    "expectedTerminalStatus": 200,
+    "kind": "category",
+    "cid": 10,
+    "source": [
+      "database",
+      "meta-route-map"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": "/category/DN42/",
+    "queryKey": null,
+    "action": "redirect",
+    "targetPath": "/category/dn42/",
+    "expectedTerminalStatus": 200,
+    "kind": "category",
+    "cid": 10,
+    "source": [
+      "database",
+      "meta-route-map"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": "/category/mnt",
+    "queryKey": null,
+    "action": "redirect",
+    "targetPath": "/category/mnt/",
+    "expectedTerminalStatus": 200,
+    "kind": "category",
+    "cid": 14,
+    "source": [
+      "database",
+      "meta-route-map"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": "/category/NAS",
+    "queryKey": null,
+    "action": "redirect",
+    "targetPath": "/category/nas/",
+    "expectedTerminalStatus": 200,
+    "kind": "category",
+    "cid": 6,
+    "source": [
+      "database",
+      "meta-route-map"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": "/category/NAS/",
+    "queryKey": null,
+    "action": "redirect",
+    "targetPath": "/category/nas/",
+    "expectedTerminalStatus": 200,
+    "kind": "category",
+    "cid": 6,
+    "source": [
+      "database",
+      "meta-route-map"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": "/category/opensource",
+    "queryKey": null,
+    "action": "redirect",
+    "targetPath": "/category/opensource/",
+    "expectedTerminalStatus": 200,
+    "kind": "category",
+    "cid": 11,
+    "source": [
+      "database",
+      "meta-route-map"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": "/category/refine",
+    "queryKey": null,
+    "action": "redirect",
+    "targetPath": "/category/refine/",
+    "expectedTerminalStatus": 200,
+    "kind": "category",
+    "cid": 13,
+    "source": [
+      "database",
+      "meta-route-map"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": "/feed",
+    "queryKey": null,
+    "action": "redirect",
+    "targetPath": "/rss.xml",
+    "expectedTerminalStatus": 200,
+    "kind": "feed",
+    "cid": null,
+    "source": [
+      "live-crawl",
+      "rss"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": "/feed/",
+    "queryKey": null,
+    "action": "redirect",
+    "targetPath": "/rss.xml",
+    "expectedTerminalStatus": 200,
+    "kind": "feed",
+    "cid": null,
+    "source": [
+      "live-crawl",
+      "rss"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": "/index.php",
+    "queryKey": null,
+    "action": "redirect",
+    "targetPath": "/",
+    "expectedTerminalStatus": 200,
+    "kind": "home",
+    "cid": null,
+    "source": [
+      "live-crawl",
+      "routing-table"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": "/index.php/",
+    "queryKey": null,
+    "action": "redirect",
+    "targetPath": "/",
+    "expectedTerminalStatus": 200,
+    "kind": "home",
+    "cid": null,
+    "source": [
+      "live-crawl",
+      "routing-table"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": "/index.php/16.html",
+    "queryKey": null,
+    "action": "redirect",
+    "targetPath": "/dn42/",
+    "expectedTerminalStatus": 200,
+    "kind": "page",
+    "cid": 16,
+    "source": [
+      "database",
+      "live-crawl",
+      "route-map"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": "/index.php/5.html",
+    "queryKey": null,
+    "action": "redirect",
+    "targetPath": "/friends/",
+    "expectedTerminalStatus": 200,
+    "kind": "page",
+    "cid": 5,
+    "source": [
+      "database",
+      "live-crawl",
+      "route-map"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": "/index.php/archives/11",
+    "queryKey": null,
+    "action": "redirect",
+    "targetPath": "/posts/omv-webui-400-bad-request/",
+    "expectedTerminalStatus": 200,
+    "kind": "post",
+    "cid": 11,
+    "source": [
+      "database",
+      "live-crawl",
+      "route-map"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": "/index.php/archives/11/",
+    "queryKey": null,
+    "action": "redirect",
+    "targetPath": "/posts/omv-webui-400-bad-request/",
+    "expectedTerminalStatus": 200,
+    "kind": "post",
+    "cid": 11,
+    "source": [
+      "database",
+      "live-crawl",
+      "route-map"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": "/index.php/archives/13",
+    "queryKey": null,
+    "action": "redirect",
+    "targetPath": "/posts/maibot-astrbot-napcat/",
+    "expectedTerminalStatus": 200,
+    "kind": "post",
+    "cid": 13,
+    "source": [
+      "database",
+      "live-crawl",
+      "route-map"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": "/index.php/archives/13/",
+    "queryKey": null,
+    "action": "redirect",
+    "targetPath": "/posts/maibot-astrbot-napcat/",
+    "expectedTerminalStatus": 200,
+    "kind": "post",
+    "cid": 13,
+    "source": [
+      "database",
+      "live-crawl",
+      "route-map"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": "/index.php/archives/30",
+    "queryKey": null,
+    "action": "redirect",
+    "targetPath": "/posts/grafana-bird-status/",
+    "expectedTerminalStatus": 200,
+    "kind": "post",
+    "cid": 30,
+    "source": [
+      "database",
+      "live-crawl",
+      "route-map"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": "/index.php/archives/30/",
+    "queryKey": null,
+    "action": "redirect",
+    "targetPath": "/posts/grafana-bird-status/",
+    "expectedTerminalStatus": 200,
+    "kind": "post",
+    "cid": 30,
+    "source": [
+      "database",
+      "live-crawl",
+      "route-map"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": "/index.php/archives/33",
+    "queryKey": null,
+    "action": "redirect",
+    "targetPath": "/posts/ios-lz4-extract/",
+    "expectedTerminalStatus": 200,
+    "kind": "post",
+    "cid": 33,
+    "source": [
+      "database",
+      "live-crawl",
+      "route-map"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": "/index.php/archives/33/",
+    "queryKey": null,
+    "action": "redirect",
+    "targetPath": "/posts/ios-lz4-extract/",
+    "expectedTerminalStatus": 200,
+    "kind": "post",
+    "cid": 33,
+    "source": [
+      "database",
+      "live-crawl",
+      "route-map"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": "/index.php/archives/34",
+    "queryKey": null,
+    "action": "redirect",
+    "targetPath": "/posts/silly-tavern-linux/",
+    "expectedTerminalStatus": 200,
+    "kind": "post",
+    "cid": 34,
+    "source": [
+      "database",
+      "live-crawl",
+      "route-map"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": "/index.php/archives/34/",
+    "queryKey": null,
+    "action": "redirect",
+    "targetPath": "/posts/silly-tavern-linux/",
+    "expectedTerminalStatus": 200,
+    "kind": "post",
+    "cid": 34,
+    "source": [
+      "database",
+      "live-crawl",
+      "route-map"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": "/index.php/archives/41",
+    "queryKey": null,
+    "action": "redirect",
+    "targetPath": "/posts/screen-tmux-ssh-background/",
+    "expectedTerminalStatus": 200,
+    "kind": "post",
+    "cid": 41,
+    "source": [
+      "database",
+      "live-crawl",
+      "route-map"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": "/index.php/archives/41/",
+    "queryKey": null,
+    "action": "redirect",
+    "targetPath": "/posts/screen-tmux-ssh-background/",
+    "expectedTerminalStatus": 200,
+    "kind": "post",
+    "cid": 41,
+    "source": [
+      "database",
+      "live-crawl",
+      "route-map"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": "/index.php/archives/47",
+    "queryKey": null,
+    "action": "redirect",
+    "targetPath": "/posts/typecho-joe-mermaid/",
+    "expectedTerminalStatus": 200,
+    "kind": "post",
+    "cid": 47,
+    "source": [
+      "database",
+      "live-crawl",
+      "route-map"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": "/index.php/archives/47/",
+    "queryKey": null,
+    "action": "redirect",
+    "targetPath": "/posts/typecho-joe-mermaid/",
+    "expectedTerminalStatus": 200,
+    "kind": "post",
+    "cid": 47,
+    "source": [
+      "database",
+      "live-crawl",
+      "route-map"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": "/index.php/archives/61",
+    "queryKey": null,
+    "action": "redirect",
+    "targetPath": "/posts/blog-cover-origin/",
+    "expectedTerminalStatus": 200,
+    "kind": "post",
+    "cid": 61,
+    "source": [
+      "database",
+      "live-crawl",
+      "route-map"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": "/index.php/archives/61/",
+    "queryKey": null,
+    "action": "redirect",
+    "targetPath": "/posts/blog-cover-origin/",
+    "expectedTerminalStatus": 200,
+    "kind": "post",
+    "cid": 61,
+    "source": [
+      "database",
+      "live-crawl",
+      "route-map"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": "/index.php/archives/62",
+    "queryKey": null,
+    "action": "redirect",
+    "targetPath": "/posts/stable-diffusion-notes-p1/",
+    "expectedTerminalStatus": 200,
+    "kind": "post",
+    "cid": 62,
+    "source": [
+      "database",
+      "live-crawl",
+      "route-map"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": "/index.php/archives/62/",
+    "queryKey": null,
+    "action": "redirect",
+    "targetPath": "/posts/stable-diffusion-notes-p1/",
+    "expectedTerminalStatus": 200,
+    "kind": "post",
+    "cid": 62,
+    "source": [
+      "database",
+      "live-crawl",
+      "route-map"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": "/index.php/archives/66",
+    "queryKey": null,
+    "action": "redirect",
+    "targetPath": "/posts/rp-hub-silly-tavern/",
+    "expectedTerminalStatus": 200,
+    "kind": "post",
+    "cid": 66,
+    "source": [
+      "database",
+      "live-crawl",
+      "route-map"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": "/index.php/archives/66/",
+    "queryKey": null,
+    "action": "redirect",
+    "targetPath": "/posts/rp-hub-silly-tavern/",
+    "expectedTerminalStatus": 200,
+    "kind": "post",
+    "cid": 66,
+    "source": [
+      "database",
+      "live-crawl",
+      "route-map"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": "/index.php/archives/68",
+    "queryKey": null,
+    "action": "redirect",
+    "targetPath": "/posts/looking-glass-shadow-incident/",
+    "expectedTerminalStatus": 200,
+    "kind": "post",
+    "cid": 68,
+    "source": [
+      "database",
+      "live-crawl",
+      "route-map"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": "/index.php/archives/68/",
+    "queryKey": null,
+    "action": "redirect",
+    "targetPath": "/posts/looking-glass-shadow-incident/",
+    "expectedTerminalStatus": 200,
+    "kind": "post",
+    "cid": 68,
+    "source": [
+      "database",
+      "live-crawl",
+      "route-map"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": "/index.php/archives/76",
+    "queryKey": null,
+    "action": "redirect",
+    "targetPath": "/posts/asterisk-telephony42/",
+    "expectedTerminalStatus": 200,
+    "kind": "post",
+    "cid": 76,
+    "source": [
+      "database",
+      "live-crawl",
+      "route-map"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": "/index.php/archives/76/",
+    "queryKey": null,
+    "action": "redirect",
+    "targetPath": "/posts/asterisk-telephony42/",
+    "expectedTerminalStatus": 200,
+    "kind": "post",
+    "cid": 76,
+    "source": [
+      "database",
+      "live-crawl",
+      "route-map"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": "/index.php/blog",
+    "queryKey": null,
+    "action": "redirect",
+    "targetPath": "/",
+    "expectedTerminalStatus": 200,
+    "kind": "archive",
+    "cid": null,
+    "source": [
+      "routing-table"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": "/index.php/blog/",
+    "queryKey": null,
+    "action": "redirect",
+    "targetPath": "/",
+    "expectedTerminalStatus": 200,
+    "kind": "archive",
+    "cid": null,
+    "source": [
+      "routing-table"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": "/index.php/category/AI",
+    "queryKey": null,
+    "action": "redirect",
+    "targetPath": "/category/ai/",
+    "expectedTerminalStatus": 200,
+    "kind": "category",
+    "cid": 12,
+    "source": [
+      "database",
+      "meta-route-map"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": "/index.php/category/AI/",
+    "queryKey": null,
+    "action": "redirect",
+    "targetPath": "/category/ai/",
+    "expectedTerminalStatus": 200,
+    "kind": "category",
+    "cid": 12,
+    "source": [
+      "database",
+      "meta-route-map"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": "/index.php/category/cyber_safety",
+    "queryKey": null,
+    "action": "redirect",
+    "targetPath": "/category/cyber-safety/",
+    "expectedTerminalStatus": 200,
+    "kind": "category",
+    "cid": 15,
+    "source": [
+      "database",
+      "meta-route-map"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": "/index.php/category/cyber_safety/",
+    "queryKey": null,
+    "action": "redirect",
+    "targetPath": "/category/cyber-safety/",
+    "expectedTerminalStatus": 200,
+    "kind": "category",
+    "cid": 15,
+    "source": [
+      "database",
+      "meta-route-map"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": "/index.php/category/default",
+    "queryKey": null,
+    "action": "redirect",
+    "targetPath": "/category/default/",
+    "expectedTerminalStatus": 200,
+    "kind": "category",
+    "cid": 1,
+    "source": [
+      "database",
+      "meta-route-map"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": "/index.php/category/default/",
+    "queryKey": null,
+    "action": "redirect",
+    "targetPath": "/category/default/",
+    "expectedTerminalStatus": 200,
+    "kind": "category",
+    "cid": 1,
+    "source": [
+      "database",
+      "meta-route-map"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": "/index.php/category/DN42",
+    "queryKey": null,
+    "action": "redirect",
+    "targetPath": "/category/dn42/",
+    "expectedTerminalStatus": 200,
+    "kind": "category",
+    "cid": 10,
+    "source": [
+      "database",
+      "meta-route-map"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": "/index.php/category/DN42/",
+    "queryKey": null,
+    "action": "redirect",
+    "targetPath": "/category/dn42/",
+    "expectedTerminalStatus": 200,
+    "kind": "category",
+    "cid": 10,
+    "source": [
+      "database",
+      "meta-route-map"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": "/index.php/category/mnt",
+    "queryKey": null,
+    "action": "redirect",
+    "targetPath": "/category/mnt/",
+    "expectedTerminalStatus": 200,
+    "kind": "category",
+    "cid": 14,
+    "source": [
+      "database",
+      "meta-route-map"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": "/index.php/category/mnt/",
+    "queryKey": null,
+    "action": "redirect",
+    "targetPath": "/category/mnt/",
+    "expectedTerminalStatus": 200,
+    "kind": "category",
+    "cid": 14,
+    "source": [
+      "database",
+      "meta-route-map"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": "/index.php/category/NAS",
+    "queryKey": null,
+    "action": "redirect",
+    "targetPath": "/category/nas/",
+    "expectedTerminalStatus": 200,
+    "kind": "category",
+    "cid": 6,
+    "source": [
+      "database",
+      "meta-route-map"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": "/index.php/category/NAS/",
+    "queryKey": null,
+    "action": "redirect",
+    "targetPath": "/category/nas/",
+    "expectedTerminalStatus": 200,
+    "kind": "category",
+    "cid": 6,
+    "source": [
+      "database",
+      "meta-route-map"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": "/index.php/category/opensource",
+    "queryKey": null,
+    "action": "redirect",
+    "targetPath": "/category/opensource/",
+    "expectedTerminalStatus": 200,
+    "kind": "category",
+    "cid": 11,
+    "source": [
+      "database",
+      "meta-route-map"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": "/index.php/category/opensource/",
+    "queryKey": null,
+    "action": "redirect",
+    "targetPath": "/category/opensource/",
+    "expectedTerminalStatus": 200,
+    "kind": "category",
+    "cid": 11,
+    "source": [
+      "database",
+      "meta-route-map"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": "/index.php/category/refine",
+    "queryKey": null,
+    "action": "redirect",
+    "targetPath": "/category/refine/",
+    "expectedTerminalStatus": 200,
+    "kind": "category",
+    "cid": 13,
+    "source": [
+      "database",
+      "meta-route-map"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": "/index.php/category/refine/",
+    "queryKey": null,
+    "action": "redirect",
+    "targetPath": "/category/refine/",
+    "expectedTerminalStatus": 200,
+    "kind": "category",
+    "cid": 13,
+    "source": [
+      "database",
+      "meta-route-map"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": "/index.php/feed",
+    "queryKey": null,
+    "action": "redirect",
+    "targetPath": "/rss.xml",
+    "expectedTerminalStatus": 200,
+    "kind": "feed",
+    "cid": null,
+    "source": [
+      "live-crawl",
+      "rss"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": "/index.php/feed/",
+    "queryKey": null,
+    "action": "redirect",
+    "targetPath": "/rss.xml",
+    "expectedTerminalStatus": 200,
+    "kind": "feed",
+    "cid": null,
+    "source": [
+      "live-crawl",
+      "rss"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": "/index.php/feed/atom",
+    "queryKey": null,
+    "action": "redirect",
+    "targetPath": "/rss.xml",
+    "expectedTerminalStatus": 200,
+    "kind": "feed",
+    "cid": null,
+    "source": [
+      "live-crawl",
+      "rss"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": "/index.php/feed/atom/",
+    "queryKey": null,
+    "action": "redirect",
+    "targetPath": "/rss.xml",
+    "expectedTerminalStatus": 200,
+    "kind": "feed",
+    "cid": null,
+    "source": [
+      "live-crawl",
+      "rss"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": "/index.php/feed/rss",
+    "queryKey": null,
+    "action": "redirect",
+    "targetPath": "/rss.xml",
+    "expectedTerminalStatus": 200,
+    "kind": "feed",
+    "cid": null,
+    "source": [
+      "live-crawl",
+      "rss"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": "/index.php/feed/rss/",
+    "queryKey": null,
+    "action": "redirect",
+    "targetPath": "/rss.xml",
+    "expectedTerminalStatus": 200,
+    "kind": "feed",
+    "cid": null,
+    "source": [
+      "live-crawl",
+      "rss"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": "/index.php/start-page.html",
+    "queryKey": null,
+    "action": "redirect",
+    "targetPath": "/about/",
+    "expectedTerminalStatus": 200,
+    "kind": "page",
+    "cid": 2,
+    "source": [
+      "database",
+      "live-crawl",
+      "route-map"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": "/index.php/tag/%E5%88%86%E6%9E%90fen-x/",
+    "queryKey": null,
+    "action": "redirect",
+    "targetPath": "/tag/fen-x/",
+    "expectedTerminalStatus": 200,
+    "kind": "tag",
+    "cid": 7,
+    "source": [
+      "database",
+      "meta-route-map"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": "/index.php/tag/app",
+    "queryKey": null,
+    "action": "redirect",
+    "targetPath": "/tag/app/",
+    "expectedTerminalStatus": 200,
+    "kind": "tag",
+    "cid": 3,
+    "source": [
+      "database",
+      "meta-route-map"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": "/index.php/tag/app/",
+    "queryKey": null,
+    "action": "redirect",
+    "targetPath": "/tag/app/",
+    "expectedTerminalStatus": 200,
+    "kind": "tag",
+    "cid": 3,
+    "source": [
+      "database",
+      "meta-route-map"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": "/index.php/tag/argue",
+    "queryKey": null,
+    "action": "redirect",
+    "targetPath": "/tag/argue/",
+    "expectedTerminalStatus": 200,
+    "kind": "tag",
+    "cid": 5,
+    "source": [
+      "database",
+      "meta-route-map"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": "/index.php/tag/argue/",
+    "queryKey": null,
+    "action": "redirect",
+    "targetPath": "/tag/argue/",
+    "expectedTerminalStatus": 200,
+    "kind": "tag",
+    "cid": 5,
+    "source": [
+      "database",
+      "meta-route-map"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": "/index.php/tag/music",
+    "queryKey": null,
+    "action": "redirect",
+    "targetPath": "/tag/music/",
+    "expectedTerminalStatus": 200,
+    "kind": "tag",
+    "cid": 2,
+    "source": [
+      "database",
+      "meta-route-map"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": "/index.php/tag/music/",
+    "queryKey": null,
+    "action": "redirect",
+    "targetPath": "/tag/music/",
+    "expectedTerminalStatus": 200,
+    "kind": "tag",
+    "cid": 2,
+    "source": [
+      "database",
+      "meta-route-map"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": "/index.php/tag/tec",
+    "queryKey": null,
+    "action": "redirect",
+    "targetPath": "/tag/tec/",
+    "expectedTerminalStatus": 200,
+    "kind": "tag",
+    "cid": 4,
+    "source": [
+      "database",
+      "meta-route-map"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": "/index.php/tag/tec/",
+    "queryKey": null,
+    "action": "redirect",
+    "targetPath": "/tag/tec/",
+    "expectedTerminalStatus": 200,
+    "kind": "tag",
+    "cid": 4,
+    "source": [
+      "database",
+      "meta-route-map"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": "/start-page.html",
+    "queryKey": null,
+    "action": "redirect",
+    "targetPath": "/about/",
+    "expectedTerminalStatus": 200,
+    "kind": "page",
+    "cid": 2,
+    "source": [
+      "database",
+      "live-crawl",
+      "route-map"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": "/tag/app",
+    "queryKey": null,
+    "action": "redirect",
+    "targetPath": "/tag/app/",
+    "expectedTerminalStatus": 200,
+    "kind": "tag",
+    "cid": 3,
+    "source": [
+      "database",
+      "meta-route-map"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": "/tag/argue",
+    "queryKey": null,
+    "action": "redirect",
+    "targetPath": "/tag/argue/",
+    "expectedTerminalStatus": 200,
+    "kind": "tag",
+    "cid": 5,
+    "source": [
+      "database",
+      "meta-route-map"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": "/tag/fen-x",
+    "queryKey": null,
+    "action": "redirect",
+    "targetPath": "/tag/fen-x/",
+    "expectedTerminalStatus": 200,
+    "kind": "tag",
+    "cid": 7,
+    "source": [
+      "database",
+      "meta-route-map"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": "/tag/music",
+    "queryKey": null,
+    "action": "redirect",
+    "targetPath": "/tag/music/",
+    "expectedTerminalStatus": 200,
+    "kind": "tag",
+    "cid": 2,
+    "source": [
+      "database",
+      "meta-route-map"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": "/tag/tec",
+    "queryKey": null,
+    "action": "redirect",
+    "targetPath": "/tag/tec/",
+    "expectedTerminalStatus": 200,
+    "kind": "tag",
+    "cid": 4,
+    "source": [
+      "database",
+      "meta-route-map"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": null,
+    "queryKey": "/:11",
+    "action": "redirect",
+    "targetPath": "/posts/omv-webui-400-bad-request/",
+    "expectedTerminalStatus": 200,
+    "kind": "post",
+    "cid": 11,
+    "source": [
+      "database",
+      "routing-table"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": null,
+    "queryKey": "/:13",
+    "action": "redirect",
+    "targetPath": "/posts/maibot-astrbot-napcat/",
+    "expectedTerminalStatus": 200,
+    "kind": "post",
+    "cid": 13,
+    "source": [
+      "database",
+      "routing-table"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": null,
+    "queryKey": "/:16",
+    "action": "redirect",
+    "targetPath": "/dn42/",
+    "expectedTerminalStatus": 200,
+    "kind": "page",
+    "cid": 16,
+    "source": [
+      "database",
+      "routing-table"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": null,
+    "queryKey": "/:2",
+    "action": "redirect",
+    "targetPath": "/about/",
+    "expectedTerminalStatus": 200,
+    "kind": "page",
+    "cid": 2,
+    "source": [
+      "database",
+      "routing-table"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": null,
+    "queryKey": "/:30",
+    "action": "redirect",
+    "targetPath": "/posts/grafana-bird-status/",
+    "expectedTerminalStatus": 200,
+    "kind": "post",
+    "cid": 30,
+    "source": [
+      "database",
+      "routing-table"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": null,
+    "queryKey": "/:33",
+    "action": "redirect",
+    "targetPath": "/posts/ios-lz4-extract/",
+    "expectedTerminalStatus": 200,
+    "kind": "post",
+    "cid": 33,
+    "source": [
+      "database",
+      "routing-table"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": null,
+    "queryKey": "/:34",
+    "action": "redirect",
+    "targetPath": "/posts/silly-tavern-linux/",
+    "expectedTerminalStatus": 200,
+    "kind": "post",
+    "cid": 34,
+    "source": [
+      "database",
+      "routing-table"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": null,
+    "queryKey": "/:41",
+    "action": "redirect",
+    "targetPath": "/posts/screen-tmux-ssh-background/",
+    "expectedTerminalStatus": 200,
+    "kind": "post",
+    "cid": 41,
+    "source": [
+      "database",
+      "routing-table"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": null,
+    "queryKey": "/:47",
+    "action": "redirect",
+    "targetPath": "/posts/typecho-joe-mermaid/",
+    "expectedTerminalStatus": 200,
+    "kind": "post",
+    "cid": 47,
+    "source": [
+      "database",
+      "routing-table"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": null,
+    "queryKey": "/:5",
+    "action": "redirect",
+    "targetPath": "/friends/",
+    "expectedTerminalStatus": 200,
+    "kind": "page",
+    "cid": 5,
+    "source": [
+      "database",
+      "routing-table"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": null,
+    "queryKey": "/:61",
+    "action": "redirect",
+    "targetPath": "/posts/blog-cover-origin/",
+    "expectedTerminalStatus": 200,
+    "kind": "post",
+    "cid": 61,
+    "source": [
+      "database",
+      "routing-table"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": null,
+    "queryKey": "/:62",
+    "action": "redirect",
+    "targetPath": "/posts/stable-diffusion-notes-p1/",
+    "expectedTerminalStatus": 200,
+    "kind": "post",
+    "cid": 62,
+    "source": [
+      "database",
+      "routing-table"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": null,
+    "queryKey": "/:66",
+    "action": "redirect",
+    "targetPath": "/posts/rp-hub-silly-tavern/",
+    "expectedTerminalStatus": 200,
+    "kind": "post",
+    "cid": 66,
+    "source": [
+      "database",
+      "routing-table"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": null,
+    "queryKey": "/:68",
+    "action": "redirect",
+    "targetPath": "/posts/looking-glass-shadow-incident/",
+    "expectedTerminalStatus": 200,
+    "kind": "post",
+    "cid": 68,
+    "source": [
+      "database",
+      "routing-table"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": null,
+    "queryKey": "/:76",
+    "action": "redirect",
+    "targetPath": "/posts/asterisk-telephony42/",
+    "expectedTerminalStatus": 200,
+    "kind": "post",
+    "cid": 76,
+    "source": [
+      "database",
+      "routing-table"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": null,
+    "queryKey": "/index.php:11",
+    "action": "redirect",
+    "targetPath": "/posts/omv-webui-400-bad-request/",
+    "expectedTerminalStatus": 200,
+    "kind": "post",
+    "cid": 11,
+    "source": [
+      "database",
+      "routing-table"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": null,
+    "queryKey": "/index.php:13",
+    "action": "redirect",
+    "targetPath": "/posts/maibot-astrbot-napcat/",
+    "expectedTerminalStatus": 200,
+    "kind": "post",
+    "cid": 13,
+    "source": [
+      "database",
+      "routing-table"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": null,
+    "queryKey": "/index.php:16",
+    "action": "redirect",
+    "targetPath": "/dn42/",
+    "expectedTerminalStatus": 200,
+    "kind": "page",
+    "cid": 16,
+    "source": [
+      "database",
+      "routing-table"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": null,
+    "queryKey": "/index.php:2",
+    "action": "redirect",
+    "targetPath": "/about/",
+    "expectedTerminalStatus": 200,
+    "kind": "page",
+    "cid": 2,
+    "source": [
+      "database",
+      "routing-table"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": null,
+    "queryKey": "/index.php:30",
+    "action": "redirect",
+    "targetPath": "/posts/grafana-bird-status/",
+    "expectedTerminalStatus": 200,
+    "kind": "post",
+    "cid": 30,
+    "source": [
+      "database",
+      "routing-table"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": null,
+    "queryKey": "/index.php:33",
+    "action": "redirect",
+    "targetPath": "/posts/ios-lz4-extract/",
+    "expectedTerminalStatus": 200,
+    "kind": "post",
+    "cid": 33,
+    "source": [
+      "database",
+      "routing-table"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": null,
+    "queryKey": "/index.php:34",
+    "action": "redirect",
+    "targetPath": "/posts/silly-tavern-linux/",
+    "expectedTerminalStatus": 200,
+    "kind": "post",
+    "cid": 34,
+    "source": [
+      "database",
+      "routing-table"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": null,
+    "queryKey": "/index.php:41",
+    "action": "redirect",
+    "targetPath": "/posts/screen-tmux-ssh-background/",
+    "expectedTerminalStatus": 200,
+    "kind": "post",
+    "cid": 41,
+    "source": [
+      "database",
+      "routing-table"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": null,
+    "queryKey": "/index.php:47",
+    "action": "redirect",
+    "targetPath": "/posts/typecho-joe-mermaid/",
+    "expectedTerminalStatus": 200,
+    "kind": "post",
+    "cid": 47,
+    "source": [
+      "database",
+      "routing-table"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": null,
+    "queryKey": "/index.php:5",
+    "action": "redirect",
+    "targetPath": "/friends/",
+    "expectedTerminalStatus": 200,
+    "kind": "page",
+    "cid": 5,
+    "source": [
+      "database",
+      "routing-table"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": null,
+    "queryKey": "/index.php:61",
+    "action": "redirect",
+    "targetPath": "/posts/blog-cover-origin/",
+    "expectedTerminalStatus": 200,
+    "kind": "post",
+    "cid": 61,
+    "source": [
+      "database",
+      "routing-table"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": null,
+    "queryKey": "/index.php:62",
+    "action": "redirect",
+    "targetPath": "/posts/stable-diffusion-notes-p1/",
+    "expectedTerminalStatus": 200,
+    "kind": "post",
+    "cid": 62,
+    "source": [
+      "database",
+      "routing-table"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": null,
+    "queryKey": "/index.php:66",
+    "action": "redirect",
+    "targetPath": "/posts/rp-hub-silly-tavern/",
+    "expectedTerminalStatus": 200,
+    "kind": "post",
+    "cid": 66,
+    "source": [
+      "database",
+      "routing-table"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": null,
+    "queryKey": "/index.php:68",
+    "action": "redirect",
+    "targetPath": "/posts/looking-glass-shadow-incident/",
+    "expectedTerminalStatus": 200,
+    "kind": "post",
+    "cid": 68,
+    "source": [
+      "database",
+      "routing-table"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  },
+  {
+    "oldPath": null,
+    "queryKey": "/index.php:76",
+    "action": "redirect",
+    "targetPath": "/posts/asterisk-telephony42/",
+    "expectedTerminalStatus": 200,
+    "kind": "post",
+    "cid": 76,
+    "source": [
+      "database",
+      "routing-table"
+    ],
+    "firstSeenAt": "2026-08-01T00:00:00Z",
+    "lastVerifiedAt": "2026-08-02T00:00:00Z"
+  }
+]
