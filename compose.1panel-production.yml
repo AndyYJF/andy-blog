@@ -1,0 +1,57 @@
+# 1Panel production Waline for www.andy-y.cn (Stage 10).
+# No nginx / Typecho / public ports other than loopback Waline.
+# OpenResty (host network) proxies https://www.andy-y.cn/api|/ui → 127.0.0.1:8360.
+name: andy-blog-waline
+
+services:
+  waline:
+    build:
+      context: ./docker/waline
+      args:
+        WALINE_UPSTREAM_IMAGE: ${WALINE_UPSTREAM_IMAGE:?set a digest-pinned Waline image}
+        NODE_BASE_IMAGE: ${WALINE_NODE_IMAGE:?set a digest-pinned Node image}
+    restart: unless-stopped
+    ports:
+      - '127.0.0.1:${WALINE_HOST_PORT:-8360}:8360'
+    environment:
+      TZ: Asia/Shanghai
+      MYSQL_HOST: ${WALINE_MYSQL_HOST:?set production Waline MySQL host}
+      MYSQL_PORT: ${WALINE_MYSQL_PORT:-3306}
+      MYSQL_DB: ${WALINE_MYSQL_DB:?set production Waline database}
+      MYSQL_USER: ${WALINE_MYSQL_USER:?set production Waline user}
+      MYSQL_PASSWORD: ${WALINE_MYSQL_PASSWORD:?set production Waline password}
+      MYSQL_PREFIX: wl_
+      SITE_NAME: AndyYan Blog
+      SITE_URL: https://www.andy-y.cn
+      SERVER_URL: https://www.andy-y.cn
+      SECURE_DOMAINS: www.andy-y.cn
+      COMMENT_POLICY_FILE: /var/www/andy-y.cn/current/comment-policy.json
+      JWT_TOKEN: ${WALINE_JWT:?set production JWT}
+      IPQPS: 60
+    volumes:
+      - '${PROD_WWW_ROOT:?set the 1Panel www deploy root}:/var/www/andy-y.cn:ro'
+    networks: [onepanel]
+    security_opt:
+      - no-new-privileges:true
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - >-
+          fetch('http://127.0.0.1:8360/api/comment?path=%2F').then(r =>
+          process.exit(r.status < 500 ? 0 : 1)).catch(() => process.exit(1))
+      interval: 15s
+      timeout: 5s
+      retries: 8
+      start_period: 30s
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+        max-file: '3'
+
+networks:
+  onepanel:
+    external: true
+    name: ${ONEPANEL_NETWORK:-1panel-network}

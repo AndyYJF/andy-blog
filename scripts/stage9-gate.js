@@ -286,7 +286,7 @@ fs.writeFileSync(
     '',
     '## Accepted debt (not Stage 9 scaffold blockers)',
     '',
-    '- AA-02 human Final 14/15 still open',
+    '- AA-02 human Final: closed 15/15 (`owner-final-accept`, 2026-08-05)',
     '- AA-06 full CMS vertical / AA-09 Stage0 restore evidence / AA-10 mutations',
     '- Live VPS `nginx -t`, cert issue, rollback drill — require production-write authorization',
     '- Real CDN purge OpenAPI still `not-implemented` (exit 71)',
