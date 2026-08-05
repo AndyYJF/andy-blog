@@ -2,6 +2,7 @@
 import CommonHead from "../components/CommonHead.astro";
 import ThemeInit from "../components/ThemeInit.astro";
 import SearchDialog from "../components/SearchDialog.astro";
+import PageOrnaments from "../components/PageOrnaments.astro";
 import "../styles/global.css";
 
 interface Props {
@@ -15,6 +16,7 @@ interface Props {
   updatedDate?: Date;
   noindex?: boolean;
   jsonLd?: Record<string, unknown> | Record<string, unknown>[];
+  pageMotif?: "home" | "archive" | "about" | "dn42" | "friends";
 }
 
 const {
@@ -28,6 +30,7 @@ const {
   updatedDate,
   noindex = false,
   jsonLd,
+  pageMotif,
 } = Astro.props;
 
 const site = Astro.site ?? new URL("https://www.andy-y.cn");
@@ -94,6 +97,7 @@ const ldPayload = jsonLd ?? defaultLd;
   </head>
   <body>
     <div data-top-sentinel aria-hidden="true"></div>
+    <a class="skip-link" href="#main">跳到正文</a>
     <header class="site-header">
       <div class="site-header-inner">
         <a class="brand" href="/">AndyYan</a>
@@ -116,10 +120,13 @@ const ldPayload = jsonLd ?? defaultLd;
       </div>
     </header>
 
-    <main class="wrap">
+    {pageMotif && <PageOrnaments motif={pageMotif} />}
+
+    <main class="wrap" id="main" tabindex="-1">
       <slot />
     </main>
 
+    {article && <nav class="article-toc" data-article-toc aria-label="文章目录"></nav>}
     {article && <nav class="reading-progress" data-reading-progress aria-label="章节导航"></nav>}
 
     <button class="to-top" type="button" data-to-top aria-label="返回顶部">
@@ -167,7 +174,13 @@ const ldPayload = jsonLd ?? defaultLd;
 
         const { initArticle } = await import("../scripts/article");
         if (current !== generation) return;
-        disposers.push(initArticle(article, document.querySelector("[data-reading-progress]")));
+        disposers.push(
+          initArticle(
+            article,
+            document.querySelector("[data-reading-progress]"),
+            document.querySelector("[data-article-toc]"),
+          ),
+        );
       }
 
       function cleanup() {

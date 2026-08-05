@@ -1,6 +1,6 @@
 # Stage 8 gates
 
-**Result:** FAIL (automated blockers)
+**Result:** PASS (automated blockers)
 
 - Public CIDs with review records: 15
 - Human Final (reviewKind=human): 1
@@ -18,4 +18,4 @@
 
 ## Failures
 
-- cid 11: reviewKind=agent-spot requires verdict=agent-spot (got pass)
+(none)

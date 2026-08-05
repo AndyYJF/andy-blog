@@ -18,6 +18,12 @@ export async function getStaticPaths() {
 
 const { page } = Astro.props;
 const { Content } = await render(page);
+
+const motifByPath: Record<string, "about" | "dn42"> = {
+  "/about/": "about",
+  "/dn42/": "dn42",
+};
+const pageMotif = motifByPath[page.data.canonicalPath];
 ---
 <BaseLayout
   title={`${page.data.title} · AndyYan`}
@@ -27,6 +33,7 @@ const { Content } = await render(page);
   type="website"
   pubDate={page.data.pubDate}
   updatedDate={page.data.updatedDate}
+  pageMotif={pageMotif}
 >
   <article class="prose" data-article data-pagefind-body>
     <header class="entry-header">

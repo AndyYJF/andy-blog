@@ -1,0 +1,151 @@
+---
+interface Props {
+  motif: "dn42";
+}
+
+const { motif } = Astro.props;
+---
+
+<div class="page-ornaments" data-motif={motif} aria-hidden="true">
+  <div class="ornament-plate ornament-plate--right dn42-rack">
+    <svg viewBox="0 0 300 610" focusable="false">
+      <ellipse class="fill-soft" cx="150" cy="570" rx="126" ry="11" />
+      <rect class="line-strong" x="34" y="36" width="232" height="500" rx="3" />
+      <path class="line" d="M48 50V521M252 50V521M22 536H278M48 536L42 555M252 536L258 555" />
+      <g class="line-faint rack-holes">
+        <path d="M43 67V503M257 67V503" />
+        <path d="M39 72H47M39 92H47M39 112H47M39 132H47M39 152H47M39 172H47M39 192H47M39 212H47M39 232H47M39 252H47M39 272H47M39 292H47M39 312H47M39 332H47M39 352H47M39 372H47M39 392H47M39 412H47M39 432H47M39 452H47M39 472H47M39 492H47" />
+        <path d="M253 72H261M253 92H261M253 112H261M253 132H261M253 152H261M253 172H261M253 192H261M253 212H261M253 232H261M253 252H261M253 272H261M253 292H261M253 312H261M253 332H261M253 352H261M253 372H261M253 392H261M253 412H261M253 432H261M253 452H261M253 472H261M253 492H261" />
+      </g>
+      <g class="line fill-panel">
+        <rect x="56" y="66" width="188" height="70" rx="2" />
+        <rect x="56" y="150" width="188" height="88" rx="2" />
+        <rect x="56" y="252" width="188" height="126" rx="2" />
+        <rect x="56" y="392" width="188" height="108" rx="2" />
+      </g>
+      <g class="line-faint">
+        <path d="M67 80H233M67 122H233M67 164H233M67 224H233M67 266H233M67 364H233M67 406H233M67 486H233" />
+        <path d="M70 278H139M70 288H139M70 298H139M70 308H139M70 318H139M70 328H139M70 338H139M70 348H139" />
+        <circle cx="194" cy="315" r="34" /><circle cx="194" cy="315" r="15" />
+        <path d="M194 281V349M160 315H228" />
+        <path d="M70 458H230M70 470H230" />
+      </g>
+      <g class="line ports">
+        <rect x="66" y="91" width="14" height="12" rx="1" /><rect x="86" y="91" width="14" height="12" rx="1" />
+        <rect x="106" y="91" width="14" height="12" rx="1" /><rect x="126" y="91" width="14" height="12" rx="1" />
+        <rect x="146" y="91" width="14" height="12" rx="1" /><rect x="166" y="91" width="14" height="12" rx="1" />
+        <rect x="186" y="91" width="14" height="12" rx="1" /><rect x="206" y="91" width="14" height="12" rx="1" />
+        <rect x="68" y="184" width="20" height="15" rx="1" /><rect x="98" y="184" width="20" height="15" rx="1" />
+        <rect x="128" y="184" width="20" height="15" rx="1" /><rect x="158" y="184" width="20" height="15" rx="1" />
+        <rect x="188" y="184" width="20" height="15" rx="1" />
+      </g>
+      <path class="line cable" d="M73 103C73 135 75 157 78 184M113 103C113 137 132 151 138 184M173 103C173 139 171 158 168 184M213 103C213 134 229 148 229 168C229 177 212 184 198 184" />
+      <path class="accent-line" d="M173 103C173 139 171 158 168 184" />
+      <g class="status-lights">
+        <circle class="status status--hot" cx="221" cy="192" r="3" />
+        <circle class="status" cx="230" cy="192" r="3" />
+        <circle class="status" cx="74" cy="434" r="3" />
+        <circle class="status" cx="84" cy="434" r="3" />
+      </g>
+    </svg>
+  </div>
+</div>
+
+<style>
+  .page-ornaments {
+    --orn-strong: color-mix(in srgb, var(--muted) 58%, transparent);
+    --orn-line: color-mix(in srgb, var(--muted) 44%, transparent);
+    --orn-faint: color-mix(in srgb, var(--border) 80%, transparent);
+    --orn-accent: color-mix(in srgb, var(--accent) 70%, transparent);
+    --orn-fill: color-mix(in srgb, var(--surface) 56%, transparent);
+
+    position: absolute;
+    top: 4.25rem;
+    right: 0;
+    left: 0;
+    z-index: 0;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, var(--measure)) minmax(0, 1fr);
+    column-gap: clamp(1.25rem, 2.5vw, 2.75rem);
+    height: 58rem;
+    overflow: clip;
+    pointer-events: none;
+  }
+
+  .ornament-plate {
+    grid-row: 1;
+    align-self: start;
+    width: min(18rem, calc(100% - 0.5rem));
+    opacity: 0.76;
+  }
+
+  .ornament-plate--right {
+    grid-column: 3;
+    justify-self: center;
+  }
+
+  .dn42-rack { margin-top: 3.5rem; }
+
+  svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+  }
+
+  .line,
+  .line-strong,
+  .line-faint,
+  .accent-line,
+  .status {
+    vector-effect: non-scaling-stroke;
+  }
+
+  .line,
+  .line-strong,
+  .line-faint,
+  .accent-line {
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .line { stroke: var(--orn-line); stroke-width: 1px; }
+  .line-strong { stroke: var(--orn-strong); stroke-width: 1.25px; }
+  .line-faint { stroke: var(--orn-faint); stroke-width: 0.75px; }
+  .accent-line { stroke: var(--orn-accent); stroke-width: 1.35px; }
+  .fill-soft { fill: var(--orn-faint); opacity: 0.18; }
+  .fill-panel { fill: var(--orn-fill); }
+
+  .status { fill: var(--orn-strong); stroke: none; }
+  .status--hot { fill: var(--orn-accent); animation: status-breathe 8s ease-in-out infinite; }
+
+  @keyframes status-breathe {
+    0%, 100% { opacity: 0.45; }
+    50% { opacity: 0.9; }
+  }
+
+  :global(html[data-theme="dark"]) .page-ornaments {
+    --orn-strong: color-mix(in srgb, var(--muted) 64%, transparent);
+    --orn-line: color-mix(in srgb, var(--muted) 50%, transparent);
+    --orn-faint: color-mix(in srgb, var(--border) 88%, transparent);
+    --orn-accent: color-mix(in srgb, var(--accent) 74%, transparent);
+    --orn-fill: color-mix(in srgb, var(--surface) 46%, transparent);
+  }
+
+  @media (min-width: 1100px) and (max-width: 1199px) {
+    .ornament-plate { opacity: 0.58; }
+  }
+
+  @media (min-width: 1200px) and (max-width: 1299px) {
+    .ornament-plate { opacity: 0.68; }
+  }
+
+  @media (max-width: 1099px) {
+    .page-ornaments { display: none; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .status--hot { animation: none; }
+  }
+</style>
