@@ -1,0 +1,56 @@
+# 1Panel staging adapter for new.andy-y.cn.
+# This stack intentionally contains no nginx, Typecho, production Waline, or public port.
+name: andy-blog-staging
+
+services:
+  waline-staging:
+    build:
+      context: ./docker/waline
+      args:
+        WALINE_UPSTREAM_IMAGE: ${WALINE_UPSTREAM_IMAGE:?set a digest-pinned Waline image}
+        NODE_BASE_IMAGE: ${WALINE_NODE_IMAGE:?set a digest-pinned Node image}
+    restart: unless-stopped
+    ports:
+      - '127.0.0.1:${WALINE_STAGING_HOST_PORT:-8361}:8360'
+    environment:
+      TZ: Asia/Shanghai
+      MYSQL_HOST: ${WALINE_STAGING_MYSQL_HOST:-1Panel-mysql-RSa9}
+      MYSQL_PORT: ${WALINE_STAGING_MYSQL_PORT:-3306}
+      MYSQL_DB: ${WALINE_STAGING_MYSQL_DB:?set staging database}
+      MYSQL_USER: ${WALINE_STAGING_MYSQL_USER:?set staging database user}
+      MYSQL_PASSWORD: ${WALINE_STAGING_MYSQL_PASSWORD:?set staging database password}
+      MYSQL_PREFIX: wl_
+      SITE_NAME: AndyYan Blog (staging)
+      SITE_URL: https://new.andy-y.cn
+      SERVER_URL: https://new.andy-y.cn
+      SECURE_DOMAINS: new.andy-y.cn
+      COMMENT_POLICY_FILE: /var/www/andy-y.cn/candidate/comment-policy.staging.json
+      JWT_TOKEN: ${WALINE_STAGING_JWT:?set staging JWT}
+      IPQPS: 60
+    volumes:
+      - '${STAGING_WWW_ROOT:?set the 1Panel staging release root}:/var/www/andy-y.cn:ro'
+    networks: [onepanel]
+    security_opt:
+      - no-new-privileges:true
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - >-
+          fetch('http://127.0.0.1:8360/api/comment?path=%2F').then(r =>
+          process.exit(r.status < 500 ? 0 : 1)).catch(() => process.exit(1))
+      interval: 15s
+      timeout: 5s
+      retries: 8
+      start_period: 30s
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+        max-file: '3'
+
+networks:
+  onepanel:
+    external: true
+    name: ${ONEPANEL_NETWORK:-1panel-network}

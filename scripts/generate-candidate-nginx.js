@@ -91,6 +91,7 @@ ${maps}
 server {
   listen 80;
   server_name new.andy-y.cn;
+  add_header X-Robots-Tag "noindex, nofollow, noarchive" always;
 ${stagingAction}
   return 301 ${STAGING_SITE}$request_uri;
 }
@@ -120,6 +121,7 @@ ${stagingAction}
     proxy_set_header Connection "";
     proxy_read_timeout 30s;
     add_header Cache-Control "no-store" always;
+    add_header X-Robots-Tag "noindex, nofollow, noarchive" always;
   }
   location = /ui { return 308 /ui/; }
   location ^~ /ui/ {
@@ -129,22 +131,26 @@ ${stagingAction}
     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
     proxy_set_header X-Forwarded-Proto $scheme;
     add_header Cache-Control "no-store" always;
+    add_header X-Robots-Tag "noindex, nofollow, noarchive" always;
   }
 
   location ^~ /_astro/ {
     try_files $uri =404;
     expires 1y;
     add_header Cache-Control "public, max-age=31536000, immutable";
+    add_header X-Robots-Tag "noindex, nofollow, noarchive" always;
   }
 
   location = /__release {
     try_files /release-id.txt =503;
     add_header Cache-Control "no-store" always;
+    add_header X-Robots-Tag "noindex, nofollow, noarchive" always;
   }
 
   location / {
     try_files $uri $uri/index.html =404;
     add_header Cache-Control "public, max-age=0, s-maxage=600, must-revalidate" always;
+    add_header X-Robots-Tag "noindex, nofollow, noarchive" always;
   }
 }
 `;

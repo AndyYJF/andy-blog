@@ -15,7 +15,12 @@ import {
   loadPolicyFile,
   normalizeCommentPath,
 } from './policy.js';
-import { isApiPath, isCommentWritePath, isSafeMethod } from './server-path.js';
+import {
+  buildProxyHeaders,
+  isApiPath,
+  isCommentWritePath,
+  isSafeMethod,
+} from './server-path.js';
 
 const listenPort = Number(process.env.PORT || 8360);
 const upstream = process.env.WALINE_UPSTREAM || '127.0.0.1:8361';
@@ -42,9 +47,8 @@ function readBody(req) {
 
 function proxy(req, res, bodyBuf) {
   const [host, port] = upstream.split(':');
-  const headers = { ...req.headers, host: upstream };
-  delete headers['content-length'];
-  if (bodyBuf) headers['content-length'] = String(bodyBuf.length);
+  // Preserve the public Host header so Waline SECURE_DOMAINS can validate it.
+  const headers = buildProxyHeaders(req.headers, bodyBuf);
 
   const preq = http.request(
     {

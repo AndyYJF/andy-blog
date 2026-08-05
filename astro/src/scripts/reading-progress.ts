@@ -2,6 +2,11 @@ type Dispose = () => void;
 
 const NOOP: Dispose = () => {};
 
+const RAIL_BASE_WIDTH = 18;
+const RAIL_ACTIVE_WIDTH = 34;
+const RAIL_NEAR_WIDTH = 54;
+const RAIL_PROXIMITY_RADIUS = 68;
+
 const headingLabel = (heading: HTMLElement) =>
   (heading.textContent ?? "").replace(/#$/, "").trim();
 
@@ -34,6 +39,7 @@ export function initReadingProgress(
     const label = headingLabel(heading);
     link.title = label;
     link.setAttribute("aria-label", label);
+    link.dataset.label = label;
     return link;
   });
 
@@ -57,12 +63,49 @@ export function initReadingProgress(
     rail.setAttribute("data-ready", "");
   }
   if (toc && tocLinks.length > 0) {
-    toc.replaceChildren(...tocLinks);
+    const title = document.createElement("span");
+    title.className = "article-toc-title";
+    title.textContent = "文章目录";
+    toc.replaceChildren(title, ...tocLinks);
     toc.setAttribute("data-ready", "");
   }
 
   let activeToc = -1;
   let activeRail = -1;
+  let pointerY: number | null = null;
+
+  const updateRailProximity = () => {
+    for (const link of railLinks) {
+      if (pointerY == null) {
+        link.style.removeProperty("--guide-width");
+        continue;
+      }
+
+      const rect = link.getBoundingClientRect();
+      const distance = Math.abs(pointerY - (rect.top + rect.height / 2));
+      const proximity = Math.max(0, 1 - distance / RAIL_PROXIMITY_RADIUS);
+      const eased = proximity * proximity * (3 - 2 * proximity);
+      const base = link.getAttribute("aria-current") === "true"
+        ? RAIL_ACTIVE_WIDTH
+        : RAIL_BASE_WIDTH;
+      const width = base + (RAIL_NEAR_WIDTH - base) * eased;
+      link.style.setProperty("--guide-width", `${width.toFixed(1)}px`);
+    }
+  };
+
+  const onRailPointerMove = (event: PointerEvent) => {
+    if (event.pointerType === "touch") return;
+    pointerY = event.clientY;
+    updateRailProximity();
+  };
+
+  const onRailPointerLeave = () => {
+    pointerY = null;
+    updateRailProximity();
+  };
+
+  rail?.addEventListener("pointermove", onRailPointerMove);
+  rail?.addEventListener("pointerleave", onRailPointerLeave);
 
   const setActive = (tocIndex: number) => {
     if (tocIndex === activeToc) return;
@@ -75,6 +118,7 @@ export function initReadingProgress(
       railLinks[activeRail]?.removeAttribute("aria-current");
       railLinks[railIndex]?.setAttribute("aria-current", "true");
       activeRail = railIndex;
+      updateRailProximity();
     }
   };
 
@@ -87,15 +131,35 @@ export function initReadingProgress(
     setActive(next);
   };
 
-  const observer = new IntersectionObserver(recompute, {
+  let recomputeFrame = 0;
+  const scheduleRecompute = () => {
+    if (recomputeFrame !== 0) return;
+    recomputeFrame = requestAnimationFrame(() => {
+      recomputeFrame = 0;
+      recompute();
+    });
+  };
+
+  const observer = new IntersectionObserver(scheduleRecompute, {
     rootMargin: "-25% 0px -70% 0px",
     threshold: [0, 1],
   });
   for (const heading of tocHeadings) observer.observe(heading);
+  addEventListener("scroll", scheduleRecompute, { passive: true });
+  addEventListener("scrollend", scheduleRecompute);
+  addEventListener("hashchange", scheduleRecompute);
+  addEventListener("resize", scheduleRecompute);
   recompute();
 
   return () => {
     observer.disconnect();
+    removeEventListener("scroll", scheduleRecompute);
+    removeEventListener("scrollend", scheduleRecompute);
+    removeEventListener("hashchange", scheduleRecompute);
+    removeEventListener("resize", scheduleRecompute);
+    if (recomputeFrame !== 0) cancelAnimationFrame(recomputeFrame);
+    rail?.removeEventListener("pointermove", onRailPointerMove);
+    rail?.removeEventListener("pointerleave", onRailPointerLeave);
     rail?.removeAttribute("data-ready");
     rail?.replaceChildren();
     toc?.removeAttribute("data-ready");

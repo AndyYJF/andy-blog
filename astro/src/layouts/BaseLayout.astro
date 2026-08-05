@@ -16,7 +16,7 @@ interface Props {
   updatedDate?: Date;
   noindex?: boolean;
   jsonLd?: Record<string, unknown> | Record<string, unknown>[];
-  pageMotif?: "home" | "archive" | "about" | "dn42" | "friends";
+  pageMotif?: "dn42";
 }
 
 const {
@@ -37,6 +37,13 @@ const site = Astro.site ?? new URL("https://www.andy-y.cn");
 const canonical = new URL(canonicalPath, site).href;
 const ogImage = new URL(image || "/og-default.png", site).href;
 const year = new Date().getFullYear();
+const currentPath = Astro.url.pathname;
+const navItems = [
+  { href: "/archive/", label: "归档" },
+  { href: "/about/", label: "关于" },
+  { href: "/friends/", label: "友链" },
+  { href: "/dn42/", label: "DN42" },
+];
 
 const defaultLd =
   type === "article"
@@ -100,12 +107,11 @@ const ldPayload = jsonLd ?? defaultLd;
     <a class="skip-link" href="#main">跳到正文</a>
     <header class="site-header">
       <div class="site-header-inner">
-        <a class="brand" href="/">AndyYan</a>
+        <a class="brand" href="/" aria-current={currentPath === "/" ? "page" : undefined}>AndyYan</a>
         <nav class="site-nav">
-          <a href="/archive/">归档</a>
-          <a href="/about/">关于</a>
-          <a href="/friends/">友链</a>
-          <a href="/dn42/">DN42</a>
+          {navItems.map(({ href, label }) => (
+            <a href={href} aria-current={currentPath === href ? "page" : undefined}>{label}</a>
+          ))}
           <SearchDialog />
           <button class="theme-toggle" type="button" data-theme-toggle aria-pressed="false" aria-label="切换主题">
             <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -120,7 +126,7 @@ const ldPayload = jsonLd ?? defaultLd;
       </div>
     </header>
 
-    {pageMotif && <PageOrnaments motif={pageMotif} />}
+    {pageMotif === "dn42" && <PageOrnaments motif="dn42" />}
 
     <main class="wrap" id="main" tabindex="-1">
       <slot />

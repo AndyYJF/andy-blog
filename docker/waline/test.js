@@ -37,7 +37,7 @@ assert.equal(authorizeCommentWrite(policy, 'POST', '/posts/b/').reason, 'entry-n
 assert.equal(authorizeCommentWrite(policy, 'POST', '/posts/missing/').ok, false);
 assert.equal(authorizeCommentWrite(policy, 'POST', null).reason, 'missing-or-invalid-path');
 
-import { isApiPath, isCommentWritePath } from './server-path.js';
+import { buildProxyHeaders, isApiPath, isCommentWritePath } from './server-path.js';
 
 assert.equal(isCommentWritePath('/api/comment'), true);
 assert.equal(isCommentWritePath('/api/comment/'), true);
@@ -47,4 +47,11 @@ assert.equal(isCommentWritePath('/api/user'), false);
 assert.equal(isApiPath('/api/user'), true);
 assert.equal(isApiPath('/ui/login'), false);
 
-console.log(JSON.stringify({ ok: true, tests: 19 }));
+const forwardedGet = buildProxyHeaders({ host: 'new.andy-y.cn', 'content-length': '999' }, null);
+assert.equal(forwardedGet.host, 'new.andy-y.cn');
+assert.equal(forwardedGet['content-length'], undefined);
+const forwardedPost = buildProxyHeaders({ host: 'new.andy-y.cn', 'content-length': '999' }, Buffer.from('{}'));
+assert.equal(forwardedPost.host, 'new.andy-y.cn');
+assert.equal(forwardedPost['content-length'], '2');
+
+console.log(JSON.stringify({ ok: true, tests: 23 }));

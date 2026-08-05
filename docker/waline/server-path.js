@@ -13,3 +13,10 @@ export function isSafeMethod(method) {
   const m = (method || 'GET').toUpperCase();
   return m === 'GET' || m === 'HEAD' || m === 'OPTIONS';
 }
+
+export function buildProxyHeaders(incomingHeaders, bodyBuf) {
+  const headers = { ...incomingHeaders };
+  delete headers['content-length'];
+  if (bodyBuf) headers['content-length'] = String(bodyBuf.length);
+  return headers;
+}

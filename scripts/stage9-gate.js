@@ -25,8 +25,10 @@ const exists = (rel) => fs.existsSync(path.join(ROOT, rel));
 for (const rel of [
   'compose.yml',
   'compose.staging.yml',
+  'compose.1panel-staging.yml',
   'nginx/staging-loader.conf',
   'scripts/generate-candidate-nginx.js',
+  'scripts/generate-1panel-staging-nginx.js',
   'scripts/probe-dual-cdn.js',
   'scripts/lighthouse-gate.js',
   'scripts/patch-beoe-alt.js',
@@ -45,6 +47,8 @@ for (const rel of [
 
 const compose = read('compose.yml');
 const stagingCompose = read('compose.staging.yml');
+const onePanelCompose = read('compose.1panel-staging.yml');
+const walineDockerfile = read('docker/waline/Dockerfile');
 check(compose.includes('SECURE_DOMAINS'), 'compose waline missing SECURE_DOMAINS');
 check(compose.includes('WALINE_JWT'), 'compose waline missing JWT');
 check(compose.includes('SERVER_URL: https://www.andy-y.cn'), 'compose waline missing SERVER_URL');
@@ -53,6 +57,20 @@ check(stagingCompose.includes('90-staging-loader.conf'), 'staging override missi
 check(stagingCompose.includes('waline-staging'), 'staging override missing waline-staging');
 check(stagingCompose.includes('SECURE_DOMAINS: new.andy-y.cn'), 'staging SECURE_DOMAINS must be new only');
 check(stagingCompose.includes('COMMENT_POLICY_FILE: /var/www/andy-y.cn/candidate/comment-policy.staging.json'), 'staging policy path wrong');
+check(!/^\s{2}(?:nginx|typecho|waline):\s*$/m.test(onePanelCompose), '1Panel staging must not define production services');
+check(onePanelCompose.includes("127.0.0.1:${WALINE_STAGING_HOST_PORT:-8361}:8360"), '1Panel Waline must bind loopback only');
+check(onePanelCompose.includes('name: ${ONEPANEL_NETWORK:-1panel-network}'), '1Panel external network missing');
+check(onePanelCompose.includes('WALINE_UPSTREAM_IMAGE: ${WALINE_UPSTREAM_IMAGE:?'), '1Panel Waline image must be required');
+check(onePanelCompose.includes('NODE_BASE_IMAGE: ${WALINE_NODE_IMAGE:?'), '1Panel Node image must be required');
+check(
+  walineDockerfile.includes('COPY policy.js server-path.js server.js entrypoint.sh ./'),
+  'Waline image must copy every policy wrapper runtime module',
+);
+check(
+  walineDockerfile.includes('COPY waline-config.cjs /waline/node_modules/@waline/vercel/config.js'),
+  'Waline image must install the ThinkJS upstream port override',
+);
+check(read('docker/waline/waline-config.cjs').includes('port: 8361'), 'Waline upstream must listen on 8361');
 
 const loader = read('nginx/staging-loader.conf');
 check(
@@ -88,6 +106,10 @@ const stagingHttp = fs.readFileSync(path.join(outNginx, 'staging-http.conf'), 'u
 check(stagingHttp.includes('server_name new.andy-y.cn'), 'staging-http missing new.andy-y.cn');
 check(stagingHttp.includes('waline-staging:8360'), 'staging-http must proxy to waline-staging');
 check(stagingHttp.includes('X-Robots-Tag'), 'staging-http missing noindex');
+check(
+  (stagingHttp.match(/add_header X-Robots-Tag "noindex, nofollow, noarchive" always;/g) || []).length === 7,
+  'staging-http must repeat noindex in every header-owning location',
+);
 check(stagingHttp.includes('$staging_legacy_target'), 'staging-http missing staging maps');
 check(!/map \$uri \$legacy_target/.test(stagingHttp), 'staging-http must not define production $legacy_target');
 check(!/proxy_pass http:\/\/waline:8360/.test(stagingHttp), 'staging must not use production waline');
@@ -95,6 +117,31 @@ check(fs.existsSync(path.join(outNginx, 'candidate-nginx.conf')), 'missing candi
 check(fs.existsSync(path.join(outNginx, 'candidate-staging-nginx.conf')), 'missing candidate-staging-nginx.conf');
 const candStaging = fs.readFileSync(path.join(outNginx, 'candidate-staging-nginx.conf'), 'utf8');
 check(candStaging.includes('staging-http.conf'), 'candidate-staging must include staging-http');
+
+const onePanelOut = path.join(outNginx, 'new.andy-y.cn.conf');
+const onePanelGen = spawnSync(
+  'node',
+  [
+    'scripts/generate-1panel-staging-nginx.js',
+    '--input',
+    path.join(outNginx, 'staging-http.conf'),
+    '--out',
+    onePanelOut,
+  ],
+  { cwd: ROOT, encoding: 'utf8' },
+);
+check(onePanelGen.status === 0, `generate-1panel-staging-nginx failed: ${onePanelGen.stderr || onePanelGen.stdout}`);
+if (onePanelGen.status === 0) {
+  const onePanelNginx = fs.readFileSync(onePanelOut, 'utf8');
+  check(onePanelNginx.includes('root /www/sites/new.andy-y.cn/deploy/candidate/site'), '1Panel staging root wrong');
+  check(onePanelNginx.includes('proxy_pass http://127.0.0.1:8361'), '1Panel staging Waline upstream wrong');
+  check(onePanelNginx.includes('/www/sites/www.andy-y.cn/ssl/fullchain.pem'), '1Panel wildcard certificate path wrong');
+  check(!onePanelNginx.includes('waline-staging:8360'), '1Panel config retains Compose-only upstream');
+  check(
+    (onePanelNginx.match(/add_header X-Robots-Tag "noindex, nofollow, noarchive" always;/g) || []).length === 7,
+    '1Panel config must retain all staging noindex headers',
+  );
+}
 
 // --- alert-notify behavioral ---
 const alertTest = spawnSync('bash', ['host/alert-notify.sh', 'stage9-gate-test', 'body'], {
@@ -229,6 +276,7 @@ fs.writeFileSync(
     `**Result:** ${report.ok ? 'PASS' : 'FAIL'} (in-repo deploy scaffold)`,
     '',
     '- compose.yml + compose.staging.yml + staging-loader',
+    '- compose.1panel-staging.yml + generated 1Panel OpenResty adapter',
     '- staging-http.conf with independent `$staging_*` maps and new.andy-y.cn → waline-staging',
     '- OnFailure alert units + fail-closed alert-notify (exit 71)',
     '- cert-new-andy-y.sh + staging enable runbook',

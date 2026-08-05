@@ -1,0 +1,34 @@
+# Findings
+
+- 2026-08-05：用户确认已添加 `new.andy-y.cn` 解析记录，并提供 VPS root 登录信息；密码不落盘、不进入命令历史。
+- 2026-08-05：历史审计提示静态门禁不能替代 Compose/Nginx/CDN/回滚的真实运行验证，本次按 staging-only、可回滚流程执行。
+- 2026-08-05：Google/Cloudflare DoH 均返回 `new.andy-y.cn A 139.224.71.200`，TTL 600；SSH TCP/22 可达。
+- 2026-08-05：现有本机密钥无法登录 root，SSH 返回 `Permission denied (publickey,password)`；不使用明文密码自动化，改为一次性部署密钥。
+- 2026-08-05：本地发布源为分支 `cursor/stage0-8-adversarial-baseline`、HEAD `488f32c7fd176d19b2bc34430d1a77506f51d889`；除本次 `.planning/` 外无未提交内容。
+- 2026-08-05：已生成一次性 ED25519 部署密钥，公钥指纹 `SHA256:E+7DypwuNeTOHMGvvvHKAJsSQ0Di9hMo911nuazak/I`；私钥仅位于本地临时目录，任务结束后删除。
+- 2026-08-05：一次性密钥登录成功，远端为 root，主机 `iZuf647pvojdq223bc9k0tZ`，Linux `6.8.0-40-generic x86_64`。
+- 2026-08-05：VPS 为 Ubuntu 24.04；内存 1.6 GiB（available 697 MiB），swap 2.5 GiB 中已用 1.7 GiB；根盘 40 GiB、已用 74%、剩余约 9.9 GiB。
+- 2026-08-05：Docker 28.2.2 / Compose 2.36.2 正常运行；80/443 由 `1Panel-openresty-yR6x` 占用，宿主 nginx 命令不存在且 systemd nginx inactive。
+- 2026-08-05：生产 Typecho 为 `1Panel-typecho-f31a`（`joyqi/typecho:1.2.1-php8.0-apache`），仅绑定 `127.0.0.1:8080`；MySQL 8.4.5 仅绑定 `127.0.0.1:3306`。
+- 2026-08-05：`/var/www/andy-blog`、`/var/www/andy-y.cn`、current/previous/candidate、blog systemd units 和 staging secrets 均不存在。
+- 2026-08-05：`new.andy-y.cn` 已解析并通过当前 OpenResty 返回默认 200 页面，但正规 TLS 校验失败（self-signed certificate in chain）；`www` 返回 200。
+- 2026-08-05：原 runbook 假设项目 Nginx 可接管发布端口，与现有 1Panel OpenResty 占用 80/443 冲突；部署前必须设计不影响现网的接入方式。
+- 2026-08-05：仓库 `compose.yml` 的 nginx 显式发布 `80:80` 与 `443:443`；不可在当前 VPS 直接 `up nginx`，否则与 1Panel OpenResty 端口冲突。
+- 2026-08-05：仓库 cert 脚本依赖宿主 certbot，但 VPS 未安装 certbot；现有证书由 1Panel OpenResty 目录体系管理。
+- 2026-08-05：`waline-staging` 仅在 Compose 内部网络 expose 8360，不发布宿主端口；当前 1Panel OpenResty 不属于该 Compose 网络，不能按现有配置直接代理。
+- 2026-08-05：1Panel OpenResty 活动配置测试通过；站点配置位于 `/opt/1panel/www/conf.d`，生产 `www.andy-y.cn.conf` 已存在，`new.andy-y.cn.conf` 尚不存在。
+- 2026-08-05：生产 www vhost 仅反代 `127.0.0.1:8080` Typecho；未发现额外 proxy include，新增独立 new vhost 不需改写 www 配置。
+- 2026-08-05：现有 www 证书为 Let’s Encrypt 通配证书，SAN=`*.andy-y.cn, andy-y.cn`，有效期至 2026-09-27；可由 new vhost 直接引用同一路径并随 1Panel 更新。
+- 2026-08-05：1Panel OpenResty 为 host network；因此可安全代理宿主 `127.0.0.1:8361`。Typecho/MySQL 位于 `1panel-network`，MySQL 数据库目前仅有 Typecho/Lsky，无 Waline schema。
+- 2026-08-05：适配方案：独立 `compose.1panel-staging.yml` 只运行 waline-staging，加入 `1panel-network` 访问 MySQL并仅发布 `127.0.0.1:8361:8360`；静态候选与 release 放入 1Panel 已挂载的 new 站点目录；新增 new vhost，完全不改 www vhost。
+- 2026-08-05：已实现 1Panel staging Compose、Nginx adapter、Waline Node base image build arg 与 Stage9 gate 约束；YAML 解析、Waline 19 tests、Stage9 gate、git diff check 均通过。
+- 2026-08-05：本地 Stage9 gate 因无 Docker 与主动 SKIP 仍只验证 scaffold；远端部署后必须补 Compose/build/容器/HTTP 实测。
+- 2026-08-05：部署前候选 `488f32c` 是较早工作快照：仍向首页/归档/关于/友链传入 `pageMotif`，横线 `:hover` 规则只变色不变宽；线上 CSS 与该源码完全一致，因此不是 CDN 或浏览器缓存回退。
+- 2026-08-05：Git reflog、stash、悬空对象与 Cursor 本地历史没有可恢复的后续导航版本；按用户已确认的最终要求重建，而非继续在旧实现上微调。
+- 2026-08-05：最终右侧导引默认宽度 18px、当前章节 34px、最近指针最大 54px；鼠标靠近中间项时实测宽度约为 36/31/41/50/54/50/41/31/22px，移开后恢复。
+- 2026-08-05：文章目录通过 `scroll`、`scrollend`、`hashchange`、`resize` 与 IntersectionObserver 共同调度，并用 `requestAnimationFrame` 合并更新；点击章节后 URL、左侧目录、右侧当前项一致。
+- 2026-08-05：最终 staging release 为 `20260805T143100Z-c92e7d31`；回滚目标为 `20260805T142400Z-b6e2a1fc`，初始 release `20260805T131152Z-51d0a116` 也仍保留。
+- 2026-08-05：最终 Waline 容器 `db1069f…48945` healthy，启动时间未变，映射仅为 `127.0.0.1:8361`；隔离库表为 `wl_Comment`、`wl_Counter`、`wl_Users`。
+- 2026-08-05：生产 Typecho 容器 ID/启动时间未变；`www.andy-y.cn.conf` SHA-256 仍为 `d981ee…b114c`，`www` 返回 200，未切生产流量或生产评论。
+- 2026-08-05：最终证书为 Let’s Encrypt `andy-y.cn` 通配证书，有效至 2026-09-27；根盘使用率 78%，可用约 8.3 GiB，应在生产切换前持续关注容量与续签。
+- 2026-08-05：用户明确跳过剩余 14 项人工 Final；仅记录为 waiver，不伪造 15/15 人工通过。

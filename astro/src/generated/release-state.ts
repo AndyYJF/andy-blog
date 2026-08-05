@@ -2,5 +2,5 @@ export const releaseState = {
   productionWriteEnabled: false,
   commentWriteMode: "disabled",
   redirectStatus: 302,
-  releaseId: "20260802T120000Z-deadbeef",
+  releaseId: "20260805T143100Z-c92e7d31",
 } as const;

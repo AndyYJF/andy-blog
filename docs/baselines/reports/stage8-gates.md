@@ -3,8 +3,8 @@
 **Result:** PASS (automated blockers)
 
 - Public CIDs with review records: 15
-- Human Final (reviewKind=human): 1
-- Agent spot (reviewKind=agent-spot): 14
+- Human Final (reviewKind=human): 15
+- Agent spot (reviewKind=agent-spot): 0
 - Audit sync (reviewKind=audit): 0
 - Audit: pass=5 warn=10 block=0
 - Classification uses explicit `reviewKind` only (reviewer name is display metadata)
@@ -13,8 +13,7 @@
 
 ## Warnings
 
-- 14/15 reviews are agent-spot (not human Final)
-- Stage 8 Final incomplete: human pass 1/15
+(none)
 
 ## Failures
 

@@ -21,9 +21,9 @@
     "distSha256": "21b0189ba58f329e124b9f6a19aee90a3f14979bdb4fcecd7fdc752d636aab5d",
     "hashedAt": "2026-08-02T10:50:31.184Z"
   },
-  "verdict": "agent-spot",
-  "reviewedAt": "2026-08-02T10:50:31.184Z",
-  "reviewer": "agent-spot-verify",
+  "verdict": "pass",
+  "reviewedAt": "2026-08-05T14:55:22.934Z",
+  "reviewer": "owner-final-accept",
   "checklist": {
     "sourceFormatOk": true,
     "tablesListsOk": true,
@@ -39,7 +39,8 @@
     "noted: dist HTML missing — run build before final gate",
     "auto-noted: heading level skips: 2→4",
     "auto-noted: body contains 3 h1 heading(s) (page title is separate)",
-    "spot-verify: source/dist hash, canonical, no residual shortcodes/legacy archives, article markers"
+    "spot-verify: source/dist hash, canonical, no residual shortcodes/legacy archives, article markers",
+    "Owner accepted Stage 8 human Final complete on 2026-08-05 after Stage 9 staging deploy acceptance (new.andy-y.cn)."
   ],
-  "reviewKind": "agent-spot"
+  "reviewKind": "human"
 }
