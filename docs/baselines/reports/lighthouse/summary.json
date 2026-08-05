@@ -1,0 +1,19 @@
+{
+  "ok": true,
+  "chromePath": "C:\\Users\\AndyYan\\AppData\\Local\\ms-playwright\\chromium_headless_shell-1234\\chrome-headless-shell-win64\\chrome-headless-shell.exe",
+  "scores": [
+    {
+      "url": "http://127.0.0.1:4239/",
+      "performance": 1,
+      "seo": 1,
+      "accessibility": 1
+    },
+    {
+      "url": "http://127.0.0.1:4239/posts/maibot-astrbot-napcat/",
+      "performance": 0.99,
+      "seo": 1,
+      "accessibility": 1
+    }
+  ],
+  "failures": []
+}

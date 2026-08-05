@@ -1,4 +1,4 @@
-# Base Compose — Stage 5 scaffold. Pin digests in .env before production.
+# Base Compose — Stage 9. Pin digests in .env before production.
 name: andy-blog
 
 services:
@@ -68,13 +68,23 @@ services:
       MYSQL_DB: ${WALINE_MYSQL_DB:?WALINE_MYSQL_DB}
       MYSQL_USER: ${WALINE_MYSQL_USER:?WALINE_MYSQL_USER}
       MYSQL_PASSWORD: ${WALINE_MYSQL_PASSWORD:?WALINE_MYSQL_PASSWORD}
+      MYSQL_PREFIX: wl_
       SITE_NAME: AndyYan Blog
       SITE_URL: https://www.andy-y.cn
+      SERVER_URL: https://www.andy-y.cn
+      SECURE_DOMAINS: ${WALINE_SECURE_DOMAINS:?set production www only}
       COMMENT_POLICY_FILE: /var/www/andy-y.cn/current/comment-policy.json
+      JWT_TOKEN: ${WALINE_JWT:?WALINE_JWT is required}
+      AUTHOR_EMAIL: ${AUTHOR_EMAIL:-}
+      SMTP_SERVICE: ${SMTP_SERVICE:-}
+      SMTP_USER: ${SMTP_USER:-}
+      SMTP_PASS: ${SMTP_PASS:-}
+      IPQPS: 60
     volumes:
       - '${WWW_ROOT:?set an absolute host WWW_ROOT}:/var/www/andy-y.cn:ro'
     networks: [app, data_egress]
 
+  # Base definition; production env/JWT filled by compose.staging.yml for profile staging.
   waline-staging:
     build: ./docker/waline
     profiles: ['staging']
@@ -87,9 +97,13 @@ services:
       MYSQL_DB: ${WALINE_STAGING_MYSQL_DB:?WALINE_STAGING_MYSQL_DB}
       MYSQL_USER: ${WALINE_STAGING_MYSQL_USER:?WALINE_STAGING_MYSQL_USER}
       MYSQL_PASSWORD: ${WALINE_STAGING_MYSQL_PASSWORD:?WALINE_STAGING_MYSQL_PASSWORD}
+      MYSQL_PREFIX: wl_
       SITE_NAME: AndyYan Blog (staging)
       SITE_URL: https://new.andy-y.cn
+      SERVER_URL: https://new.andy-y.cn
+      SECURE_DOMAINS: new.andy-y.cn
       COMMENT_POLICY_FILE: /var/www/andy-y.cn/candidate/comment-policy.staging.json
+      JWT_TOKEN: ${WALINE_STAGING_JWT:?WALINE_STAGING_JWT is required}
     volumes:
       - '${WWW_ROOT:?set an absolute host WWW_ROOT}:/var/www/andy-y.cn:ro'
     networks: [app, data_egress]

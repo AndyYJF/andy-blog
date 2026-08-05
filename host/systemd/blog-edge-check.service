@@ -1,0 +1,14 @@
+[Unit]
+Description=Andy blog edge-pending / cert expiry check
+After=network-online.target
+
+[Service]
+Type=oneshot
+User=deploy
+Group=deploy
+Environment=WWW_ROOT=/var/www/andy-y.cn
+Environment=COMPOSE_DIR=/var/www/andy-blog
+Environment=STATE_DIR=/var/www/andy-y.cn/state
+ExecStart=/var/www/andy-blog/host/check-edge-pending.sh
+# not-configured / edge-pending alerts exit 71 until webhook is wired
+SuccessExitStatus=71

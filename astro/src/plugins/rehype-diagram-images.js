@@ -5,10 +5,18 @@ export function rehypeDiagramImages() {
     visit(tree, 'element', (node) => {
       if (node.tagName !== 'img') return;
       const raw = node.properties?.className ?? [];
-      const classes = Array.isArray(raw) ? raw.map(String) : String(raw).split(/\s+/);
+      const classes = Array.isArray(raw) ? raw.map(String) : String(raw).split(/\s+/).filter(Boolean);
       if (!classes.some((name) => name === 'beoe-light' || name === 'beoe-dark')) return;
-      node.properties.loading = 'lazy';
-      node.properties.decoding = 'async';
+      const label = classes.includes('beoe-dark')
+        ? 'Mermaid diagram (dark theme)'
+        : 'Mermaid diagram (light theme)';
+      node.properties = {
+        ...node.properties,
+        loading: 'lazy',
+        decoding: 'async',
+        alt: label,
+        ariaLabel: label,
+      };
     });
   };
 }

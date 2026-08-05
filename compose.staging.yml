@@ -1,0 +1,39 @@
+# Staging override — only with:
+#   docker compose -f compose.yml -f compose.staging.yml --profile staging up -d
+# Do not load on production without new.andy-y.cn cert + candidate symlink ready.
+name: andy-blog
+
+services:
+  nginx:
+    depends_on:
+      - typecho
+      - waline
+      - waline-staging
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+      - ./nginx/staging-loader.conf:/etc/nginx/conf.d/90-staging-loader.conf:ro
+      - ./typecho:/var/www/typecho:ro
+      - '${WWW_ROOT:?set an absolute host WWW_ROOT}:/var/www/andy-y.cn:ro'
+      - /etc/letsencrypt:/etc/letsencrypt:ro
+
+  waline-staging:
+    profiles: [staging]
+    restart: unless-stopped
+    expose: ['8360']
+    volumes:
+      - '${WWW_ROOT:?set an absolute host WWW_ROOT}:/var/www/andy-y.cn:ro'
+    environment:
+      TZ: Asia/Shanghai
+      SITE_NAME: andy-y.cn staging
+      SITE_URL: https://new.andy-y.cn
+      SERVER_URL: https://new.andy-y.cn
+      SECURE_DOMAINS: new.andy-y.cn
+      COMMENT_POLICY_FILE: /var/www/andy-y.cn/candidate/comment-policy.staging.json
+      JWT_TOKEN: ${WALINE_STAGING_JWT:?WALINE_STAGING_JWT is required}
+      MYSQL_HOST: ${WALINE_STAGING_MYSQL_HOST:?WALINE_STAGING_MYSQL_HOST}
+      MYSQL_PORT: ${WALINE_STAGING_MYSQL_PORT:-3306}
+      MYSQL_DB: ${WALINE_STAGING_MYSQL_DB:?WALINE_STAGING_MYSQL_DB}
+      MYSQL_USER: ${WALINE_STAGING_MYSQL_USER:?WALINE_STAGING_MYSQL_USER}
+      MYSQL_PASSWORD: ${WALINE_STAGING_MYSQL_PASSWORD:?WALINE_STAGING_MYSQL_PASSWORD}
+      MYSQL_PREFIX: wl_
+    networks: [app, data_egress]

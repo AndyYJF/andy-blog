@@ -1,0 +1,15 @@
+[Unit]
+Description=Andy blog rebuild failure alert
+After=network-online.target
+
+[Service]
+Type=oneshot
+User=deploy
+Group=deploy
+Environment=WWW_ROOT=/var/www/andy-y.cn
+Environment=COMPOSE_DIR=/var/www/andy-blog
+Environment=RUNTIME_DIR=/var/www/andy-blog/runtime/build
+Environment=STATE_DIR=/var/www/andy-y.cn/state
+# Exit 71 when ALERT_WEBHOOK_URL unset is expected until notifier is wired.
+ExecStart=/var/www/andy-blog/host/alert-on-failure.sh build-failure
+SuccessExitStatus=71

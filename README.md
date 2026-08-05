@@ -99,6 +99,28 @@ npm --prefix astro run preview -- --host 127.0.0.1 --port 4321
 
 Never commit secrets or `backups/`.
 
+## Stage 9
+
+**Status: in-repo deploy scaffold (compose staging, new.andy-y.cn vhost, gates). Live VPS drills need write authorization.**
+
+See `docs/baselines/reports/stage9-gates.md` and `stage9-staging-enable.md`.
+
+```powershell
+npm install
+$env:SKIP_LIGHTHOUSE = "1"   # omit after build if you want LHCI budgets enforced
+$env:SKIP_CDN_PROBE = "1"    # default in gate; set "0" for live dual-edge hash probe
+npm run stage9:gate
+
+# After npm run build — Lighthouse Perf≥95 / SEO 100 / A11y≥95 against astro/dist:
+npm run lighthouse:local
+
+# Optional read-only dual CDN probe (direct + 127.0.0.1:7892):
+$env:SKIP_CDN_PROBE = "0"; npm run cdn:probe
+```
+
+Staging preview (`new.andy-y.cn`) enable order on the host is documented in
+`docs/baselines/reports/stage9-staging-enable.md`. Do not cut www DNS here (Stage 10).
+
 ## Rules
 
 - Production SSH/MySQL: SELECT / dump / file pull only. No writes, restarts, or config changes.

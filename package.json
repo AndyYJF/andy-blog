@@ -20,6 +20,9 @@
     "stage7:gate": "node scripts/stage7-gate.js",
     "stage8:audit": "node scripts/stage8-audit.js",
     "stage8:gate": "node scripts/stage8-gate.js",
+    "stage9:gate": "node scripts/stage9-gate.js",
+    "lighthouse:local": "node scripts/lighthouse-gate.js",
+    "cdn:probe": "node scripts/probe-dual-cdn.js",
     "friends:extract": "python scripts/extract-joe-friends.py",
     "comments:migrate": "node scripts/migrate-comments.js --epoch 1785565762 --backend memory --twice",
     "build": "npm run sync && npm run legacy:map && npm run nginx:302 && npm --prefix astro run build && npm run render:gate && npm run rss:gate && npm run stage4:gate && npm run stage6:gate && npm run stage7:gate && npm run stage8:gate"
@@ -30,6 +33,8 @@
     "slugify": "^1.6.9"
   },
   "devDependencies": {
+    "chrome-launcher": "^1.2.1",
+    "lighthouse": "^13.4.1",
     "pagefind": "^1.5.2"
   }
 }

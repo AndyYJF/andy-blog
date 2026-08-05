@@ -1,0 +1,9 @@
+[Unit]
+Description=Periodic edge-pending and cert expiry check
+
+[Timer]
+OnCalendar=hourly
+Persistent=true
+
+[Install]
+WantedBy=timers.target

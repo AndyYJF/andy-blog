@@ -18,6 +18,9 @@ id_ed25519*
 node_modules/
 dist/
 .astro/
+.lighthouseci/
+docs/baselines/reports/lighthouse/
+!docs/baselines/reports/lighthouse/summary.json
 public/beoe/
 astro/public/beoe/
 

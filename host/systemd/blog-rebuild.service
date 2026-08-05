@@ -2,7 +2,7 @@
 Description=Andy blog rebuild (consume durable pending/dirty)
 After=network-online.target docker.service
 Wants=network-online.target
-# Serialize: never overlap rebuilds; dirty flag covers mid-build events.
+OnFailure=blog-rebuild-failure.service
 RefuseManualStart=false
 
 [Service]
