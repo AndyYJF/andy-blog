@@ -9,7 +9,7 @@
 - Production invariant remains `302 + comment-write-mode=enabled`; 301 is prohibited.
 - This status block supersedes the stale Phase 12-15 rows later in this historical table.
 - Immediate operational follow-up is scoped Docker disk reclamation planning: root is `97%` used, and rollback images/releases must be identified before any prune.
-- Phase 16 (comments admin API-origin repair): completed; admin UI now uses `comments.andy-y.cn/api/`, with comments-vhost-only backup/test/reload and preserved production invariants.
+- Phase 16 (comments admin API-origin repair): completed; `/ui/` preserves public `SITE_URL` and rewrites only `window.serverURL` to the protected comments API origin.
 
 ## Goal
 
