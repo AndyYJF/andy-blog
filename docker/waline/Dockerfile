@@ -8,7 +8,7 @@ FROM ${NODE_BASE_IMAGE}
 WORKDIR /app
 COPY package.json ./
 COPY policy.js server-path.js server.js entrypoint.sh ./
-RUN chmod +x entrypoint.sh
+RUN sed -i 's/\r$//' entrypoint.sh && chmod +x entrypoint.sh
 # Re-export upstream waline CLI if present; entrypoint starts both processes.
 COPY --from=upstream /app /waline
 COPY waline-config.cjs /waline/node_modules/@waline/vercel/config.js

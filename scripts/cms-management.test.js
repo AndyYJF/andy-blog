@@ -75,5 +75,6 @@ test('Waline management uses the direct upstream only on a loopback host port', 
   const dockerfile = read('docker/waline/Dockerfile');
   const compose = read('compose.1panel-production.yml');
   assert.match(dockerfile, /EXPOSE 8360 8361/);
+  assert.match(dockerfile, /sed -i 's\/\\\\r\$\/\/' entrypoint\.sh/);
   assert.match(compose, /127\.0\.0\.1:\$\{WALINE_ADMIN_HOST_PORT:-8362\}:8361/);
 });
