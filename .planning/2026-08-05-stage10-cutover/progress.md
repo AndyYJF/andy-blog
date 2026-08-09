@@ -2,6 +2,9 @@
 
 ## 2026-08-09 production CMS/comment management deployment
 
+- Comments admin API-origin repair attempt 1 timed out during full UI-body verification after reload; the rollback trap restored the original comments vhost, and unauthenticated `/ui/` remained HTTP 401. No www, Waline, database, release, or deploy-state change occurred. Retry will use a bounded file-based response check.
+- Direct retry showed `openresty -t` and reload succeeded, but the immediate first UI fetch still contained the old public API URL and triggered rollback. The direct upstream is uncompressed `text/html`, and OpenResty includes `http_sub_module`; verification now polls new workers for up to 10 seconds to avoid the reload handover race.
+- Comments admin API-origin repair completed from commit `29bebb9`. The active comments vhost rewrites only the Basic-Auth-protected `/ui/` runtime URL to `https://comments.andy-y.cn/api/`; `openresty -t` and reload passed after new-worker polling. Backup: `/opt/1panel/www/conf.d/comments.andy-y.cn.conf.bak-comments-api-20260809T130616Z`. Production release `20260809T123758Z-f7d863f2`, 302/enabled state, www config hash, and Waline container identity remained unchanged.
 - Deployment PASS from source/control-plane commit `7aca145`; production current is `20260809T123758Z-f7d863f2`, previous is `20260809T102318Z-1db1021e`.
 - Invariants preserved: `redirect-status=302`, `comment-write-mode=enabled`; no 301, CDN purge, staging change, repository nginx, MySQL restart, or comment deletion.
 - `cms.andy-y.cn` Typecho admin and `comments.andy-y.cn` Waline admin are installed behind separate HTTP Basic Auth boundaries (`401` unauthenticated; authenticated origin checks passed).
