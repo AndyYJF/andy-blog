@@ -10,6 +10,7 @@
 - This status block supersedes the stale Phase 12-15 rows later in this historical table.
 - Immediate operational follow-up is scoped Docker disk reclamation planning: root is `97%` used, and rollback images/releases must be identified before any prune.
 - Phase 16 (comments admin API-origin repair): completed; comments-domain HTTP Basic removed, Waline login retained, registration POSTs permanently rejected, and other unauthenticated API writes denied.
+- Phase 17 (production comment moderation): completed; production Waline runs healthy with `COMMENT_AUDIT=true`, so new comments require approval before display.
 
 ## Goal
 

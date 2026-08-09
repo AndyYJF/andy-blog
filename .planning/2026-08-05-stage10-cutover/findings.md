@@ -152,6 +152,7 @@
 - The remaining loop was an independent authorization-layer collision. Access logs show successful Basic-authenticated `/ui/` and `/api/token` login followed immediately by 401 responses for Bearer-authenticated `/api/comment`; a read-only probe confirmed Bearer requests receive OpenResty's `WWW-Authenticate: Basic` response before reaching Waline.
 - Owner selected the simpler final boundary: remove comments-domain HTTP Basic entirely, retain Waline's inner login, block `POST /api/user` regardless of credentials, and require Bearer for every other state-changing API request except token login.
 - Commit `95a6d9a` implements the final boundary. Origin and public-path verification both returned `/ui/` 200 with no `WWW-Authenticate`; public `POST /api/user` returned 403. OpenResty config test/reload and production invariants passed without changing release, 302/enabled state, www config, Waline container, or data.
+- Production moderation is now explicit in Compose as `COMMENT_AUDIT=true` (`f5d5f03`). Only `andy-blog-waline-waline-1` was recreated with the existing image and no dependencies; runtime env, healthcheck, and known-key GET passed. No synthetic comment was posted, so verification introduced no comment row.
 
 ## 2026-08-09 Phase 9a local package
 
