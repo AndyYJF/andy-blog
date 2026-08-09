@@ -76,3 +76,4 @@
 - 2026-08-09：修正为精确绝对 Location 后，第二次只读 preflight 在工具检查处 fail-closed：VPS host 有 Node 但缺 `npm`。仍早于任何生产写入。为避免安装软件或操作容器，构建路径改为“远端 Typecho 只读 fresh snapshot → 本机 clean checkout + 现有 Node/npm → 上传精确制品”；凭证不输出、不落盘。
 - 2026-08-09：fresh snapshot 首个实现错误引用远端不存在的 `/var/www/andy-blog/node_modules/mysql2`，只读脚本在查询前失败；改为 MySQL 8 原生 JSON 聚合。随后两次新 SSH 连接分别在 15s/30s banner exchange 超时，远端脚本均未开始；未发生生产写入。后续减少为 snapshot 一次会话和部署前一次最小 preflight。
 - 2026-08-09：第三次 snapshot SSH 仍在 30s banner exchange 超时；未执行远端脚本。首次本地 Bash 语法检查因硬编码错误的 Git 安装路径失败，改用 `Get-Command bash` 找到 `C:\App\Git\bin\bash.exe` 后两份远端 helper `bash -n` PASS。生产仍为未变更状态。
+- 2026-08-09：冷却并完成本地最小执行入口后，第四次 SSH 仍在 30s banner exchange 超时，远端 snapshot 脚本未开始。停止继续打连接；当前唯一阻塞为 VPN/SSH 通道。Phase 9c 未产生任何备份、状态跃迁、release、POST 或其它生产写入。
