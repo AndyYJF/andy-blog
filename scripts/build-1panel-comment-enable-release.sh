@@ -59,8 +59,8 @@ cp .cache/comment-policy.json "$release_dir/comment-policy.json"
 printf '%s\n' "$release_id" > "$release_dir/site/release-id.txt"
 
 source_head="$(git -C "$root" rev-parse HEAD)"
-cp host/transition-deploy-state.sh "$package_root/meta/transition-deploy-state.sh"
-cp scripts/phase9c-validate-release.js "$package_root/meta/phase9c-validate-release.mjs"
+git show HEAD:host/transition-deploy-state.sh > "$package_root/meta/transition-deploy-state.sh"
+git show HEAD:scripts/phase9c-validate-release.js > "$package_root/meta/phase9c-validate-release.mjs"
 node - "$package_root/meta/deployment.json" "$release_id" "$expected_current" "$snapshot_epoch" "$source_head" <<'NODE'
 const fs = require('fs');
 const [,, output, releaseId, previousReleaseId, snapshotEpoch, sourceHead] = process.argv;

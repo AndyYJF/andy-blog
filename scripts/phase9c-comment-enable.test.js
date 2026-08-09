@@ -87,6 +87,7 @@ test('Phase 9c builder is fixed to 302 + enabled and an external artifact path',
   assert.match(script, /build_drift.*diff --name-only/s);
   assert.match(script, /astro\/src\/generated\/release-state\.ts/);
   assert.match(script, /nginx\/release-manifest\.json/);
+  assert.match(script, /git show HEAD:host\/transition-deploy-state\.sh/);
   assert.match(script, /git -C "\$root" status --porcelain\)"/);
   assert.doesNotMatch(script, /--status 301|redirect-status 301/);
 });
