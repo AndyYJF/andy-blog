@@ -4,14 +4,19 @@
 FROM node:22.14.0-bookworm
 
 ENV PLAYWRIGHT_BROWSERS_PATH=/ms-playwright
+ENV NPM_CONFIG_REGISTRY=https://registry.npmmirror.com \
+  NPM_CONFIG_FETCH_RETRIES=5 \
+  NPM_CONFIG_FETCH_RETRY_MINTIMEOUT=20000 \
+  NPM_CONFIG_FETCH_RETRY_MAXTIMEOUT=120000 \
+  PLAYWRIGHT_DOWNLOAD_HOST=https://npmmirror.com/mirrors/playwright \
+  PLAYWRIGHT_DOWNLOAD_CONNECTION_TIMEOUT=120000
 WORKDIR /app
 
 COPY package.json package-lock.json ./
 COPY astro/package.json astro/package-lock.json ./astro/
-RUN npm ci \
-  && npm --prefix astro ci \
-  && cd astro \
-  && npx playwright install --with-deps chromium
+RUN --mount=type=cache,target=/root/.npm npm ci --no-audit --no-fund
+RUN --mount=type=cache,target=/root/.npm npm --prefix astro ci --no-audit --no-fund
+RUN cd astro && npx playwright install --with-deps chromium
 
 COPY --chown=node:node . .
 RUN mkdir -p /app/.cache /app/astro/.cache /runtime/build \
