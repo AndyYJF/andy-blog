@@ -48,6 +48,12 @@ test('automatic publishing preserves current production transition state', () =>
   assert.match(switcher, /cmp -s .*release-http\.conf/);
   assert.doesNotMatch(`${rebuild}\n${switcher}`, /cdn-purge|nginx -s reload|return 301/);
   assert.doesNotMatch(releaseBuild, /node scripts\/migrate-comments/);
+  const executableModes = execFileSync('git', [
+    'ls-files', '--stage', '--',
+    'host/blog-rebuild-1panel.sh',
+    'host/switch-release-1panel.sh',
+  ], { cwd: ROOT, encoding: 'utf8' });
+  assert.equal(executableModes.trim().split('\n').every((line) => line.startsWith('100755 ')), true);
 });
 
 test('Typecho webhook target and secret fallback are fail-closed', () => {
