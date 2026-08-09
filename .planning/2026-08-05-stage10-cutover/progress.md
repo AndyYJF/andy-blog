@@ -77,3 +77,4 @@
 - 2026-08-09：fresh snapshot 首个实现错误引用远端不存在的 `/var/www/andy-blog/node_modules/mysql2`，只读脚本在查询前失败；改为 MySQL 8 原生 JSON 聚合。随后两次新 SSH 连接分别在 15s/30s banner exchange 超时，远端脚本均未开始；未发生生产写入。后续减少为 snapshot 一次会话和部署前一次最小 preflight。
 - 2026-08-09：第三次 snapshot SSH 仍在 30s banner exchange 超时；未执行远端脚本。首次本地 Bash 语法检查因硬编码错误的 Git 安装路径失败，改用 `Get-Command bash` 找到 `C:\App\Git\bin\bash.exe` 后两份远端 helper `bash -n` PASS。生产仍为未变更状态。
 - 2026-08-09：冷却并完成本地最小执行入口后，第四次 SSH 仍在 30s banner exchange 超时，远端 snapshot 脚本未开始。停止继续打连接；当前唯一阻塞为 VPN/SSH 通道。Phase 9c 未产生任何备份、状态跃迁、release、POST 或其它生产写入。
+- 2026-08-09：按 owner 要求继续 SSH：直连 IPv4 60s、经本地 7892 的 SOCKS/HTTP CONNECT 各 30s、最终直连 120s 均在 banner exchange 超时；所有尝试都早于认证和远端脚本执行。停止重复尝试，等待 VPS sshd/安全策略或网络通道恢复。
