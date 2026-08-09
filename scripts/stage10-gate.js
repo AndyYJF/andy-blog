@@ -41,6 +41,9 @@ for (const rel of [
   'scripts/typecho-comment-export.test.js',
   'scripts/typecho-comment-readonly-guard.test.js',
   'host/install-typecho-comment-readonly-guard.sh',
+  'host/enable-production-comments-1panel.sh',
+  'scripts/build-1panel-comment-enable-release.sh',
+  'scripts/phase9c-validate-release.js',
   'compose.1panel-production.yml',
   'compose.1panel-staging.yml',
   'docs/baselines/reports/stage10-www-cutover.md',
@@ -48,6 +51,7 @@ for (const rel of [
   'docs/baselines/reports/stage10-302-observation-window.md',
   'docs/baselines/reports/stage10-production-waline-readiness-authorization.md',
   'docs/baselines/reports/stage10-comment-migration-authorization.md',
+  'docs/baselines/reports/stage10-comment-enable-authorization.md',
   'docs/baselines/reports/stage9-staging-enable.md',
 ]) {
   check(exists(rel), `missing ${rel}`);
@@ -178,6 +182,32 @@ check(
 check(commentMigrationAuthorization.includes('Stop. Do not enable comments'), 'Phase 9b must stop before comment enable');
 check(commentMigrationAuthorization.includes('no staging database/container read, write, merge, restart, or migration'), 'Phase 9b must preserve staging isolation');
 check(commentMigrationAuthorization.includes('no CDN purge'), 'Phase 9b must exclude CDN purge');
+
+const commentEnableAuthorization = read('docs/baselines/reports/stage10-comment-enable-authorization.md');
+check(
+  /\*\*Status:\*\* `(AWAITING_OWNER_AUTHORIZATION|AUTHORIZED_PHASE9C|PHASE9C_COMPLETE|ROLLED_BACK)`/.test(
+    commentEnableAuthorization,
+  ),
+  'Phase 9c report must use a recognized authorization state',
+);
+check(commentEnableAuthorization.includes('redirect-status=302'), 'Phase 9c must preserve redirect 302');
+check(commentEnableAuthorization.includes('entry-not-writable'), 'Phase 9c must test the selected closed key');
+check(commentEnableAuthorization.includes('unknown-key'), 'Phase 9c must test an unknown key separately');
+check(/one\s+retained\s+open-key\s+POST/.test(commentEnableAuthorization), 'Phase 9c must disclose its one retained production write');
+check(commentEnableAuthorization.includes('no CDN purge'), 'Phase 9c must exclude CDN purge');
+check(commentEnableAuthorization.includes('no OpenResty configuration write/reload'), 'Phase 9c must preserve 1Panel OpenResty');
+check(commentEnableAuthorization.includes('no staging database/container/site read'), 'Phase 9c must preserve staging isolation');
+
+const phase9cRunner = read('host/enable-production-comments-1panel.sh');
+check(phase9cRunner.includes('transition_script" comment-write-mode enabled'), 'Phase 9c must use the state transition script');
+check(phase9cRunner.includes('transition_script" comment-write-mode disabled'), 'Phase 9c failure must transition back to disabled');
+check(phase9cRunner.includes('entry-not-writable'), 'Phase 9c runner must assert closed-key denial');
+check(phase9cRunner.includes('unknown-key'), 'Phase 9c runner must assert unknown-key denial');
+check(!/docker compose|cdn-purge|redirect-status 301|openresty.+reload|waline_staging/i.test(phase9cRunner), 'Phase 9c runner escaped its 1Panel scope');
+
+const phase9cBuilder = read('scripts/build-1panel-comment-enable-release.sh');
+check(phase9cBuilder.includes("REDIRECT_STATUS='302' COMMENT_WRITE_MODE='enabled'"), 'Phase 9c builder must be fixed to 302 + enabled');
+check(!/--status 301|redirect-status 301/.test(phase9cBuilder), 'Phase 9c builder must not create a 301 release');
 
 // --- generate www cutover + 1Panel adapter ---
 const outNginx = path.join(ROOT, '.cache', 'stage10-nginx');

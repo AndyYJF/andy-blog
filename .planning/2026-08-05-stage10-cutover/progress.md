@@ -64,3 +64,8 @@
 - 2026-08-09T08:57:19Z：Phase 9b 双库预变更备份完成并通过 gzip/SHA-256；evidence `/root/stage10-comments/20260809T085719Z-phase9b`。随后仅 CID 47 `allowComment 1→0`，安装三条永久 BEFORE 只读 guard，三类真实写探针均被阻断；Typecho 保持运行。
 - 2026-08-09T09:02:13Z：双固定导出 byte-identical（2 rows，SHA-256 `d770ca7f...2f875a9`）；production Waline dry-run clean，apply 插入 2，内置第二遍 no-op；独立第二次 apply 为 0/0/0，最终 2 mappings / 2 comments / zero-diff。未执行 sweep、POST、comment enable、release/OpenResty、staging、purge 或 301。
 - 2026-08-09：补强逐列证据后确认 Typecho 19 列中仅 CID47 `allowComment` 变化，其余内容行完全一致；最终 read-only 检查 Waline loopback/public GET=200、`/__release` 匹配、`/admin/`=404、302/disabled 不变。观察窗仍有 public CDN legacy=200 与 origin=302 不一致，301 继续禁止。
+- 2026-08-09：开始 Phase 9c-prep 本地阶段；重新读取 planning、`docs/prompts` 约束、`docs/plan.md` §8.5、www cutover runbook 和状态/回滚脚本。当前未获得 comment enable 新授权，不连接或修改 VPS；先补齐 state/build/switch 失败恢复与真实 open/closed-key 验收边界。
+- 2026-08-09：首次 release-pipeline 盘点脚本在 PowerShell 解析多个括号化参数时失败，未执行仓库查询；改为先构造 `$targets` 数组再 splat，避免重复同一语法错误。
+- 2026-08-09：POST-contract 盘点脚本又触发相同的 PowerShell 括号参数解析错误；该错误发生在查询前。修正为统一 `$targets` splat，并将后续多路径 `rg` 脚本固定采用此写法。
+- 2026-08-09：Phase 9c-prep 首轮本地验证：两份 Bash `-n` 与 Node syntax PASS，新增 Phase 9c 测试后 `comments:test` 25/25 PASS；`stage10:gate` 仅因授权文档短语跨 Markdown 换行而字面匹配失败。修正为跨空白正则后重跑，不放宽授权语义。
+- 2026-08-09：Phase 9c-prep 收口：解包 validator 改用 `.mjs`，早期失败仅在 evidence 目录就绪后写回滚证据；builder 在构建前后均要求包含 untracked files 在内的完整 clean worktree。授权包明确唯一一次保留的 open-key 标记 POST、两次 403 探针、自动回到 disabled release 及全部排除项；尚未连接或修改 VPS。

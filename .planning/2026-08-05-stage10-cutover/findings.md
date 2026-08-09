@@ -2,6 +2,15 @@
 
 ## 2026-08-09 local review
 
+- §8.5 明确规定 Phase 9c 顺序：评论停写与最终对账为 0 后，先受控跃迁 `comment-write-mode enabled`，再构建/切换独立 release，最后运行时验证开放 key 可写且关闭 key 仍拒绝；301 必须继续作为另一独立 release。
+- 当前 Phase 9b 已满足前半段，但 Phase 9c 仍有两个执行设计点必须在授权包中闭合：一是 state 已跃迁而 build/switch 失败时如何恢复 disabled；二是真实开放-key POST 会写入生产 Waline，必须明确限定唯一测试 marker、精确清理与前后计数对账，不能把 400/静态检查冒充“可写”。
+- 当前生产 `previous` 在先前只读证据中缺失；Phase 9c runner 必须验证新 release switch 会原子建立可用 previous，且失败分支不能依赖一个执行前不存在的静态 rollback symlink。
+- 仓库通用 `host/blog-rebuild.sh` / `host/switch-release.sh` 依赖 base `compose.yml` 的 nginx 容器并会调用 `docker compose exec nginx`；这与生产 1Panel OpenResty 拓扑不兼容，Phase 9c 不得直接运行它们。必须沿用已验证的 1Panel build/upload/atomic symlink adapter，或新增专用 1Panel runner。
+- `scripts/build-release.sh` 会从当前 Typecho snapshot 重新生成 manifest/comment policy，因此 Phase 9c release 才能把 CID47 的新 `allowComment=false` 固化进去；只改 host state 而复用旧 release 会让 policy 仍是旧值，不能启用。
+- 通用 rebuild 在 switch 后无条件调用未实现的 `cdn-purge.sh`，可能在 release 已切换后 exit 71；Phase 9c 明确排除 purge 时，执行包必须把“已切换但 purge 失败”与“切换失败”分开，不能把 exit 71 当作自动回滚依据。
+- Stage 9 的已验证 1Panel 发布路径不是服务器自构建，而是本机生成完整 immutable release tar、上传后在目标站点 release 目录解包并原子更新相对 symlink；旧的本机 helper 仍在 `C:\Users\AndyYan\Desktop\codex`，可作为结构参考，但必须基于当前 HEAD/Typecho snapshot 重新构建，不能复用 2026-08-05 产物。
+- `stage10-comment-cutover-plan.md` 明确要求 open-key 真 POST 并把新 native Waline row 与 Typecho mapping 分开记录；正常 rollback 不删除启用后 native comments。授权包应默认保留一条清晰标记的验收评论，而不是擅自直删；若 owner 希望清理，必须把精确清理另列授权。
+- 仓库只有 wrapper policy 单元/假 upstream 覆盖，没有固定 Waline 1.41.3 真实 POST response schema 的生产 probe；Phase 9c 不能只解析响应中的假定 `id`。更稳的验收是：唯一 marker + open canonical URL 发一次 POST，随后用生产 DB 精确查 marker 行为 1、Typecho mappings 仍为 2、native count 增加 1，并保存去 PII 的计数/ID 摘要。
 - Phase 9b preflight 发现 Typecho `typecho_contents.slug` 对 CID 47 的真实值是 `47`，不是 Astro canonical slug；canonical closed key 仍按 `data/route-map.json` 和 owner 确认使用 `/posts/typecho-joe-mermaid/`。源端写入断言必须锁定 `cid=47/type=post/status=publish/slug=47/allowComment=1`，仅把最后一列改为 0。
 - Phase 9b 已完成且无需 scoped sweep：源固定快照含 coid 6（waiting，CID47 canonical）和 coid 11（approved，Stable Diffusion canonical），所以“2 条迁移评论都属于 closed key”是假设错误；最终必须按 route-map 逐条对账，而非只数 closed-key URL。
 - 初次用普通 `grep` 过滤 Typecho 全行 TSV 时因二进制字段触发 `binary file matches`，两个空/提示文件可能造成假相等。生产后验改为 `grep -a` 加 Node 逐列比较，并证明 19 列中仅 CID47 `allowComment 1→0`；后续证据不得把普通 grep 的 binary 结果当 PASS。

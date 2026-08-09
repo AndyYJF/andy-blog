@@ -21,6 +21,7 @@
 | 9a | Phase 9 停写/固定导出/迁移执行包与授权边界（本机） | completed |
 | 9b | （已授权）VPS 评论停写、迁移 apply 与零差异对账 | completed |
 | 9c | （再授权）comment-write-mode enabled 独立 release | pending |
+| 9c-prep | Phase 9c 授权包、fail-closed runner 与回滚/验收门禁（本机） | completed |
 | 10 | 302 观察窗清单与证据模板（至少至 2026-08-12） | completed |
 | 11 | 301 独立 release（观察窗满足前禁止执行） | pending |
 
@@ -43,3 +44,5 @@
 - 2026-08-09 owner 已授权 Phase 8b：仅 production `waline` 备份、reviewed schema、生产 Waline healthcheck/必要单容器重建、只读 GET/状态验证；排除 Typecho 停写/迁移 apply/评论启用/OpenResty/release/purge/301。
 - 2026-08-09 owner 已追加窄授权：仅将既有 `waline`@`%` 以原密码切换为 `mysql_native_password`；不改 grants、不打印或落盘密码、不重启 MySQL；known-key GET 非 200 时自动恢复 `caching_sha2_password`。成功后仅继续既有 Phase 8b healthcheck 与 production Waline 单容器重建授权。
 - 2026-08-09 owner 已确认 `/posts/typecho-joe-mermaid/`（CID 47）为真实 closed key，并授权 Phase 9b：备份 Typecho/production Waline、仅 CID 47 `allowComment=0`、永久评论表只读 guard、双快照、dry-run，干净后 apply/按需 scoped sweep/双遍零差异对账。排除评论启用、release/OpenResty、staging、POST、purge、301。
+- Phase 9c-prep 只在本地形成执行包；未获得新的 owner 授权前，不运行 state transition、rebuild/switch、生产 POST、OpenResty reload、purge 或 301。
+- Phase 9c-prep 已完成：candidate builder 在构建前后均要求完整 clean worktree，release validator 固定 302/enabled/唯一 closed key，1Panel runner 具备备份、原子切换、三类 POST 验收与 disabled-release 自动回滚；Phase 9c 仍等待 owner 单独授权。
