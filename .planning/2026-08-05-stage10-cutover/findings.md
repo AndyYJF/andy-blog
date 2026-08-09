@@ -149,6 +149,9 @@
 - OpenResty reload handover briefly served an old worker during immediate verification. Bounded polling confirmed the new worker response before accepting the deployment.
 - Follow-up login exposed that the first `sub_filter` was too broad: it also changed Waline's `window.SITE_URL`, so post-login navigation treated `/ui/` as the public site and repeated the Basic Auth boundary. The correction must rewrite only the exact `window.serverURL` assignment and preserve `window.SITE_URL = "https://www.andy-y.cn"`.
 - Commit `bbb5a07` narrowed the generator and test contract to the exact `window.serverURL` assignment. Runtime verification after reload confirmed `window.SITE_URL = "https://www.andy-y.cn"` and `window.serverURL = 'https://comments.andy-y.cn/api/'` simultaneously; release, 302/enabled state, www config hash, and Waline container identity were unchanged.
+- The remaining loop was an independent authorization-layer collision. Access logs show successful Basic-authenticated `/ui/` and `/api/token` login followed immediately by 401 responses for Bearer-authenticated `/api/comment`; a read-only probe confirmed Bearer requests receive OpenResty's `WWW-Authenticate: Basic` response before reaching Waline.
+- Owner selected the simpler final boundary: remove comments-domain HTTP Basic entirely, retain Waline's inner login, block `POST /api/user` regardless of credentials, and require Bearer for every other state-changing API request except token login.
+- Commit `95a6d9a` implements the final boundary. Origin and public-path verification both returned `/ui/` 200 with no `WWW-Authenticate`; public `POST /api/user` returned 403. OpenResty config test/reload and production invariants passed without changing release, 302/enabled state, www config, Waline container, or data.
 
 ## 2026-08-09 Phase 9a local package
 
