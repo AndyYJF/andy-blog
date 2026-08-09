@@ -26,6 +26,8 @@
     "cdn:probe": "node scripts/probe-dual-cdn.js",
     "friends:extract": "python scripts/extract-joe-friends.py",
     "comments:migrate": "node scripts/migrate-comments.js --epoch 1785565762 --backend memory --twice",
+    "comments:mysql": "node scripts/migrate-comments-mysql.js",
+    "comments:test": "node --test scripts/comment-migration-core.test.js scripts/comment-migration-mysql.test.js scripts/comment-migration-cli.test.js",
     "build": "npm run sync && npm run legacy:map && npm run nginx:302 && npm --prefix astro run build && npm run render:gate && npm run rss:gate && npm run stage4:gate && npm run stage6:gate && npm run stage7:gate && npm run stage8:gate"
   },
   "dependencies": {

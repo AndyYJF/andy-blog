@@ -14,6 +14,13 @@
 | 4 | Stage 10 gate + cutover runbook | completed |
 | 5 | 本机 gate 验收；记录 VPS 实操阻塞项 | completed |
 | 6 | （需授权）VPS 实切 www — 首次 302/comments-disabled | completed |
+| 7 | 评论停写 / 迁移 / 对账方案与生产缺口盘点（本机） | completed |
+| 8a | （已授权）VPS 只读 preflight：拓扑、release/state、schema 识别 | completed |
+| 8 | 补齐并验证生产 MySQL 迁移 / 对账工具（本机） | completed |
+| 8b | （已授权）production Waline readiness：备份/schema/healthcheck/GET | in_progress |
+| 9 | （需授权）VPS 评论停写、迁移、零差异对账与独立启用 release | pending |
+| 10 | 302 观察窗清单与证据模板（至少至 2026-08-12） | completed |
+| 11 | 301 独立 release（观察窗满足前禁止执行） | pending |
 
 ## Success criteria (plan)
 
@@ -23,3 +30,12 @@
 - 评论最终对账为 0；启用前全局 POST=403；启用后仅开放 key 可写
 - release / action-map / sitemap / 部署状态版本一致
 - 回滚覆盖 release、map、双 CDN、评论去向
+
+## Current constraints
+
+- 不启动仓库 `compose.yml` 的 Nginx；生产 80/443 由 1Panel OpenResty 管理。
+- 不在普通 rebuild 中修改 `redirect-status` 或 `comment-write-mode`；状态只能由 `transition-deploy-state.sh` 跃迁并打独立 release。
+- 2026-08-09 已授权对 `root@139.224.71.200` 执行只读 preflight；不包含停写、备份、迁移、SQL 写入、状态跃迁、release 切换、POST、purge 或 301。
+- 当前阶段禁止切 301；观察窗至少到 2026-08-12，且仍需 legacy/action 与双 CDN 证据。
+- Phase 8 已完成本地实现与假连接隔离验证；未在真实 MySQL 或 VPS Compose 上运行。下一步只可在 owner 单独授权后执行 production Waline readiness 修复，且与停写/迁移授权分离。
+- 2026-08-09 owner 已授权 Phase 8b：仅 production `waline` 备份、reviewed schema、生产 Waline healthcheck/必要单容器重建、只读 GET/状态验证；排除 Typecho 停写/迁移 apply/评论启用/OpenResty/release/purge/301。

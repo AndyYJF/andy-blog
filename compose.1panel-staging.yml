@@ -38,8 +38,9 @@ services:
         - node
         - -e
         - >-
-          fetch('http://127.0.0.1:8360/api/comment?path=%2F').then(r =>
-          process.exit(r.status < 500 ? 0 : 1)).catch(() => process.exit(1))
+          fetch('http://127.0.0.1:8360/api/comment?path=%2Fposts%2Ftypecho-joe-mermaid%2F',
+          {headers:{Origin:'https://new.andy-y.cn',Referer:'https://new.andy-y.cn/posts/typecho-joe-mermaid/'}}).then(r =>
+          process.exit(r.status === 200 ? 0 : 1)).catch(() => process.exit(1))
       interval: 15s
       timeout: 5s
       retries: 8

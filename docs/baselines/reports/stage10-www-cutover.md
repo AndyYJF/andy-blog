@@ -3,6 +3,17 @@
 Follow `docs/plan.md` §8.5. Do **not** skip the observation window or invent `301` /
 `commentWriteMode=enabled` inside ordinary rebuild jobs.
 
+Detailed continuation documents:
+
+- `stage10-comment-cutover-plan.md` — production stop-write, full migration,
+  reconciliation, enable, and authorization boundaries.
+- `stage10-302-observation-window.md` — daily 302 evidence checklist and 301
+  blockers; it does not authorize a 301 transition.
+- `stage10-vps-readonly-preflight-2026-08-09.md` — sanitized live topology,
+  schema, comment-read, rollback, and legacy-cache evidence.
+- `stage10-production-waline-readiness-authorization.md` — proposed bounded
+  schema/read-health repair; status is awaiting owner authorization.
+
 ## Prerequisites
 
 1. Stage 9 `new.andy-y.cn` still healthy (or archived with known-good release).
@@ -43,7 +54,11 @@ Start production Waline (loopback only):
 
 ```bash
 docker compose -f compose.1panel-production.yml up -d
-curl -fsS http://127.0.0.1:8360/api/comment?path=%2F >/dev/null
+curl -fsS \
+  -H 'Origin: https://www.andy-y.cn' \
+  -H 'Referer: https://www.andy-y.cn/' \
+  'http://127.0.0.1:8360/api/comment?path=%2Fposts%2Ftypecho-joe-mermaid%2F' \
+  >/dev/null
 ```
 
 Atomic point `current` at the release (relative symlink). Reload OpenResty.

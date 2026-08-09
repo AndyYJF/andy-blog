@@ -11,3 +11,38 @@
   - Typecho 仍在 `127.0.0.1:8080`（写作入口暂未迁 cms）
 - 2026-08-05：未做：评论迁移启用、301、真实 CDN purge、密码轮换提醒。
 - 2026-08-09：首次提交 planning 笔记时发现仓库未配置 Git 作者身份；未产生提交，待按既有历史作者设置仓库级 identity 后重试。
+- 2026-08-09：按既有提交作者设置仓库级 Git identity；planning 笔记提交为 `e07ed40`，提交后工作树干净。
+- 2026-08-09：开始评论阶段本地盘点；确认迁移算法仅有 memory backend，生产 MySQL 迁移 / 对账和 Typecho 停写仍未实现；本轮尚未连接 VPS。
+- 2026-08-09：核对 comment policy：当前 15/15 key 均可写，无真实关闭 key；将关闭 key 验收列为启用前 owner 决策项，不以 unknown key 伪装通过。
+- 2026-08-09：新增评论切换方案、302 观察窗清单及 Stage 10 gate 约束；首轮 gate 因授权短语跨 Markdown 换行导致字面匹配失败，改为跨空白正则后重试。
+- 2026-08-09：本地 `stage10:gate` 重跑 PASS。首次专用 SSH key 生成脚本在执行 `ssh-keygen` 前被 PowerShell 条件解析阻断，未创建 key；改用显式括号后重试。
+- 2026-08-09：第二次 key 尝试因 PowerShell 丢弃 `-N` 空字符串而在写文件前退出；改用显式 `.cmd` 脚本原样传递参数，且固定目标路径、拒绝覆盖。
+- 2026-08-09：专用 Ed25519 key 创建成功，指纹 `SHA256:vwnla1qxmnwbjhEn9TbpfNG6n9nAMb2ukNBV6cjQ85o`；私钥仅在本机 `.ssh`，未写入仓库。尚未连接 VPS。
+- 2026-08-09：评论切换方案与 302 观察窗清单完成；下一本地缺口是生产 MySQL backend / 对账工具，下一 VPS 步骤仅可在 owner 明确授权后做只读 preflight。
+- 2026-08-09：首次 keypair 校验脚本误把 Windows `ssh-keygen -y` 输出当作纯 Base64，导致本地假 mismatch；改为完整公钥比较后重试。
+- 2026-08-09：公私钥派生比较一致，最终指纹复核通过；`stage10:gate` 再次 PASS，仓库 diff 未包含公钥内容。仍未连接或修改 VPS，redirect 保持 302。
+- 2026-08-09：owner 明确授权使用 `root@139.224.71.200` 执行只读 preflight；授权不含任何写操作、POST 探针或 301。
+- 2026-08-09：VPS 只读 preflight 1 完成；状态仍为 302/disabled，未写生产。发现公网 legacy 200 vs 源站 302 不一致，以及 deploy `previous`/`candidate` 缺失；进入只读缓存与 schema 复查。
+- 2026-08-09：preflight 2 确认阿里 CDN legacy cache HIT 200，正文 hash 等于 canonical target；随后 shell 正则引号错误导致脚本在 SQL 前中止。未写生产，改用仅覆盖未完成项的 2b 脚本。
+- 2026-08-09：preflight 2b/3 完成。确认 Typecho 2 条评论、15/15 公开内容开放评论；生产 `waline` 库无表，已知 commentKey GET 全部 403；评论读取/迁移尚不具备停写条件。VPS 只读 preflight 结束，未执行任何生产写操作。
+- 2026-08-09：本机浏览器式 GET 复核：`new`=200、`www`=500；确认 production read path 因空 schema 未就绪，Compose `<500` healthcheck 对 403 假绿。新增脱敏 preflight 报告。
+- 2026-08-09：开始 Phase 8 本地修复；production/staging healthcheck 改为真实 commentKey + 匹配 Origin/Referer + 仅 HTTP 200 PASS，并加入 Stage 10 gate 契约。尚未部署到 VPS。
+- 2026-08-09：本机无 `docker` CLI，无法执行 `docker compose config`；该检查未运行且不记 PASS。改用仓库 `js-yaml` 做语法/结构校验，真实 Compose config 留待另行只读 VPS 验证。
+- 2026-08-09：两份 1Panel Compose 的 YAML + healthcheck 结构经 `js-yaml` 验证 PASS；本地 `stage10:gate` PASS。Phase 8 仍在进行，生产 MySQL migration/reconciliation backend 尚未实现。
+- 2026-08-09：恢复 Phase 8 当前工作树；确认 Node 24、mysql2 已锁定，memory fixture 入口需保持兼容。开始实现共享纯契约、独立 live MySQL CLI/backend 与假连接测试；不连接 VPS。
+- 2026-08-09：Phase 8 本地实现完成。新增 production-only MySQL CLI/backend、共享迁移契约与 14 个隔离测试；默认 dry-run rollback，apply 需固定 source SHA，双遍第二次必须零变更，对账必须 zero-diff，sweep 仅限 `source=typecho` 且显式确认。
+- 2026-08-09：本地全套复核 PASS：`comments:test` 14/14、`comments:migrate`、`stage7:gate`、`stage10:gate`、Compose YAML 结构与 `git diff --check`。真实 MySQL/Compose 未验证，不冒充 PASS；VPS 状态未改变。
+- 2026-08-09：完成下一次 production Waline readiness 授权边界文档；下一步需 owner 单独授权备份/schema/production Waline healthcheck 修复。该授权不应包含 Typecho 停写、迁移 apply、评论启用、release 切换、purge 或 301。
+- 2026-08-09：owner 明确授权 production Waline readiness bounded change；Phase 8b 进入 in_progress。先运行只读 fail-closed preflight，确认 302/disabled、唯一 production container/database/port、Compose ownership、空 schema 与容量后才允许备份/DDL。
+- 2026-08-09：Phase 8b 只读 preflight PASS；目标、状态、空 schema、Compose ownership 与容量均符合授权前提。known-key GET 仍为 500；尚未产生远端写入，进入 Compose 只读 diff。
+- 2026-08-09：远端 production Compose ownership/config hash 与容器一致；remote↔local 完整 diff 仅为已审阅的 healthcheck 修复。服务解析唯一为 `waline`，可在备份后以 `--no-deps waline` 限定重建范围。
+- 2026-08-09：创建 0700 evidence 目录并完成 production `waline` pre-DDL 备份；backup/原 Compose/preflight summary 均为 0600 且写入 SHA256SUMS。未执行 DDL 或容器重建。
+- 2026-08-09：reviewed schema DDL 已应用；表/引擎/utf8mb4/关键列/主键/唯一索引/零行断言均执行到 GET 步骤。known-key loopback GET 未达到 200，脚本 fail-closed 中止；尚未覆盖 Compose 或重建容器，转入只读诊断。
+- 2026-08-09：只读诊断定位 GET 500 为 MySQL auth 协议不兼容：production `waline` user 使用 `caching_sha2_password`，Waline upstream 固定 1.41.3。当前授权不含账号认证或 upstream 版本变更，继续只读确认最小修复，不部署 unhealthy healthcheck。
+- 2026-08-09：确认 `mysql_native_password` server plugin ACTIVE，upstream 实际 driver 为 `mysql` 2.18.1。已固化 blocker checksums；Phase 8b 暂停在 ALTER USER 窄扩权边界，candidate Compose/容器均未变。
+- 2026-08-09：拟议 ALTER USER 脚本首次本地 SQL 生成测试发现 backtick 多余转义并 fail；未执行远端 ALTER。已改为确定性 SQL 文本并保留“GET 失败即恢复 caching_sha2_password”回滚路径，等待本地复测和 owner 窄扩权。
+- 2026-08-09：修正后的 ALTER USER 脚本 `bash -n` 与 dummy password SQL 生成/无明文测试 PASS；SHA-256 `f0cb688d...4d99`。脚本仅改 `waline`@`%` auth plugin、保持同一密码/同一 grants，GET 非 200 自动恢复原 plugin；尚未执行，等待 owner 明确扩权。
+- 2026-08-09：进一步加固为 EXIT trap 全路径回滚；首轮本地 rollback mock 断言失败且无远端执行。语法检查 PASS，转为打印实际 mock 事件诊断测试模型。
+- 2026-08-09：rollback mock 失败原因是 Bash 在 `||` 状态捕获上下文中禁用 `errexit`，测试改为显式 exit 后通过：success 不回滚，failure 触发恢复原 plugin。另加切换前 secret-present 只判存在、不输出断言；继续未执行远端 ALTER。
+- 2026-08-09：最终待授权 auth-switch 脚本本地 `bash -n`、dummy SQL 无明文、success/failure EXIT trap mock 均 PASS；当前 SHA-256 `ebce9c315732175166c5ad9f56ae70cc6f6de679c071df7c5792ca4c38a30a0d`，未上传或执行。
+- 2026-08-09：本地收口复核 PASS：`comments:test` 14/14、`comments:migrate`、`stage7:gate`、`stage10:gate`、`git diff --check` 与仓库变更敏感信息扫描。Stage 10 gate 改为仅接受枚举的 readiness 授权状态，当前仍为 `PAUSED_NEEDS_AUTH_PLUGIN_EXPANSION`，不表示 readiness 完成。远端继续暂停，未上传或执行 auth-switch。

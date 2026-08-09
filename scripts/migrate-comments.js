@@ -8,10 +8,19 @@
  * Live MySQL backends land in Stage 9/10; this script gates the algorithm
  * against the Stage 0 dump fixture without requiring a Waline DB.
  */
-import crypto from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import {
+  STATUS_MAP,
+  buildCommentPayload,
+  normalizeText,
+  rootCoid,
+  selectMigratable,
+  sourceHash,
+  validateParentGraph,
+  validateSourceShape,
+} from './lib/comment-migration-core.js';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -29,104 +38,6 @@ if (backend !== 'memory') throw new Error('only --backend memory is implemented 
 const commentsPath = path.join(ROOT, 'docs/baselines/fixtures', `comments-${epoch}.json`);
 const routeMap = JSON.parse(fs.readFileSync(path.join(ROOT, 'data/route-map.json'), 'utf8'));
 const sourceComments = JSON.parse(fs.readFileSync(commentsPath, 'utf8'));
-
-const STATUS_MAP = {
-  approved: 'approved',
-  waiting: 'waiting',
-  spam: 'spam',
-};
-
-function sha256(s) {
-  return crypto.createHash('sha256').update(s).digest('hex');
-}
-
-function normalizeText(text) {
-  return String(text ?? '').replace(/\r\n/g, '\n').trimEnd();
-}
-
-function sourceHash(row, commentKey) {
-  return sha256(
-    JSON.stringify({
-      coid: row.coid,
-      cid: row.cid,
-      commentKey,
-      author: row.author ?? '',
-      mail: row.mail ?? '',
-      text: normalizeText(row.text),
-      status: row.status,
-      parent: Number(row.parent) || 0,
-      created: Number(row.created),
-      type: row.type,
-    }),
-  );
-}
-
-function selectMigratable(rows) {
-  const selected = [];
-  const archived = [];
-  for (const row of rows) {
-    if (row.type !== 'comment') {
-      archived.push({ coid: row.coid, reason: `type=${row.type}` });
-      continue;
-    }
-    if (!STATUS_MAP[row.status]) {
-      archived.push({ coid: row.coid, reason: `status=${row.status}` });
-      continue;
-    }
-    selected.push(row);
-  }
-  return { selected, archived };
-}
-
-function validateParentGraph(rows) {
-  const byCoid = new Map(rows.map((r) => [Number(r.coid), r]));
-  const errors = [];
-  for (const row of rows) {
-    const parent = Number(row.parent) || 0;
-    if (parent === 0) continue;
-    if (!byCoid.has(parent)) {
-      errors.push(`orphan parent: coid=${row.coid} parent=${parent}`);
-      continue;
-    }
-    // cycle detect
-    const seen = new Set([Number(row.coid)]);
-    let cur = parent;
-    while (cur) {
-      if (seen.has(cur)) {
-        errors.push(`parent cycle involving coid=${row.coid}`);
-        break;
-      }
-      seen.add(cur);
-      const p = byCoid.get(cur);
-      cur = p ? Number(p.parent) || 0 : 0;
-    }
-  }
-  // unpublished cid
-  for (const row of rows) {
-    const route = routeMap[String(row.cid)];
-    if (!route || route.state !== 'active') {
-      errors.push(`unpublished cid for coid=${row.coid} cid=${row.cid}`);
-    }
-  }
-  if (errors.length) {
-    const err = new Error(`parent-graph validation failed:\n${errors.join('\n')}`);
-    err.errors = errors;
-    throw err;
-  }
-}
-
-function rootCoid(row, byCoid) {
-  let cur = row;
-  const seen = new Set();
-  while (Number(cur.parent) > 0) {
-    const p = Number(cur.parent);
-    if (seen.has(p)) throw new Error(`cycle while resolving root for ${row.coid}`);
-    seen.add(p);
-    cur = byCoid.get(p);
-    if (!cur) throw new Error(`missing parent ${p}`);
-  }
-  return Number(cur.coid);
-}
 
 function createMemoryBackend() {
   let nextId = 1;
@@ -164,16 +75,17 @@ function createMemoryBackend() {
           sourceKeys.add(key);
           const hash = sourceHash(row, commentKey);
           const existing = map.get(key);
+          const corePayload = buildCommentPayload(row, commentKey);
           const payload = {
-            nick: row.author || '匿名',
-            mail: row.mail || '',
-            link: row.url || '',
-            comment: normalizeText(row.text),
-            ip: row.ip || '',
-            ua: row.agent || '',
-            url: commentKey,
-            status: STATUS_MAP[row.status],
-            insertedAt: new Date(Number(row.created) * 1000).toISOString(),
+            nick: corePayload.nick,
+            mail: corePayload.mail,
+            link: corePayload.link,
+            comment: corePayload.comment,
+            ip: corePayload.ip,
+            ua: corePayload.ua,
+            url: corePayload.url,
+            status: corePayload.status,
+            insertedAt: new Date(corePayload.insertedEpoch * 1000).toISOString(),
             pid: null,
             rid: null,
             sticky: false,
@@ -236,7 +148,8 @@ function runPipeline(store, selected) {
 }
 
 const { selected, archived } = selectMigratable(sourceComments);
-validateParentGraph(selected);
+validateSourceShape(sourceComments);
+validateParentGraph(selected, routeMap);
 
 const store = createMemoryBackend();
 const first = await runPipeline(store, selected);
