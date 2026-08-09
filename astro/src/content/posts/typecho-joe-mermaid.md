@@ -6,7 +6,7 @@ legacyCid: 47
 canonicalPath: /posts/typecho-joe-mermaid/
 commentKey: /posts/typecho-joe-mermaid/
 feedGuid: https://www.andy-y.cn/index.php/archives/47/
-allowComment: true
+allowComment: false
 allowFeed: true
 pubDate: '2026-04-05T12:04:00.000Z'
 updatedDate: '2026-07-02T07:34:00.000Z'
