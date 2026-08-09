@@ -43,6 +43,7 @@ test('automatic publishing preserves current production transition state', () =>
   assert.match(rebuild, /REDIRECT_STATUS" == "302"/);
   assert.match(rebuild, /COMMENT_WRITE_MODE" == "enabled"/);
   assert.match(rebuild, /compose\.1panel-cms\.yml/);
+  assert.match(rebuild, /builder bash \/app\/scripts\/build-release\.sh/);
   assert.match(rebuild, /rearm/);
   assert.match(switcher, /sha256sum -c/);
   assert.match(switcher, /cmp -s .*release-http\.conf/);

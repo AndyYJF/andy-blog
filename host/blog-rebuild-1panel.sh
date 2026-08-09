@@ -36,7 +36,7 @@ SNAPSHOT_EPOCH="$(node -e 'const f=require("fs");process.stdout.write(JSON.parse
 set +e
 RELEASE_ID="$(docker compose -f "$COMPOSE_FILE" run --rm --no-TTY \
   -e "SNAPSHOT_EPOCH=$SNAPSHOT_EPOCH" -e REDIRECT_STATUS=302 -e COMMENT_WRITE_MODE=enabled \
-  -e WWW_ROOT=/var/www/andy-y.cn builder /app/scripts/build-release.sh)"
+  -e WWW_ROOT=/var/www/andy-y.cn builder bash /app/scripts/build-release.sh)"
 RC=$?
 set -e
 [[ $RC -eq 0 ]] || exit "$RC"
