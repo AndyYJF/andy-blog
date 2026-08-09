@@ -18,13 +18,17 @@ echo "   current: $MODE"
 }
 
 echo "2. Close Typecho comment writes (CMS plugin/options) — manual"
-echo "3. Wait for in-flight Typecho comment requests to drain — manual"
-echo "4. Run final idempotent migrate against production Waline MySQL — manual"
+echo "   install host/install-typecho-comment-readonly-guard.sh only after both DB backups"
+echo "   preserve Typecho authoring and all per-entry allowComment values"
+echo "3. Export two guarded fixed snapshots; require identical SHA-256"
+echo "   npm run comments:export -- --output <outside-repo-0600.json> ..."
+echo "4. Run final idempotent migrate against production Waline MySQL"
 echo "   scripts/migrate-comments-mysql.js defaults to rollback/dry-run"
 echo "   require database=waline, --confirm-database waline, --twice"
 echo "   apply additionally requires --apply and --confirm-source-sha <sha256>"
 echo "5. Diff Typecho vs Waline counts/parent graph must be 0 — manual"
 echo "6. Direct POST to /api/comment must be 403 while disabled"
+echo "7. Stop before comment enable; it requires a separate release authorization"
 
 set +e
 CODE="$(curl -sS -o /dev/null -w '%{http_code}' -X POST "$ORIGIN/api/comment" \

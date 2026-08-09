@@ -18,7 +18,9 @@
 | 8a | （已授权）VPS 只读 preflight：拓扑、release/state、schema 识别 | completed |
 | 8 | 补齐并验证生产 MySQL 迁移 / 对账工具（本机） | completed |
 | 8b | （已授权）production Waline readiness：备份/schema/healthcheck/GET | completed |
-| 9 | （需授权）VPS 评论停写、迁移、零差异对账与独立启用 release | pending |
+| 9a | Phase 9 停写/固定导出/迁移执行包与授权边界（本机） | completed |
+| 9b | （需授权）VPS 评论停写、迁移 apply 与零差异对账 | pending |
+| 9c | （再授权）comment-write-mode enabled 独立 release | pending |
 | 10 | 302 观察窗清单与证据模板（至少至 2026-08-12） | completed |
 | 11 | 301 独立 release（观察窗满足前禁止执行） | pending |
 

@@ -91,3 +91,11 @@
 - owner 已于 2026-08-09 追加上述窄授权；授权不改变原 Phase 8b 的其余排除项。只允许同一 `waline`@`%`、同一现有密码的 plugin 切换，grants 必须前后逐字节一致，MySQL 不重启，known-key GET 非 200 必须触发 EXIT trap 恢复原 plugin。
 - 远端实际 auth-switch 已通过全部前置断言并成功；known-key GET 达到 200，所以回滚 trap 正常解除。grants 前后内容哈希一致，未修改授权；账号插件现为 `mysql_native_password`。这关闭了 schema 后 GET=500 的认证协议阻塞，但 corrected Compose healthcheck 尚未安装，旧容器仍未重建，readiness 仍未完成。
 - corrected production Compose healthcheck 已原子安装，production Waline 仅该服务被重建；运行态 healthcheck 使用真实 key、production Origin/Referer 且仅 HTTP 200 通过。最终 GET=200、四表为空、排除容器快照一致，Phase 8b readiness 完成。后续仍不得直接进入评论迁移或启用：Phase 9 需要独立授权并先执行 Typecho 停写/排空/固定导出/dry-run/对账。
+
+## 2026-08-09 Phase 9a local package
+
+- 现有生产迁移 CLI 已可消费外部 0600 JSON，但仓库没有从实际 `typecho_frf6hh.typecho_comments` 生成固定 JSON 的生产导出器；Stage 0 fixture 不能冒充最终导出。
+- 现有 `comment-stop-write-checklist.sh` 只打印人工步骤，没有实施 source DB 不可写的机制。
+- stop-write 不能批量修改 `allowComment`，也不能停止 Typecho 容器，因为文章写作后台仍需继续。候选机制应只阻止 `typecho_comments` 的 INSERT/UPDATE/DELETE，并在迁移后永久保留旧评论只读；需先用本地契约和单独生产授权验证具体实现。
+- 固定导出器采用三触发器契约作为硬前置，而不是只依赖“公网目前不再反代 Typecho”的间接事实。导出覆盖 fixture 所需全部字段，固定排序/JSON 字节，重复导出可直接比较 SHA-256 证明 quiet interval 内源未漂移。
+- Phase 9b 仍有一项不可代替的 owner 决策：选择一个真实 closed route。建议 `/posts/typecho-joe-mermaid/`（CID 47），因为它已有历史评论与 read-path 覆盖；只有 owner 明确选择后，才可在固定导出前把该单行 `allowComment` 改为 0。未知 key 不能充当 closed-key 验收。

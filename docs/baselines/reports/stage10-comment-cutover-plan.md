@@ -115,25 +115,25 @@ comment window.
    can be verified honestly. If no route is selected, the closed-key gate stays
    unmet; an unknown key is not an equivalent test.
 
-The 2026-08-09 preflight completed these discovery checks and found blocking
-failures: production schema absent, known-key GET=403, no closed key, and no
-static `previous` release marker. Do not proceed to step 2 until these are
-repaired and reverified under a separate mutation authorization.
+The 2026-08-09 readiness work repaired the production schema/read path and
+strict healthcheck. The remaining owner decision is one real closed route; the
+missing static `previous` marker also blocks the later enable release, but does
+not authorize or replace the stop-write/migration window.
 
 ### 2. Back up, then close Typecho comment writes
 
 1. Create timestamped Typecho and production Waline database backups outside the
    repository; record path, size, SHA-256, and restore command without logging
    credentials.
-2. Block the Typecho public comment-submit endpoint at its owning ingress or
-   application hook. Preserve content writing/admin access and every content
-   row's `allowComment` value.
-3. Verify the blocked endpoint returns 403 and that `www` still returns 403 for
-   direct Waline comment POST while the deployed policy is disabled.
-4. Drain in-flight requests. Require both:
-   - no accepted Typecho comment-submit request for a defined quiet interval;
-   - two full source count + canonical hash snapshots taken after the interval
-     are identical.
+2. Keep the Typecho comment-submit endpoint absent from public `www` and install
+   the reviewed three-trigger guard on `typecho_comments`. It blocks INSERT,
+   UPDATE, and DELETE with the fixed guard marker, while leaving
+   `typecho_contents`, admin access, and article writing untouched.
+3. Require all three guarded SQL probes to fail, preserve every content row's
+   `allowComment`, and keep direct production Waline POST at 403 while the
+   deployed policy is disabled. The guard remains permanently after cutover.
+4. Drain/close the source window by taking two complete guarded exports after
+   the quiet interval; their byte-level SHA-256 and row counts must match.
 
 Stopping the Typecho container or bulk-setting `allowComment=0` is not the
 default plan because either breaks the authoring path or corrupts the policy
@@ -145,6 +145,11 @@ Export all columns needed by the current fixture contract: `coid`, `cid`,
 `created`, author fields, mail, URL, IP, user agent, text, type, status, and
 `parent`. The export is complete, not `coid > max`. Record row count and SHA-256,
 set mode 0600, and keep it outside the checkout.
+
+Use `scripts/export-typecho-comments-mysql.js`; it refuses to export unless the
+exact INSERT/UPDATE/DELETE guard triggers are installed, reads in a READ ONLY
+transaction, sorts by `coid`, and creates the output exclusively with mode
+0600. Credentials come only from `TYPECHO_MYSQL_*` environment variables.
 
 Validate before target writes:
 
@@ -213,6 +218,14 @@ The VPS evidence directory should contain only root-readable raw artifacts:
 ```text
 /root/stage10-comments/<window>/
   typecho-before.sql[.gz]
+  waline-before.sql[.gz]
+  typecho-comment-guard.txt
+  typecho-comment-state.before.txt
+  typecho-comment-state.after.txt
+  guard-{insert,update,delete}-probe.txt
+  typecho-comments-fixed-{1,2}.json
+  stop-write-summary.txt
+  SHA256SUMS.stop-write
   waline-before.sql[.gz]
   typecho-comments.json
   preflight.txt

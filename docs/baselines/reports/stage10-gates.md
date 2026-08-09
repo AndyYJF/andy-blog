@@ -8,6 +8,7 @@
 - compose.1panel-production.yml (Waline loopback 8360)
 - comment-stop-write-checklist.sh
 - production MySQL migration backend (dry-run default, named lock, transaction, twice + zero-diff reconciliation)
+- guard-protected Typecho fixed exporter + permanent comment-table readonly guard
 - stage10-www-cutover.md runbook (§8.5 order)
 - CDN purge remains fail-closed (`not-implemented` → exit 71 with credentials)
 

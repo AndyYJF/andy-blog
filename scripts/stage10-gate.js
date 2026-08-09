@@ -31,17 +31,23 @@ for (const rel of [
   'scripts/generate-1panel-www-nginx.js',
   'scripts/generate-1panel-staging-nginx.js',
   'scripts/migrate-comments-mysql.js',
+  'scripts/export-typecho-comments-mysql.js',
   'scripts/lib/comment-migration-core.js',
   'scripts/lib/comment-migration-mysql.js',
+  'scripts/lib/typecho-comment-export.js',
   'scripts/comment-migration-core.test.js',
   'scripts/comment-migration-mysql.test.js',
   'scripts/comment-migration-cli.test.js',
+  'scripts/typecho-comment-export.test.js',
+  'scripts/typecho-comment-readonly-guard.test.js',
+  'host/install-typecho-comment-readonly-guard.sh',
   'compose.1panel-production.yml',
   'compose.1panel-staging.yml',
   'docs/baselines/reports/stage10-www-cutover.md',
   'docs/baselines/reports/stage10-comment-cutover-plan.md',
   'docs/baselines/reports/stage10-302-observation-window.md',
   'docs/baselines/reports/stage10-production-waline-readiness-authorization.md',
+  'docs/baselines/reports/stage10-comment-migration-authorization.md',
   'docs/baselines/reports/stage9-staging-enable.md',
 ]) {
   check(exists(rel), `missing ${rel}`);
@@ -118,6 +124,18 @@ check(mysqlBackend.includes('applySweep'), 'MySQL absent-key sweep must be expli
 check(mysqlBackend.includes('second migration pass was not a no-op'), 'MySQL migration must block non-idempotent second pass');
 check(mysqlBackend.includes("m.source = ?"), 'MySQL reconciliation must scope source namespace');
 
+const typechoExporter = read('scripts/export-typecho-comments-mysql.js');
+const typechoExportCore = read('scripts/lib/typecho-comment-export.js');
+const typechoGuard = read('host/install-typecho-comment-readonly-guard.sh');
+check(typechoExporter.includes("fs.openSync(outputPath, 'wx', 0o600)"), 'Typecho export must be exclusive mode 0600');
+check(typechoExportCore.includes('START TRANSACTION READ ONLY'), 'Typecho export must use a read-only transaction');
+check(typechoExportCore.includes('readonly guard count mismatch'), 'Typecho export must require the readonly guard');
+check(typechoGuard.includes('BEFORE INSERT ON'), 'Typecho INSERT guard missing');
+check(typechoGuard.includes('BEFORE UPDATE ON'), 'Typecho UPDATE guard missing');
+check(typechoGuard.includes('BEFORE DELETE ON'), 'Typecho DELETE guard missing');
+check(typechoGuard.includes('allow_comment_sha256'), 'Typecho guard must preserve allowComment state');
+check(!/docker\s+(?:stop|restart)\b/.test(typechoGuard), 'Typecho guard must not stop or restart containers');
+
 const commentTests = spawnSync(
   'node',
   [
@@ -125,6 +143,8 @@ const commentTests = spawnSync(
     'scripts/comment-migration-core.test.js',
     'scripts/comment-migration-mysql.test.js',
     'scripts/comment-migration-cli.test.js',
+    'scripts/typecho-comment-export.test.js',
+    'scripts/typecho-comment-readonly-guard.test.js',
   ],
   { cwd: ROOT, encoding: 'utf8' },
 );
@@ -147,6 +167,12 @@ check(readinessAuthorization.includes('Keep `redirect-status=302`'), 'Waline rea
 check(readinessAuthorization.includes('no Typecho comment stop-write'), 'Waline readiness must exclude Typecho stop-write');
 check(readinessAuthorization.includes('no CDN purge'), 'Waline readiness must exclude purge');
 check(readinessAuthorization.includes('no database restore or destructive cleanup'), 'Waline readiness must exclude destructive cleanup');
+
+const commentMigrationAuthorization = read('docs/baselines/reports/stage10-comment-migration-authorization.md');
+check(commentMigrationAuthorization.includes('AWAITING_CLOSED_KEY_AND_OWNER_AUTHORIZATION'), 'Phase 9b must await closed-key decision and authorization');
+check(commentMigrationAuthorization.includes('Stop. Do not enable comments'), 'Phase 9b must stop before comment enable');
+check(commentMigrationAuthorization.includes('no staging database/container read, write, merge, restart, or migration'), 'Phase 9b must preserve staging isolation');
+check(commentMigrationAuthorization.includes('no CDN purge'), 'Phase 9b must exclude CDN purge');
 
 // --- generate www cutover + 1Panel adapter ---
 const outNginx = path.join(ROOT, '.cache', 'stage10-nginx');
@@ -301,6 +327,7 @@ fs.writeFileSync(
     '- compose.1panel-production.yml (Waline loopback 8360)',
     '- comment-stop-write-checklist.sh',
     '- production MySQL migration backend (dry-run default, named lock, transaction, twice + zero-diff reconciliation)',
+    '- guard-protected Typecho fixed exporter + permanent comment-table readonly guard',
     '- stage10-www-cutover.md runbook (§8.5 order)',
     '- CDN purge remains fail-closed (`not-implemented` → exit 71 with credentials)',
     '',
