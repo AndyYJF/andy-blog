@@ -13,7 +13,7 @@
 | 3 | 1Panel www 切流 adapter + prod Waline compose | completed |
 | 4 | Stage 10 gate + cutover runbook | completed |
 | 5 | 本机 gate 验收；记录 VPS 实操阻塞项 | completed |
-| 6 | （需授权）VPS 实切 www — 不在无授权时执行 | pending |
+| 6 | （需授权）VPS 实切 www — 首次 302/comments-disabled | completed |
 
 ## Success criteria (plan)
 
