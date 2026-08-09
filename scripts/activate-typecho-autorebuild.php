@@ -14,14 +14,14 @@ use Typecho\Plugin;
 $pluginName = 'AutoRebuild';
 $export = Plugin::export();
 if (isset($export['activated'][$pluginName])) {
-    fwrite(STDOUT, "already-active\n");
+    echo "already-active\n";
     exit(0);
 }
 
 [$pluginFileName, $className] = Plugin::portal($pluginName, __TYPECHO_ROOT_DIR__ . '/usr/plugins');
 require_once $pluginFileName;
 if (!class_exists($className) || !method_exists($className, 'activate')) {
-    fwrite(STDERR, "invalid-plugin\n");
+    file_put_contents('php://stderr', "invalid-plugin\n");
     exit(65);
 }
 
@@ -32,4 +32,4 @@ Db::get()->query(
         ->rows(['value' => serialize(Plugin::export())])
         ->where('name = ?', 'plugins')
 );
-fwrite(STDOUT, "activated\n");
+echo "activated\n";
