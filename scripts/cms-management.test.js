@@ -55,6 +55,14 @@ test('automatic publishing preserves current production transition state', () =>
     'host/switch-release-1panel.sh',
   ], { cwd: ROOT, encoding: 'utf8' });
   assert.equal(executableModes.trim().split('\n').every((line) => line.startsWith('100755 ')), true);
+  for (const file of [
+    'host/blog-rebuild-1panel.sh',
+    'host/switch-release-1panel.sh',
+    'scripts/build-release.sh',
+  ]) {
+    const indexed = execFileSync('git', ['show', `:${file}`], { cwd: ROOT });
+    assert.equal(indexed.includes(13), false, `${file} must use LF in the Git index`);
+  }
 });
 
 test('Typecho webhook target and secret fallback are fail-closed', () => {
