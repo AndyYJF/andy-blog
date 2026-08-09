@@ -97,6 +97,15 @@ bash host/roll-forward-release.sh      # undo rollback
 
 After comment enable, Typecho comments stay read-only forever per plan.
 
+## Production continuation record — 2026-08-09
+
+Phase 9c completed with immutable release `20260809T102318Z-1db1021e`.
+Production remains on redirect 302 and now has `commentWriteMode=enabled`;
+`previous` points to disabled release `20260805T143100Z-c92e7d31`. CID 47 is
+the sole closed key, while the retained open-key probe is the only native
+Waline comment. Continue the observation checklist and do not create a 301
+release before the separately authorized post-window transition.
+
 ## SEO follow-ups (not instant gates)
 
 - Submit sitemap / 百度改版

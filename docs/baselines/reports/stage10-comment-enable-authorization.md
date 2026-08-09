@@ -1,6 +1,6 @@
 # Stage 10 Phase 9c — production comment enable authorization
 
-**Status:** `AUTHORIZED_PHASE9C`
+**Status:** `PHASE9C_COMPLETE`
 
 Phase 9b is complete. This packet is the next separate production window from
 `docs/plan.md` §8.5 step 3. It enables production Waline writes with a new
@@ -78,6 +78,25 @@ Owner authorization must explicitly cover the state transition, immutable
 release install/switch, production Waline backup, two denied POST probes, one
 retained open-key POST, and automatic disabled-release rollback. It does not
 authorize any excluded item above.
+
+## Execution result — 2026-08-09
+
+- Active release: `20260809T102318Z-1db1021e`; source HEAD
+  `3a515147e215bca51724972742f7e9cc11febdd2`; archive SHA-256
+  `71ad14c2128b1d71e54077fc888256ce2c47531b42d5a490b6ee8723cbbd60aa`.
+- Deployment state: `redirect-status=302`, `comment-write-mode=enabled`;
+  `previous` is the former disabled release `20260805T143100Z-c92e7d31`.
+- Probe evidence: closed key 403 `entry-not-writable`, unknown key 403
+  `unknown-key`, open key 200 with exactly one retained marker row. The first
+  transport attempt automatically rolled back after all three probes; the
+  exact-resume run reused their evidence and did not send duplicate POSTs.
+- Final invariants: Typecho/Waline/mapping counts `2/3/2`, Typecho guards `3`,
+  CID 47 `allowComment=0`, production Waline healthy and known-key GET 200.
+- Evidence: `/root/stage10-comments/20260809T102424Z-phase9c` and
+  `/root/stage10-comments/20260809T102756Z-phase9c-resume`.
+- No OpenResty reload, CDN purge, staging operation, container restart, comment
+  deletion/database restore, or redirect transition was performed. 301 remains
+  prohibited during the observation window.
 
 ## Requested authorization text
 
