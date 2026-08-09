@@ -9,12 +9,14 @@ const arg = (name, fallback) => {
 };
 const domain = arg('--domain', 'comments.andy-y.cn');
 const upstream = arg('--upstream', '127.0.0.1:8362');
+const publicServerUrl = arg('--public-server-url', 'https://www.andy-y.cn');
 const certDir = arg('--cert-dir', '/www/sites/www.andy-y.cn/ssl');
 const authFile = arg('--auth-file', '/www/server/pass/andy-blog-comments.htpasswd');
 const output = path.resolve(ROOT, arg('--out', '.cache/stage10-nginx/comments.andy-y.cn.conf'));
 
 if (!/^[a-z0-9.-]+$/.test(domain)) throw new Error('invalid domain');
 if (!/^(?:127\.0\.0\.1|localhost):[1-9][0-9]{0,4}$/.test(upstream)) throw new Error('upstream must be loopback');
+if (!/^https:\/\/[a-z0-9.-]+$/.test(publicServerUrl)) throw new Error('public-server-url must be an HTTPS origin');
 for (const value of [certDir, authFile]) {
   if (!path.posix.isAbsolute(value)) throw new Error('cert-dir and auth-file must be absolute POSIX paths');
 }
@@ -47,7 +49,12 @@ server {
   auth_basic_user_file ${authFile};
 
   location = / { return 302 /ui/; }
-  location ^~ /ui/ {${proxy}
+  location ^~ /ui/ {
+    # The shared Waline instance advertises the public www API. Repoint only
+    # the Basic-Auth-protected admin UI to this management origin.
+    proxy_set_header Accept-Encoding "";
+    sub_filter_once off;
+    sub_filter '${publicServerUrl}' 'https://${domain}';${proxy}
   }
   location ^~ /api/ {${proxy}
   }
