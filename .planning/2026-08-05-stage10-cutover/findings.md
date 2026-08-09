@@ -2,6 +2,10 @@
 
 ## 2026-08-09 local review
 
+- Phase 9b preflight 发现 Typecho `typecho_contents.slug` 对 CID 47 的真实值是 `47`，不是 Astro canonical slug；canonical closed key 仍按 `data/route-map.json` 和 owner 确认使用 `/posts/typecho-joe-mermaid/`。源端写入断言必须锁定 `cid=47/type=post/status=publish/slug=47/allowComment=1`，仅把最后一列改为 0。
+- Phase 9b 已完成且无需 scoped sweep：源固定快照含 coid 6（waiting，CID47 canonical）和 coid 11（approved，Stable Diffusion canonical），所以“2 条迁移评论都属于 closed key”是假设错误；最终必须按 route-map 逐条对账，而非只数 closed-key URL。
+- 初次用普通 `grep` 过滤 Typecho 全行 TSV 时因二进制字段触发 `binary file matches`，两个空/提示文件可能造成假相等。生产后验改为 `grep -a` 加 Node 逐列比较，并证明 19 列中仅 CID47 `allowComment 1→0`；后续证据不得把普通 grep 的 binary 结果当 PASS。
+
 - 当前分支 `cursor/stage0-8-adversarial-baseline`；planning 进度已提交为 `e07ed40`。
 - 本轮开始时 `scripts/migrate-comments.js` 只接受 `--backend memory`，以 Stage 0 fixture 验证算法；该缺口已在后续 Phase 8 本地完成项中补齐为独立 production CLI/backend。
 - 现有算法已经覆盖 source hash、幂等 upsert、`pid/rid` 回填、Typecho namespace absent-key sweep、孤儿 / 环检测和第二次运行零变更。
@@ -99,3 +103,4 @@
 - stop-write 不能批量修改 `allowComment`，也不能停止 Typecho 容器，因为文章写作后台仍需继续。候选机制应只阻止 `typecho_comments` 的 INSERT/UPDATE/DELETE，并在迁移后永久保留旧评论只读；需先用本地契约和单独生产授权验证具体实现。
 - 固定导出器采用三触发器契约作为硬前置，而不是只依赖“公网目前不再反代 Typecho”的间接事实。导出覆盖 fixture 所需全部字段，固定排序/JSON 字节，重复导出可直接比较 SHA-256 证明 quiet interval 内源未漂移。
 - Phase 9b 仍有一项不可代替的 owner 决策：选择一个真实 closed route。建议 `/posts/typecho-joe-mermaid/`（CID 47），因为它已有历史评论与 read-path 覆盖；只有 owner 明确选择后，才可在固定导出前把该单行 `allowComment` 改为 0。未知 key 不能充当 closed-key 验收。
+- owner 已选择 `/posts/typecho-joe-mermaid/`（CID 47）。Phase 9b 只允许该单行 `allowComment` 从 1 改为 0；任何 CID/route 解析漂移、当前值非 1 或额外内容行变化都必须在写前停止。

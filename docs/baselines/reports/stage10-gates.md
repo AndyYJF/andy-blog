@@ -14,8 +14,8 @@
 
 ## Accepted debt (live VPS / secrets — not Stage 10 scaffold blockers)
 
-- Live www OpenResty cutover + DNS TTL (requires production-write authorization)
-- Real Typecho stop-write/migrate/reconcile = 0 and separate comment-enable release
+- Separate comment-enable release remains pending owner authorization
+- Observation evidence still has public-CDN legacy 200 versus origin 302
 - Real Aliyun / Cloudflare purge OpenAPI wiring
 - cms.andy-y.cn vertical on 1Panel (AA-06)
 - 7-day 302 observation then authorized 301 transition

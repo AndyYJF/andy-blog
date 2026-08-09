@@ -72,7 +72,7 @@ changing the permanent redirect status.
 | 2026-08-06 | day 1 | pending evidence | |
 | 2026-08-07 | day 2 | pending evidence | |
 | 2026-08-08 | day 3 | pending evidence | |
-| 2026-08-09 | day 4 | **FAIL / live read-only evidence** | origin legacy=302 but Aliyun cache HIT legacy=200 with canonical body hash; `previous` missing |
+| 2026-08-09 | day 4 | **FAIL / live read-only evidence** | at 09:02Z Phase 9b finished with 302/disabled unchanged and Waline GET=200; origin legacy=302 but public CDN legacy=200; `previous` missing |
 | 2026-08-10 | day 5 | pending | |
 | 2026-08-11 | day 6 | pending | |
 | 2026-08-12 | day 7 boundary | pending exact timestamp + full matrix | |

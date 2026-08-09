@@ -19,7 +19,7 @@
 | 8 | 补齐并验证生产 MySQL 迁移 / 对账工具（本机） | completed |
 | 8b | （已授权）production Waline readiness：备份/schema/healthcheck/GET | completed |
 | 9a | Phase 9 停写/固定导出/迁移执行包与授权边界（本机） | completed |
-| 9b | （需授权）VPS 评论停写、迁移 apply 与零差异对账 | pending |
+| 9b | （已授权）VPS 评论停写、迁移 apply 与零差异对账 | completed |
 | 9c | （再授权）comment-write-mode enabled 独立 release | pending |
 | 10 | 302 观察窗清单与证据模板（至少至 2026-08-12） | completed |
 | 11 | 301 独立 release（观察窗满足前禁止执行） | pending |
@@ -37,8 +37,9 @@
 
 - 不启动仓库 `compose.yml` 的 Nginx；生产 80/443 由 1Panel OpenResty 管理。
 - 不在普通 rebuild 中修改 `redirect-status` 或 `comment-write-mode`；状态只能由 `transition-deploy-state.sh` 跃迁并打独立 release。
-- 2026-08-09 已授权对 `root@139.224.71.200` 执行只读 preflight；不包含停写、备份、迁移、SQL 写入、状态跃迁、release 切换、POST、purge 或 301。
+- 2026-08-09 Phase 9b 已完成；Typecho 评论表永久只读，CID 47 已关闭，生产 Waline 已迁入 2 条评论并完成独立第二次零变更对账。
 - 当前阶段禁止切 301；观察窗至少到 2026-08-12，且仍需 legacy/action 与双 CDN 证据。
-- Phase 8 本地迁移工具尚未对生产评论执行 dry-run/apply；Phase 8b readiness 已在真实 MySQL/VPS Compose 完成。下一步 Phase 9 的 Typecho 停写、固定导出、迁移与启用仍需单独授权。
+- 下一步 Phase 9c 仍需单独授权：只通过 `transition-deploy-state.sh` 生成 `comment-write-mode=enabled` 的独立 release；不得与 301、OpenResty 或 CDN purge 合并。
 - 2026-08-09 owner 已授权 Phase 8b：仅 production `waline` 备份、reviewed schema、生产 Waline healthcheck/必要单容器重建、只读 GET/状态验证；排除 Typecho 停写/迁移 apply/评论启用/OpenResty/release/purge/301。
 - 2026-08-09 owner 已追加窄授权：仅将既有 `waline`@`%` 以原密码切换为 `mysql_native_password`；不改 grants、不打印或落盘密码、不重启 MySQL；known-key GET 非 200 时自动恢复 `caching_sha2_password`。成功后仅继续既有 Phase 8b healthcheck 与 production Waline 单容器重建授权。
+- 2026-08-09 owner 已确认 `/posts/typecho-joe-mermaid/`（CID 47）为真实 closed key，并授权 Phase 9b：备份 Typecho/production Waline、仅 CID 47 `allowComment=0`、永久评论表只读 guard、双快照、dry-run，干净后 apply/按需 scoped sweep/双遍零差异对账。排除评论启用、release/OpenResty、staging、POST、purge、301。

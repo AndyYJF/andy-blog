@@ -1,6 +1,6 @@
 # Stage 10 Phase 9b — comment stop-write and migration authorization
 
-**Status:** `AWAITING_CLOSED_KEY_AND_OWNER_AUTHORIZATION`
+**Status:** `PHASE9B_COMPLETE`
 
 This is a separate production window after Waline readiness. It does not
 authorize comment enable, a release switch, OpenResty changes, CDN purge, or
@@ -8,10 +8,9 @@ redirect 301.
 
 ## Required owner decision before authorization
 
-Select one real public route that must reject new comments after enable. The
-recommended existing-key candidate is `/posts/typecho-joe-mermaid/` (CID 47),
-because it already has historical-comment/read-path coverage. Do not change
-its `allowComment` until the owner names the route explicitly.
+The owner selected `/posts/typecho-joe-mermaid/` (CID 47) as the real route
+that must reject new comments after enable. Only this content row may change
+from `allowComment=1` to `allowComment=0` in Phase 9b.
 
 ## Proposed authorized mutations
 
@@ -46,3 +45,31 @@ its `allowComment` until the owner names the route explicitly.
 Any backup, trigger, fixed-export, dry-run, source-stability, migration, or
 reconciliation failure stops the window before enable. A database restore is a
 separate authorization.
+
+The owner granted this exact Phase 9b scope on 2026-08-09. Comment enable and
+all explicit exclusions above remain unauthorized.
+
+## Execution result — 2026-08-09
+
+- Root-only evidence: `/root/stage10-comments/20260809T085719Z-phase9b`.
+- Pre-mutation backups passed gzip and SHA-256 verification:
+  Typecho `6b88d1b...c0471f`; production Waline `845d2158...7a536`.
+- Exactly CID 47 changed, and a 19-column comparison proved the only changed
+  field was `allowComment: 1 -> 0`; every other Typecho content row matched.
+- All three permanent BEFORE guards passed real blocked INSERT/UPDATE/DELETE
+  probes. Typecho stayed running and its two historical comment rows did not
+  change.
+- Two guarded exports were byte-identical: 2 rows, max coid 11, one approved,
+  one waiting, SHA-256 `d770ca7f...2f875a9`.
+- Dry-run was clean and rolled back. Apply inserted 2 mappings/comments; its
+  second pass was a no-op. A separate second apply run inserted/updated/deleted
+  zero rows and reconciliation remained zero-difference. No sweep was needed.
+- Final production Waline state: 2 Typecho mappings, 2 distinct mapped comments,
+  both canonical URLs present, one approved and one waiting; known-key GET was
+  HTTP 200 on loopback and public www.
+- Release remained `20260805T143100Z-c92e7d31`, redirect remained 302, comments
+  remained globally disabled, `/admin/` remained 404, and no excluded action
+  was executed.
+
+Phase 9b is complete. Stop before Phase 9c: comment enable remains a separate
+owner-authorized release, and 301 remains prohibited.
