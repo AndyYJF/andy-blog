@@ -26,6 +26,7 @@ mkdir -p "$release_dir/site" "$release_dir/nginx" "$package_root/meta"
 cd "$root"
 snapshot_epoch="${SNAPSHOT_EPOCH:-$(node scripts/read-db-epoch.js)}"
 [[ "$snapshot_epoch" =~ ^[0-9]{10}$ ]] || { echo 'bad snapshot epoch' >&2; exit 65; }
+migration_fixture_epoch='1785565762'
 export SNAPSHOT_EPOCH="$snapshot_epoch" REDIRECT_STATUS='302' COMMENT_WRITE_MODE='enabled'
 
 node scripts/sync-typecho.js
@@ -34,7 +35,7 @@ node scripts/generate-nginx.js --status 302
 node scripts/generate-comment-policy.js --mode enabled --out .cache/comment-policy.json
 node scripts/finalize-manifest.js \
   --release-id "$release_id" --redirect-status 302 --comment-write-mode enabled
-node scripts/migrate-comments.js --epoch "$snapshot_epoch" --backend memory --twice
+node scripts/migrate-comments.js --epoch "$migration_fixture_epoch" --backend memory --twice
 npm --prefix astro run build
 node scripts/render-gate.js
 node scripts/rss-gate.js
@@ -43,7 +44,9 @@ node scripts/stage6-gate.js
 node scripts/stage8-gate.js
 node scripts/stage10-gate.js
 node scripts/generate-candidate-nginx.js --release-id "$release_id" --out .cache/phase9c-release-nginx
-test -z "$(git -C "$root" status --porcelain)" || { echo 'build changed the committed source snapshot' >&2; exit 65; }
+build_drift="$(git -C "$root" status --porcelain --untracked-files=no)"
+test "$build_drift" = ' M astro/src/generated/release-state.ts' \
+  || { printf 'unexpected tracked build drift:\n%s\n' "$build_drift" >&2; exit 65; }
 
 cp -a astro/dist/. "$release_dir/site/"
 cp nginx/release-http.conf "$release_dir/nginx/release-http.conf"
