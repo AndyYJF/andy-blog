@@ -1,5 +1,15 @@
 # Progress — Stage 10
 
+## 2026-08-09 production CMS/comment management deployment
+
+- Deployment PASS from source/control-plane commit `7aca145`; production current is `20260809T123758Z-f7d863f2`, previous is `20260809T102318Z-1db1021e`.
+- Invariants preserved: `redirect-status=302`, `comment-write-mode=enabled`; no 301, CDN purge, staging change, repository nginx, MySQL restart, or comment deletion.
+- `cms.andy-y.cn` Typecho admin and `comments.andy-y.cn` Waline admin are installed behind separate HTTP Basic Auth boundaries (`401` unauthenticated; authenticated origin checks passed).
+- AutoRebuild, read-only Typecho build account, rebuild-api, immutable builder image, and `blog-rebuild-1panel.path` are deployed; one no-content build completed and atomically switched the release.
+- Typecho, MySQL, and staging Waline container identities remained unchanged. Production Waline, rebuild-api, and staging Waline are healthy; `www /admin/` remains `404`, and CID 47 legacy redirect remains `302`.
+- Backup/evidence: `/root/stage10-cms/20260809T112335Z`; root-only credentials: `/root/.config/andy-blog-management-credentials`.
+- Operational follow-up: root filesystem is `97%` used with about `1.4G` free after the immutable builder image layers. Do not prune Docker images/cache without separately confirming rollback retention scope.
+
 ## 2026-08-09 CMS/comment management progress
 
 - Completed local implementation for Typecho CMS origin, automatic static publishing, production Waline management origin, 1Panel-safe release switching, and rollback boundaries.

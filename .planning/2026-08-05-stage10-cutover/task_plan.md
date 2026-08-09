@@ -2,11 +2,13 @@
 
 ## 2026-08-09 CMS/comment management execution status
 
-- Phase 12 (AA-06 local editor/automatic publish package): completed.
-- Phase 13 (production Waline management entry/boundary): completed locally.
-- Phase 14 (1Panel deploy/rollback package and one authorization text): completed.
-- Phase 15 (production deployment): pending new owner authorization and DNS changes.
+- Phase 12 (AA-06 editor/automatic publish package): completed and deployed.
+- Phase 13 (production Waline management entry/boundary): completed and deployed.
+- Phase 14 (1Panel deploy/rollback package): completed.
+- Phase 15 (production deployment): completed; current release `20260809T123758Z-f7d863f2`.
 - Production invariant remains `302 + comment-write-mode=enabled`; 301 is prohibited.
+- This status block supersedes the stale Phase 12-15 rows later in this historical table.
+- Immediate operational follow-up is scoped Docker disk reclamation planning: root is `97%` used, and rollback images/releases must be identified before any prune.
 
 ## Goal
 
