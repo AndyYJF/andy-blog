@@ -31,6 +31,7 @@ services:
       COMMENT_POLICY_FILE: /var/www/andy-y.cn/current/comment-policy.json
       JWT_TOKEN: ${WALINE_JWT:?set production JWT}
       IPQPS: 60
+      COMMENT_AUDIT: 'true'
     volumes:
       - '${PROD_WWW_ROOT:?set the 1Panel www deploy root}:/var/www/andy-y.cn:ro'
     networks: [onepanel]

@@ -100,4 +100,5 @@ test('Waline management uses the direct upstream only on a loopback host port', 
   assert.match(dockerfile, /EXPOSE 8360 8361/);
   assert.equal(dockerfile.includes("RUN sed -i 's/\\r$//' entrypoint.sh"), true);
   assert.match(compose, /127\.0\.0\.1:\$\{WALINE_ADMIN_HOST_PORT:-8362\}:8361/);
+  assert.match(compose, /COMMENT_AUDIT: 'true'/);
 });
