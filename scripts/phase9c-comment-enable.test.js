@@ -69,6 +69,10 @@ test('1Panel enable runner preserves topology and uses controlled state transiti
   assert.match(script, /entry-not-writable/);
   assert.match(script, /unknown-key/);
   assert.match(script, /native_probe_rows=1/);
+  assert.match(script, /PHASE9C_RESUME_EVIDENCE_DIR/);
+  assert.match(script, /probe_mode='retained-from-prior-evidence'/);
+  assert.match(script, /resume marker row mismatch/);
+  assert.match(script, /resume release checksum manifest mismatch/);
   assert.match(script, /evidence_ready='false'/);
   assert.match(script, /test "\$evidence_ready" = 'true'/);
   assert.match(script, /phase9c-validate-release\.mjs/);

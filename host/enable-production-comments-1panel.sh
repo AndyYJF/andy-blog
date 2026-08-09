@@ -9,6 +9,7 @@ release_id="${PHASE9C_RELEASE_ID:?set reviewed release id}"
 expected_current="${PHASE9C_EXPECTED_CURRENT:?set exact current release id}"
 expected_source_head="${PHASE9C_SOURCE_HEAD:?set reviewed source HEAD}"
 evidence_dir="${PHASE9C_EVIDENCE_DIR:?set new root-only evidence directory}"
+resume_evidence="${PHASE9C_RESUME_EVIDENCE_DIR:-}"
 deploy_root="${PHASE9C_WWW_ROOT:-/opt/1panel/www/sites/www.andy-y.cn/deploy}"
 state_dir="$deploy_root/state"
 mysql_container='1Panel-mysql-RSa9'
@@ -52,6 +53,8 @@ post_probe() {
 state_changed='false'
 switched='false'
 evidence_ready='false'
+resume_mode='false'
+probe_mode='executed-now'
 rollback_on_error() {
   local original_status="$?"
   local rollback_status=0
@@ -97,7 +100,6 @@ test -f "$archive" || fail 'archive missing'
 test "$(sha256sum "$archive" | awk '{print $1}')" = "$archive_sha" || fail 'archive hash mismatch'
 test ! -e "$evidence_dir" || fail 'evidence directory already exists'
 test ! -e "$release_install" || fail 'release install path exists'
-test ! -e "$release_root" || fail 'release already exists'
 test "$(readlink "$deploy_root/current")" = "releases/$expected_current" || fail 'current release drifted'
 test "$(tr -d '\r\n' < "$state_dir/redirect-status")" = '302' || fail 'redirect status drifted'
 test "$(tr -d '\r\n' < "$state_dir/comment-write-mode")" = 'disabled' || fail 'comment mode is not disabled'
@@ -105,7 +107,23 @@ test "$(docker inspect --format '{{.State.Running}}' "$typecho_container")" = 't
 test "$(docker inspect --format '{{.State.Health.Status}}' "$waline_container")" = 'healthy' || fail 'production Waline is not healthy'
 test "$(mysql_root_query 'SELECT CONCAT(cid,"|",allowComment) FROM typecho_frf6hh.typecho_contents WHERE cid=47')" = '47|0' || fail 'CID47 is not closed'
 test "$(mysql_root_query 'SELECT COUNT(*) FROM information_schema.TRIGGERS WHERE TRIGGER_SCHEMA="typecho_frf6hh" AND EVENT_OBJECT_TABLE="typecho_comments" AND ACTION_TIMING="BEFORE" AND ACTION_STATEMENT LIKE "%TYPECHO_COMMENTS_READ_ONLY_AFTER_ASTRO_CUTOVER%"')" = '3' || fail 'Typecho comment guard mismatch'
-test "$(mysql_root_query 'SELECT CONCAT((SELECT COUNT(*) FROM typecho_frf6hh.typecho_comments),"|",(SELECT COUNT(*) FROM waline.wl_Comment),"|",(SELECT COUNT(*) FROM waline.astro_comment_migration_map))')" = '2|2|2' || fail 'pre-enable comment counts drifted'
+if test -n "$resume_evidence"; then
+  resume_mode='true'
+  probe_mode='retained-from-prior-evidence'
+  case "$resume_evidence" in /*) ;; *) fail 'resume evidence path must be absolute' ;; esac
+  test -d "$release_root" || fail 'resume release is missing'
+  test "$(readlink "$deploy_root/previous")" = "releases/$release_id" || fail 'resume previous release mismatch'
+  test "$(mysql_root_query 'SELECT CONCAT((SELECT COUNT(*) FROM typecho_frf6hh.typecho_comments),"|",(SELECT COUNT(*) FROM waline.wl_Comment),"|",(SELECT COUNT(*) FROM waline.astro_comment_migration_map))')" = '2|3|2' || fail 'resume comment counts drifted'
+  test "$(mysql_root_query "SELECT COUNT(*) FROM waline.wl_Comment WHERE comment LIKE '%$marker%' AND url='$open_key'")" = '1' || fail 'resume marker row mismatch'
+  grep -Fxq 'closed_key_status=403|entry-not-writable' "$resume_evidence/phase9c-summary.txt" || fail 'resume closed probe evidence mismatch'
+  grep -Fxq 'unknown_key_status=403|unknown-key' "$resume_evidence/phase9c-summary.txt" || fail 'resume unknown probe evidence mismatch'
+  grep -Fxq 'open_key_status=200' "$resume_evidence/phase9c-summary.txt" || fail 'resume open probe evidence mismatch'
+  grep -Fq 'entry-not-writable' "$resume_evidence/closed-post.response.json" || fail 'resume closed response mismatch'
+  grep -Fq 'unknown-key' "$resume_evidence/unknown-post.response.json" || fail 'resume unknown response mismatch'
+else
+  test ! -e "$release_root" || fail 'release already exists'
+  test "$(mysql_root_query 'SELECT CONCAT((SELECT COUNT(*) FROM typecho_frf6hh.typecho_comments),"|",(SELECT COUNT(*) FROM waline.wl_Comment),"|",(SELECT COUNT(*) FROM waline.astro_comment_migration_map))')" = '2|2|2' || fail 'pre-enable comment counts drifted'
+fi
 
 mkdir "$evidence_dir"
 chmod 700 "$evidence_dir"
@@ -142,13 +160,19 @@ NODE
 cmp -s "$deploy_root/current/nginx/release-http.conf" "$candidate_release/nginx/release-http.conf" \
   || fail 'Nginx maps changed; Phase 9c may not reload OpenResty'
 
-mkdir "$release_install"
-cp -a "$candidate_release/." "$release_install/"
-find "$release_install" -type d -exec chmod 0755 {} +
-find "$release_install" -type f -exec chmod 0644 {} +
-node "$package_root/meta/phase9c-validate-release.mjs" --release-dir "$release_install" --release-id "$release_id" \
-  > "$evidence_dir/installed-validation.json"
-mv "$release_install" "$release_root"
+if test "$resume_mode" = 'true'; then
+  cmp -s "$candidate_release/checksums.sha256" "$release_root/checksums.sha256" || fail 'resume release checksum manifest mismatch'
+  node "$package_root/meta/phase9c-validate-release.mjs" --release-dir "$release_root" --release-id "$release_id" \
+    > "$evidence_dir/installed-validation.json"
+else
+  mkdir "$release_install"
+  cp -a "$candidate_release/." "$release_install/"
+  find "$release_install" -type d -exec chmod 0755 {} +
+  find "$release_install" -type f -exec chmod 0644 {} +
+  node "$package_root/meta/phase9c-validate-release.mjs" --release-dir "$release_install" --release-id "$release_id" \
+    > "$evidence_dir/installed-validation.json"
+  mv "$release_install" "$release_root"
+fi
 
 WWW_ROOT="$deploy_root" STATE_DIR="$state_dir" \
   "$transition_script" comment-write-mode enabled > "$evidence_dir/state-transition.txt"
@@ -167,7 +191,14 @@ test "$(readlink "$deploy_root/previous")" = "releases/$expected_current" || fai
 node "$package_root/meta/phase9c-validate-release.mjs" --release-dir "$deploy_root/current" --release-id "$release_id" \
   > "$evidence_dir/current-validation.json"
 
-node - "$evidence_dir" "$release_id" "$closed_key" "$unknown_key" "$open_key" <<'NODE'
+if test "$resume_mode" = 'true'; then
+  cp "$resume_evidence/closed-post.payload.json" "$resume_evidence/closed-post.response.json" \
+    "$resume_evidence/unknown-post.payload.json" "$resume_evidence/unknown-post.response.json" \
+    "$resume_evidence/open-post.payload.json" "$resume_evidence/open-post.response.json" \
+    "$evidence_dir/"
+  cp "$resume_evidence/phase9c-summary.txt" "$evidence_dir/prior-probe-summary.txt"
+else
+  node - "$evidence_dir" "$release_id" "$closed_key" "$unknown_key" "$open_key" <<'NODE'
 const fs = require('fs');
 const [,, dir, releaseId, closedKey, unknownKey, openKey] = process.argv;
 const common = { nick: 'Stage 10 Probe', mail: 'stage10-probe@andy-y.cn', link: '' };
@@ -177,16 +208,17 @@ for (const [name, url] of [['closed', closedKey], ['unknown', unknownKey], ['ope
 }
 NODE
 
-closed_status="$(post_probe "$evidence_dir/closed-post.payload.json" "$evidence_dir/closed-post.response.json")"
-test "$closed_status" = '403' || fail "closed key status=$closed_status"
-grep -Fq 'entry-not-writable' "$evidence_dir/closed-post.response.json" || fail 'closed key reason mismatch'
-unknown_status="$(post_probe "$evidence_dir/unknown-post.payload.json" "$evidence_dir/unknown-post.response.json")"
-test "$unknown_status" = '403' || fail "unknown key status=$unknown_status"
-grep -Fq 'unknown-key' "$evidence_dir/unknown-post.response.json" || fail 'unknown key reason mismatch'
-test "$(mysql_root_query 'SELECT CONCAT((SELECT COUNT(*) FROM waline.wl_Comment),"|",(SELECT COUNT(*) FROM waline.astro_comment_migration_map))')" = '2|2' || fail 'denied probes changed Waline'
+  closed_status="$(post_probe "$evidence_dir/closed-post.payload.json" "$evidence_dir/closed-post.response.json")"
+  test "$closed_status" = '403' || fail "closed key status=$closed_status"
+  grep -Fq 'entry-not-writable' "$evidence_dir/closed-post.response.json" || fail 'closed key reason mismatch'
+  unknown_status="$(post_probe "$evidence_dir/unknown-post.payload.json" "$evidence_dir/unknown-post.response.json")"
+  test "$unknown_status" = '403' || fail "unknown key status=$unknown_status"
+  grep -Fq 'unknown-key' "$evidence_dir/unknown-post.response.json" || fail 'unknown key reason mismatch'
+  test "$(mysql_root_query 'SELECT CONCAT((SELECT COUNT(*) FROM waline.wl_Comment),"|",(SELECT COUNT(*) FROM waline.astro_comment_migration_map))')" = '2|2' || fail 'denied probes changed Waline'
 
-open_status="$(post_probe "$evidence_dir/open-post.payload.json" "$evidence_dir/open-post.response.json")"
-test "$open_status" = '200' || fail "open key status=$open_status"
+  open_status="$(post_probe "$evidence_dir/open-post.payload.json" "$evidence_dir/open-post.response.json")"
+  test "$open_status" = '200' || fail "open key status=$open_status"
+fi
 test "$(mysql_root_query "SELECT COUNT(*) FROM waline.wl_Comment WHERE comment LIKE '%$marker%' AND url='$open_key'")" = '1' || fail 'open probe marker row mismatch'
 test "$(mysql_root_query 'SELECT CONCAT((SELECT COUNT(*) FROM waline.wl_Comment),"|",(SELECT COUNT(*) FROM waline.astro_comment_migration_map),"|",(SELECT COUNT(*) FROM waline.wl_Comment c LEFT JOIN waline.astro_comment_migration_map m ON m.waline_id=c.id WHERE m.waline_id IS NULL))')" = '3|2|1' || fail 'post-enable native/mapped counts mismatch'
 mysql_root_query "SELECT CONCAT(id,'|',status,'|',url,'|',SHA2(comment,256)) FROM waline.wl_Comment WHERE comment LIKE '%$marker%' AND url='$open_key'" \
@@ -207,6 +239,7 @@ test "$(tr -d '\r\n' < "$state_dir/comment-write-mode")" = 'enabled' || fail 'co
   printf 'redirect_status=302\ncomment_write_mode=enabled\n'
   printf 'closed_key_status=403|entry-not-writable\nunknown_key_status=403|unknown-key\n'
   printf 'open_key_status=200\nnative_probe_rows=1\ntypecho_mappings=2\nwaline_comments=3\n'
+  printf 'post_probe_mode=%s\n' "$probe_mode"
   printf 'typecho_comments=2\ntypecho_guard_triggers=3\nwaline_get=200\n'
   printf 'vhost_reload_executed=false\ncdn_purge_executed=false\n'
 } > "$evidence_dir/phase9c-summary.txt"
