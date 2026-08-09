@@ -13,8 +13,9 @@ test('CMS and comment admin generators stay loopback-only and protected', () => 
   execFileSync(process.execPath, ['scripts/generate-1panel-waline-admin-nginx.js'], { cwd: ROOT });
   const cms = read('.cache/stage10-nginx/cms.andy-y.cn.conf');
   const comments = read('.cache/stage10-nginx/comments.andy-y.cn.conf');
+  assert.match(cms, /auth_basic_user_file/);
+  assert.doesNotMatch(comments, /auth_basic/);
   for (const conf of [cms, comments]) {
-    assert.match(conf, /auth_basic_user_file/);
     assert.match(conf, /X-Robots-Tag "noindex, nofollow, noarchive"/);
     assert.doesNotMatch(conf, /return 301/);
   }
@@ -24,6 +25,10 @@ test('CMS and comment admin generators stay loopback-only and protected', () => 
   assert.match(comments, /proxy_set_header Accept-Encoding ""/);
   assert.match(comments, /sub_filter "window\.serverURL = 'https:\/\/www\.andy-y\.cn\/api\/';" "window\.serverURL = 'https:\/\/comments\.andy-y\.cn\/api\/';";/);
   assert.doesNotMatch(comments, /sub_filter 'https:\/\/www\.andy-y\.cn' 'https:\/\/comments\.andy-y\.cn'/);
+  assert.match(comments, /map "\$request_method:\$http_authorization" \$andy_blog_comments_block_unauthenticated_write/);
+  assert.match(comments, /location = \/api\/token \{\s+proxy_pass/);
+  assert.match(comments, /location \^~ \/api\/user \{\s+if \(\$request_method = POST\) \{ return 403; \}/);
+  assert.match(comments, /location \^~ \/api\/ \{\s+if \(\$andy_blog_comments_block_unauthenticated_write\) \{ return 403; \}/);
 });
 
 test('1Panel compose files expose no public service or repository nginx', () => {

@@ -11,15 +11,12 @@ const domain = arg('--domain', 'comments.andy-y.cn');
 const upstream = arg('--upstream', '127.0.0.1:8362');
 const publicServerUrl = arg('--public-server-url', 'https://www.andy-y.cn');
 const certDir = arg('--cert-dir', '/www/sites/www.andy-y.cn/ssl');
-const authFile = arg('--auth-file', '/www/server/pass/andy-blog-comments.htpasswd');
 const output = path.resolve(ROOT, arg('--out', '.cache/stage10-nginx/comments.andy-y.cn.conf'));
 
 if (!/^[a-z0-9.-]+$/.test(domain)) throw new Error('invalid domain');
 if (!/^(?:127\.0\.0\.1|localhost):[1-9][0-9]{0,4}$/.test(upstream)) throw new Error('upstream must be loopback');
 if (!/^https:\/\/[a-z0-9.-]+$/.test(publicServerUrl)) throw new Error('public-server-url must be an HTTPS origin');
-for (const value of [certDir, authFile]) {
-  if (!path.posix.isAbsolute(value)) throw new Error('cert-dir and auth-file must be absolute POSIX paths');
-}
+if (!path.posix.isAbsolute(certDir)) throw new Error('cert-dir must be an absolute POSIX path');
 
 const proxy = `
     proxy_pass http://${upstream};
@@ -31,7 +28,12 @@ const proxy = `
     proxy_set_header Upgrade $http_upgrade;
     proxy_set_header Connection "upgrade";`;
 
-const config = `server {
+const config = `map "$request_method:$http_authorization" $andy_blog_comments_block_unauthenticated_write {
+  default 0;
+  ~*^(POST|PUT|PATCH|DELETE):(?!Bearer\\s) 1;
+}
+
+server {
   listen 80;
   server_name ${domain};
   return 302 https://${domain}$request_uri;
@@ -45,18 +47,25 @@ server {
 
   add_header X-Robots-Tag "noindex, nofollow, noarchive" always;
   add_header Cache-Control "private, no-store" always;
-  auth_basic "Andy Blog Comments";
-  auth_basic_user_file ${authFile};
 
   location = / { return 302 /ui/; }
   location ^~ /ui/ {
     # The shared Waline instance advertises the public www API. Repoint only
-    # the Basic-Auth-protected admin UI to this management origin.
+    # the admin UI to this management origin.
     proxy_set_header Accept-Encoding "";
     sub_filter_once off;
     sub_filter "window.serverURL = '${publicServerUrl}/api/';" "window.serverURL = 'https://${domain}/api/';";${proxy}
   }
-  location ^~ /api/ {${proxy}
+  # Waline owns authentication on the management origin. Keep token login
+  # available, permanently reject user registration, and require Bearer for
+  # every other state-changing API request.
+  location = /api/token {${proxy}
+  }
+  location ^~ /api/user {
+    if ($request_method = POST) { return 403; }${proxy}
+  }
+  location ^~ /api/ {
+    if ($andy_blog_comments_block_unauthenticated_write) { return 403; }${proxy}
   }
   location / { return 404; }
 }
