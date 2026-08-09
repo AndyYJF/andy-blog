@@ -1,15 +1,21 @@
-# Builder: Node >=22.12 + Chromium for Mermaid. Not Alpine (Playwright needs glibc).
+# syntax=docker/dockerfile:1
+# Immutable production builder. Source and browser are baked into the image;
+# runtime mounts contain only release/state data.
 FROM node:22.14.0-bookworm
 
-RUN apt-get update \
-  && apt-get install -y --no-install-recommends \
-    util-linux curl openssl ca-certificates \
-    libnss3 libatk-bridge2.0-0 libdrm2 libxkbcommon0 libgbm1 libasound2 \
-  && rm -rf /var/lib/apt/lists/*
-
-WORKDIR /app
 ENV PLAYWRIGHT_BROWSERS_PATH=/ms-playwright
-# Browsers installed at image-build time once package.json is present in CI;
-# for local scaffold, install during first compose build via a later layer.
+WORKDIR /app
+
+COPY package.json package-lock.json ./
+COPY astro/package.json astro/package-lock.json ./astro/
+RUN npm ci \
+  && npm --prefix astro ci \
+  && cd astro \
+  && npx playwright install --with-deps chromium
+
+COPY --chown=node:node . .
+RUN mkdir -p /app/.cache /app/astro/.cache /runtime/build \
+  && cp /app/docs/baselines/fixtures/img-dims.json /app/astro/.cache/img-dims.json \
+  && chown -R node:node /app /runtime/build /ms-playwright
 
 USER node

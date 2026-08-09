@@ -84,7 +84,8 @@ check(cdn.includes('exit 71'), 'cdn-purge must fail-closed when stubbed with cre
 
 const onePanelProd = read('compose.1panel-production.yml');
 check(onePanelProd.includes("127.0.0.1:${WALINE_HOST_PORT:-8360}:8360"), 'prod Waline must bind loopback 8360');
-check(onePanelProd.includes('SECURE_DOMAINS: www.andy-y.cn'), 'prod SECURE_DOMAINS must be www only');
+check(onePanelProd.includes("127.0.0.1:${WALINE_ADMIN_HOST_PORT:-8362}:8361"), 'Waline admin must bind direct upstream to loopback only');
+check(onePanelProd.includes('WALINE_SECURE_DOMAINS:-www.andy-y.cn,comments.andy-y.cn'), 'prod secure origins must be public www plus protected admin');
 check(onePanelProd.includes('COMMENT_POLICY_FILE: /var/www/andy-y.cn/current/comment-policy.json'), 'prod policy path wrong');
 check(!/^\s{2}(?:nginx|typecho):\s*$/m.test(onePanelProd), '1Panel prod compose must not define nginx/typecho');
 check(onePanelProd.includes('name: ${ONEPANEL_NETWORK:-1panel-network}'), '1Panel prod external network missing');

@@ -14,5 +14,5 @@ COPY --from=upstream /app /waline
 COPY waline-config.cjs /waline/node_modules/@waline/vercel/config.js
 ENV PORT=8360
 ENV WALINE_UPSTREAM=127.0.0.1:8361
-EXPOSE 8360
+EXPOSE 8360 8361
 ENTRYPOINT ["/app/entrypoint.sh"]

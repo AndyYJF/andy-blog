@@ -1,0 +1,47 @@
+# Stage 10 content editing and automatic static rebuild control plane.
+# It never publishes 80/443 and never starts the repository nginx service.
+name: andy-blog-cms
+
+services:
+  rebuild-api:
+    build:
+      context: ./docker/rebuild-api
+    restart: unless-stopped
+    environment:
+      TZ: Asia/Shanghai
+      RUNTIME_DIR: /runtime/build
+      WEBHOOK_SECRET_FILE: /run/secrets/webhook_secret
+    volumes:
+      - '${REBUILD_RUNTIME_DIR:?set durable rebuild runtime}:/runtime/build'
+      - '${REBUILD_SECRET_FILE:?set webhook secret file}:/run/secrets/webhook_secret:ro'
+    networks: [onepanel]
+    security_opt:
+      - no-new-privileges:true
+    healthcheck:
+      test: [CMD, node, -e, "fetch('http://127.0.0.1:9000/healthz').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+
+  builder:
+    profiles: [build]
+    build:
+      context: .
+      dockerfile: docker/builder/Dockerfile
+    environment:
+      TZ: Asia/Shanghai
+      DB_HOST: ${TYPECHO_DB_HOST:?set Typecho database host}
+      DB_USER: ${TYPECHO_RO_DB_USER:?set read-only Typecho database user}
+      DB_PASSWORD: ${TYPECHO_RO_DB_PASSWORD:?set read-only Typecho database password}
+      DB_NAME: ${TYPECHO_DB_NAME:?set Typecho database name}
+    volumes:
+      - '${PROD_WWW_ROOT:?set the 1Panel www deploy root}:/var/www/andy-y.cn'
+      - '${REBUILD_RUNTIME_DIR:?set durable rebuild runtime}:/runtime/build'
+    networks: [onepanel]
+    security_opt:
+      - no-new-privileges:true
+
+networks:
+  onepanel:
+    external: true
+    name: ${ONEPANEL_NETWORK:-1panel-network}

@@ -38,7 +38,7 @@ class AutoRebuild_Plugin implements Typecho_Plugin_Interface
      */
     public static function trigger(...$args)
     {
-        $secretFile = getenv('WEBHOOK_SECRET_FILE') ?: '/run/secrets/webhook_secret';
+        $secretFile = getenv('WEBHOOK_SECRET_FILE') ?: __TYPECHO_ROOT_DIR__ . '/usr/.secrets/webhook_secret';
         if (!is_readable($secretFile)) {
             error_log('AutoRebuild: webhook secret is not readable');
             return;
@@ -57,7 +57,12 @@ class AutoRebuild_Plugin implements Typecho_Plugin_Interface
         $sig = 'sha256=' . hash_hmac('sha256', $body, $secret);
 
         // Compose service name — 127.0.0.1 would loop back to Typecho itself.
-        $ch = curl_init('http://rebuild-api:9000/hooks/rebuild');
+        $endpoint = getenv('AUTO_REBUILD_ENDPOINT') ?: 'http://rebuild-api:9000/hooks/rebuild';
+        if ($endpoint !== 'http://rebuild-api:9000/hooks/rebuild') {
+            error_log('AutoRebuild: rejected non-allowlisted endpoint');
+            return;
+        }
+        $ch = curl_init($endpoint);
         curl_setopt_array($ch, [
             CURLOPT_POST => true,
             CURLOPT_POSTFIELDS => $body,

@@ -1,0 +1,13 @@
+.git
+.planning
+.cache
+**/.cache
+**/node_modules
+**/dist
+backups
+secrets
+.env
+.env.*
+*.sql
+*.pem
+*.key

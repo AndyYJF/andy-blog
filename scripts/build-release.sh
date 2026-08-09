@@ -47,7 +47,8 @@ node scripts/finalize-manifest.js \
   --release-id "$RELEASE_ID" \
   --redirect-status "$REDIRECT_STATUS" \
   --comment-write-mode "$COMMENT_WRITE_MODE"
-node scripts/migrate-comments.js --epoch "$SNAPSHOT_EPOCH" --backend memory --twice
+# Comment migration is a one-time cutover operation. Ordinary article rebuilds
+# must never replay it against production Waline.
 
 npm --prefix astro run build
 node scripts/render-gate.js

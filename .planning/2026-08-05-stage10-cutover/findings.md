@@ -1,5 +1,33 @@
 # Findings — Stage 10 continuation
 
+## 2026-08-09 CMS/comment management local closeout
+
+- Read-only production facts: Typecho is `1Panel-typecho-f31a`, bind root `/opt/1panel/apps/typecho/typecho/data`, HTTP loopback `8080`, and all three reviewed admin-origin input hashes match exactly.
+- Production Waline working directory is `/var/www/andy-blog`; its direct upstream `127.0.0.1:8361/ui/` returns 200. The public policy wrapper remains on 8360.
+- `cms.andy-y.cn` and `comments.andy-y.cn` have no DNS records yet, so production cannot be called complete until the authorized deploy window creates direct A records and installs both vhosts.
+- Added a source-baked Node/Chromium builder, private rebuild API Compose, durable 1Panel consumer, checksum/state/atomic switch guard, and systemd path unit. Automatic publishing is hard-locked to 302/enabled and never invokes repository nginx/CDN purge/comment migration.
+- Added protected CMS and Waline management vhost generators. Comment management reaches the direct Waline upstream through loopback 8362; public comment writes still traverse the policy wrapper on 8360.
+- Added hash-pinned Typecho plugin deployment/activation helper. Remote patch inputs and PHP extensions are ready; actual files/DB remain unchanged pending authorization.
+- Targeted result: CMS management tests 6/6 PASS, Stage 5 gate PASS, Stage 10 gate PASS, Bash syntax PASS, Compose YAML parse PASS.
+
+## 2026-08-09 CMS and comment management completion
+
+- 生产评论写入核心链已完成，但“评论管理系统”还缺受控管理入口与管理员初始化/回滚说明；不得用 staging Waline 管理面或合并其数据库。
+- Typecho 容器仍在 `127.0.0.1:8080`，只能证明源程序继续运行，不能证明 `cms.andy-y.cn` 的登录、上传、permalink、状态回跳和 Joe 资源纵向已经完成。
+- `docs/plan.md` 将完整文章发布定义为 Typecho lifecycle hook → HMAC/replay-safe rebuild API → durable pending/dirty queue → host systemd consumer → immutable release；普通 job 必须继承当前 `redirect-status=302` 与 `comment-write-mode=enabled`。
+- 当前仓库已有 rebuild-api、AutoRebuild、host rebuild/systemd 和 Typecho siteUrl patch 脚手架，应优先补齐并复用这些组件，不重写整套系统。
+- 本轮先完成仓库实现、行为测试、1Panel adapter、回滚和单次授权包；未获新授权前不修改 DNS、证书、OpenResty、Typecho 容器或 production Waline 管理配置。
+- 仓库已存在可复用的 `docker/rebuild-api`、`AutoRebuild`、`host/blog-rebuild.sh`、systemd path/service/timer、Typecho siteUrl patch 和 production Waline wrapper；主要缺口是把通用 Compose/Nginx 假设改成 1Panel 生产 adapter，并补管理入口纵向契约。
+- `compose.1panel-production.yml` 当前只覆盖 production Waline；CMS、rebuild-api 和 host consumer 尚未形成 1Panel 专用部署拓扑。文章编辑/发布不能仅靠现有 Typecho loopback 存活状态宣称完成。
+- public Waline wrapper 会对除评论写入以外的 `/api/*` mutation 返回 403；这对公网是正确的，但也意味着把 `/ui` 放在同一 `8360` 端口不能形成可用管理后台。最小安全拓扑是保留 `8360` 公网策略端口，另映射仅 loopback 的 upstream 管理端口，并由受保护的独立管理域名反代。
+- 生产 Typecho 已由 1Panel 独立运行在 `127.0.0.1:8080`，最快路径不是启动仓库 `typecho`/`nginx` Compose，而是生成严格路径范围的 CMS reverse-proxy adapter，并把现有 admin-origin patch/常量以可回滚方式应用到该实例。
+- 通用 `generate-nginx.js` 仍生成 Compose `fastcgi_pass typecho:9000` CMS vhost，并把 public `/ui` 代理到受策略 wrapper；两者都不适合当前 1Panel 生产。需要独立生成 CMS reverse-proxy vhost和评论管理 vhost，不能把通用 release 配置直接上线。
+- 通用 `host/blog-rebuild.sh` 依赖 `compose.yml` builder、`switch-release.sh` 和仓库 Nginx 容器；当前 VPS 没有 host npm，生产也禁止启动该 Nginx。需新增 1Panel consumer：可复用 builder 服务，但切换只做 release 校验/相对 symlink；配置树不变时不 reload，CDN stub 不得阻止正文 release 成功。
+- 当前 builder Dockerfile 只是基础镜像骨架，没有 COPY/install/Chromium 层；直接在 VPS `docker compose run builder` 不能保证可构建。1Panel 自动发布包必须固定可执行 builder image 或提供另一个已校验构建路径。
+- 选定最小自动发布拓扑：builder image 在镜像构建时 COPY 已提交源码并安装 root/Astro 依赖与 Chromium，运行时只挂 production deploy root 和 durable runtime；这样构建不会污染 host Git worktree，也不依赖 VPS host npm。
+- 1Panel consumer 将拒绝任何 Nginx tree 变化，只允许正文/内容 release 在现有 OpenResty vhost 下原子切换；状态文件必须已存在且与当前 manifest 一致，普通 job 不提供 302/enabled 默认值。
+- `build-release.sh` 当前在切换前清除 pending；1Panel host consumer 必须在 build/switch 失败时重新写入 pending，并保留同一 job descriptor/cutoff，避免 webhook 静默丢失。
+
 ## 2026-08-09 observation collector continuation
 
 - `c398daf` 后工作树干净；Phase 9c 仍等待单独生产授权，因此本轮只推进无需 VPS 写权限的公网 302 观察证据。

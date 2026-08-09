@@ -13,6 +13,9 @@ services:
     restart: unless-stopped
     ports:
       - '127.0.0.1:${WALINE_HOST_PORT:-8360}:8360'
+      # Direct upstream is admin-only; expose it only through the protected
+      # comments.andy-y.cn OpenResty vhost.
+      - '127.0.0.1:${WALINE_ADMIN_HOST_PORT:-8362}:8361'
     environment:
       TZ: Asia/Shanghai
       MYSQL_HOST: ${WALINE_MYSQL_HOST:?set production Waline MySQL host}
@@ -24,7 +27,7 @@ services:
       SITE_NAME: AndyYan Blog
       SITE_URL: https://www.andy-y.cn
       SERVER_URL: https://www.andy-y.cn
-      SECURE_DOMAINS: www.andy-y.cn
+      SECURE_DOMAINS: ${WALINE_SECURE_DOMAINS:-www.andy-y.cn,comments.andy-y.cn}
       COMMENT_POLICY_FILE: /var/www/andy-y.cn/current/comment-policy.json
       JWT_TOKEN: ${WALINE_JWT:?set production JWT}
       IPQPS: 60

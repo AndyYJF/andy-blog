@@ -1,0 +1,11 @@
+[Unit]
+Description=Watch durable Typecho rebuild queue
+After=network-online.target docker.service
+
+[Path]
+PathExists=/var/www/andy-blog/runtime/build/pending
+PathExists=/var/www/andy-blog/runtime/build/dirty
+Unit=blog-rebuild-1panel.service
+
+[Install]
+WantedBy=multi-user.target

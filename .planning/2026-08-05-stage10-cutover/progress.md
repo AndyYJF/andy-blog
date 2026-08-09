@@ -1,5 +1,14 @@
 # Progress — Stage 10
 
+## 2026-08-09 CMS/comment management progress
+
+- Completed local implementation for Typecho CMS origin, automatic static publishing, production Waline management origin, 1Panel-safe release switching, and rollback boundaries.
+- Removed one-time comment migration from ordinary article rebuilds; it cannot be replayed by a publish event.
+- Confirmed production Typecho patch targets match reviewed hashes and Waline direct upstream is healthy using three compact read-only SSH preflights; no VPS mutation occurred.
+- Validation PASS: `npm run cms:management:test` 6/6, `npm run stage5:gate`, `npm run stage10:gate`, two `bash -n` checks, and both Compose YAML parses.
+- Next action is one explicit production authorization covering DNS A records, backups, Typecho patch/plugin activation, read-only rebuild DB user, two OpenResty vhosts/reload, production-Waline-only rebuild, rebuild API/builder/systemd deployment, and one 302+enabled no-op release verification.
+- Explicit exclusions remain: 301, CDN purge, staging, repository nginx, comment deletion, and MySQL restart.
+
 - 2026-08-05：启动 Stage 10；按 plan §8.5 先做 in-repo 脚手架，不擅自切 www DNS。
 - 2026-08-05：落地 rollback / roll-forward / transition / www adapters / stage10 gate；`npm run stage10:gate` PASS。
 - 2026-08-05：commit `3a6aa39`。
@@ -83,3 +92,4 @@
 - 2026-08-09T10:23:18Z：候选 release `20260809T102318Z-1db1021e` 构建通过，archive SHA-256 `71ad14c2128b1d71e54077fc888256ce2c47531b42d5a490b6ee8723cbbd60aa`，source HEAD `3a515147e215bca51724972742f7e9cc11febdd2`；策略为 302 + enabled、15 keys/14 writable、仅 CID47 closed。
 - 2026-08-09T10:24:48Z：首次完整 runner 已完成授权的 closed=403 `entry-not-writable`、unknown=403 `unknown-key`、open=200 保留标记 POST，并写入 evidence `/root/stage10-comments/20260809T102424Z-phase9c`；本机 PowerShell 将 runner 的正常 stderr 提示当作异常关闭 SSH，触发自动回滚到旧 disabled release。标记评论按授权保留，Waline=`3`、mapping=`2`。
 - 2026-08-09T10:28:41Z：使用精确 resume evidence 模式完成 Phase 9c，不重复任何 POST。生产 `current=releases/20260809T102318Z-1db1021e`、`previous=releases/20260805T143100Z-c92e7d31`、302/enabled；Typecho/Waline/mapping=`2/3/2`、guards=3、CID47=0、marker rows=1、Waline healthy/GET=200。恢复 evidence `/root/stage10-comments/20260809T102756Z-phase9c-resume`；未执行 OpenResty reload、CDN purge、staging、容器重启或 301。
+- 2026-08-09：owner 要求尽快完成文章编辑与评论管理并最大程度减少审计消耗；新增 Phase 12–15。先复用现有 CMS/rebuild/Waline 脚手架做本地行为收口，生产部署集中为一次窄授权，302/301 观察规则保持不变。

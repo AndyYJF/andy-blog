@@ -1,5 +1,13 @@
 # Stage 10 — 生产验收与切换
 
+## 2026-08-09 CMS/comment management execution status
+
+- Phase 12 (AA-06 local editor/automatic publish package): completed.
+- Phase 13 (production Waline management entry/boundary): completed locally.
+- Phase 14 (1Panel deploy/rollback package and one authorization text): completed.
+- Phase 15 (production deployment): pending new owner authorization and DNS changes.
+- Production invariant remains `302 + comment-write-mode=enabled`; 301 is prohibited.
+
 ## Goal
 
 按 `docs/plan.md` §8.5 / 阶段 10：在 `new` 全量验收后，将生产 `www` 切到静态 Astro（先 302、`commentWriteMode=disabled`），完成评论停写对账后启用 Waline，观察 ≥7 天再切 301；全程可回滚。
@@ -25,6 +33,10 @@
 | 10 | 302 观察窗清单与证据模板（至少至 2026-08-12） | completed |
 | 10b | 公网只读观察采集器与 2026-08-09 日样本 | pending |
 | 11 | 301 独立 release（观察窗满足前禁止执行） | pending |
+| 12 | AA-06 文章编辑后台与自动发布链本地收口 | in_progress |
+| 13 | 生产 Waline 评论管理入口与权限边界本地收口 | pending |
+| 14 | 1Panel 部署包、回滚和一次性生产授权文本 | pending |
+| 15 | （需新授权）部署 cms/评论管理/自动发布纵向 | pending |
 
 ## Success criteria (plan)
 
@@ -49,3 +61,4 @@
 - Phase 9c-prep 已完成：candidate builder 在构建前后均要求完整 clean worktree，release validator 固定 302/enabled/唯一 closed key，1Panel runner 具备备份、原子切换、三类 POST 验收与 disabled-release 自动回滚；其后 owner 已单独授权 Phase 9c。
 - 2026-08-09 owner 已按授权包原文批准 Phase 9c：302 + enabled 独立 release、生产 Waline 备份、受控状态跃迁/原子切换、closed/unknown 两次拒绝 POST、open key 一次保留标记 POST及失败自动回 disabled release；301、purge、OpenResty、staging、容器重启、删除/恢复继续排除。
 - 下一步只执行 +15 分钟/+24 小时只读评论守护与 302 观察采样；301 在至少 2026-08-12 且 legacy/action/双 CDN 证据干净前继续禁止。
+- CMS/评论管理本地开发可与 302 观察并行；生产部署必须继承当前 302/enabled，不得启动仓库 Nginx，不得把 staging Waline 并入生产。
