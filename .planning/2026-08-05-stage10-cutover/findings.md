@@ -88,3 +88,6 @@
 - MySQL `mysql_native_password` plugin 为 ACTIVE/ON；Waline upstream `/waline` 明确解析到 `mysql` 2.18.1，未安装 mysql2。最小可逆修复不是重启 MySQL或升级镜像，而是仅将既有 `waline`@`%` 使用同一现有密码改为 `mysql_native_password`。
 - blocker 证据已固化到 root-only evidence：`auth-blocker-summary.txt` 与 `SHA256SUMS.blocker`。当前 remote Compose SHA/container config hash 仍为原值，candidate 未安装，container 未重建，302/disabled 未变。
 - 该 ALTER USER 不在本次授权的枚举范围，需 owner 窄扩权。拟议脚本不打印/落盘密码，从 production Waline env 内存读取并通过 stdin 设置同一密码；若 GET 仍不为 200，立即用同一密码恢复 `caching_sha2_password` 并停止。
+- owner 已于 2026-08-09 追加上述窄授权；授权不改变原 Phase 8b 的其余排除项。只允许同一 `waline`@`%`、同一现有密码的 plugin 切换，grants 必须前后逐字节一致，MySQL 不重启，known-key GET 非 200 必须触发 EXIT trap 恢复原 plugin。
+- 远端实际 auth-switch 已通过全部前置断言并成功；known-key GET 达到 200，所以回滚 trap 正常解除。grants 前后内容哈希一致，未修改授权；账号插件现为 `mysql_native_password`。这关闭了 schema 后 GET=500 的认证协议阻塞，但 corrected Compose healthcheck 尚未安装，旧容器仍未重建，readiness 仍未完成。
+- corrected production Compose healthcheck 已原子安装，production Waline 仅该服务被重建；运行态 healthcheck 使用真实 key、production Origin/Referer 且仅 HTTP 200 通过。最终 GET=200、四表为空、排除容器快照一致，Phase 8b readiness 完成。后续仍不得直接进入评论迁移或启用：Phase 9 需要独立授权并先执行 Typecho 停写/排空/固定导出/dry-run/对账。

@@ -1,6 +1,6 @@
 # Stage 10 production Waline readiness — authorization boundary
 
-**Status:** `PAUSED_NEEDS_AUTH_PLUGIN_EXPANSION`
+**Status:** `READINESS_COMPLETE`
 
 This is the next production step after the local migration backend and gates.
 It is deliberately smaller than the Typecho stop-write/migration window.
@@ -81,3 +81,32 @@ write the password, does not alter grants, and automatically restores
 become HTTP 200. It does not restart MySQL or any container. Reviewed local
 script SHA-256 is recorded in the current planning progress after every local
 hardening revision; execute only the reviewed current hash after owner approval.
+
+The owner granted this narrow expansion on 2026-08-09. It authorizes only the
+same-account, same-password switch to `mysql_native_password`, requires grants
+to remain unchanged, prohibits printing or persisting the password and
+restarting MySQL, and requires automatic restoration to
+`caching_sha2_password` if the known-key GET does not reach HTTP 200. On
+success, work may continue only with the previously authorized production
+Waline healthcheck deployment and single-service recreation.
+
+## Completion evidence
+
+Completed on 2026-08-09 without expanding the authorized scope:
+
+- backup integrity and reviewed four-table schema contract passed;
+- `waline`@`%` now uses `mysql_native_password` with the existing password;
+  grants are byte-identical and MySQL was not restarted;
+- the active production Compose SHA-256 is
+  `8e2a1576aa4593fbf6923b60f866e796598b16e9e573be409b1feec53f18a5aa`
+  and its mode is `0640`;
+- only production Waline was recreated; its image is unchanged and the strict
+  known-key HTTP-200 healthcheck is healthy;
+- loopback and public known-key GET both return 200; schema/comment/map counts
+  are `4/0/0`;
+- release `20260805T143100Z-c92e7d31`, redirect 302, comments disabled,
+  MySQL, Typecho, and staging container snapshots remain unchanged.
+
+No POST, Typecho stop-write, migration apply, comment enable, OpenResty
+change, release switch, CDN purge, or 301 was performed. Phase 9 still needs a
+separate explicit authorization.

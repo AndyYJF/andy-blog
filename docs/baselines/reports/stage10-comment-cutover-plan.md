@@ -9,20 +9,18 @@ VPS access, does not enable Waline writes, and does not change redirect status.
   `redirectStatus=302` and `commentWriteMode=disabled`.
 - Production Waline is isolated at `127.0.0.1:8360`, database `waline`.
   Staging `127.0.0.1:8361` / `waline_staging` is never a migration target.
-- Read-only preflight on 2026-08-09 found that production database `waline`
-  contains zero tables. `wl_Comment`, the other upstream Waline tables, and
-  `astro_comment_migration_map` are absent. Production schema apply and a real
-  known-commentKey GET=200 are blockers before the stop-write window.
+- Production readiness completed on 2026-08-09: database `waline` has the four
+  reviewed empty tables, and both loopback/public known-commentKey GET return
+  200 through the strict production healthcheck.
 - Typecho remains available only on VPS loopback `127.0.0.1:8080` for writing.
-- `scripts/migrate-comments.js` currently implements only the memory fixture
-  backend. A production MySQL backend and production reconciliation report are
-  blockers, not manual waivers.
+- `scripts/migrate-comments-mysql.js` provides the fail-closed production
+  backend and reconciliation report; it has not yet been run against the fixed
+  production Typecho export.
 - The current manifest has 15 comment keys and all 15 are writable at entry
   level. There is no real closed key for the required production negative test.
-- GET probes without Origin/Referer returned 403 because of Waline
-  `SECURE_DOMAINS`. Browser-like GET with matching Origin/Referer returned 200
-  on staging `new` but 500 on production `www`. The current `<500` healthcheck
-  accepts the predictable 403 and does not establish schema/read readiness.
+- GET probes without Origin/Referer remain invalid because of Waline
+  `SECURE_DOMAINS`. The deployed healthcheck now uses a real key with matching
+  production Origin/Referer and requires HTTP 200.
 
 ## Non-negotiable invariants
 
@@ -92,10 +90,9 @@ The live backend must:
   author links, or the source file path.
 
 `docker/waline/schema.sql` is the reviewed schema source, but the migration CLI
-does not apply it. Because production currently has zero Waline tables, schema
-creation is a separate backup-first production mutation and needs explicit
-authorization. After schema creation, run `npm run comments:test`, then the
-CLI dry-run above, before considering `--apply`.
+does not apply it. The backup-first production schema step is complete. Run
+`npm run comments:test`, then the CLI dry-run above, before considering
+`--apply` in the separately authorized stop-write window.
 
 ## Authorized cutover sequence
 

@@ -14,7 +14,7 @@
 ## Accepted debt (live VPS / secrets — not Stage 10 scaffold blockers)
 
 - Live www OpenResty cutover + DNS TTL (requires production-write authorization)
-- Production Waline auth compatibility + healthcheck completion; real Typecho stop-write/migrate/reconcile = 0
+- Real Typecho stop-write/migrate/reconcile = 0 and separate comment-enable release
 - Real Aliyun / Cloudflare purge OpenAPI wiring
 - cms.andy-y.cn vertical on 1Panel (AA-06)
 - 7-day 302 observation then authorized 301 transition
