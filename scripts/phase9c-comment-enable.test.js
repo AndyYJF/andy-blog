@@ -50,6 +50,9 @@ test('Phase 9c validator requires 302 + enabled and one exact closed key', () =>
   assert.equal(result.policy.entries, 15);
   assert.equal(result.policy.writable, 14);
   assert.deepEqual(result.policy.closed, [CLOSED_KEY]);
+  const checksumsPath = path.join(fixture.root, 'checksums.sha256');
+  fs.writeFileSync(checksumsPath, fs.readFileSync(checksumsPath, 'utf8').replaceAll('  ', ' *'));
+  assert.equal(validateRelease({ releaseDir: fixture.root, releaseId: fixture.releaseId }).policy.entries, 15);
   assert.throws(() => validatePolicy({
     writeEnabled: true,
     entries: { ...fixture.entries, [CLOSED_KEY]: { writable: true } },

@@ -87,7 +87,7 @@ export function validateRelease({ releaseDir, releaseId }) {
   const expectedFiles = files.filter((file) => file !== 'checksums.sha256');
   const recorded = new Map();
   for (const line of checksumLines) {
-    const match = /^([a-f0-9]{64})  (.+)$/.exec(line);
+    const match = /^([a-f0-9]{64}) [ *](.+)$/.exec(line);
     if (!match || recorded.has(match[2])) throw new Error(`bad checksum line: ${line}`);
     recorded.set(match[2], match[1]);
   }
