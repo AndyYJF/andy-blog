@@ -22,7 +22,8 @@ test('CMS and comment admin generators stay loopback-only and protected', () => 
   assert.match(comments, /proxy_pass http:\/\/127\.0\.0\.1:8362/);
   assert.match(comments, /location \^~ \/api\//);
   assert.match(comments, /proxy_set_header Accept-Encoding ""/);
-  assert.match(comments, /sub_filter 'https:\/\/www\.andy-y\.cn' 'https:\/\/comments\.andy-y\.cn'/);
+  assert.match(comments, /sub_filter "window\.serverURL = 'https:\/\/www\.andy-y\.cn\/api\/';" "window\.serverURL = 'https:\/\/comments\.andy-y\.cn\/api\/';";/);
+  assert.doesNotMatch(comments, /sub_filter 'https:\/\/www\.andy-y\.cn' 'https:\/\/comments\.andy-y\.cn'/);
 });
 
 test('1Panel compose files expose no public service or repository nginx', () => {

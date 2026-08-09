@@ -54,7 +54,7 @@ server {
     # the Basic-Auth-protected admin UI to this management origin.
     proxy_set_header Accept-Encoding "";
     sub_filter_once off;
-    sub_filter '${publicServerUrl}' 'https://${domain}';${proxy}
+    sub_filter "window.serverURL = '${publicServerUrl}/api/';" "window.serverURL = 'https://${domain}/api/';";${proxy}
   }
   location ^~ /api/ {${proxy}
   }
