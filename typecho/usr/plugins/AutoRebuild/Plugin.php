@@ -1,4 +1,8 @@
 <?php
+use Typecho\Plugin;
+use Typecho\Plugin\PluginInterface;
+use Typecho\Widget\Helper\Form;
+
 /**
  * AutoRebuild — enqueue Astro rebuilds on Typecho content changes.
  *
@@ -8,12 +12,12 @@
  * @version 1.0.0
  * @link https://www.andy-y.cn
  */
-class AutoRebuild_Plugin implements Typecho_Plugin_Interface
+class AutoRebuild_Plugin implements PluginInterface
 {
     public static function activate()
     {
         foreach (['Widget_Contents_Post_Edit', 'Widget_Contents_Page_Edit'] as $hook) {
-            $factory = Typecho_Plugin::factory($hook);
+            $factory = Plugin::factory($hook);
             $factory->finishPublish = ['AutoRebuild_Plugin', 'trigger'];
             $factory->mark          = ['AutoRebuild_Plugin', 'trigger'];
             $factory->finishDelete  = ['AutoRebuild_Plugin', 'trigger'];
@@ -25,11 +29,11 @@ class AutoRebuild_Plugin implements Typecho_Plugin_Interface
     {
     }
 
-    public static function config(Typecho_Widget_Helper_Form $form)
+    public static function config(Form $form)
     {
     }
 
-    public static function personalConfig(Typecho_Widget_Helper_Form $form)
+    public static function personalConfig(Form $form)
     {
     }
 

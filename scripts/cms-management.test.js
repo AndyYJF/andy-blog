@@ -56,6 +56,8 @@ test('Typecho webhook target and secret fallback are fail-closed', () => {
   assert.match(plugin, /usr\/\.secrets\/webhook_secret/);
   assert.match(plugin, /endpoint !== 'http:\/\/rebuild-api:9000\/hooks\/rebuild'/);
   assert.match(plugin, /hash_hmac\('sha256'/);
+  assert.match(plugin, /implements PluginInterface/);
+  assert.match(plugin, /Plugin::factory\(\$hook\)/);
   assert.match(installer, /Plugin::activate\(\$pluginName\)/);
   assert.match(installer, /where\('name = \?', 'plugins'\)/);
 });
