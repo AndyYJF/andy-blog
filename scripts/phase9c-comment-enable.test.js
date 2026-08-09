@@ -81,8 +81,9 @@ test('Phase 9c builder is fixed to 302 + enabled and an external artifact path',
   assert.match(script, /phase9c-validate-release\.mjs/);
   assert.match(script, /worktree must be clean, including untracked files/);
   assert.match(script, /migration_fixture_epoch='1785565762'/);
-  assert.match(script, /build_drift.*status --porcelain --untracked-files=no/s);
-  assert.match(script, / M astro\/src\/generated\/release-state\.ts/);
+  assert.match(script, /build_drift.*diff --name-only/s);
+  assert.match(script, /astro\/src\/generated\/release-state\.ts/);
+  assert.match(script, /nginx\/release-manifest\.json/);
   assert.match(script, /git -C "\$root" status --porcelain\)"/);
   assert.doesNotMatch(script, /--status 301|redirect-status 301/);
 });

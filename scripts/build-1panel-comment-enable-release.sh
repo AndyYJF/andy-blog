@@ -44,8 +44,11 @@ node scripts/stage6-gate.js
 node scripts/stage8-gate.js
 node scripts/stage10-gate.js
 node scripts/generate-candidate-nginx.js --release-id "$release_id" --out .cache/phase9c-release-nginx
-build_drift="$(git -C "$root" status --porcelain --untracked-files=no)"
-test "$build_drift" = ' M astro/src/generated/release-state.ts' \
+build_drift="$(git -C "$root" diff --name-only)"
+expected_build_drift="$(printf '%s\n' \
+  'astro/src/generated/release-state.ts' \
+  'nginx/release-manifest.json')"
+test "$build_drift" = "$expected_build_drift" \
   || { printf 'unexpected tracked build drift:\n%s\n' "$build_drift" >&2; exit 65; }
 
 cp -a astro/dist/. "$release_dir/site/"
