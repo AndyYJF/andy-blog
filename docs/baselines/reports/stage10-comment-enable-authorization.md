@@ -1,6 +1,6 @@
 # Stage 10 Phase 9c — production comment enable authorization
 
-**Status:** `AWAITING_OWNER_AUTHORIZATION`
+**Status:** `AUTHORIZED_PHASE9C`
 
 Phase 9b is complete. This packet is the next separate production window from
 `docs/plan.md` §8.5 step 3. It enables production Waline writes with a new
@@ -89,3 +89,9 @@ authorize any excluded item above.
 > 计数和 GET 核验；失败时自动恢复原 disabled release。授权不包含 301、CDN
 > purge、OpenResty 配置或 reload、staging、容器重启、Typecho guard 移除、评论删除
 > 或数据库恢复。
+
+## Owner authorization record
+
+On 2026-08-09 the owner supplied the requested authorization text verbatim.
+The authorized production window is therefore limited to the actions above;
+all explicit exclusions remain binding.

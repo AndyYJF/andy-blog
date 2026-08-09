@@ -1,5 +1,13 @@
 # Findings — Stage 10 continuation
 
+## 2026-08-09 observation collector continuation
+
+- `c398daf` 后工作树干净；Phase 9c 仍等待单独生产授权，因此本轮只推进无需 VPS 写权限的公网 302 观察证据。
+- 现有 Phase 10 “completed”仅表示清单与证据模板已落地，不代表 ≥7 天观察门禁已通过；当前 ledger 明确记录 2026-08-09 为 FAIL，原因包括公网 legacy cache 仍返回 200、源站为 302，以及完整三视角 legacy/action 证据未闭合。
+- 观察采集器必须严格只做 GET/HEAD 类公网读取，不发送评论 POST、不调用 purge、不连接 staging 数据库，也不得把 2026-08-12 到期时间自动解释成可切 301。
+- 仓库不存在独立 `data/action-map.json`；Stage 10 所称 legacy/action 的权威集合就是 `data/legacy-url-map.json`，当前共 140 条 redirect（110 path + 30 query）。query key 形如 `/:47` / `/index.php:47`，实际请求分别是 `/?p=47` / `/index.php?p=47`。
+- 现有 `probe-dual-cdn.js` 只比较 direct 与代理路径 body hash，且文档已明确“同一 edge 不算三视角”；它不足以验证逐条 302/Location/单跳终点。新采集器应明确区分公网 DNS edge 与强制 origin IP，只把两者称为两视角，并为未来显式加入真实 Cloudflare vantage 留接口。
+
 ## 2026-08-09 local review
 
 - §8.5 明确规定 Phase 9c 顺序：评论停写与最终对账为 0 后，先受控跃迁 `comment-write-mode enabled`，再构建/切换独立 release，最后运行时验证开放 key 可写且关闭 key 仍拒绝；301 必须继续作为另一独立 release。

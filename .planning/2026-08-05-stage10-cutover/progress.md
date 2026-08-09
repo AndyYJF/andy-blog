@@ -69,3 +69,6 @@
 - 2026-08-09：POST-contract 盘点脚本又触发相同的 PowerShell 括号参数解析错误；该错误发生在查询前。修正为统一 `$targets` splat，并将后续多路径 `rg` 脚本固定采用此写法。
 - 2026-08-09：Phase 9c-prep 首轮本地验证：两份 Bash `-n` 与 Node syntax PASS，新增 Phase 9c 测试后 `comments:test` 25/25 PASS；`stage10:gate` 仅因授权文档短语跨 Markdown 换行而字面匹配失败。修正为跨空白正则后重跑，不放宽授权语义。
 - 2026-08-09：Phase 9c-prep 收口：解包 validator 改用 `.mjs`，早期失败仅在 evidence 目录就绪后写回滚证据；builder 在构建前后均要求包含 untracked files 在内的完整 clean worktree。授权包明确唯一一次保留的 open-key 标记 POST、两次 403 探针、自动回到 disabled release 及全部排除项；尚未连接或修改 VPS。
+- 2026-08-09：Phase 9c 等待新授权期间启动 Phase 10b：只做公网 302 观察采集器与当日样本，不连接或修改 VPS。确认现有观察 ledger 仍为 FAIL，不能因清单已完成或观察日历接近 7 天而切 301。
+- 2026-08-09：首轮观察规范读取脚本错误假设 `data/action-map.json` 存在；PowerShell 对该 `Get-Content` 报错但脚本未设置 stop-on-error，导致最终 exit 0。后续改为先用 `rg --files` 定位真实 action 数据，并让读取脚本对缺失路径 fail-closed；该错误未触发网络或生产操作。
+- 2026-08-09：owner 明确授权 Phase 9c 生产窗口；暂停尚未实现的 Phase 10b collector，先提交授权状态与当前 planning，随后只运行已审核的 302 + enabled 1Panel 执行链。所有 301/purge/OpenResty/staging/容器重启/评论删除与数据库恢复仍排除。
