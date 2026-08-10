@@ -49,6 +49,8 @@ for (const rel of [
   'docs/baselines/reports/stage10-www-cutover.md',
   'docs/baselines/reports/stage10-comment-cutover-plan.md',
   'docs/baselines/reports/stage10-302-observation-window.md',
+  'scripts/stage10-observation.js',
+  'scripts/stage10-observation.test.js',
   'docs/baselines/reports/stage10-production-waline-readiness-authorization.md',
   'docs/baselines/reports/stage10-comment-migration-authorization.md',
   'docs/baselines/reports/stage10-comment-enable-authorization.md',
@@ -160,6 +162,10 @@ check(observation.includes('PROHIBITED'), 'observation checklist must prohibit 3
 check(observation.includes('2026-08-12'), 'observation checklist missing provisional day-7 boundary');
 check(observation.includes('exits 71'), 'observation checklist must disclose CDN purge stub');
 check(observation.includes('origin, Aliyun, and Cloudflare'), 'observation checklist must require three-vantage agreement');
+const observationCollector = read('scripts/stage10-observation.js');
+check(observationCollector.includes("new Set(['GET', 'HEAD'])"), 'observation collector must be locked to GET/HEAD');
+check(observationCollector.includes('OBSERVATION_FAIL_301_PROHIBITED'), 'observation collector must fail closed for 301');
+check(observationCollector.includes("expectedServer:'cloudflare'"), 'observation collector must identify a Cloudflare vantage');
 
 const readinessAuthorization = read('docs/baselines/reports/stage10-production-waline-readiness-authorization.md');
 check(

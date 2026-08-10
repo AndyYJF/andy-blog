@@ -22,6 +22,7 @@
     "stage8:gate": "node scripts/stage8-gate.js",
     "stage9:gate": "node scripts/stage9-gate.js",
     "stage10:gate": "node scripts/stage10-gate.js",
+    "stage10:observe": "node scripts/stage10-observation.js",
     "lighthouse:local": "node scripts/lighthouse-gate.js",
     "cdn:probe": "node scripts/probe-dual-cdn.js",
     "friends:extract": "python scripts/extract-joe-friends.py",
