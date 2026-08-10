@@ -11,6 +11,10 @@
 - Immediate operational follow-up is scoped Docker disk reclamation planning: root is `97%` used, and rollback images/releases must be identified before any prune.
 - Phase 16 (comments admin API-origin repair): completed; comments-domain HTTP Basic removed, Waline login retained, registration POSTs permanently rejected, and other unauthenticated API writes denied.
 - Phase 17 (production comment moderation): completed; production Waline runs healthy with `COMMENT_AUDIT=true`, so new comments require approval before display.
+- Phase 10c (decoded legacy mapping repair): local implementation and gates completed in `8f33989`; production deployment remains separately authorized and pending.
+- Phase 10d (real dual-CDN purge): local implementation completed; credentialed execution and post-propagation evidence remain a separately authorized production step.
+- Phase 10e (cleanup): local Codex temporary scripts were removed; VPS cleanup remains inventory-first because root usage was last observed at 97%.
+- Phase 10e read-only inventory now proves releases are not the capacity cause; detailed image/volume ownership and the installed CMS systemd unit names still need identification before any cleanup or runtime claim.
 
 ## Goal
 
@@ -36,6 +40,9 @@
 | 9c-prep | Phase 9c 授权包、fail-closed runner 与回滚/验收门禁（本机） | completed |
 | 10 | 302 观察窗清单与证据模板（至少至 2026-08-12） | completed |
 | 10b | 公网只读观察采集器与每日样本（2026-08-10 续采） | completed |
+| 10c | decoded legacy mapping 修复与 302-only 生产部署包 | in_progress |
+| 10d | Aliyun / Cloudflare 真实 purge 实现与 fail-closed 门禁 | completed |
+| 10e | 本机临时文件清理与 VPS 空间回收清单 | in_progress |
 | 11 | 301 独立 release（观察窗满足前禁止执行） | pending |
 | 12 | AA-06 文章编辑后台与自动发布链本地收口 | in_progress |
 | 13 | 生产 Waline 评论管理入口与权限边界本地收口 | pending |

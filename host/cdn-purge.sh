@@ -1,69 +1,37 @@
 #!/usr/bin/env bash
-# host/cdn-purge.sh — durable dual-CDN purge after origin is healthy.
-# Credentials come from env / secret files; never from webhook payloads.
+# Durable exact-URL dual-CDN purge. The immutable release owns the URL plan;
+# the source checkout owns the reviewed API client. Never purges a whole zone.
 set -Eeuo pipefail
+umask 077
 
 RELEASE_ID="${1:?release id}"
-WWW_ROOT="${WWW_ROOT:?}"
+WWW_ROOT="${WWW_ROOT:?set absolute WWW_ROOT}"
 STATE_DIR="${STATE_DIR:-$WWW_ROOT/state}"
-JOB_DIR="$STATE_DIR/cdn-jobs"
-mkdir -p "$JOB_DIR"
+COMPOSE_DIR="${COMPOSE_DIR:?set absolute COMPOSE_DIR containing scripts/run-cdn-purge.js}"
 
-JOB="$JOB_DIR/${RELEASE_ID}.json"
-if [[ ! -f "$JOB" ]]; then
-  # Purge HTML/XML/redirect surfaces only — hashed /_astro/* is immutable.
-  node - "$JOB" "$RELEASE_ID" <<'NODE'
-const fs = require('fs');
-const [,, job, releaseId] = process.argv;
-const doc = {
-  releaseId,
-  createdAt: new Date().toISOString().replace(/\.\d{3}Z$/, 'Z'),
-  paths: ['/', '/rss.xml', '/sitemap-index.xml', '/sitemap-0.xml', '/robots.txt', '/__release'],
-  aliyun: { status: 'pending' },
-  cloudflare: { status: 'pending' },
-};
-fs.writeFileSync(job, `${JSON.stringify(doc, null, 2)}\n`);
-NODE
-fi
-
-patch_job() {
-  local provider="$1"
-  local status="$2"
-  local reason="$3"
-  node - "$JOB" "$provider" "$status" "$reason" <<'NODE'
-const fs = require('fs');
-const [,, job, provider, status, reason] = process.argv;
-const data = JSON.parse(fs.readFileSync(job, 'utf8'));
-data[provider] = {
-  status,
-  reason,
-  at: new Date().toISOString().replace(/\.\d{3}Z$/, 'Z'),
-};
-fs.writeFileSync(job, `${JSON.stringify(data, null, 2)}\n`);
-NODE
+[[ "$RELEASE_ID" =~ ^[0-9]{8}T[0-9]{6}Z-[0-9a-f]{8}$ ]] || {
+  echo "bad release id: $RELEASE_ID" >&2
+  exit 64
+}
+[[ "$WWW_ROOT" == /* && "$STATE_DIR" == /* && "$COMPOSE_DIR" == /* ]] || {
+  echo "WWW_ROOT, STATE_DIR, and COMPOSE_DIR must be absolute" >&2
+  exit 64
+}
+RELEASE_DIR="$WWW_ROOT/releases/$RELEASE_ID"
+test -f "$RELEASE_DIR/cdn-purge-plan.json"
+test -f "$RELEASE_DIR/checksums.sha256"
+test -f "$COMPOSE_DIR/scripts/run-cdn-purge.js"
+(cd "$RELEASE_DIR" && sha256sum --check --status checksums.sha256) || {
+  echo "release checksum verification failed" >&2
+  exit 72
 }
 
-# --- Aliyun CDN ---
-if [[ -n "${ALIYUN_CDN_ACCESS_KEY_ID:-}" && -n "${ALIYUN_CDN_ACCESS_KEY_SECRET:-}" && -n "${ALIYUN_CDN_DOMAIN:-}" ]]; then
-  # Placeholder until OpenAPI RefreshObjectCaches is wired. Never report success.
-  echo "aliyun purge not-implemented for $RELEASE_ID (domain=$ALIYUN_CDN_DOMAIN)" >&2
-  patch_job aliyun not-implemented "OpenAPI RefreshObjectCaches not wired"
-  echo "edge-pending: aliyun purge stub must not report ok" >&2
-  exit 71
-else
-  echo "ALIYUN credentials missing — recording skipped" >&2
-  patch_job aliyun skipped "missing credentials"
-fi
+mkdir -p "$STATE_DIR/cdn-jobs"
+chmod 0700 "$STATE_DIR/cdn-jobs"
+exec 9>"$STATE_DIR/cdn-jobs/.lock"
+flock -n 9 || {
+  echo "another CDN purge is active" >&2
+  exit 73
+}
 
-# --- Cloudflare SaaS ---
-if [[ -n "${CF_API_TOKEN:-}" && -n "${CF_ZONE_ID:-}" ]]; then
-  echo "cloudflare purge not-implemented for $RELEASE_ID (zone=$CF_ZONE_ID)" >&2
-  patch_job cloudflare not-implemented "Cloudflare purge API not wired"
-  echo "edge-pending: cloudflare purge stub must not report ok" >&2
-  exit 71
-else
-  echo "CF credentials missing — recording skipped" >&2
-  patch_job cloudflare skipped "missing credentials"
-fi
-
-echo "cdn purge job written: $JOB"
+exec node "$COMPOSE_DIR/scripts/run-cdn-purge.js" --release-id "$RELEASE_ID"

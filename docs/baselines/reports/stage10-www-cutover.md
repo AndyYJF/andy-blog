@@ -88,6 +88,13 @@ bash host/comment-stop-write-checklist.sh
 3. Rebuild+switch with `--status 301` / `REDIRECT_STATUS=301`.
 4. Purge dual CDN (must not fake ok); verify HTML hash agreement.
 
+The release must contain `cdn-purge-plan.json`. Run `host/cdn-purge.sh` only
+with root-readable Aliyun/Cloudflare credentials after origin health and the
+1Panel OpenResty reload succeed. The job is resumable per validated provider
+batch; a task/request ID means accepted by the provider, not propagated to all
+edges. Wait for Aliyun propagation and rerun the full three-vantage observation
+matrix before treating the purge gate as complete.
+
 ### D. Rollback / roll-forward drills
 
 ```bash

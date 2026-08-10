@@ -27,6 +27,10 @@ for (const rel of [
   'host/transition-deploy-state.sh',
   'host/comment-stop-write-checklist.sh',
   'host/cdn-purge.sh',
+  'scripts/cdn-purge-core.js',
+  'scripts/generate-cdn-purge-plan.js',
+  'scripts/run-cdn-purge.js',
+  'scripts/cdn-purge.test.js',
   'scripts/generate-www-cutover-http.js',
   'scripts/nginx-uri.js',
   'scripts/nginx-uri.test.js',
@@ -83,8 +87,14 @@ check(checklist.includes('disabled'), 'stop-write checklist must require disable
 check(checklist.includes('POST'), 'stop-write checklist must probe POST');
 
 const cdn = read('host/cdn-purge.sh');
-check(cdn.includes('not-implemented'), 'cdn-purge must not fake success');
-check(cdn.includes('exit 71'), 'cdn-purge must fail-closed when stubbed with credentials');
+const cdnCore = read('scripts/cdn-purge-core.js');
+const cdnRunner = read('scripts/run-cdn-purge.js');
+check(cdn.includes('scripts/run-cdn-purge.js'), 'cdn-purge wrapper must invoke reviewed runner');
+check(!cdn.includes('not-implemented'), 'cdn-purge must not retain the old API stub');
+check(cdnCore.includes('ACS3-HMAC-SHA256') && cdnCore.includes('RefreshObjectCaches'), 'Aliyun V3 purge integration missing');
+check(cdnCore.includes('api.cloudflare.com/client/v4/zones/'), 'Cloudflare purge integration missing');
+check(!/purge_everything|"hosts"|"prefixes"/.test(`${cdn}\n${cdnCore}\n${cdnRunner}`), 'cdn-purge escaped exact-URL scope');
+check(read('scripts/build-release.sh').includes('cdn-purge-plan.json'), 'release build must embed immutable CDN purge plan');
 
 const onePanelProd = read('compose.1panel-production.yml');
 check(onePanelProd.includes("127.0.0.1:${WALINE_HOST_PORT:-8360}:8360"), 'prod Waline must bind loopback 8360');
@@ -162,7 +172,7 @@ check(commentTests.status === 0, `comment migration tests failed: ${commentTests
 const observation = read('docs/baselines/reports/stage10-302-observation-window.md');
 check(observation.includes('PROHIBITED'), 'observation checklist must prohibit 301 before approval');
 check(observation.includes('2026-08-12'), 'observation checklist missing provisional day-7 boundary');
-check(observation.includes('exits 71'), 'observation checklist must disclose CDN purge stub');
+check(/not been deployed or called with real\s+credentials/.test(observation), 'observation checklist must disclose that real CDN purge evidence is still missing');
 check(observation.includes('origin, Aliyun, and Cloudflare'), 'observation checklist must require three-vantage agreement');
 const observationCollector = read('scripts/stage10-observation.js');
 check(observationCollector.includes("new Set(['GET', 'HEAD'])"), 'observation collector must be locked to GET/HEAD');
@@ -328,26 +338,41 @@ if (!badTr.error && badTr.status !== null) {
   check(badTr.status !== 0, 'transition must reject non-enum redirect-status');
 }
 
-// --- cdn-purge fail-closed with fake credentials ---
+// --- cdn-purge fail-closed before network when credentials are absent ---
 const purgeDir = path.join(ROOT, '.cache', 'stage10-cdn');
 fs.rmSync(purgeDir, { recursive: true, force: true });
+const purgeReleaseId = '20260805T143100Z-c92e7d31';
 fs.mkdirSync(path.join(purgeDir, 'state'), { recursive: true });
-const purge = spawnSync(bash, ['host/cdn-purge.sh', '20260805T143100Z-c92e7d31'], {
+fs.mkdirSync(path.join(purgeDir, 'releases', purgeReleaseId), { recursive: true });
+const purgePlan = spawnSync('node', ['scripts/generate-cdn-purge-plan.js', '--release-id', purgeReleaseId, '--out', path.join(purgeDir, 'releases', purgeReleaseId, 'cdn-purge-plan.json')], {
+  cwd: ROOT,
+  encoding: 'utf8',
+});
+check(purgePlan.status === 0, `cdn purge plan generation failed: ${purgePlan.stderr || purgePlan.stdout}`);
+const purge = spawnSync('node', ['scripts/run-cdn-purge.js', '--release-id', purgeReleaseId], {
   cwd: ROOT,
   encoding: 'utf8',
   env: {
     ...process.env,
     WWW_ROOT: purgeDir,
     STATE_DIR: path.join(purgeDir, 'state'),
-    ALIYUN_CDN_ACCESS_KEY_ID: 'x',
-    ALIYUN_CDN_ACCESS_KEY_SECRET: 'y',
-    ALIYUN_CDN_DOMAIN: 'www.andy-y.cn',
+    ALIYUN_CDN_ACCESS_KEY_ID: '',
+    ALIYUN_CDN_ACCESS_KEY_SECRET: '',
+    ALIYUN_CDN_DOMAIN: '',
+    CF_API_TOKEN: '',
+    CF_ZONE_ID: '',
   },
 });
 if (purge.error || purge.status === null) {
-  warnings.push(`cdn-purge stub check skipped: ${purge.error?.message || 'bash unavailable'}`);
+  warnings.push(`cdn-purge missing-credential check skipped: ${purge.error?.message || 'bash unavailable'}`);
 } else {
-  check(purge.status === 71, `cdn-purge with creds must exit 71 (got ${purge.status})`);
+  check(purge.status === 72, `cdn-purge without credentials must exit 72 (got ${purge.status})`);
+  const purgeJobFile = path.join(purgeDir, 'state', 'cdn-jobs', `${purgeReleaseId}.json`);
+  check(fs.existsSync(purgeJobFile), 'missing-credential purge must persist a blocked job');
+  if (fs.existsSync(purgeJobFile)) {
+    const purgeJob = JSON.parse(fs.readFileSync(purgeJobFile, 'utf8'));
+    check(purgeJob.status == null && purgeJob.aliyun.status === 'blocked', 'missing credentials must not mark CDN job ok');
+  }
 }
 
 // Stage 8 Final must be closed before Stage 10 cutover prep
@@ -377,7 +402,7 @@ fs.writeFileSync(
     '- production MySQL migration backend (dry-run default, named lock, transaction, twice + zero-diff reconciliation)',
     '- guard-protected Typecho fixed exporter + permanent comment-table readonly guard',
     '- stage10-www-cutover.md runbook (§8.5 order)',
-    '- CDN purge remains fail-closed (`not-implemented` → exit 71 with credentials)',
+    '- CDN purge is exact-URL and fail-closed; real provider IDs plus a post-propagation matrix are still required',
     '',
     '## Accepted debt (live VPS / secrets — not Stage 10 scaffold blockers)',
     '',

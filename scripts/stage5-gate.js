@@ -45,8 +45,12 @@ check(nginxGen.includes('fastcgi_pass typecho:9000'), 'CMS PHP must target typec
 check(!nginxGen.includes('fastcgi_pass 127.0.0.1:9000'), 'CMS must not use loopback PHP-FPM');
 
 const cdn = fs.readFileSync(path.join(ROOT, 'host/cdn-purge.sh'), 'utf8');
-check(cdn.includes('not-implemented'), 'cdn-purge stub must record not-implemented');
-check(!/status": "ok".*stub/.test(cdn) && !cdn.includes('"requestId": "stub-'), 'cdn-purge must not fake ok/stub requestId');
+const cdnRunner = fs.readFileSync(path.join(ROOT, 'scripts/run-cdn-purge.js'), 'utf8');
+check(cdn.includes('scripts/run-cdn-purge.js'), 'cdn-purge wrapper must invoke the reviewed API runner');
+check(!cdn.includes('not-implemented'), 'cdn-purge must not retain the old API stub');
+check(cdnRunner.includes('RefreshObjectCaches') || fs.readFileSync(path.join(ROOT, 'scripts/cdn-purge-core.js'), 'utf8').includes('RefreshObjectCaches'), 'Aliyun refresh API missing');
+check(cdnRunner.includes('api.cloudflare.com') || fs.readFileSync(path.join(ROOT, 'scripts/cdn-purge-core.js'), 'utf8').includes('api.cloudflare.com'), 'Cloudflare purge API missing');
+check(!/purge_everything|"hosts"|"prefixes"/.test(cdnRunner), 'CDN purge must stay exact-URL scoped');
 
 const baidu = fs.readFileSync(path.join(ROOT, 'host/baidu-push.sh'), 'utf8');
 check(baidu.includes('PREV_ID="${2'), 'baidu-push must accept previous release as $2');
@@ -81,6 +85,10 @@ for (const rel of [
   'host/blog-rebuild.sh',
   'host/switch-release.sh',
   'host/cdn-purge.sh',
+  'scripts/cdn-purge-core.js',
+  'scripts/generate-cdn-purge-plan.js',
+  'scripts/run-cdn-purge.js',
+  'scripts/cdn-purge.test.js',
   'host/baidu-push.sh',
   'host/systemd/blog-rebuild.path',
   'host/systemd/blog-rebuild.service',
@@ -100,22 +108,31 @@ const pol = JSON.parse(fs.readFileSync(path.join(ROOT, '.cache/comment-policy.js
 check(pol.writeEnabled === false, 'disabled policy must set writeEnabled=false');
 
 const releaseId = '20260802T120000Z-deadbeef';
-const fin = spawnSync(
-  'node',
-  [
-    'scripts/finalize-manifest.js',
-    '--release-id',
-    releaseId,
-    '--redirect-status',
-    '302',
-    '--comment-write-mode',
-    'disabled',
-  ],
-  { cwd: ROOT, encoding: 'utf8', env: { ...process.env, SNAPSHOT_EPOCH: '1785565762' } },
-);
-check(fin.status === 0, `finalize-manifest failed: ${fin.stderr}`);
-const man = JSON.parse(fs.readFileSync(path.join(ROOT, '.cache/manifest.json'), 'utf8'));
-check(man.releaseId === releaseId && man.redirectStatus === 302, 'manifest fields wrong');
+const releaseStateFile = path.join(ROOT, 'astro/src/generated/release-state.ts');
+const releaseStateBefore = fs.readFileSync(releaseStateFile, 'utf8');
+let man;
+try {
+  const fin = spawnSync(
+    'node',
+    [
+      'scripts/finalize-manifest.js',
+      '--release-id',
+      releaseId,
+      '--redirect-status',
+      '302',
+      '--comment-write-mode',
+      'disabled',
+    ],
+    { cwd: ROOT, encoding: 'utf8', env: { ...process.env, SNAPSHOT_EPOCH: '1785565762' } },
+  );
+  check(fin.status === 0, `finalize-manifest failed: ${fin.stderr}`);
+  if (fin.status === 0) {
+    man = JSON.parse(fs.readFileSync(path.join(ROOT, '.cache/manifest.json'), 'utf8'));
+    check(man.releaseId === releaseId && man.redirectStatus === 302, 'manifest fields wrong');
+  }
+} finally {
+  fs.writeFileSync(releaseStateFile, releaseStateBefore);
+}
 
 const cand = spawnSync(
   'node',

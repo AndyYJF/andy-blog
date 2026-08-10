@@ -10,7 +10,7 @@
 - production MySQL migration backend (dry-run default, named lock, transaction, twice + zero-diff reconciliation)
 - guard-protected Typecho fixed exporter + permanent comment-table readonly guard
 - stage10-www-cutover.md runbook (§8.5 order)
-- CDN purge remains fail-closed (`not-implemented` → exit 71 with credentials)
+- CDN purge is exact-URL and fail-closed; real provider IDs plus a post-propagation matrix are still required
 
 ## Accepted debt (live VPS / secrets — not Stage 10 scaffold blockers)
 

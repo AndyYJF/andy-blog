@@ -43,6 +43,7 @@ node scripts/build-legacy-url-map.js
 node scripts/generate-nginx.js --status "$REDIRECT_STATUS"
 node scripts/generate-comment-policy.js --mode "$COMMENT_WRITE_MODE" --out .cache/comment-policy.json
 node scripts/generate-comment-policy.js --mode enabled --out .cache/comment-policy.staging.json
+node scripts/generate-cdn-purge-plan.js --release-id "$RELEASE_ID" --out .cache/cdn-purge-plan.json
 node scripts/finalize-manifest.js \
   --release-id "$RELEASE_ID" \
   --redirect-status "$REDIRECT_STATUS" \
@@ -68,6 +69,7 @@ cp -a astro/dist/. "$STAGE/site/"
 cp .cache/manifest.json "$STAGE/manifest.json"
 cp .cache/comment-policy.json "$STAGE/comment-policy.json"
 cp .cache/comment-policy.staging.json "$STAGE/comment-policy.staging.json"
+cp .cache/cdn-purge-plan.json "$STAGE/cdn-purge-plan.json"
 printf '%s\n' "$RELEASE_ID" > "$STAGE/site/release-id.txt"
 
 if find "$STAGE" ! -type f ! -type d -print -quit | grep -q .; then

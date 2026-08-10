@@ -27,7 +27,7 @@ Date: 2026-08-02
 
 ### 4. Dual CDN + Baidu
 
-- `host/cdn-purge.sh` — durable per-release job; with credentials records `not-implemented` and fails (never stub `ok`)
+- `host/cdn-purge.sh` — executable durable per-release wrapper; verifies immutable checksums, then runs exact-URL Aliyun/Cloudflare batches and records only validated response IDs
 - `host/baidu-push.sh` — **diff-only** vs previous release id passed as `$2` (captured before `last-success-release` overwrite); post URLs are canonical `https://www.andy-y.cn/posts/<slug>/` (no `//`)
 - Behavior fixture: `bash scripts/test-baidu-push.sh` (wired into `stage5-gate.js`)
 

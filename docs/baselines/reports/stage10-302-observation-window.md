@@ -44,9 +44,11 @@ credentials.
 
 Use `scripts/probe-dual-cdn.js` only with actual distinct direct/proxy paths. A
 run where all bases resolve through the same edge is not three-vantage evidence.
-The current `host/cdn-purge.sh` exits 71 when credentials are present because
-both provider APIs are unimplemented; therefore it cannot be cited as purge
-success.
+The repository now contains exact-URL Aliyun `RefreshObjectCaches` and
+Cloudflare purge clients, but they have not been deployed or called with real
+credentials. A local mocked PASS is not purge evidence. Count purge as complete
+only when the immutable release plan hash, real provider request/task IDs, and a
+post-propagation three-vantage capture are all retained.
 
 ## Legacy/action matrix requirements
 
