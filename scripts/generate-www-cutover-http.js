@@ -9,6 +9,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { normalizeNginxUriKey } from './nginx-uri.js';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const SITE = 'https://www.andy-y.cn';
@@ -54,17 +55,17 @@ const queryGone = [];
 for (const entry of legacy) {
   if (entry.action === 'redirect') {
     if (entry.queryKey) queryRedirect.push([entry.queryKey, entry.targetPath]);
-    else if (entry.oldPath) pathRedirect.push([entry.oldPath, entry.targetPath]);
+    else if (entry.oldPath) pathRedirect.push([normalizeNginxUriKey(entry.oldPath), entry.targetPath]);
     continue;
   }
   if (entry.action === 'not_found') {
     if (entry.queryKey) queryNotFound.push([entry.queryKey, true]);
-    else pathNotFound.push([entry.oldPath, true]);
+    else pathNotFound.push([normalizeNginxUriKey(entry.oldPath), true]);
     continue;
   }
   if (entry.action === 'gone') {
     if (entry.queryKey) queryGone.push([entry.queryKey, true]);
-    else pathGone.push([entry.oldPath, true]);
+    else pathGone.push([normalizeNginxUriKey(entry.oldPath), true]);
   }
 }
 

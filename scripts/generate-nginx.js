@@ -12,6 +12,7 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { normalizeNginxUriKey } from './nginx-uri.js';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const SITE = 'https://www.andy-y.cn';
@@ -85,14 +86,15 @@ async function main() {
         seenQuery.set(entry.queryKey, entry.targetPath);
         queryRedirect.push([entry.queryKey, entry.targetPath]);
       } else if (entry.oldPath) {
-        if (entry.oldPath === entry.targetPath) {
+        const normalizedPath = normalizeNginxUriKey(entry.oldPath);
+        if (normalizedPath === entry.targetPath) {
           throw new Error(`self-redirect forbidden: ${entry.oldPath}`);
         }
-        if (seenPath.has(entry.oldPath) && seenPath.get(entry.oldPath) !== entry.targetPath) {
+        if (seenPath.has(normalizedPath) && seenPath.get(normalizedPath) !== entry.targetPath) {
           throw new Error(`path conflict: ${entry.oldPath}`);
         }
-        seenPath.set(entry.oldPath, entry.targetPath);
-        pathRedirect.push([entry.oldPath, entry.targetPath]);
+        seenPath.set(normalizedPath, entry.targetPath);
+        pathRedirect.push([normalizedPath, entry.targetPath]);
       } else {
         throw new Error(`redirect missing key: ${JSON.stringify(entry)}`);
       }
@@ -100,12 +102,12 @@ async function main() {
     }
     if (entry.action === 'not_found') {
       if (entry.queryKey) queryNotFound.push([entry.queryKey, true]);
-      else pathNotFound.push([entry.oldPath, true]);
+      else pathNotFound.push([normalizeNginxUriKey(entry.oldPath), true]);
       continue;
     }
     if (entry.action === 'gone') {
       if (entry.queryKey) queryGone.push([entry.queryKey, true]);
-      else pathGone.push([entry.oldPath, true]);
+      else pathGone.push([normalizeNginxUriKey(entry.oldPath), true]);
       continue;
     }
     throw new Error(`unknown action: ${entry.action}`);

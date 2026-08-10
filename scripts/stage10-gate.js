@@ -28,6 +28,8 @@ for (const rel of [
   'host/comment-stop-write-checklist.sh',
   'host/cdn-purge.sh',
   'scripts/generate-www-cutover-http.js',
+  'scripts/nginx-uri.js',
+  'scripts/nginx-uri.test.js',
   'scripts/generate-1panel-www-nginx.js',
   'scripts/generate-1panel-staging-nginx.js',
   'scripts/migrate-comments-mysql.js',
@@ -240,6 +242,8 @@ check(wwwHttp.includes('return 302 https://www.andy-y.cn'), 'www-cutover must us
 check(wwwHttp.includes('proxy_pass http://waline:8360'), 'www-cutover must default to compose waline');
 check(!/noindex/.test(wwwHttp), 'www-cutover must not noindex production');
 check(wwwHttp.includes('map $uri $legacy_target'), 'www-cutover missing legacy maps');
+check(wwwHttp.includes('分析fen-x'), 'www-cutover must use the decoded nginx $uri key for the encoded Chinese legacy path');
+check(!wwwHttp.includes('%E5%88%86%E6%9E%90fen-x'), 'www-cutover must not compare encoded text against nginx $uri');
 check(wwwHttp.includes('location = /admin'), 'www-cutover must 404 admin');
 
 const onePanelGen = spawnSync(
@@ -261,6 +265,8 @@ if (onePanelGen.status === 0) {
   check(adapted.includes('/www/sites/www.andy-y.cn/ssl/fullchain.pem'), '1Panel www cert path wrong');
   check(!adapted.includes('proxy_pass http://waline:8360'), '1Panel www retains Compose waline upstream');
   check(!/noindex/.test(adapted), '1Panel www must not noindex');
+  check(adapted.includes('分析fen-x'), '1Panel www must retain the decoded nginx $uri key');
+  check(!adapted.includes('%E5%88%86%E6%9E%90fen-x'), '1Panel www must not restore the encoded nginx $uri key');
 }
 
 const gen301 = spawnSync(

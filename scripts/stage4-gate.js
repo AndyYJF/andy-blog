@@ -4,6 +4,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { normalizeNginxUriKey } from './nginx-uri.js';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const DIST = path.join(ROOT, 'astro', 'dist');
@@ -29,14 +30,16 @@ check(nginx.includes('return 302 https://www.andy-y.cn$legacy_query_target'), 'n
 check(!nginx.includes('return 301 https://www.andy-y.cn$legacy_target'), 'observation nginx must not use 301 for legacy');
 
 const pathKeys = new Set();
+const normalizedPathKeys = new Set();
 const queryKeys = new Set();
 for (const entry of legacy) {
   check(['redirect', 'not_found', 'gone'].includes(entry.action), `bad action ${entry.action}`);
   if (entry.action === 'redirect') {
     check(!!entry.targetPath?.startsWith('/'), `redirect without target: ${JSON.stringify(entry)}`);
     if (entry.oldPath) {
+      const nginxUriKey = normalizeNginxUriKey(entry.oldPath);
       check(
-        entry.oldPath !== entry.targetPath,
+        nginxUriKey !== entry.targetPath,
         `self-redirect forbidden: ${entry.oldPath} → ${entry.targetPath}`,
       );
     }
@@ -49,6 +52,9 @@ for (const entry of legacy) {
     check(!!entry.oldPath, 'entry missing oldPath');
     check(!pathKeys.has(entry.oldPath), `duplicate oldPath ${entry.oldPath}`);
     pathKeys.add(entry.oldPath);
+    const nginxUriKey = normalizeNginxUriKey(entry.oldPath);
+    check(!normalizedPathKeys.has(nginxUriKey), `duplicate decoded nginx $uri key ${nginxUriKey}`);
+    normalizedPathKeys.add(nginxUriKey);
   }
 }
 
@@ -119,8 +125,9 @@ check(
   `nginx path redirects (${nginxPathRedirects.size}) != legacy path redirects (${legacyPathRedirects.length})`,
 );
 for (const entry of legacyPathRedirects) {
-  const got = nginxPathRedirects.get(entry.oldPath);
-  check(got != null, `nginx missing legacy path ${entry.oldPath}`);
+  const nginxUriKey = normalizeNginxUriKey(entry.oldPath);
+  const got = nginxPathRedirects.get(nginxUriKey);
+  check(got != null, `nginx missing legacy path ${entry.oldPath} (decoded $uri ${nginxUriKey})`);
   check(got === entry.targetPath, `nginx target drift for ${entry.oldPath}: ${got} vs ${entry.targetPath}`);
 }
 
