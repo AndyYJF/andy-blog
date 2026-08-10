@@ -28,6 +28,8 @@ services:
     build:
       context: .
       dockerfile: docker/builder/Dockerfile
+      args:
+        SOURCE_REVISION: ${BUILDER_SOURCE_REVISION:-unknown}
     environment:
       TZ: Asia/Shanghai
       DB_HOST: ${TYPECHO_DB_HOST:?set Typecho database host}

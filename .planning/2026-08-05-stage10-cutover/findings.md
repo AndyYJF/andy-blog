@@ -213,3 +213,12 @@
 - 固定导出器采用三触发器契约作为硬前置，而不是只依赖“公网目前不再反代 Typecho”的间接事实。导出覆盖 fixture 所需全部字段，固定排序/JSON 字节，重复导出可直接比较 SHA-256 证明 quiet interval 内源未漂移。
 - Phase 9b 仍有一项不可代替的 owner 决策：选择一个真实 closed route。建议 `/posts/typecho-joe-mermaid/`（CID 47），因为它已有历史评论与 read-path 覆盖；只有 owner 明确选择后，才可在固定导出前把该单行 `allowComment` 改为 0。未知 key 不能充当 closed-key 验收。
 - owner 已选择 `/posts/typecho-joe-mermaid/`（CID 47）。Phase 9b 只允许该单行 `allowComment` 从 1 改为 0；任何 CID/route 解析漂移、当前值非 1 或额外内容行变化都必须在写前停止。
+
+## 2026-08-10 decoded mapping repair transaction
+
+- production 的普通 rebuild watcher 会调用现有 1Panel switch 脚本；该脚本会拒绝 nginx policy drift，因此不能靠下一次文章发布顺带修复 decoded URI mapping。
+- 专用 runner 必须同时更新 source builder 与 immutable release，并把 vhost 差异锁死为一行 encoded-to-decoded 替换；状态始终为 302 + enabled，成功后 edge 状态只能写为 `edge-pending`。
+- 回滚必须恢复 active/previous symlink、last-success、edge-status 与 vhost，并重新测试/reload OpenResty；`edge-status` 应作为必需前置文件，不能用 `missing` 哨兵留下不完整恢复分支。
+- VPS 根盘约 97%；部署前若需要空间，只能在再次确认无容器引用后精确删除旧 builder image `sha256:22d68ae100bfd6413110dda5c78667b8339e7a15214a93e94c01c44071b1efe3`。禁止 global prune，并保留 Waline 回滚镜像、当前/旧 release、备份、volume 与仍被 EasyTier 使用的 dangling image。
+- 首轮 runner 复审发现需要继续收紧两个失败窗口：symlink 第一次 `mv` 前就应标记 rollback active；builder rebuild 失败回滚还必须恢复原 builder image tag，否则 watcher 虽恢复但下一次自动发布可能因 decoded/encoded vhost policy drift 被拒绝。
+- `/var/www/andy-blog` 的既有部署明确不含 `.git`，所以 `.deploy-source-revision` 只能证明声明值，不能单独证明 build context 字节。执行包还需绑定 `git archive` SHA/文件清单，并确认自已部署的基线 commit 到候选 commit 没有 tracked deletion；否则 overlay 遗留文件可能进入 builder 的 `COPY . .`。

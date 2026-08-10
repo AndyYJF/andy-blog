@@ -3,6 +3,9 @@
 # runtime mounts contain only release/state data.
 FROM node:22.14.0-bookworm
 
+ARG SOURCE_REVISION=unknown
+LABEL org.opencontainers.image.revision=$SOURCE_REVISION
+
 ENV PLAYWRIGHT_BROWSERS_PATH=/ms-playwright
 ENV NPM_CONFIG_REGISTRY=https://registry.npmmirror.com \
   NPM_CONFIG_FETCH_RETRIES=5 \

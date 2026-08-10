@@ -31,6 +31,9 @@ for (const rel of [
   'scripts/generate-cdn-purge-plan.js',
   'scripts/run-cdn-purge.js',
   'scripts/cdn-purge.test.js',
+  'host/deploy-mapping-repair-1panel.sh',
+  'scripts/validate-1panel-mapping-repair.js',
+  'scripts/mapping-repair.test.js',
   'scripts/generate-www-cutover-http.js',
   'scripts/nginx-uri.js',
   'scripts/nginx-uri.test.js',
@@ -60,6 +63,7 @@ for (const rel of [
   'docs/baselines/reports/stage10-production-waline-readiness-authorization.md',
   'docs/baselines/reports/stage10-comment-migration-authorization.md',
   'docs/baselines/reports/stage10-comment-enable-authorization.md',
+  'docs/baselines/reports/stage10-mapping-repair-authorization.md',
   'docs/baselines/reports/stage9-staging-enable.md',
 ]) {
   check(exists(rel), `missing ${rel}`);
@@ -95,6 +99,16 @@ check(cdnCore.includes('ACS3-HMAC-SHA256') && cdnCore.includes('RefreshObjectCac
 check(cdnCore.includes('api.cloudflare.com/client/v4/zones/'), 'Cloudflare purge integration missing');
 check(!/purge_everything|"hosts"|"prefixes"/.test(`${cdn}\n${cdnCore}\n${cdnRunner}`), 'cdn-purge escaped exact-URL scope');
 check(read('scripts/build-release.sh').includes('cdn-purge-plan.json'), 'release build must embed immutable CDN purge plan');
+
+const mappingRepair = read('host/deploy-mapping-repair-1panel.sh');
+const mappingValidator = read('scripts/validate-1panel-mapping-repair.js');
+check(mappingRepair.includes("[[ \"$(cat \"$STATE_DIR/redirect-status\")\" == '302' ]]"), 'mapping repair must require redirect 302');
+check(mappingRepair.includes("[[ \"$(cat \"$STATE_DIR/comment-write-mode\")\" == 'enabled' ]]"), 'mapping repair must preserve enabled comments');
+check(mappingRepair.includes('validate-1panel-mapping-repair.js'), 'mapping repair must invoke exact-diff validator');
+check(mappingRepair.includes("atomic_state_write 'edge-pending'"), 'mapping repair must leave CDN state pending');
+check(mappingRepair.includes('restore_transaction'), 'mapping repair must implement rollback');
+check(!/redirect-status 301|transition-deploy-state|cdn-purge\.sh|docker compose.*nginx|POST \/api/i.test(mappingRepair), 'mapping repair escaped its bounded scope');
+check(mappingValidator.includes('candidate vhost contains changes outside the single reviewed mapping line'), 'mapping validator must reject policy drift');
 
 const onePanelProd = read('compose.1panel-production.yml');
 check(onePanelProd.includes("127.0.0.1:${WALINE_HOST_PORT:-8360}:8360"), 'prod Waline must bind loopback 8360');
@@ -168,6 +182,12 @@ const commentTests = spawnSync(
   { cwd: ROOT, encoding: 'utf8' },
 );
 check(commentTests.status === 0, `comment migration tests failed: ${commentTests.stderr || commentTests.stdout}`);
+
+const mappingTests = spawnSync('node', ['--test', 'scripts/mapping-repair.test.js'], {
+  cwd: ROOT,
+  encoding: 'utf8',
+});
+check(mappingTests.status === 0, `mapping repair tests failed: ${mappingTests.stderr || mappingTests.stdout}`);
 
 const observation = read('docs/baselines/reports/stage10-302-observation-window.md');
 check(observation.includes('PROHIBITED'), 'observation checklist must prohibit 301 before approval');

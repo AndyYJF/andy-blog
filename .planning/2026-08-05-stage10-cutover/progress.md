@@ -155,3 +155,11 @@
 - 2026-08-09T10:24:48Z：首次完整 runner 已完成授权的 closed=403 `entry-not-writable`、unknown=403 `unknown-key`、open=200 保留标记 POST，并写入 evidence `/root/stage10-comments/20260809T102424Z-phase9c`；本机 PowerShell 将 runner 的正常 stderr 提示当作异常关闭 SSH，触发自动回滚到旧 disabled release。标记评论按授权保留，Waline=`3`、mapping=`2`。
 - 2026-08-09T10:28:41Z：使用精确 resume evidence 模式完成 Phase 9c，不重复任何 POST。生产 `current=releases/20260809T102318Z-1db1021e`、`previous=releases/20260805T143100Z-c92e7d31`、302/enabled；Typecho/Waline/mapping=`2/3/2`、guards=3、CID47=0、marker rows=1、Waline healthy/GET=200。恢复 evidence `/root/stage10-comments/20260809T102756Z-phase9c-resume`；未执行 OpenResty reload、CDN purge、staging、容器重启或 301。
 - 2026-08-09：owner 要求尽快完成文章编辑与评论管理并最大程度减少审计消耗；新增 Phase 12–15。先复用现有 CMS/rebuild/Waline 脚手架做本地行为收口，生产部署集中为一次窄授权，302/301 观察规则保持不变。
+- 2026-08-10：真实双 CDN 精确 URL purge 控制面已提交为 `69a9ae4`；本地 mock/gate 均 PASS，未调用真实 CDN API。开始补齐“仅一行 decoded legacy mapping”专用 1Panel 事务 runner；当前仅为未提交本地实现，尚未部署、reload 或切换 release。
+- 2026-08-10：owner 再次要求记住清理。本轮收尾将显式删除本机创建的 `andy-blog-*` 临时脚本；VPS 不做全局 prune，任何远端删除仅限另行授权且重新确认无容器引用的精确对象。
+- 2026-08-10：恢复 mapping runner 工作树后确认仅 2 个 builder/Compose 修改和 3 个新 runner/validator/test 文件；将 `edge-status` 改为必需前置并无条件纳入失败恢复，消除 `missing` 哨兵导致的不完整回滚分支。下一步接入 package/Stage 10 gate 并运行本地测试。
+- 2026-08-10：首次同时修改 `package.json` 与 Stage 10 gate 的补丁因空 hunk 后紧接第二个 file header，`apply_patch` 在落盘前整体拒绝；拆成有明确上下文的独立补丁后成功，未留下部分修改。
+- 2026-08-10：mapping 本地首轮验证全 PASS：validator Node syntax、2/2 mapping tests、Bash syntax、Compose YAML、CMS management 6/6、Stage 10 gate、`git diff --check`。UTF-8 codepoint 复核确认 decoded 常量确为 `分析`（U+5206/U+6790），此前 PowerShell 输出只是显示乱码。
+- 2026-08-10：首轮 PASS 后进行事务级人工复审，发现自动发布 watcher 的 builder tag 也属于失败恢复面；当前 Compose 未显式声明 builder image ref。继续修改 runner，先捕获旧 image ID/ref，并在失败时把旧 image retag 回原 ref，同时把 symlink rollback flag 前移到第一次原子替换之前。
+- 2026-08-10：加固后首轮复测 1/2 mapping test PASS、Stage 10 gate FAIL。原因均为测试自身仍按旧实现匹配：symlink 顺序断言误命中 rollback 函数内较早的 `mv`，gate 仍期待直接 `printf edge-pending` 而实现已改为原子 state helper；生产 runner Bash syntax 与 CMS tests 仍 PASS。已收紧搜索起点并更新 gate 契约，未连接 VPS。
+- 2026-08-10：修正测试后第二轮验证全 PASS：mapping 2/2、CMS 6/6、Stage 10 gate、Bash/Node/YAML syntax 与 `git diff --check`。10 个预期文件已显式 staged；授权包状态仍为 `AWAITING_OWNER_AUTHORIZATION`，未执行 SSH、OpenResty reload、release 切换、清理或 CDN API。
