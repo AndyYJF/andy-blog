@@ -72,8 +72,8 @@ changing the permanent redirect status.
 | 2026-08-06 | day 1 | pending evidence | |
 | 2026-08-07 | day 2 | pending evidence | |
 | 2026-08-08 | day 3 | pending evidence | |
-| 2026-08-09 | day 4 | **FAIL / live read-only evidence** | at 09:02Z Phase 9b finished with 302/disabled unchanged and Waline GET=200; origin legacy=302 but public CDN legacy=200; `previous` missing |
-| 2026-08-10 | day 5 | pending | |
+| 2026-08-09 | day 4 | **FAIL / live read-only evidence** | at 09:02Z Phase 9b finished with 302/disabled unchanged and Waline GET=200; origin legacy=302 but public CDN legacy=200; `previous` was missing at that capture and was later restored by the Phase 9c release switch |
+| 2026-08-10 | day 5 | **FAIL / full three-vantage capture** | [`stage10-observation-2026-08-10.json`](stage10-observation-2026-08-10.json): origin 139/140, Aliyun 0/140, Cloudflare 139/140 legacy checks; all three terminal matrices 30/30 and probes 6/6. Shared failure `/index.php/tag/%E5%88%86%E6%9E%90fen-x/` returned 404; local 302 generator repair passes gates but is not deployed. Active `current` and `previous` both exist. |
 | 2026-08-11 | day 6 | pending | |
 | 2026-08-12 | day 7 boundary | pending exact timestamp + full matrix | |
 
@@ -87,11 +87,14 @@ used as evidence only if their retention and time range cover the gap.
 - any unresolved legacy/action mismatch, redirect loop/chain, or unexpected 5xx;
 - missing origin/Aliyun/Cloudflare agreement;
 - Aliyun currently serves a cached canonical 200 body under at least one legacy
-  URL while origin returns the required 302;
+  URL while origin returns the required 302; the 2026-08-10 full capture found
+  all 140 Aliyun legacy checks non-compliant;
+- `/index.php/tag/%E5%88%86%E6%9E%90fen-x/` returns 404 at all three vantages
+  because the deployed Nginx map compares encoded text against decoded `$uri`;
+  the local repair is not production evidence until separately deployed and rechecked;
 - release/action-map/sitemap/deployment-state mismatch;
 - unimplemented or unverified real Aliyun and Cloudflare purge;
 - no tested rollback/roll-forward evidence for the active production adapter;
-- production deploy has no `previous` marker, so static rollback cannot run;
 - comment work does not directly block observing 302, but it must not be bundled
   into a 301 release;
 - owner has not explicitly authorized the 301 transition.

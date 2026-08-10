@@ -35,7 +35,7 @@
 | 9c | （已完成）comment-write-mode enabled 独立 release | completed |
 | 9c-prep | Phase 9c 授权包、fail-closed runner 与回滚/验收门禁（本机） | completed |
 | 10 | 302 观察窗清单与证据模板（至少至 2026-08-12） | completed |
-| 10b | 公网只读观察采集器与 2026-08-09 日样本 | pending |
+| 10b | 公网只读观察采集器与每日样本（2026-08-10 续采） | completed |
 | 11 | 301 独立 release（观察窗满足前禁止执行） | pending |
 | 12 | AA-06 文章编辑后台与自动发布链本地收口 | in_progress |
 | 13 | 生产 Waline 评论管理入口与权限边界本地收口 | pending |
