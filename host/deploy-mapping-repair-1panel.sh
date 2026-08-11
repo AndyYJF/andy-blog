@@ -148,11 +148,11 @@ BUILDER_IMAGE_ID="$(docker image inspect --format '{{.Id}}' "$OLD_BUILDER_IMAGE_
 if [[ "$BUILDER_IMAGE_ID" != "$OLD_BUILDER_IMAGE_ID" ]]; then BUILDER_RETAG_REQUIRED=1; fi
 [[ "$(docker inspect --format '{{index .Config.Labels "org.opencontainers.image.revision"}}' "$BUILDER_IMAGE_ID")" == "$EXPECTED_SOURCE_REVISION" ]]
 
-SNAPSHOT_EPOCH="$(docker compose -f "$COMPOSE_FILE" run --rm --no-TTY builder node /app/scripts/read-db-epoch.js)"
+SNAPSHOT_EPOCH="$(docker compose -f "$COMPOSE_FILE" run --rm --no-TTY builder node /app/scripts/read-db-epoch.js </dev/null)"
 [[ "$SNAPSHOT_EPOCH" =~ ^[0-9]{10}$ ]]
 RELEASE_ID="$(docker compose -f "$COMPOSE_FILE" run --rm --no-TTY \
   -e "SNAPSHOT_EPOCH=$SNAPSHOT_EPOCH" -e REDIRECT_STATUS=302 -e COMMENT_WRITE_MODE=enabled \
-  -e WWW_ROOT=/var/www/andy-y.cn builder bash /app/scripts/build-release.sh \
+  -e WWW_ROOT=/var/www/andy-y.cn builder bash /app/scripts/build-release.sh </dev/null \
   | tr -d '\r' | tail -n1)"
 [[ "$RELEASE_ID" =~ ^[0-9]{8}T[0-9]{6}Z-[a-f0-9]{8}$ ]]
 RELEASE_DIR="$WWW_ROOT/releases/$RELEASE_ID"
@@ -160,9 +160,13 @@ RELEASE_DIR="$WWW_ROOT/releases/$RELEASE_ID"
 CANDIDATE_DIR="$STATE_DIR/mapping-repair-candidates/$RELEASE_ID"
 mkdir -p "$CANDIDATE_DIR"
 chmod 0700 "$STATE_DIR/mapping-repair-candidates" "$CANDIDATE_DIR"
+PRODUCTION_HTTP="$CANDIDATE_DIR/www-cutover-http.conf"
 CANDIDATE_VHOST="$CANDIDATE_DIR/www.andy-y.cn.conf.candidate"
+node "$COMPOSE_DIR/scripts/generate-www-cutover-http.js" \
+  --status 302 \
+  --out "$PRODUCTION_HTTP"
 node "$COMPOSE_DIR/scripts/generate-1panel-www-nginx.js" \
-  --input "$RELEASE_DIR/nginx/release-http.conf" \
+  --input "$PRODUCTION_HTTP" \
   --out "$CANDIDATE_VHOST"
 node "$COMPOSE_DIR/scripts/validate-1panel-mapping-repair.js" \
   --current-vhost "$VHOST_FILE" \

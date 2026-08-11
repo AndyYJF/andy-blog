@@ -88,8 +88,15 @@ export function validateRelease({ releaseDir, releaseId }) {
   const recorded = new Map();
   for (const line of checksumLines) {
     const match = /^([a-f0-9]{64}) [ *](.+)$/.exec(line);
-    if (!match || recorded.has(match[2])) throw new Error(`bad checksum line: ${line}`);
-    recorded.set(match[2], match[1]);
+    if (!match) throw new Error(`bad checksum line: ${line}`);
+    const rawRelative = match[2];
+    const relative = rawRelative.startsWith('./') ? rawRelative.slice(2) : rawRelative;
+    if (!relative || relative.includes('\\') || path.posix.isAbsolute(relative)
+        || relative === '..' || relative.startsWith('../') || relative.includes('/../')
+        || recorded.has(relative)) {
+      throw new Error(`bad checksum line: ${line}`);
+    }
+    recorded.set(relative, match[1]);
   }
   if (recorded.size !== expectedFiles.length) throw new Error('checksum file count mismatch');
   for (const relative of expectedFiles) {

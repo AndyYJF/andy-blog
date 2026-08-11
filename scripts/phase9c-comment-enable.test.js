@@ -53,6 +53,13 @@ test('Phase 9c validator requires 302 + enabled and one exact closed key', () =>
   const checksumsPath = path.join(fixture.root, 'checksums.sha256');
   fs.writeFileSync(checksumsPath, fs.readFileSync(checksumsPath, 'utf8').replaceAll('  ', ' *'));
   assert.equal(validateRelease({ releaseDir: fixture.root, releaseId: fixture.releaseId }).policy.entries, 15);
+  fs.writeFileSync(checksumsPath, fs.readFileSync(checksumsPath, 'utf8').replaceAll(' *', ' *./'));
+  assert.equal(validateRelease({ releaseDir: fixture.root, releaseId: fixture.releaseId }).policy.entries, 15);
+  fs.appendFileSync(checksumsPath, fs.readFileSync(checksumsPath, 'utf8').split('\n')[0].replace(' *./', ' *').concat('\n'));
+  assert.throws(
+    () => validateRelease({ releaseDir: fixture.root, releaseId: fixture.releaseId }),
+    /bad checksum line/,
+  );
   assert.throws(() => validatePolicy({
     writeEnabled: true,
     entries: { ...fixture.entries, [CLOSED_KEY]: { writable: true } },

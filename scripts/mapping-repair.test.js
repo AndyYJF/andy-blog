@@ -27,6 +27,14 @@ test('production runner is bounded to 302+enabled and has complete rollback', ()
   assert.match(script, /redirect-status.*302/s);
   assert.match(script, /comment-write-mode.*enabled/s);
   assert.match(script, /validate-1panel-mapping-repair\.js/);
+  assert.match(script, /generate-www-cutover-http\.js/);
+  assert.match(script, /--input "\$PRODUCTION_HTTP"/);
+  assert.doesNotMatch(script, /--input "\$RELEASE_DIR\/nginx\/release-http\.conf"/);
+  assert.ok(
+    script.indexOf('generate-www-cutover-http.js') < script.indexOf('generate-1panel-www-nginx.js'),
+    'production HTTP generation must precede the 1Panel adapter',
+  );
+  assert.equal((script.match(/<\/dev\/null/g) || []).length, 2);
   assert.match(script, /openresty.*-t/s);
   assert.match(script, /openresty.*-s.*reload/s);
   assert.match(script, /restore_transaction/);
