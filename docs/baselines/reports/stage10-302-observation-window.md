@@ -76,7 +76,7 @@ changing the permanent redirect status.
 | 2026-08-08 | day 3 | pending evidence | |
 | 2026-08-09 | day 4 | **FAIL / live read-only evidence** | at 09:02Z Phase 9b finished with 302/disabled unchanged and Waline GET=200; origin legacy=302 but public CDN legacy=200; `previous` was missing at that capture and was later restored by the Phase 9c release switch |
 | 2026-08-10 | day 5 | **FAIL / full three-vantage capture** | [`stage10-observation-2026-08-10.json`](stage10-observation-2026-08-10.json): origin 139/140, Aliyun 0/140, Cloudflare 139/140 legacy checks; all three terminal matrices 30/30 and probes 6/6. Shared failure `/index.php/tag/%E5%88%86%E6%9E%90fen-x/` returned 404; local 302 generator repair passes gates but is not deployed. Active `current` and `previous` both exist. |
-| 2026-08-11 | day 6 | pending | |
+| 2026-08-11 | day 6 | **PARTIAL / mapping repaired, CDN stale** | release `20260811T060917Z-408488e5`; exact vhost diff deployed and origin encoded legacy request now returns one-hop 302. Public path still returns cached 200, so `edge-status=edge-pending` and real dual-CDN purge/post-propagation evidence remain required. |
 | 2026-08-12 | day 7 boundary | pending exact timestamp + full matrix | |
 
 Missing historical daily captures are reported as missing; current healthy
@@ -91,9 +91,8 @@ used as evidence only if their retention and time range cover the gap.
 - Aliyun currently serves a cached canonical 200 body under at least one legacy
   URL while origin returns the required 302; the 2026-08-10 full capture found
   all 140 Aliyun legacy checks non-compliant;
-- `/index.php/tag/%E5%88%86%E6%9E%90fen-x/` returns 404 at all three vantages
-  because the deployed Nginx map compares encoded text against decoded `$uri`;
-  the local repair is not production evidence until separately deployed and rechecked;
+- `/index.php/tag/%E5%88%86%E6%9E%90fen-x/` is repaired at origin (one-hop 302),
+  but the public CDN path still serves a stale 200 and full distinct-vantage agreement is missing;
 - release/action-map/sitemap/deployment-state mismatch;
 - unimplemented or unverified real Aliyun and Cloudflare purge;
 - no tested rollback/roll-forward evidence for the active production adapter;

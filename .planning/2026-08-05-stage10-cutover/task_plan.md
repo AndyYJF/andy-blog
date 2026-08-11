@@ -40,7 +40,7 @@
 | 9c-prep | Phase 9c 授权包、fail-closed runner 与回滚/验收门禁（本机） | completed |
 | 10 | 302 观察窗清单与证据模板（至少至 2026-08-12） | completed |
 | 10b | 公网只读观察采集器与每日样本（2026-08-10 续采） | completed |
-| 10c | decoded legacy mapping 修复与 302-only 生产部署包 | in_progress |
+| 10c | decoded legacy mapping 修复与 302-only 生产部署包 | completed |
 | 10d | Aliyun / Cloudflare 真实 purge 实现与 fail-closed 门禁 | completed |
 | 10e | 本机临时文件清理与 VPS 空间回收清单 | in_progress |
 | 11 | 301 独立 release（观察窗满足前禁止执行） | pending |
@@ -64,12 +64,12 @@
 - 不在普通 rebuild 中修改 `redirect-status` 或 `comment-write-mode`；状态只能由 `transition-deploy-state.sh` 跃迁并打独立 release。
 - 2026-08-09 Phase 9b 已完成；Typecho 评论表永久只读，CID 47 已关闭，生产 Waline 已迁入 2 条评论并完成独立第二次零变更对账。
 - 当前阶段禁止切 301；观察窗至少到 2026-08-12，且仍需 legacy/action 与双 CDN 证据。
-- Phase 9c 已完成：生产 `current` 为 `20260809T102318Z-1db1021e`，保持 302，`comment-write-mode=enabled`；`previous` 为原 disabled release `20260805T143100Z-c92e7d31`。
+- Phase 9c 与 10c 已完成：生产 `current` 为 `20260811T060917Z-408488e5`，保持 302，`comment-write-mode=enabled`；`previous` 为 `20260809T123758Z-f7d863f2`，decoded legacy mapping origin 验证为单跳 302。
 - 2026-08-09 owner 已授权 Phase 8b：仅 production `waline` 备份、reviewed schema、生产 Waline healthcheck/必要单容器重建、只读 GET/状态验证；排除 Typecho 停写/迁移 apply/评论启用/OpenResty/release/purge/301。
 - 2026-08-09 owner 已追加窄授权：仅将既有 `waline`@`%` 以原密码切换为 `mysql_native_password`；不改 grants、不打印或落盘密码、不重启 MySQL；known-key GET 非 200 时自动恢复 `caching_sha2_password`。成功后仅继续既有 Phase 8b healthcheck 与 production Waline 单容器重建授权。
 - 2026-08-09 owner 已确认 `/posts/typecho-joe-mermaid/`（CID 47）为真实 closed key，并授权 Phase 9b：备份 Typecho/production Waline、仅 CID 47 `allowComment=0`、永久评论表只读 guard、双快照、dry-run，干净后 apply/按需 scoped sweep/双遍零差异对账。排除评论启用、release/OpenResty、staging、POST、purge、301。
 - Phase 9c-prep 只在本地形成执行包；未获得新的 owner 授权前，不运行 state transition、rebuild/switch、生产 POST、OpenResty reload、purge 或 301。
 - Phase 9c-prep 已完成：candidate builder 在构建前后均要求完整 clean worktree，release validator 固定 302/enabled/唯一 closed key，1Panel runner 具备备份、原子切换、三类 POST 验收与 disabled-release 自动回滚；其后 owner 已单独授权 Phase 9c。
 - 2026-08-09 owner 已按授权包原文批准 Phase 9c：302 + enabled 独立 release、生产 Waline 备份、受控状态跃迁/原子切换、closed/unknown 两次拒绝 POST、open key 一次保留标记 POST及失败自动回 disabled release；301、purge、OpenResty、staging、容器重启、删除/恢复继续排除。
-- 下一步只执行 +15 分钟/+24 小时只读评论守护与 302 观察采样；301 在至少 2026-08-12 且 legacy/action/双 CDN 证据干净前继续禁止。
+- 下一步是单独授权的真实 Aliyun/Cloudflare exact-URL purge 与传播后三视角验证；当前 public legacy仍为旧CDN 200且`edge-status=edge-pending`。301 在至少 2026-08-12 且 legacy/action/双 CDN 证据干净前继续禁止。
 - CMS/评论管理本地开发可与 302 观察并行；生产部署必须继承当前 302/enabled，不得启动仓库 Nginx，不得把 staging Waline 并入生产。
