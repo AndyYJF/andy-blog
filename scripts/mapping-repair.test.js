@@ -6,6 +6,7 @@ import { fileURLToPath } from 'node:url';
 import {
   DECODED_MAP_LINE,
   ENCODED_MAP_LINE,
+  buildExactMappingCandidate,
   validateExactMappingDiff,
 } from './validate-1panel-mapping-repair.js';
 
@@ -20,6 +21,8 @@ test('mapping repair accepts only the encoded-to-decoded line replacement', () =
   assert.throws(() => validateExactMappingDiff(current, candidate.replace('server {', 'server {\n  add_header X-Drift yes;')));
   assert.throws(() => validateExactMappingDiff(current, current));
   assert.throws(() => validateExactMappingDiff(candidate, candidate));
+  assert.equal(buildExactMappingCandidate(current), candidate);
+  assert.throws(() => buildExactMappingCandidate(candidate));
 });
 
 test('production runner is bounded to 302+enabled and has complete rollback', () => {
@@ -27,13 +30,8 @@ test('production runner is bounded to 302+enabled and has complete rollback', ()
   assert.match(script, /redirect-status.*302/s);
   assert.match(script, /comment-write-mode.*enabled/s);
   assert.match(script, /validate-1panel-mapping-repair\.js/);
-  assert.match(script, /generate-www-cutover-http\.js/);
-  assert.match(script, /--input "\$PRODUCTION_HTTP"/);
-  assert.doesNotMatch(script, /--input "\$RELEASE_DIR\/nginx\/release-http\.conf"/);
-  assert.ok(
-    script.indexOf('generate-www-cutover-http.js') < script.indexOf('generate-1panel-www-nginx.js'),
-    'production HTTP generation must precede the 1Panel adapter',
-  );
+  assert.match(script, /--write-candidate "\$CANDIDATE_VHOST"/);
+  assert.doesNotMatch(script, /generate-(?:www-cutover-http|1panel-www-nginx)\.js/);
   assert.equal((script.match(/<\/dev\/null/g) || []).length, 2);
   assert.match(script, /openresty.*-t/s);
   assert.match(script, /openresty.*-s.*reload/s);

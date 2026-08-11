@@ -27,6 +27,13 @@ export function validateExactMappingDiff(currentConfig, candidateConfig) {
   return { removed: ENCODED_MAP_LINE, added: DECODED_MAP_LINE };
 }
 
+export function buildExactMappingCandidate(currentConfig) {
+  const current = currentConfig.replaceAll('\r\n', '\n');
+  const candidate = current.replace(ENCODED_MAP_LINE, DECODED_MAP_LINE);
+  validateExactMappingDiff(current, candidate);
+  return candidate;
+}
+
 function valueFor(args, option) {
   const index = args.indexOf(option);
   if (index === -1 || !args[index + 1]) throw new Error(`missing ${option}`);
@@ -47,6 +54,14 @@ export function validateMappingRepair({ currentVhost, candidateVhost, releaseDir
 
 function main() {
   const args = process.argv.slice(2);
+  if (args.includes('--write-candidate')) {
+    const currentVhost = valueFor(args, '--current-vhost');
+    const candidateVhost = valueFor(args, '--write-candidate');
+    const candidate = buildExactMappingCandidate(fs.readFileSync(currentVhost, 'utf8'));
+    fs.writeFileSync(candidateVhost, candidate, { flag: 'wx', mode: 0o600 });
+    process.stdout.write(`${JSON.stringify({ ok: true, candidateVhost, diff: validateExactMappingDiff(fs.readFileSync(currentVhost, 'utf8'), candidate) })}\n`);
+    return;
+  }
   const summary = validateMappingRepair({
     currentVhost: valueFor(args, '--current-vhost'),
     candidateVhost: valueFor(args, '--candidate-vhost'),

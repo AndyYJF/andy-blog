@@ -232,3 +232,5 @@
 - 通过 SSH stdin 执行 Bash 时，`docker compose run --no-TTY` 只禁用 TTY，不会关闭 stdin；子进程可吞掉 runner 后续源码并让外层自然 EOF/exit 0。所有此类 transaction runner 必须给 Compose run 显式 `</dev/null`（或等价禁用 interactive），并测试 mutation 后仍会走到终态。
 - `build-release.sh` 的 `nginx/release-http.conf` 是 staging/isolated nginx artifact，故包含强制 noindex；production 1Panel adapter必须消费 `generate-www-cutover-http.js` 的产物，不能把 staging artifact传入并靠删除 header 绕过。exact-diff validator应继续证明候选 vhost除 encoded→decoded 单行外无变化。
 - release checksum 文件由 `(cd STAGE && find . ...)` 生成，因此合法条目带 `./`；`walkFiles()` 返回无前缀 relative path。validator需在拒绝绝对路径/`..` traversal 后规范化单个 `./`，并在规范化后检测重复项；不能修改已生成 immutable release来迁就 validator。
+- 生产 vhost mapping repair不应重新生成整份配置：即使显式对齐uploads alias，Unicode decoded key会因排序规则移动位置，违反“仅原位单行替换”的授权和validator契约。最终控制面应从当前vhost读取exact baseline，使用reviewed常量原位替换一次，再对整文件运行`validateExactMappingDiff`；这同时保留所有1Panel现实路径与手工边界。
+- OpenResty reload后的即时单次GET可能命中旧worker；切换事务应使用短时有界轮询，但每轮必须让release、legacy状态/Location、admin 404、Waline GET同时满足原严格条件，不能把轮询变成接受旧响应。失败仍完整恢复vhost/symlinks/state/builder/watcher。

@@ -160,14 +160,10 @@ RELEASE_DIR="$WWW_ROOT/releases/$RELEASE_ID"
 CANDIDATE_DIR="$STATE_DIR/mapping-repair-candidates/$RELEASE_ID"
 mkdir -p "$CANDIDATE_DIR"
 chmod 0700 "$STATE_DIR/mapping-repair-candidates" "$CANDIDATE_DIR"
-PRODUCTION_HTTP="$CANDIDATE_DIR/www-cutover-http.conf"
 CANDIDATE_VHOST="$CANDIDATE_DIR/www.andy-y.cn.conf.candidate"
-node "$COMPOSE_DIR/scripts/generate-www-cutover-http.js" \
-  --status 302 \
-  --out "$PRODUCTION_HTTP"
-node "$COMPOSE_DIR/scripts/generate-1panel-www-nginx.js" \
-  --input "$PRODUCTION_HTTP" \
-  --out "$CANDIDATE_VHOST"
+node "$COMPOSE_DIR/scripts/validate-1panel-mapping-repair.js" \
+  --current-vhost "$VHOST_FILE" \
+  --write-candidate "$CANDIDATE_VHOST"
 node "$COMPOSE_DIR/scripts/validate-1panel-mapping-repair.js" \
   --current-vhost "$VHOST_FILE" \
   --candidate-vhost "$CANDIDATE_VHOST" \
