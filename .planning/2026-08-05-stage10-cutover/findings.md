@@ -222,3 +222,5 @@
 - VPS 根盘约 97%；部署前若需要空间，只能在再次确认无容器引用后精确删除旧 builder image `sha256:22d68ae100bfd6413110dda5c78667b8339e7a15214a93e94c01c44071b1efe3`。禁止 global prune，并保留 Waline 回滚镜像、当前/旧 release、备份、volume 与仍被 EasyTier 使用的 dangling image。
 - 首轮 runner 复审发现需要继续收紧两个失败窗口：symlink 第一次 `mv` 前就应标记 rollback active；builder rebuild 失败回滚还必须恢复原 builder image tag，否则 watcher 虽恢复但下一次自动发布可能因 decoded/encoded vhost policy drift 被拒绝。
 - `/var/www/andy-blog` 的既有部署明确不含 `.git`，所以 `.deploy-source-revision` 只能证明声明值，不能单独证明 build context 字节。执行包还需绑定 `git archive` SHA/文件清单，并确认自已部署的基线 commit 到候选 commit 没有 tracked deletion；否则 overlay 遗留文件可能进入 builder 的 `COPY . .`。
+- 2026-08-11 实机状态目录没有 `edge-status`，旧脚本只在 rebuild/rollback/roll-forward 的 purge 分支写 `edge-pending` 或 `ok`；此前静态切流路径未创建它。mapping runner 的枚举应以 `edge-pending` 表示真实 purge 尚未执行，但外层事务必须记录“原文件缺失”，失败时删除本次新建的精确文件，不能把初始化误当成既有状态。
+- `docker compose images -q builder` 只覆盖已创建容器关联的镜像；production builder 总是 `run --rm`，因此无论 profile 是否启用都返回空。可用的无凭证接口是 `docker compose config --images`，其中唯一 `*-builder` ref 为 `andy-blog-cms-builder`；runner 必须从该 ref 用 `docker image inspect` 获取前后 image ID，并禁止读取/打印 resolved service environment。

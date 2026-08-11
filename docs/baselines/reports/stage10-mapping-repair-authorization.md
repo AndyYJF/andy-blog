@@ -1,6 +1,14 @@
 # Stage 10 decoded legacy mapping repair authorization
 
-**Status:** `AWAITING_OWNER_AUTHORIZATION`
+**Status:** `PAUSED_RUNNER_FIX_REQUIRES_REAUTH`
+
+The owner authorized commit `6dc4e3a`, but its read-only production preflight
+proved that `docker compose images -q builder` cannot discover a build-profile
+service used only through `run --rm`, and that the initial `edge-status` file is
+absent. No production write occurred under that authorization. The corrected
+commit uses the unique `andy-blog-cms-builder` ref from `config --images` and
+restores an initially absent edge-state file on failure; execution requires the
+owner to bind authorization to the corrected commit.
 
 This packet is for one dedicated 1Panel production transaction. It repairs the
 decoded request form of `/index.php/tag/%E5%88%86%E6%9E%90fen-x/` while keeping

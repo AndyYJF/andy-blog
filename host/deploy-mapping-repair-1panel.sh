@@ -3,6 +3,7 @@
 # This transaction is locked to 302 + enabled and never invokes CDN purge or POST.
 set -Eeuo pipefail
 umask 077
+export COMPOSE_PROFILES=build
 
 WWW_ROOT="${WWW_ROOT:?set production deploy root}"
 STATE_DIR="${STATE_DIR:?set production state dir}"
@@ -14,6 +15,7 @@ EXPECTED_SOURCE_REVISION="${EXPECTED_SOURCE_REVISION:?set reviewed 40-hex source
 EXPECTED_CURRENT_ID="${EXPECTED_CURRENT_ID:?set current release id}"
 EXPECTED_VHOST_SHA256="${EXPECTED_VHOST_SHA256:?set active vhost sha256}"
 REBUILD_PATH_UNIT="${REBUILD_PATH_UNIT:-blog-rebuild-1panel.path}"
+REBUILD_PATH_PRESTOPPED="${REBUILD_PATH_PRESTOPPED:-0}"
 OPENRESTY_BIN='/usr/local/openresty/bin/openresty'
 COMPOSE_FILE="$COMPOSE_DIR/compose.1panel-cms.yml"
 SOURCE_REVISION_FILE="$COMPOSE_DIR/.deploy-source-revision"
@@ -25,11 +27,11 @@ SOURCE_REVISION_FILE="$COMPOSE_DIR/.deploy-source-revision"
 [[ "$EXPECTED_SOURCE_REVISION" =~ ^[a-f0-9]{40}$ ]]
 [[ "$EXPECTED_CURRENT_ID" =~ ^[0-9]{8}T[0-9]{6}Z-[a-f0-9]{8}$ ]]
 [[ "$EXPECTED_VHOST_SHA256" =~ ^[a-f0-9]{64}$ ]]
+[[ "$REBUILD_PATH_PRESTOPPED" == '0' || "$REBUILD_PATH_PRESTOPPED" == '1' ]]
 test -f "$COMPOSE_FILE"
 test -f "$SOURCE_REVISION_FILE"
 grep -qx "$EXPECTED_SOURCE_REVISION" "$SOURCE_REVISION_FILE"
 test -f "$VHOST_FILE"
-test -f "$STATE_DIR/edge-status"
 
 [[ "$(cat "$STATE_DIR/redirect-status")" == '302' ]]
 [[ "$(cat "$STATE_DIR/comment-write-mode")" == 'enabled' ]]
@@ -37,33 +39,41 @@ test -f "$STATE_DIR/edge-status"
 [[ "$(sha256sum "$VHOST_FILE" | awk '{print $1}')" == "$EXPECTED_VHOST_SHA256" ]]
 [[ "$(docker inspect --format '{{.Image}}' "$OPENRESTY_CONTAINER")" == "$OPENRESTY_IMAGE_ID" ]]
 [[ "$(docker inspect --format '{{.State.Running}}' "$OPENRESTY_CONTAINER")" == 'true' ]]
-systemctl is-active --quiet "$REBUILD_PATH_UNIT"
+if [[ "$REBUILD_PATH_PRESTOPPED" == '0' ]]; then
+  systemctl is-active --quiet "$REBUILD_PATH_UNIT"
+else
+  ! systemctl is-active --quiet "$REBUILD_PATH_UNIT"
+fi
 
 OLD_ID="$EXPECTED_CURRENT_ID"
 OLD_PREVIOUS_TARGET="$(readlink "$WWW_ROOT/previous")"
 OLD_LAST_SUCCESS="$(cat "$STATE_DIR/last-success-release")"
-OLD_EDGE_STATUS="$(cat "$STATE_DIR/edge-status")"
+OLD_EDGE_PRESENT=0
+OLD_EDGE_STATUS=''
+if [[ -f "$STATE_DIR/edge-status" ]]; then
+  OLD_EDGE_PRESENT=1
+  OLD_EDGE_STATUS="$(cat "$STATE_DIR/edge-status")"
+fi
 [[ "$OLD_PREVIOUS_TARGET" =~ ^releases/[0-9]{8}T[0-9]{6}Z-[a-f0-9]{8}$ ]]
 [[ "$OLD_LAST_SUCCESS" =~ ^[0-9]{8}T[0-9]{6}Z-[a-f0-9]{8}$ ]]
-[[ "$OLD_EDGE_STATUS" =~ ^(edge-pending|edge-purged|edge-verified)$ ]]
+if [[ "$OLD_EDGE_PRESENT" -eq 1 ]]; then
+  [[ "$OLD_EDGE_STATUS" =~ ^(edge-pending|edge-purged|edge-verified)$ ]]
+fi
 cd "$COMPOSE_DIR"
-OLD_BUILDER_SERVICE_ID="$(docker compose -f "$COMPOSE_FILE" images -q builder)"
-[[ -n "$OLD_BUILDER_SERVICE_ID" ]]
-OLD_BUILDER_IMAGE_ID="$(docker image inspect --format '{{.Id}}' "$OLD_BUILDER_SERVICE_ID")"
+mapfile -t BUILDER_IMAGE_REFS < <(
+  docker compose -f "$COMPOSE_FILE" config --images |
+    grep -E '(^|[-_])builder(:[^/]*)?$'
+)
+[[ "${#BUILDER_IMAGE_REFS[@]}" -eq 1 ]]
+OLD_BUILDER_IMAGE_REF="${BUILDER_IMAGE_REFS[0]}"
+[[ "$OLD_BUILDER_IMAGE_REF" == 'andy-blog-cms-builder' || "$OLD_BUILDER_IMAGE_REF" == 'andy-blog-cms-builder:'* ]]
+OLD_BUILDER_IMAGE_ID="$(docker image inspect --format '{{.Id}}' "$OLD_BUILDER_IMAGE_REF")"
 [[ "$OLD_BUILDER_IMAGE_ID" =~ ^sha256:[a-f0-9]{64}$ ]]
-OLD_BUILDER_IMAGE_REF="$(docker compose -f "$COMPOSE_FILE" images --format json builder | node -e '
-  let input = require("fs").readFileSync(0, "utf8").trim();
-  let rows;
-  try { rows = JSON.parse(input); } catch { rows = input.split(/\r?\n/).filter(Boolean).map(JSON.parse); }
-  if (!Array.isArray(rows)) rows = [rows];
-  if (rows.length !== 1 || !rows[0].Repository || !rows[0].Tag) process.exit(1);
-  process.stdout.write(`${rows[0].Repository}:${rows[0].Tag}`);
-')"
-[[ "$OLD_BUILDER_IMAGE_REF" != *'<none>'* && "$OLD_BUILDER_IMAGE_REF" == *:* ]]
 PATH_STOPPED=0
 CONFIG_INSTALLED=0
 SYMLINK_SWITCHED=0
 BUILDER_RETAG_REQUIRED=0
+EDGE_CREATED=0
 VHOST_BACKUP=''
 
 atomic_state_write() {
@@ -84,7 +94,11 @@ restore_transaction() {
     ln -sfn "$OLD_PREVIOUS_TARGET" "$WWW_ROOT/previous.next" || RESTORE_RC=1
     mv -T "$WWW_ROOT/previous.next" "$WWW_ROOT/previous" || RESTORE_RC=1
     atomic_state_write "$OLD_LAST_SUCCESS" "$STATE_DIR/last-success-release" || RESTORE_RC=1
+  fi
+  if [[ "$OLD_EDGE_PRESENT" -eq 1 ]]; then
     atomic_state_write "$OLD_EDGE_STATUS" "$STATE_DIR/edge-status" || RESTORE_RC=1
+  elif [[ "$EDGE_CREATED" -eq 1 ]]; then
+    rm -f -- /opt/1panel/www/sites/www.andy-y.cn/deploy/state/edge-status || RESTORE_RC=1
   fi
   if [[ "$CONFIG_INSTALLED" -eq 1 && -f "$VHOST_BACKUP" ]]; then
     VHOST_OWNER="$(stat -c '%u' "$VHOST_BACKUP")"
@@ -118,13 +132,19 @@ on_exit() {
 }
 trap on_exit EXIT
 
-systemctl stop "$REBUILD_PATH_UNIT"
+if [[ "$REBUILD_PATH_PRESTOPPED" == '0' ]]; then systemctl stop "$REBUILD_PATH_UNIT"; fi
 PATH_STOPPED=1
 
+if [[ "$OLD_EDGE_PRESENT" -eq 0 ]]; then
+  printf '%s\n' 'edge-pending' >"$STATE_DIR/edge-status.next"
+  chmod 0644 "$STATE_DIR/edge-status.next"
+  chown root:root "$STATE_DIR/edge-status.next"
+  mv -T "$STATE_DIR/edge-status.next" "$STATE_DIR/edge-status"
+  EDGE_CREATED=1
+fi
+
 BUILDER_SOURCE_REVISION="$EXPECTED_SOURCE_REVISION" docker compose -f "$COMPOSE_FILE" build builder
-BUILDER_SERVICE_ID="$(docker compose -f "$COMPOSE_FILE" images -q builder)"
-[[ -n "$BUILDER_SERVICE_ID" ]]
-BUILDER_IMAGE_ID="$(docker image inspect --format '{{.Id}}' "$BUILDER_SERVICE_ID")"
+BUILDER_IMAGE_ID="$(docker image inspect --format '{{.Id}}' "$OLD_BUILDER_IMAGE_REF")"
 if [[ "$BUILDER_IMAGE_ID" != "$OLD_BUILDER_IMAGE_ID" ]]; then BUILDER_RETAG_REQUIRED=1; fi
 [[ "$(docker inspect --format '{{index .Config.Labels "org.opencontainers.image.revision"}}' "$BUILDER_IMAGE_ID")" == "$EXPECTED_SOURCE_REVISION" ]]
 

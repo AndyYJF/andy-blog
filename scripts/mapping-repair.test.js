@@ -31,8 +31,13 @@ test('production runner is bounded to 302+enabled and has complete rollback', ()
   assert.match(script, /openresty.*-s.*reload/s);
   assert.match(script, /restore_transaction/);
   assert.match(script, /OLD_BUILDER_IMAGE_ID/);
+  assert.match(script, /docker compose -f "\$COMPOSE_FILE" config --images/);
+  assert.doesNotMatch(script, /docker compose -f "\$COMPOSE_FILE" images -q builder/);
   assert.match(script, /docker image tag "\$OLD_BUILDER_IMAGE_ID" "\$OLD_BUILDER_IMAGE_REF"/);
   assert.match(script, /rollback incomplete; watcher left stopped/);
+  assert.match(script, /REBUILD_PATH_PRESTOPPED/);
+  assert.match(script, /OLD_EDGE_PRESENT/);
+  assert.match(script, /rm -f -- \/opt\/1panel\/www\/sites\/www\.andy-y\.cn\/deploy\/state\/edge-status/);
   const forwardSwitch = script.indexOf('ln -sfn "releases/$RELEASE_ID"');
   assert.ok(
     script.indexOf('SYMLINK_SWITCHED=1', forwardSwitch)
