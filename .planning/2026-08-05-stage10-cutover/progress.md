@@ -196,3 +196,4 @@
 - 2026-08-12T08:14Z：回答 Aliyun 手工刷新范围前完成只读核验。AliDNS 国内分支仍为 Tengine `117.68.89.36`；显式 Aliyun 的 encoded tag、`/archives/47/`、`/?p=47` 为 200，而 origin 同三条均为正确 302，证明旧缓存不只一个页面。按 production `20260811T060917Z-408488e5` 的 immutable plan 生成 174 条 URL 刷新列表（140 legacy/query + 30 canonical terminal + 4 fixed）及 30 条可选 canonical 预热列表。未执行刷新/预热、未读取凭证、`edge-pending` 未变。
 - 2026-08-12：首次列表校验脚本因对 PowerShell pipeline 标量直接取 `.Count` 而误报 `Invalid refresh list`；未改列表或生产。校验改为先强制收集为数组并同时打印 raw/unique 计数后重跑。
 - 2026-08-12：第二次校验按 PowerShell 默认大小写不敏感去重，将合法的 `AI/ai`、`DN42/dn42`、`NAS/nas` 三组 URL 错折叠为 171。生产 purge core 使用 Ordinal/JavaScript Set 语义；校验器改为 `StringComparer.Ordinal`，保留全部 174 条大小写敏感 URL。
+- 2026-08-12：Aliyun guidance 提交 `5c4458f` 已成功 push，但紧随其后的 GitHub API commit 查询短暂返回旧 SHA，使本地 wrapper 在 push 后误报 `Remote SHA mismatch`。改用 `git ls-remote --heads` 对精确分支做权威核对；文件提交与 push 本身未失败。
