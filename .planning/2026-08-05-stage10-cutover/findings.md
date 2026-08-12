@@ -234,3 +234,10 @@
 - release checksum 文件由 `(cd STAGE && find . ...)` 生成，因此合法条目带 `./`；`walkFiles()` 返回无前缀 relative path。validator需在拒绝绝对路径/`..` traversal 后规范化单个 `./`，并在规范化后检测重复项；不能修改已生成 immutable release来迁就 validator。
 - 生产 vhost mapping repair不应重新生成整份配置：即使显式对齐uploads alias，Unicode decoded key会因排序规则移动位置，违反“仅原位单行替换”的授权和validator契约。最终控制面应从当前vhost读取exact baseline，使用reviewed常量原位替换一次，再对整文件运行`validateExactMappingDiff`；这同时保留所有1Panel现实路径与手工边界。
 - OpenResty reload后的即时单次GET可能命中旧worker；切换事务应使用短时有界轮询，但每轮必须让release、legacy状态/Location、admin 404、Waline GET同时满足原严格条件，不能把轮询变成接受旧响应。失败仍完整恢复vhost/symlinks/state/builder/watcher。
+
+## 2026-08-12 session handoff
+
+- 七天日历边界已经到达，但这是必要条件而非充分条件。当前 origin decoded legacy 为正确 302，public 默认 DNS 路径仍为 200，故真实状态必须保持 `edge-pending`，不能因日期到达而推进 301。
+- 真实双 CDN purge 仍未获授权；当前聊天此前所有 production 授权均明确排除 purge。下一会话必须先取得 `HANDOFF-2026-08-12.md` 中的 Phase 10d 窄授权，才可检查 CDN 凭证键存在性或调用 provider API。
+- 本地 ignored control archive 仍存在，SHA-256 为 `45e971991aecffba005d2ab376bbba1e7c63c6e9a514f8ceaade6d08d8948f23`；API 双成功最多推进到 `edge-purged`，`edge-verified` 必须由传播后且确属不同 CDN 的三视角证据单独产生。
+- CMS 根入口当前 401，comments 根 302 到 `/ui/` 且 `/ui/` 200；这些状态证明边界/入口存在，不等价于本轮重新完成登录、发文或评论管理写操作验证。
