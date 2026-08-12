@@ -197,3 +197,4 @@
 - 2026-08-12：首次列表校验脚本因对 PowerShell pipeline 标量直接取 `.Count` 而误报 `Invalid refresh list`；未改列表或生产。校验改为先强制收集为数组并同时打印 raw/unique 计数后重跑。
 - 2026-08-12：第二次校验按 PowerShell 默认大小写不敏感去重，将合法的 `AI/ai`、`DN42/dn42`、`NAS/nas` 三组 URL 错折叠为 171。生产 purge core 使用 Ordinal/JavaScript Set 语义；校验器改为 `StringComparer.Ordinal`，保留全部 174 条大小写敏感 URL。
 - 2026-08-12：Aliyun guidance 提交 `5c4458f` 已成功 push，但紧随其后的 GitHub API commit 查询短暂返回旧 SHA，使本地 wrapper 在 push 后误报 `Remote SHA mismatch`。改用 `git ls-remote --heads` 对精确分支做权威核对；文件提交与 push 本身未失败。
+- 2026-08-12T08:20Z：发现首轮显式 Aliyun curl 带代理 CONNECT 行，为避免视角误标，改用 `--noproxy '*' --resolve www.andy-y.cn:443:117.68.89.36` 直连重测。encoded tag=`HIT TCP_REFRESH_HIT/200`，`/archives/47/` 与 `/?p=47`=`HIT TCP_MEM_HIT/200`；国内旧缓存结论被直接证实，未执行刷新。

@@ -245,6 +245,6 @@
 ## 2026-08-12 Aliyun manual refresh guidance
 
 - Tavily search skill因本机缺少 `TAVILY_API_KEY` 在网络请求前停止；改用内置网页检索，并仅采用阿里云官方 CDN 文档（`https://help.aliyun.com/zh/cdn/user-guide/refresh-and-prefetch-resources`、`https://help.aliyun.com/zh/cdn/user-guide/refresh-and-warm-up-related-faq`）。官方规则：源内容更新应使用 URL 刷新让边缘缓存失效；预热是后续主动拉取热点资源，不支持目录预热。刷新后预热是常见顺序，但小文件通常无需预热。
-- AliDNS 当前仍解析国内链路为 `www.andy-y.cn.w.kunlunaq.com` → `117.68.89.36`。显式 SNI/Host GET 证明该 Tengine 边缘的 encoded tag、`/archives/47/`、`/?p=47` 均返回 200；同一时刻 origin 三者分别正确返回 302 到 `/tag/fen-x/` 与 `/posts/typecho-joe-mermaid/`。至少多个 legacy 家族仍与 origin 不一致，不能只刷新一个 URL。
+- AliDNS 当前仍解析国内链路为 `www.andy-y.cn.w.kunlunaq.com` → `117.68.89.36`。最终使用 `--noproxy '*'` + exact `--resolve` 直连复核：该 Tengine 边缘的 encoded tag、`/archives/47/`、`/?p=47` 均为缓存 HIT/200；同一时刻 origin 三者分别正确返回 302 到 `/tag/fen-x/` 与 `/posts/typecho-joe-mermaid/`。至少多个 legacy 家族仍与 origin 不一致，不能只刷新一个 URL。
 - 当前 release 的 immutable plan 仍为 174 exact URLs：140 legacy/query、30 canonical terminal、4 个额外固定元数据 URL。阿里云应使用 URL 刷新提交全部 174 条，不使用根目录/whole-zone 刷新。刷新完成并验证后，预热可省略；若 owner 希望降低首次回源延迟，只预热 30 条 canonical terminal，不预热 legacy redirect/query 入口。
 - 手工列表已固化为 `aliyun-refresh-urls-2026-08-12.txt` 与 `aliyun-optional-preheat-urls-2026-08-12.txt`；本轮未提交阿里云任务、未读取凭证、未改变 `edge-pending`。
