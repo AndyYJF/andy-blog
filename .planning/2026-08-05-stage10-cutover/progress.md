@@ -199,3 +199,4 @@
 - 2026-08-12：Aliyun guidance 提交 `5c4458f` 已成功 push，但紧随其后的 GitHub API commit 查询短暂返回旧 SHA，使本地 wrapper 在 push 后误报 `Remote SHA mismatch`。改用 `git ls-remote --heads` 对精确分支做权威核对；文件提交与 push 本身未失败。
 - 2026-08-12T08:20Z：发现首轮显式 Aliyun curl 带代理 CONNECT 行，为避免视角误标，改用 `--noproxy '*' --resolve www.andy-y.cn:443:117.68.89.36` 直连重测。encoded tag=`HIT TCP_REFRESH_HIT/200`，`/archives/47/` 与 `/?p=47`=`HIT TCP_MEM_HIT/200`；国内旧缓存结论被直接证实，未执行刷新。
 - 2026-08-12T08:24Z：owner 手工提交 Aliyun URL 刷新后粗检。样本首先全部变为 `TCP_MISS`，证明刷新触达；但 legacy 仍为 200，并在约一分钟后重新成为 HIT。正文 hash 证明两个 legacy 与 canonical post 完全相同，结合阿里云官方契约定位为“回源301/302跟随”吞掉 origin redirect。当前建议 owner 关闭该域名开关后再次刷新 174 条；未修改 CDN 配置，未预热，`edge-pending` 保持。
+- 2026-08-12T08:27Z：owner 关闭 Aliyun“回源301/302跟随”并重新刷新后粗检 PASS。直连 Tengine 的 encoded tag、`/archives/47/`、`/?p=47` 均返回正确 302/Location；canonical post、sitemap 与 release 保持 200。未执行全量 collector、Cloudflare purge 或状态跃迁，故只记录 Aliyun 抽样修复，`edge-pending` 不变。

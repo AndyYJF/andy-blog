@@ -250,3 +250,4 @@
 - 手工列表已固化为 `aliyun-refresh-urls-2026-08-12.txt` 与 `aliyun-optional-preheat-urls-2026-08-12.txt`；本轮未提交阿里云任务、未读取凭证、未改变 `edge-pending`。
 - Owner 手工 URL 刷新后的直接复核证明任务已触达 Aliyun 节点：样本由 HIT 转为 `TCP_MISS` 且 save time 重置，但三个 legacy 仍为 200。`/archives/47/`、`/?p=47` 与 canonical post 的响应正文均为 88,496 bytes，SHA-256 均为 `24d347afc70d1e3fc8adad252fc077a1beeb3d5001f85427cb96d771449c0e61`，随后旧入口重新成为 `TCP_MEM_HIT/200`。
 - 该行为精确匹配 Aliyun 官方“回源301/302跟随”：节点收到源站 301/302 后自行请求 Location，不把重定向返回给用户，并缓存目标资源（`https://help.aliyun.com/zh/cdn/user-guide/configure-301-or-302-redirection`）。本项目依赖对客户端可见的 302→301 SEO 迁移，所以必须关闭 `www.andy-y.cn` 的该开关，再刷新全部 174 exact URLs；关闭前不得预热。
+- Owner 关闭“回源301/302跟随”并重新刷新后，`--noproxy '*'` 直连 Aliyun 抽查恢复正确：encoded tag、archive CID47、query CID47 均为 `TCP_MISS/302` 且 Location 与 origin 一致；canonical post 与 sitemap 为 200。Aliyun 配置根因已被行为验证关闭，但抽样不能替代 140 legacy 全量和 Cloudflare/三视角证据。
