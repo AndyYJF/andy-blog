@@ -198,6 +198,33 @@ if (exists('astro/dist/posts/typecho-joe-mermaid/index.html')) {
   check(/data-pagefind-body/.test(samplePost), 'posts must declare data-pagefind-body');
 }
 
+check(
+  exists('astro/dist/vendor/katex/katex.min.css'),
+  'self-hosted KaTeX stylesheet missing from dist',
+);
+function walkHtml(dir) {
+  if (!fs.existsSync(dir)) return [];
+  return fs.readdirSync(dir, { withFileTypes: true }).flatMap((ent) => {
+    const full = path.join(dir, ent.name);
+    if (ent.isDirectory()) {
+      if (ent.name === 'pagefind' || ent.name === '_astro' || ent.name === 'vendor') return [];
+      return walkHtml(full);
+    }
+    return ent.name === 'index.html' || ent.name === '404.html' ? [full] : [];
+  });
+}
+for (const file of walkHtml(DIST)) {
+  const html = fs.readFileSync(file, 'utf8');
+  const rel = path.relative(ROOT, file).replace(/\\/g, '/');
+  const hasKatexMarkup = /\bclass=["'][^"']*\bkatex(?:-display)?\b/.test(html);
+  const hasKatexCss = /href=["']\/vendor\/katex\/katex\.min\.css["']/.test(html);
+  if (hasKatexMarkup) {
+    check(hasKatexCss, `${rel} rendered KaTeX without the stylesheet`);
+  } else {
+    check(!hasKatexCss, `${rel} must not load KaTeX stylesheet`);
+  }
+}
+
 const report = {
   ok: failures.length === 0,
   failures,
@@ -219,6 +246,7 @@ fs.writeFileSync(
     `- active taxonomy pages: ${report.taxonomyPages}`,
     `- discoverable taxonomy pages: ${report.discoverableTaxonomyPages}`,
     `- Lazy UI: home HTML has zero pagefind-ui / pagefind.js references`,
+    `- KaTeX CSS is self-hosted and linked only on pages that rendered .katex`,
     `- Personal home + /posts/ + taxonomies + /archive/ + /page/2/ + 404.html present`,
     `- Sitemap includes discoverable list canonicals with lastmod; excludes compatibility-only taxonomies and 404`,
     '',

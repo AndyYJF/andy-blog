@@ -18,7 +18,8 @@ export async function getStaticPaths() {
 }
 
 const { page } = Astro.props;
-const { Content } = await render(page);
+const { Content, remarkPluginFrontmatter } = await render(page);
+const katex = remarkPluginFrontmatter.hasKatex === true;
 
 const pageMotif = page.data.canonicalPath === "/dn42/" ? "dn42" : undefined;
 const isAbout = page.data.canonicalPath === "/about/";
@@ -35,6 +36,7 @@ const description = isAbout
   pubDate={page.data.pubDate}
   updatedDate={page.data.updatedDate}
   pageMotif={pageMotif}
+  katex={katex}
 >
   <article class="prose" data-article data-pagefind-body>
     <header class="entry-header">

@@ -37,7 +37,9 @@
     "release:cleanup:test": "node --test scripts/cleanup-old-releases.test.js",
     "content:presentation:test": "node --test scripts/content-presentation.test.js",
     "content:joe-task:test": "node --test scripts/joe-task-markers.test.js",
-    "build": "npm run release:cleanup:test && npm run content:presentation:test && npm run content:joe-task:test && npm run sync && npm run legacy:map && npm run nginx:302 && npm --prefix astro run build && npm run render:gate && npm run rss:gate && npm run stage4:gate && npm run stage6:gate && npm run stage7:gate && npm run stage8:gate"
+    "content:katex:test": "node --test scripts/katex-css.test.js",
+    "playwright:path:test": "node --test scripts/ensure-playwright-browsers-path.test.js",
+    "build": "npm run release:cleanup:test && npm run content:presentation:test && npm run content:joe-task:test && npm run content:katex:test && npm run playwright:path:test && npm run sync && npm run legacy:map && npm run nginx:302 && npm --prefix astro run build && npm run render:gate && npm run rss:gate && npm run stage4:gate && npm run stage6:gate && npm run stage7:gate && npm run stage8:gate"
   },
   "dependencies": {
     "js-yaml": "^4.1.0",

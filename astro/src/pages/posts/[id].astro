@@ -13,7 +13,8 @@ export async function getStaticPaths() {
 }
 
 const { post } = Astro.props;
-const { Content } = await render(post);
+const { Content, remarkPluginFrontmatter } = await render(post);
+const katex = remarkPluginFrontmatter.hasKatex === true;
 const description = post.data.description;
 const displayCategories = post.data.categories.filter((category) => category.mid !== 1);
 ---
@@ -26,6 +27,7 @@ const displayCategories = post.data.categories.filter((category) => category.mid
   image={post.data.cover}
   pubDate={post.data.pubDate}
   updatedDate={post.data.updatedDate}
+  katex={katex}
 >
   <article class="prose" data-article data-pagefind-body>
     <header class="entry-header">

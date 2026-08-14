@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build && pagefind --site dist && node ../scripts/patch-beoe-alt.js",
+    "build": "node ../scripts/run-with-playwright.mjs astro build && pagefind --site dist && node ../scripts/patch-beoe-alt.js",
     "preview": "astro preview"
   },
   "engines": {

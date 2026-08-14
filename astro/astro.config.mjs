@@ -16,6 +16,7 @@ import rehypeAutolinkHeadings from 'rehype-autolink-headings';
 import { remarkCustomDirectives } from './src/plugins/remark-directives.js';
 import { remarkImageSize } from './src/plugins/remark-image-size.js';
 import { rehypeDiagramImages } from './src/plugins/rehype-diagram-images.js';
+import { rehypeFlagKatex } from './src/plugins/rehype-flag-katex.js';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 /** @type {Record<string, string>} */
@@ -84,6 +85,7 @@ export default defineConfig({
       rehypePlugins: [
         rehypeRaw,
         rehypeKatex,
+        rehypeFlagKatex,
         [
           rehypeMermaid,
           {

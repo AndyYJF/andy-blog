@@ -17,6 +17,7 @@ interface Props {
   noindex?: boolean;
   jsonLd?: Record<string, unknown> | Record<string, unknown>[];
   pageMotif?: "dn42";
+  katex?: boolean;
 }
 
 const {
@@ -31,6 +32,7 @@ const {
   noindex = false,
   jsonLd,
   pageMotif,
+  katex = false,
 } = Astro.props;
 
 const site = Astro.site ?? new URL("https://www.andy-y.cn");
@@ -111,7 +113,7 @@ const ldPayload = jsonLd ?? defaultLd;
     <script type="application/ld+json" set:html={JSON.stringify(ldPayload)} />
 
     <ThemeInit />
-    <link rel="stylesheet" href="/vendor/katex/katex.min.css" />
+    {katex && <link rel="stylesheet" href="/vendor/katex/katex.min.css" />}
     <CommonHead />
   </head>
   <body>
