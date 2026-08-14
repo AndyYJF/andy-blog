@@ -1,21 +1,159 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import PostList from "../components/PostList.astro";
-import Pagination from "../components/Pagination.astro";
 import { getCollection } from "astro:content";
-import { pageSlice } from "../lib/posts";
+import { sortPosts } from "../lib/posts";
+import { profile } from "../data/profile";
 
 const all = await getCollection("posts");
-const { posts, current, totalPages } = pageSlice(all, 1);
+const latestPosts = sortPosts(all).slice(0, 3);
+const description = "AndyYan 的个人主页：网络实践、自托管项目与技术文章。";
+const site = Astro.site ?? new URL("https://www.andy-y.cn");
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "ProfilePage",
+  name: "AndyYan 的个人主页",
+  url: new URL("/", site).href,
+  description,
+  mainEntity: {
+    "@type": "Person",
+    name: profile.name,
+    url: new URL("/", site).href,
+    email: `mailto:${profile.email}`,
+    description: profile.intro,
+    knowsAbout: ["BGP", "DN42", "VPS", "Self-hosting", "Astro"],
+  },
+};
 ---
-<BaseLayout title="AndyYan Blog" canonicalPath="/">
-  <h1>AndyYan Blog</h1>
-  <p class="muted">技术笔记与折腾记录</p>
-  <PostList posts={posts.map((p) => ({
-    title: p.data.title,
-    canonicalPath: p.data.canonicalPath,
-    pubDate: p.data.pubDate,
-    categories: p.data.categories,
-  }))} />
-  <Pagination current={current} totalPages={totalPages} />
+<BaseLayout
+  title="AndyYan · 网络与自托管实践"
+  description={description}
+  canonicalPath="/"
+  jsonLd={jsonLd}
+>
+  <div class="profile-home" data-profile-home>
+    <section class="profile-hero" aria-labelledby="profile-title">
+      <div class="hero-text">
+        <p class="profile-kicker">{profile.eyebrow}</p>
+        <h1 id="profile-title">{profile.name}</h1>
+        <p class="profile-role">{profile.role}</p>
+        <p class="profile-intro">{profile.intro}</p>
+      </div>
+
+      <figure class="hero-topology" aria-label="DN42 网络拓扑">
+        <svg viewBox="0 0 280 158" role="img" aria-label="DN42 四节点全互联拓扑：洛杉矶、法兰克福、香港、东京">
+          <defs>
+            <pattern id="topo-dot-grid" width="14" height="14" patternUnits="userSpaceOnUse">
+              <circle class="topo-dots" cx="2" cy="2" r="1"></circle>
+            </pattern>
+          </defs>
+          <rect width="280" height="158" fill="url(#topo-dot-grid)"></rect>
+          <path class="topo-arc" d="M30 80 Q 78 30 132 42"></path>
+          <path class="topo-arc" d="M30 80 Q 118 104 210 58"></path>
+          <path class="topo-arc topo-arc-faint" d="M30 80 Q 138 134 250 96"></path>
+          <path class="topo-arc" d="M132 42 Q 172 26 210 58"></path>
+          <path class="topo-arc topo-arc-faint" d="M132 42 Q 196 22 250 96"></path>
+          <path class="topo-arc" d="M210 58 Q 236 72 250 96"></path>
+          <circle class="topo-node topo-pulse" cx="30" cy="80" r="3.4"></circle>
+          <circle class="topo-node topo-pulse" cx="132" cy="42" r="3.4" style="animation-delay:.6s"></circle>
+          <circle class="topo-node topo-pulse" cx="210" cy="58" r="3.4" style="animation-delay:1.2s"></circle>
+          <circle class="topo-node topo-pulse" cx="250" cy="96" r="3.4" style="animation-delay:1.8s"></circle>
+          <text class="topo-label" x="30" y="98" text-anchor="middle">LAX</text>
+          <text class="topo-label" x="132" y="60" text-anchor="middle">FRA</text>
+          <text class="topo-label" x="210" y="76" text-anchor="middle">HKG</text>
+          <text class="topo-label" x="250" y="114" text-anchor="middle">TYO</text>
+        </svg>
+        <figcaption class="topo-caption">
+          <span>DN42 · AS4242422921</span>
+          <span>FULL-MESH / 4 节点</span>
+        </figcaption>
+      </figure>
+
+      <ul class="profile-links" aria-label="快捷入口">
+        <li>
+          <a href="/posts/">
+            <span>阅读文章</span>
+            <small>{all.length} 篇技术记录</small>
+          </a>
+        </li>
+        <li>
+          <a href="/dn42/">
+            <span>DN42 网络</span>
+            <small>ASN 4242422921</small>
+          </a>
+        </li>
+        <li>
+          <a href={`mailto:${profile.email}`}>
+            <span>联系我</span>
+            <small>Email</small>
+          </a>
+        </li>
+      </ul>
+    </section>
+
+    <section class="profile-section" aria-labelledby="focus-title">
+      <header class="section-heading">
+        <div>
+          <p>FOCUS</p>
+          <h2 id="focus-title">正在关注</h2>
+        </div>
+      </header>
+      <ol class="focus-list">
+        {profile.focus.map((item) => (
+          <li>
+            <span class="ledger-index" aria-hidden="true">{item.index}</span>
+            <div>
+              <h3>{item.title}</h3>
+              <p>{item.description}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+    </section>
+
+    <section class="profile-section" aria-labelledby="projects-title">
+      <header class="section-heading">
+        <div>
+          <p>SELECTED WORK</p>
+          <h2 id="projects-title">项目与实践</h2>
+        </div>
+      </header>
+      <div class="project-grid">
+        {profile.projects.map((project) => (
+          <article class="project-card">
+            <p class="project-marker">{project.marker}</p>
+            <h3>{project.title}</h3>
+            <p>{project.description}</p>
+            <a href={project.href}>{project.linkLabel}<span aria-hidden="true"> →</span></a>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <section class="profile-section home-latest" aria-labelledby="latest-title">
+      <header class="section-heading section-heading-split">
+        <div>
+          <p>LATEST WRITING</p>
+          <h2 id="latest-title">最近文章</h2>
+        </div>
+        <a class="section-more" href="/posts/">全部文章<span aria-hidden="true"> →</span></a>
+      </header>
+      <PostList posts={latestPosts.map((post) => ({
+        title: post.data.title,
+        canonicalPath: post.data.canonicalPath,
+        pubDate: post.data.pubDate,
+        description: post.data.description,
+        cover: post.data.cover,
+        categories: post.data.categories,
+      }))} />
+    </section>
+
+    <section class="profile-contact" aria-labelledby="contact-title">
+      <div>
+        <p class="profile-kicker">CONTACT</p>
+        <h2 id="contact-title">保持联系</h2>
+      </div>
+      <a href={`mailto:${profile.email}`}>{profile.email}</a>
+    </section>
+  </div>
 </BaseLayout>

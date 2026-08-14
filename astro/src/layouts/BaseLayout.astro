@@ -37,13 +37,20 @@ const site = Astro.site ?? new URL("https://www.andy-y.cn");
 const canonical = new URL(canonicalPath, site).href;
 const ogImage = new URL(image || "/og-default.png", site).href;
 const year = new Date().getFullYear();
+const buildDate = new Date().toISOString().slice(0, 10);
 const currentPath = Astro.url.pathname;
+const articleNavActive =
+  currentPath === "/posts/" ||
+  currentPath.startsWith("/posts/") ||
+  /^\/page\/\d+\/?$/.test(currentPath);
 const navItems = [
+  { href: "/posts/", label: "文章" },
   { href: "/archive/", label: "归档" },
-  { href: "/about/", label: "关于" },
   { href: "/friends/", label: "友链" },
   { href: "/dn42/", label: "DN42" },
 ];
+const isNavActive = (href: string) =>
+  href === "/posts/" ? articleNavActive : currentPath === href;
 
 const defaultLd =
   type === "article"
@@ -80,6 +87,11 @@ const ldPayload = jsonLd ?? defaultLd;
     {noindex && <meta name="robots" content="noindex, follow" />}
     <link rel="canonical" href={canonical} />
     <link rel="alternate" type="application/rss+xml" title="AndyYan Blog RSS" href={new URL("/rss.xml", site).href} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#fafafa" />
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0a0a0a" />
 
     <meta property="og:type" content={type} />
     <meta property="og:site_name" content="AndyYan Blog" />
@@ -107,11 +119,34 @@ const ldPayload = jsonLd ?? defaultLd;
     <a class="skip-link" href="#main">跳到正文</a>
     <header class="site-header">
       <div class="site-header-inner">
-        <a class="brand" href="/" aria-current={currentPath === "/" ? "page" : undefined}>AndyYan</a>
-        <nav class="site-nav">
-          {navItems.map(({ href, label }) => (
-            <a href={href} aria-current={currentPath === href ? "page" : undefined}>{label}</a>
-          ))}
+        <a class="brand" href="/" aria-current={currentPath === "/" ? "page" : undefined} aria-label="个人主页">主页</a>
+        <nav class="site-nav" aria-label="主要导航">
+          <div class="site-nav-links">
+            {navItems.map(({ href, label }) => (
+              <a href={href} aria-current={isNavActive(href) ? "page" : undefined}>{label}</a>
+            ))}
+          </div>
+          <details class="site-menu">
+            <summary
+              class="site-menu-toggle"
+              role="button"
+              aria-controls="site-menu-panel"
+              aria-expanded="false"
+              aria-label="打开导航菜单"
+              data-site-menu-toggle
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+                <path d="M4 7h16M4 12h16M4 17h16"></path>
+              </svg>
+              <span>菜单</span>
+            </summary>
+            <div class="site-menu-panel" id="site-menu-panel">
+              {navItems.map(({ href, label }) => (
+                <a href={href} aria-current={isNavActive(href) ? "page" : undefined}>{label}</a>
+              ))}
+              <a href="/about/" aria-current={currentPath === "/about/" ? "page" : undefined}>关于</a>
+            </div>
+          </details>
           <SearchDialog />
           <button class="theme-toggle" type="button" data-theme-toggle aria-pressed="false" aria-label="切换主题">
             <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -141,7 +176,19 @@ const ldPayload = jsonLd ?? defaultLd;
       </svg>
     </button>
 
-    <footer class="site-footer">© {year} AndyYan</footer>
+    <footer class="site-footer">
+      <p class="net-status">
+        <span>AS4242422921 · FULL-MESH IBGP</span>
+        <span><span class="net-ok">●</span> 4/4 节点在线 · BUILD {buildDate}</span>
+      </p>
+      <div class="site-footer-row">
+        <span>© {year} AndyYan</span>
+        <nav aria-label="页脚导航">
+          <a href="/about/">关于</a>
+          <a href="/rss.xml">RSS</a>
+        </nav>
+      </div>
+    </footer>
 
     <script>
       type Dispose = () => void;
@@ -171,9 +218,26 @@ const ldPayload = jsonLd ?? defaultLd;
         };
       }
 
+      function initSiteMenu(): Dispose {
+        const details = document.querySelector<HTMLDetailsElement>(".site-menu");
+        const toggle = details?.querySelector<HTMLElement>("[data-site-menu-toggle]");
+        if (!details || !toggle) return () => {};
+
+        const sync = () => {
+          const expanded = details.open;
+          toggle.setAttribute("aria-expanded", String(expanded));
+          toggle.setAttribute("aria-label", expanded ? "关闭导航菜单" : "打开导航菜单");
+        };
+        details.addEventListener("toggle", sync);
+        sync();
+
+        return () => details.removeEventListener("toggle", sync);
+      }
+
       async function mount() {
         const current = ++generation;
         disposers.push(initBackToTop());
+        disposers.push(initSiteMenu());
 
         const article = document.querySelector<HTMLElement>("[data-article]");
         if (!article) return;

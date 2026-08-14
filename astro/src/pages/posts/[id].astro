@@ -2,6 +2,7 @@
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import Comments from "../../components/Comments.astro";
 import { getCollection, render } from "astro:content";
+import { categoryTone } from "../../lib/category-tone";
 
 export async function getStaticPaths() {
   const posts = await getCollection("posts");
@@ -13,7 +14,8 @@ export async function getStaticPaths() {
 
 const { post } = Astro.props;
 const { Content } = await render(post);
-const description = `${post.data.title} · AndyYan 的技术博客`;
+const description = post.data.description;
+const displayCategories = post.data.categories.filter((category) => category.mid !== 1);
 ---
 <BaseLayout
   title={`${post.data.title} · AndyYan`}
@@ -32,8 +34,16 @@ const description = `${post.data.title} · AndyYan 的技术博客`;
         <time datetime={post.data.pubDate.toISOString()}>
           {post.data.pubDate.toISOString().slice(0, 10)}
         </time>
-        {post.data.categories.length > 0 && (
-          <> · {post.data.categories.map((c) => c.name).join(" / ")}</>
+        {displayCategories.length > 0 && (
+          <> · {displayCategories.map((category, index) => {
+            const tone = categoryTone(category.slug);
+            return (
+              <>
+                {index > 0 && " / "}
+                <span class:list={["cat", tone && `tone-${tone}`]}>{category.name}</span>
+              </>
+            );
+          })}</>
         )}
       </p>
     </header>

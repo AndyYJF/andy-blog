@@ -13,13 +13,14 @@
   "notes": [
     "converted shortcodes: 2",
     "headingFixes during sync: 6",
-    "built body chars≈5601"
+    "built body chars≈5594"
   ],
   "contentHashes": {
-    "sourceSha256": "a619a7a972685173d9f130cd054470efaab2cf683e27ce0b7b31755db6a4e751",
-    "distSha256": "14536cebf2622ac983ec20efcf7caf1798b5f8ae40cf45895b8ca913908d46ff",
-    "hashedAt": "2026-08-02T10:50:31.184Z"
+    "sourceSha256": "ac7824547fe92aa879a9e04e6ebeb7eb67fcea4023921dca23f3c59bfffaeae5",
+    "distSha256": "dd7d3490f53391314a93e4cb4e77a384fb4e3522e0979289e155fc3788982996",
+    "hashedAt": "2026-08-14T01:54:36.183Z"
   },
+  "reviewKind": "human",
   "verdict": "pass",
   "reviewedAt": "2026-08-05T14:55:22.934Z",
   "reviewer": "owner-final-accept",
@@ -37,7 +38,8 @@
     "noted: dist HTML missing — run build before final gate",
     "auto-noted: body contains 3 h1 heading(s) (page title is separate)",
     "spot-verify: source/dist hash, canonical, no residual shortcodes/legacy archives, article markers",
-    "Owner accepted Stage 8 human Final complete on 2026-08-05 after Stage 9 staging deploy acceptance (new.andy-y.cn)."
-  ],
-  "reviewKind": "human"
+    "Owner accepted Stage 8 human Final complete on 2026-08-05 after Stage 9 staging deploy acceptance (new.andy-y.cn).",
+    "automated audit only — human 10–20min review still required for Stage 8 Final",
+    "re-baselined 2026-08-14T01:54:36.183Z: source hash refreshed to pinned fixture-1785565762 sync output; previous hash referenced unreproducible live-DB snapshot 1786604456"
+  ]
 }

@@ -31,7 +31,9 @@ const canonicalPath = `/page/${current}/`;
     title: p.data.title,
     canonicalPath: p.data.canonicalPath,
     pubDate: p.data.pubDate,
+    description: p.data.description,
+    cover: p.data.cover,
     categories: p.data.categories,
   }))} />
-  <Pagination current={current} totalPages={totalPages} />
+  <Pagination current={current} totalPages={totalPages} basePath="/posts/" />
 </BaseLayout>

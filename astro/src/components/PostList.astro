@@ -2,11 +2,15 @@
 /**
  * Shared post list card markup for home / taxonomies / pagination.
  */
+import { categoryTone } from "../lib/category-tone";
+
 interface PostItem {
   title: string;
   canonicalPath: string;
   pubDate: Date;
-  categories: { name: string }[];
+  description?: string;
+  cover?: string;
+  categories: { mid: number; name: string; slug?: string }[];
 }
 
 interface Props {
@@ -20,16 +24,44 @@ const { posts, emptyText = "暂无文章" } = Astro.props;
   <p class="muted">{emptyText}</p>
 ) : (
   <ul class="post-list">
-    {posts.map((post) => (
-      <li class="post-card">
-        <time datetime={post.pubDate.toISOString()}>
-          {post.pubDate.toISOString().slice(0, 10)}
-        </time>
-        <h2><a href={post.canonicalPath}>{post.title}</a></h2>
-        {post.categories.length > 0 && (
-          <p class="card-meta">{post.categories.map((c) => c.name).join(" / ")}</p>
-        )}
-      </li>
-    ))}
+    {posts.map((post) => {
+      const displayCategories = post.categories.filter((category) => category.mid !== 1);
+      return (
+        <li class="post-card">
+          {post.cover && (
+            <a class="card-cover" href={post.canonicalPath} tabindex="-1" aria-hidden="true">
+              <img
+                src={post.cover}
+                alt=""
+                width="1280"
+                height="800"
+                loading="lazy"
+                decoding="async"
+              />
+            </a>
+          )}
+          <div class="card-body">
+            <time datetime={post.pubDate.toISOString()}>
+              {post.pubDate.toISOString().slice(0, 10)}
+            </time>
+            <h2><a href={post.canonicalPath}>{post.title}</a></h2>
+            {post.description && <p class="card-summary">{post.description}</p>}
+            {displayCategories.length > 0 && (
+              <p class="card-meta">
+                {displayCategories.map((category, index) => {
+                  const tone = categoryTone(category.slug);
+                  return (
+                    <>
+                      {index > 0 && <span class="cat-sep" aria-hidden="true"> / </span>}
+                      <span class:list={["cat", tone && `tone-${tone}`]}>{category.name}</span>
+                    </>
+                  );
+                })}
+              </p>
+            )}
+          </div>
+        </li>
+      );
+    })}
   </ul>
 )}

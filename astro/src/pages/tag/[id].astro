@@ -24,6 +24,7 @@ const titleName =
   title={`${titleName} · 标签 · AndyYan`}
   description={`标签「${titleName}」下的文章`}
   canonicalPath={meta.canonicalPath}
+  noindex={meta.discoverable === false}
 >
   <h1>{titleName}</h1>
   <p class="muted">标签 · {posts.length} 篇</p>
@@ -33,6 +34,8 @@ const titleName =
       title: p.data.title,
       canonicalPath: p.data.canonicalPath,
       pubDate: p.data.pubDate,
+      description: p.data.description,
+      cover: p.data.cover,
       categories: p.data.categories,
     }))}
   />
