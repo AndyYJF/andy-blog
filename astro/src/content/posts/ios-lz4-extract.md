@@ -31,7 +31,7 @@ cover: https://tc.andy-y.cn/i/2026/06/11/6a2aaea533d2f.png
 #### 1.下载iSH
 这里用到了一个叫做iSH的工具，这是一个适用于 iOS 设备的开源终端模拟器，相当于一个轻量化的linux环境。
 直接打开AppStore搜索 `iSH` 下载
- ![iSH下载界面](https://tc.andy-y.cn/i/2026/03/13/69b400cadf490.png) 
+ ![iSH下载界面](https://tc.andy-y.cn/i/2026/03/13/69b400cadf490.png)
 
 #### 2.打开 iSH，安装 lz4
 

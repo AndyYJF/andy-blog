@@ -4,7 +4,7 @@
   "kind": "post",
   "title": "Typecho + JOE 主题下 Mermaid 渲染的解决方案",
   "canonicalPath": "/posts/typecho-joe-mermaid/",
-  "snapshotEpoch": 1786604456,
+  "snapshotEpoch": 1786673780,
   "auditStatus": "pass",
   "blockers": [],
   "warnings": [],
@@ -14,9 +14,9 @@
     "built body chars≈9054"
   ],
   "contentHashes": {
-    "sourceSha256": "6f6628d08722c6dcb0513f3fc4e231891098b5dccdb7d58ed40f21129cb5719a",
+    "sourceSha256": "e86301383b1ace8220a693f3df014f8314352be6f0fccb1d136c5896b42771e7",
     "distSha256": "895a59d8f51a42ab84108d514098385e5afce09e391ba831db5e67c6bfc9d18c",
-    "hashedAt": "2026-08-14T01:52:37.139Z"
+    "hashedAt": "2026-08-14T02:22:07.383Z"
   },
   "reviewKind": "human",
   "verdict": "pass",
@@ -35,6 +35,7 @@
     "noted: dist HTML missing — run build before final gate",
     "Owner accepted Stage 8 human Final complete on 2026-08-05 after Stage 9 staging deploy acceptance (new.andy-y.cn).",
     "Owner instructed on 2026-08-12 that the latest synchronized article state prevails. The production Typecho snapshot 1786531586 changed allowComment=true→false; normalized article body is unchanged.",
-    "spot-verify: source/dist hash, canonical, no residual shortcodes/legacy archives, article markers"
+    "spot-verify: source/dist hash, canonical, no residual shortcodes/legacy archives, article markers",
+    "verified 2026-08-14T02:22:07.383Z: source drift is limited to deterministic single trailing-space cleanup; git diff --ignore-space-at-eol is clean"
   ]
 }

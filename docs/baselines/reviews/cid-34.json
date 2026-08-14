@@ -4,7 +4,7 @@
   "kind": "post",
   "title": "Linux环境下的Silly Tavern 云酒馆 AI 搭建与美化完善（几乎0基础？）",
   "canonicalPath": "/posts/silly-tavern-linux/",
-  "snapshotEpoch": 1785565762,
+  "snapshotEpoch": 1786673780,
   "auditStatus": "warn",
   "blockers": [],
   "warnings": [
@@ -18,14 +18,14 @@
     "built body chars≈1565"
   ],
   "contentHashes": {
-    "sourceSha256": "7659dfd2c0c948f9a4f32e4024daf867762d7b311537af2d736e924b2094a2c7",
-    "distSha256": "46b5700107ef77c33a7981b65709cd883930256a5678e37837ee1a58b5f6cf48",
-    "hashedAt": "2026-08-14T01:54:36.183Z"
+    "sourceSha256": "87fa9a9b033363173e7a9e17783dc3c016ab2b9c3c6e85910ae836a0b89f4f9e",
+    "distSha256": "8f6ce212e145ee0e31b89e9130842604b019c3a7952cbcb1b57541c529a7bae4",
+    "hashedAt": "2026-08-14T02:22:07.383Z"
   },
-  "reviewKind": "human",
-  "verdict": "pass",
-  "reviewedAt": "2026-08-05T14:55:22.934Z",
-  "reviewer": "owner-final-accept",
+  "reviewKind": "agent-spot",
+  "verdict": "agent-spot",
+  "reviewedAt": "2026-08-14T02:22:07.383Z",
+  "reviewer": "agent-spot-verify",
   "checklist": {
     "sourceFormatOk": true,
     "tablesListsOk": true,
@@ -44,6 +44,8 @@
     "spot-verify: source/dist hash, canonical, no residual shortcodes/legacy archives, article markers",
     "Owner accepted Stage 8 human Final complete on 2026-08-05 after Stage 9 staging deploy acceptance (new.andy-y.cn).",
     "automated audit only — human 10–20min review still required for Stage 8 Final",
-    "re-baselined 2026-08-14T01:54:36.183Z: source hash refreshed to pinned fixture-1785565762 sync output; previous hash referenced unreproducible live-DB snapshot 1786604456"
+    "re-baselined 2026-08-14T01:54:36.183Z: source hash refreshed to pinned fixture-1785565762 sync output; previous hash referenced unreproducible live-DB snapshot 1786604456",
+    "production source changed at snapshot 1786673780; prior human Final no longer applies to the current body, so this review is explicitly downgraded to agent-spot pending a future human Final",
+    "verified 2026-08-14T02:22:07.383Z: latest production source at snapshot 1786673780 contains substantive body or metadata changes; prior human Final is not reused"
   ]
 }

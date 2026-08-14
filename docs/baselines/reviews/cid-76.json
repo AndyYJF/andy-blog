@@ -4,7 +4,7 @@
   "kind": "post",
   "title": "通过Asterisk自建PBX以接入Telephony42",
   "canonicalPath": "/posts/asterisk-telephony42/",
-  "snapshotEpoch": 1785565762,
+  "snapshotEpoch": 1786673780,
   "auditStatus": "warn",
   "blockers": [],
   "warnings": [
@@ -16,14 +16,14 @@
     "built body chars≈12350"
   ],
   "contentHashes": {
-    "sourceSha256": "3f093bf390b026cf9fa54585145e2494a3db2e810f8be0dca0ace283e8427b0f",
-    "distSha256": "cb3081aa88e67834a0d84e69e79f680da82895379561a877920d1e7d5edfa8d1",
-    "hashedAt": "2026-08-14T01:54:36.183Z"
+    "sourceSha256": "06a570aac0cd06f46dfa80e8727a0ce926ad2378670f991027a9715c59ec0ea7",
+    "distSha256": "1e8ad6843c6884190cbbb0eb525330f683d89b9d13ce04058f85542c51ba5ef7",
+    "hashedAt": "2026-08-14T02:22:07.383Z"
   },
-  "reviewKind": "human",
-  "verdict": "pass",
-  "reviewedAt": "2026-08-05T14:55:22.934Z",
-  "reviewer": "owner-final-accept",
+  "reviewKind": "agent-spot",
+  "verdict": "agent-spot",
+  "reviewedAt": "2026-08-14T02:22:07.383Z",
+  "reviewer": "agent-spot-verify",
   "checklist": {
     "sourceFormatOk": true,
     "tablesListsOk": true,
@@ -42,6 +42,8 @@
     "spot-verify: source/dist hash, canonical, no residual shortcodes/legacy archives, article markers",
     "Owner accepted Stage 8 human Final complete on 2026-08-05 after Stage 9 staging deploy acceptance (new.andy-y.cn).",
     "automated audit only — human 10–20min review still required for Stage 8 Final",
-    "re-baselined 2026-08-14T01:54:36.183Z: source hash refreshed to pinned fixture-1785565762 sync output; previous hash referenced unreproducible live-DB snapshot 1786604456"
+    "re-baselined 2026-08-14T01:54:36.183Z: source hash refreshed to pinned fixture-1785565762 sync output; previous hash referenced unreproducible live-DB snapshot 1786604456",
+    "production source changed at snapshot 1786673780; prior human Final no longer applies to the current body, so this review is explicitly downgraded to agent-spot pending a future human Final",
+    "verified 2026-08-14T02:22:07.383Z: latest production source at snapshot 1786673780 contains substantive body or metadata changes; prior human Final is not reused"
   ]
 }

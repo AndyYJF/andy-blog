@@ -9,7 +9,7 @@ feedGuid: https://www.andy-y.cn/index.php/archives/34/
 allowComment: true
 allowFeed: true
 pubDate: '2026-03-13T15:09:00.000Z'
-updatedDate: '2026-07-02T07:34:15.000Z'
+updatedDate: '2026-08-13T11:12:30.000Z'
 categories:
   - mid: 1
     name: 所有文章
@@ -45,12 +45,11 @@ Silly Tavern Chat（云酒馆） 是一个强大的AI Role Play网站，依赖�
 # 开始部署
 ## 0.SSH的连接
 #### 0.1打开Termius（这里以电脑版举例）
- ![ ](https://tc.andy-y.cn/i/2026/03/13/69b40dcb357c3.png) 
+ ![ ](https://tc.andy-y.cn/i/2026/03/13/69b40dcb357c3.png)
 #### 0.2点击 `NEW HOST`，在红框内填写IDC商家提供给你的信息
 ![](https://tc.andy-y.cn/i/2026/03/13/69b40eb6ec83e.png)
 ( `Lable` 就是你给vps起的名字)
 #### 0.3点击 `Connect` 连接
-![](https://www.andy-y.cn/usr/uploads/2026/03/1901601289.png)
 ### 1.安装1panel面板
 为了方便萌新进行后续反代等等的搭建，建议先安装1p。
 输入下方这串命令，按提示操作（提示是否安装docker时直接按enter键）
@@ -87,15 +86,15 @@ docker compose up -d
 sudo nano config/config.yaml
 ```
 此时进入到你 `config` 配置文件
-点击向下，直到看到 `whitelistMode` 
+点击向下，直到看到 `whitelistMode`
 ![](https://tc.andy-y.cn/i/2026/03/13/69b412548e526.png)
-把后面的 `true` 改为 `false` 
+把后面的 `true` 改为 `false`
 再往下找到basicAuthMode
 ![](https://tc.andy-y.cn/i/2026/03/13/69b4136a1aa0b.png)
 把false改为true
 最后在下方设置你的账号密码
 ![](https://tc.andy-y.cn/i/2026/03/13/69b412b439d5c.png)
-按 `ctrl+O` ，再按 `enter` 
+按 `ctrl+O` ，再按 `enter`
 接着按 `ctrl+X` 保存退出nano编辑器
 
 #### 3.3重启容器，使改动生效
@@ -134,4 +133,4 @@ docker compose restart sillytavern
 
 
 
-    
+

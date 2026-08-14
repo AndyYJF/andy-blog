@@ -485,7 +485,7 @@ HTML;
 ```bash
 /usr/plugins/Mermaid/Plugin.php
 ```
-进入 Typecho 后台： `控制台 → 插件 → 启用 Mermaid` 
+进入 Typecho 后台： `控制台 → 插件 → 启用 Mermaid`
 写文章时使用 Mermaid就直接在 Markdown 里写：
 ![](https://tc.andy-y.cn/i/2026/04/05/69d24faf4bde7.png)
 发布后就会自动渲染成图。

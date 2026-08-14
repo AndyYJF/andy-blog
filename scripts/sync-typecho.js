@@ -16,6 +16,7 @@ import { normalizeJoeTaskMarkers } from './lib/joe-task-markers.js';
 import {
   deriveDescription,
   isDiscoverableMeta,
+  normalizeIncidentalTrailingWhitespace,
   normalizeMetaName,
   repairKnownContent,
 } from './lib/content-presentation.js';
@@ -247,6 +248,7 @@ function buildMarkdown(item, route, rels, cover) {
   body = converted.text;
   const fences = remapFenceLangs(body);
   body = fences.text;
+  if (sourceFormat === 'markdown') body = normalizeIncidentalTrailingWhitespace(body);
 
   const fm = {
     slug: route.routeId,

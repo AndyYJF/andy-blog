@@ -23,7 +23,7 @@ description: 众所周知，原版的Silly Tavern，动画是 没有 的，界�
 cover: https://tc.andy-y.cn/i/2026/06/26/6a3e791bbc3fb.png
 ---
 
-**声明：此项目二改自 [RP-Hub](https://github.com/STA1N156/RP-Hub) ，根据原项目作者要求，本人已得到原作者关于二改的授权。二改过程中使用了AI，若您对此反对可停止阅读** 
+**声明：此项目二改自 [RP-Hub](https://github.com/STA1N156/RP-Hub) ，根据原项目作者要求，本人已得到原作者关于二改的授权。二改过程中使用了AI，若您对此反对可停止阅读**
 # 前言
 众所周知，原版的Silly Tavern，动画是 **没有** 的，界面是 **臃肿** 的，对新手是 **地狱** 的。我一直想找到一个易用且现代的类Silly Tavern项目，某次偶然在B站看到了这个视频：
 
@@ -38,9 +38,9 @@ cover: https://tc.andy-y.cn/i/2026/06/26/6a3e791bbc3fb.png
 于是我便把项目克隆，打开了Codex，开始了和AI博弈的两天。
 过程就不多说了，本次二改项目使用了GLM-5.2、GPT-5.5，Claude-Opus-4.6模型共同开发，由GPT主写代码，GLM进行代码审批， ~~Claude负责摸鱼~~ 。
 跌跌撞撞花了不少token，反正是做出来了。
- ![CC-Switch统计](https://tc.andy-y.cn/i/2026/06/26/6a3e764fa806c.png) 
+ ![CC-Switch统计](https://tc.andy-y.cn/i/2026/06/26/6a3e764fa806c.png)
 # 成果
- **二改项目我已经放在了 [Github](https://github.com/AndyYJF/RP-Hub) ** 
+ **二改项目我已经放在了 [Github](https://github.com/AndyYJF/RP-Hub) **
  在原纯前端项目基础上，新增了以下功能（详见 [DEPLOY.md](https://github.com/AndyYJF/RP-Hub/blob/main/DEPLOY.md)）：
 
 ### 多用户体系

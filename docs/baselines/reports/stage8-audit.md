@@ -1,6 +1,6 @@
 # Stage 8 content audit
 
-Snapshot: `1785565762`
+Snapshot: `1786673780`
 
 | status | count |
 |---|---:|
@@ -32,7 +32,7 @@ Snapshot: `1785565762`
   - notes: converted shortcodes: 1; headingFixes during sync: 7; built body chars≈476
 - **34** `silly-tavern-linux` (post) — **warn**
   - warnings: heading level skips: 2→4; body contains 2 h1 heading(s) (page title is separate)
-  - notes: local uploads ok (1); converted shortcodes: 2; headingFixes during sync: 22; built body chars≈1541
+  - notes: converted shortcodes: 2; headingFixes during sync: 22; built body chars≈1541
 - **41** `screen-tmux-ssh-background` (post) — **warn**
   - warnings: heading level skips: 2→4
   - notes: headingFixes during sync: 10; built body chars≈519
@@ -50,4 +50,4 @@ Snapshot: `1785565762`
   - notes: built body chars≈5298
 - **76** `asterisk-telephony42` (post) — **warn**
   - warnings: heading level skips: 2→4; body contains 5 h1 heading(s) (page title is separate)
-  - notes: headingFixes during sync: 29; built body chars≈12338
+  - notes: converted shortcodes: 1; headingFixes during sync: 29; built body chars≈12341

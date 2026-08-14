@@ -79,7 +79,7 @@ D:\AI\AIData
 ## 2.加入模型，创建工作流
 
 #### 2.1模型获取
-新手可以直接使用我在网上找到的资源。~~只有度盘链接还请见谅~~ 
+新手可以直接使用我在网上找到的资源。~~只有度盘链接还请见谅~~
 
 
 :::cloud{title="SD" url="https://pan.baidu.com/s/1v2g_4hKDafaS9tcYEouYxA?pwd=1ajk"}
@@ -104,16 +104,16 @@ D:\AI\AIData
 
 #### 2.2模型识别
 模型的识别比较重要，使用错误的模型+Lora会导致报错
-首先是 **模型文件类型** 
+首先是 **模型文件类型**
 建议直接识别后缀
-1.`.safetensors / .ckpt` 
+1.`.safetensors / .ckpt`
 这个属于Checkpoint（大模型主体），可以单独出图
 模型代数识别：
 - sd15 / 1-5 / v1-5 → SD1.5
 - sd21 / 2-1 → SD2.1
 - xl / SDXL → SDXL
 
-2.`.safetensors` 
+2.`.safetensors`
 这个属于LoRA（风格/角色插件）不能单独出图，必须 + base model
 3.`.vae.safetensors`
 这个是VAE，是用来改善颜色/对比度的
@@ -128,20 +128,20 @@ D:\AI\AIData
 4. 双击左键，搜索 `VAE Decode` ，添加节点
 5. 双击左键，搜索 `Save Image` ，添加节点
 6. 连线规则：
- **从 Checkpoint加载器（简易）连出去：** 
+ **从 Checkpoint加载器（简易）连出去：**
 - 模型 → KSampler 的 model
 - CLIP → 两个 CLIP文本编码 节点的 clip
 - VAE → VAE Decode 的 vae
- **文本节点：** 
+ **文本节点：**
 - 正向 CLIP文本编码 → KSampler 的 positive
 - 负向 CLIP文本编码 → KSampler 的 negative
- **Empty Latent Image：** 
+ **Empty Latent Image：**
 - 输出 → KSampler 的 latent_image
- **KSampler：** 
+ **KSampler：**
 - 输出 → VAE Decode 的 samples
- **VAE Decode：** 
+ **VAE Decode：**
 - 输出 → Save Image 的 images
- ![节点图](https://tc.andy-y.cn/i/2026/06/20/6a3648a34d580.png) 
+ ![节点图](https://tc.andy-y.cn/i/2026/06/20/6a3648a34d580.png)
 ## 3.开始作画
 #### 3.1填入提示词
  **正向提示词**
@@ -154,14 +154,14 @@ masterpiece, best quality, ultra detailed, 1girl, portrait, soft lighting, detai
 ```txt
 low quality, blurry, bad anatomy, extra fingers, deformed hands, watermark, text
 ```
- **Empty Latent Image** 
+ **Empty Latent Image**
  设置：
 ```txt
 width: 1024
 height: 1024
 batch_size: 1
 ```
- **KSampler** 
+ **KSampler**
  设置：
  ```txt
 steps: 28
@@ -169,8 +169,8 @@ cfg: 6
 sampler_name: dpmpp_2m  //自行选择，推荐这个
 scheduler: karras
 ```
- **最后点击 `运行` ** 
+ **最后点击 `运行` **
  成图：
-  ![sample](https://tc.andy-y.cn/i/2026/06/20/6a3648ba8c6ac.png) 
+  ![sample](https://tc.andy-y.cn/i/2026/06/20/6a3648ba8c6ac.png)
 
 

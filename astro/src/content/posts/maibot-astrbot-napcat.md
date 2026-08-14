@@ -87,7 +87,7 @@ wget https://raw.githubusercontent.com/Mai-with-u/MaiBot/main/docker-compose.yml
 
 > 备用下载方式  
 > 若 GitHub 直连不稳定，可使用镜像源：
-> 
+>
 > ```bash
 > wget https://fastly.jsdelivr.net/gh/Mai-with-u/MaiBot@main/docker-compose.yml
 > ```
@@ -165,7 +165,7 @@ services:
   #     - ./data/MaiMBot:/data/MaiMBot
   #   networks:
   #     - maim_bot
-  
+
 volumes:
   site-packages:
 networks:
@@ -180,14 +180,14 @@ networks:
 ```bash
 # 获取核心组件配置模板
 wget https://raw.githubusercontent.com/MaiM-with-u/MaiBot/main/template/template.env      -O docker-config/mmc/.env
-# 若 GitHub 直连不稳定，可使用镜像源：https://fastly.jsdelivr.net/gh/Mai-with-u/MaiBot@main/template/template.env 
+# 若 GitHub 直连不稳定，可使用镜像源：https://fastly.jsdelivr.net/gh/Mai-with-u/MaiBot@main/template/template.env
 ```
 
 获取 `adapter` 的 `config.toml`:
 
 ```bash
 wget https://github.com/MaiM-with-u/MaiBot-Napcat-Adapter/raw/refs/heads/main/template/template_config.toml      -O docker-config/adapters/config.toml
-# 若 GitHub 直连不稳定，可使用镜像源：https://fastly.jsdelivr.net/gh/Mai-with-u/MaiBot-Napcat-Adapter@main/template/template_config.toml 
+# 若 GitHub 直连不稳定，可使用镜像源：https://fastly.jsdelivr.net/gh/Mai-with-u/MaiBot-Napcat-Adapter@main/template/template_config.toml
 ```
 
 > 配置文件里的服务名如不可用可替换为容器名  
@@ -334,7 +334,7 @@ docker compose ps
 ## 配置NapCat
 Napcat 配置入口: http://公网服务器IP:6099  
 - 网络配置使用websocket客户端，url为ws://<你的公网服务器ip>:8095 tocken和你之前在adapter中的tocken一致，启用：
- ![NapCat-1](https://tc.andy-y.cn/i/2026/01/23/697328f72c599.png) 
+ ![NapCat-1](https://tc.andy-y.cn/i/2026/01/23/697328f72c599.png)
 大功告成！
 
 ---

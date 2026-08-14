@@ -3,6 +3,7 @@ import test from 'node:test';
 import {
   deriveDescription,
   isDiscoverableMeta,
+  normalizeIncidentalTrailingWhitespace,
   normalizeMetaName,
   repairKnownContent,
 } from './lib/content-presentation.js';
@@ -79,4 +80,12 @@ test('taxonomy presentation keeps compatibility routes but limits discovery', ()
   assert.equal(isDiscoverableMeta({ state: 'active', type: 'tag' }, 0, 7), false);
   assert.equal(isDiscoverableMeta({ state: 'active', type: 'category' }, 11, 1), false);
   assert.equal(isDiscoverableMeta({ state: 'active', type: 'category' }, 3, 10), true);
+});
+
+test('Markdown whitespace cleanup removes incidental single spaces but preserves hard breaks', () => {
+  const markdown = ['paragraph ', 'hard break  ', ' \t', 'image ![](demo.png) ', 'clean'].join('\n');
+  assert.equal(
+    normalizeIncidentalTrailingWhitespace(markdown),
+    ['paragraph', 'hard break  ', '', 'image ![](demo.png)', 'clean'].join('\n'),
+  );
 });

@@ -1,0 +1,1337 @@
+{
+  "metas": [
+    {
+      "mid": 1,
+      "name": "所有文章",
+      "slug": "default",
+      "type": "category",
+      "count": 11,
+      "order": 0,
+      "description": "只是一个默认分类"
+    },
+    {
+      "mid": 2,
+      "name": "音乐分享",
+      "slug": "music",
+      "type": "tag",
+      "count": 0,
+      "order": 0,
+      "description": ""
+    },
+    {
+      "mid": 3,
+      "name": "软件分享",
+      "slug": "app",
+      "type": "tag",
+      "count": 0,
+      "order": 0,
+      "description": ""
+    },
+    {
+      "mid": 4,
+      "name": "技术分享",
+      "slug": "tec",
+      "type": "tag",
+      "count": 0,
+      "order": 0,
+      "description": ""
+    },
+    {
+      "mid": 5,
+      "name": "吐槽",
+      "slug": "argue",
+      "type": "tag",
+      "count": 0,
+      "order": 0,
+      "description": ""
+    },
+    {
+      "mid": 6,
+      "name": "NAS",
+      "slug": "NAS",
+      "type": "category",
+      "count": 1,
+      "order": 1,
+      "description": ""
+    },
+    {
+      "mid": 7,
+      "name": "技术fen'x",
+      "slug": "技术fen-x",
+      "type": "tag",
+      "count": 0,
+      "order": 0,
+      "description": ""
+    },
+    {
+      "mid": 10,
+      "name": "DN42",
+      "slug": "DN42",
+      "type": "category",
+      "count": 3,
+      "order": 4,
+      "description": ""
+    },
+    {
+      "mid": 11,
+      "name": "开源项目",
+      "slug": "opensource",
+      "type": "category",
+      "count": 5,
+      "order": 5,
+      "description": ""
+    },
+    {
+      "mid": 12,
+      "name": "AI",
+      "slug": "AI",
+      "type": "category",
+      "count": 4,
+      "order": 6,
+      "description": ""
+    },
+    {
+      "mid": 13,
+      "name": "调优",
+      "slug": "refine",
+      "type": "category",
+      "count": 4,
+      "order": 7,
+      "description": ""
+    },
+    {
+      "mid": 14,
+      "name": "运维",
+      "slug": "mnt",
+      "type": "category",
+      "count": 4,
+      "order": 8,
+      "description": ""
+    },
+    {
+      "mid": 15,
+      "name": "网络安全",
+      "slug": "cyber_safety",
+      "type": "category",
+      "count": 1,
+      "order": 9,
+      "description": ""
+    }
+  ],
+  "fields": [
+    {
+      "cid": 2,
+      "name": "abstract",
+      "type": "str",
+      "int_value": 0,
+      "str_value": "",
+      "float_value": 0.0
+    },
+    {
+      "cid": 2,
+      "name": "description",
+      "type": "str",
+      "int_value": 0,
+      "str_value": "",
+      "float_value": 0.0
+    },
+    {
+      "cid": 2,
+      "name": "keywords",
+      "type": "str",
+      "int_value": 0,
+      "str_value": "",
+      "float_value": 0.0
+    },
+    {
+      "cid": 2,
+      "name": "mode",
+      "type": "str",
+      "int_value": 0,
+      "str_value": "default",
+      "float_value": 0.0
+    },
+    {
+      "cid": 2,
+      "name": "thumb",
+      "type": "str",
+      "int_value": 0,
+      "str_value": "",
+      "float_value": 0.0
+    },
+    {
+      "cid": 2,
+      "name": "video",
+      "type": "str",
+      "int_value": 0,
+      "str_value": "",
+      "float_value": 0.0
+    },
+    {
+      "cid": 5,
+      "name": "abstract",
+      "type": "str",
+      "int_value": 0,
+      "str_value": "",
+      "float_value": 0.0
+    },
+    {
+      "cid": 5,
+      "name": "description",
+      "type": "str",
+      "int_value": 0,
+      "str_value": "",
+      "float_value": 0.0
+    },
+    {
+      "cid": 5,
+      "name": "keywords",
+      "type": "str",
+      "int_value": 0,
+      "str_value": "",
+      "float_value": 0.0
+    },
+    {
+      "cid": 5,
+      "name": "mode",
+      "type": "str",
+      "int_value": 0,
+      "str_value": "default",
+      "float_value": 0.0
+    },
+    {
+      "cid": 5,
+      "name": "thumb",
+      "type": "str",
+      "int_value": 0,
+      "str_value": "",
+      "float_value": 0.0
+    },
+    {
+      "cid": 5,
+      "name": "video",
+      "type": "str",
+      "int_value": 0,
+      "str_value": "",
+      "float_value": 0.0
+    },
+    {
+      "cid": 11,
+      "name": "abstract",
+      "type": "str",
+      "int_value": 0,
+      "str_value": "",
+      "float_value": 0.0
+    },
+    {
+      "cid": 11,
+      "name": "description",
+      "type": "str",
+      "int_value": 0,
+      "str_value": "",
+      "float_value": 0.0
+    },
+    {
+      "cid": 11,
+      "name": "keywords",
+      "type": "str",
+      "int_value": 0,
+      "str_value": "",
+      "float_value": 0.0
+    },
+    {
+      "cid": 11,
+      "name": "mode",
+      "type": "str",
+      "int_value": 0,
+      "str_value": "default",
+      "float_value": 0.0
+    },
+    {
+      "cid": 11,
+      "name": "thumb",
+      "type": "str",
+      "int_value": 0,
+      "str_value": "https://tc.andy-y.cn/i/2026/06/11/6a2aaff942c29.png",
+      "float_value": 0.0
+    },
+    {
+      "cid": 11,
+      "name": "video",
+      "type": "str",
+      "int_value": 0,
+      "str_value": "",
+      "float_value": 0.0
+    },
+    {
+      "cid": 13,
+      "name": "abstract",
+      "type": "str",
+      "int_value": 0,
+      "str_value": "",
+      "float_value": 0.0
+    },
+    {
+      "cid": 13,
+      "name": "description",
+      "type": "str",
+      "int_value": 0,
+      "str_value": "",
+      "float_value": 0.0
+    },
+    {
+      "cid": 13,
+      "name": "keywords",
+      "type": "str",
+      "int_value": 0,
+      "str_value": "",
+      "float_value": 0.0
+    },
+    {
+      "cid": 13,
+      "name": "mode",
+      "type": "str",
+      "int_value": 0,
+      "str_value": "default",
+      "float_value": 0.0
+    },
+    {
+      "cid": 13,
+      "name": "thumb",
+      "type": "str",
+      "int_value": 0,
+      "str_value": "https://tc.andy-y.cn/i/2026/06/11/6a2aaf9a001b3.png",
+      "float_value": 0.0
+    },
+    {
+      "cid": 13,
+      "name": "video",
+      "type": "str",
+      "int_value": 0,
+      "str_value": "",
+      "float_value": 0.0
+    },
+    {
+      "cid": 16,
+      "name": "abstract",
+      "type": "str",
+      "int_value": 0,
+      "str_value": "",
+      "float_value": 0.0
+    },
+    {
+      "cid": 16,
+      "name": "description",
+      "type": "str",
+      "int_value": 0,
+      "str_value": "",
+      "float_value": 0.0
+    },
+    {
+      "cid": 16,
+      "name": "keywords",
+      "type": "str",
+      "int_value": 0,
+      "str_value": "",
+      "float_value": 0.0
+    },
+    {
+      "cid": 16,
+      "name": "mode",
+      "type": "str",
+      "int_value": 0,
+      "str_value": "default",
+      "float_value": 0.0
+    },
+    {
+      "cid": 16,
+      "name": "thumb",
+      "type": "str",
+      "int_value": 0,
+      "str_value": "",
+      "float_value": 0.0
+    },
+    {
+      "cid": 16,
+      "name": "video",
+      "type": "str",
+      "int_value": 0,
+      "str_value": "",
+      "float_value": 0.0
+    },
+    {
+      "cid": 30,
+      "name": "abstract",
+      "type": "str",
+      "int_value": 0,
+      "str_value": "",
+      "float_value": 0.0
+    },
+    {
+      "cid": 30,
+      "name": "description",
+      "type": "str",
+      "int_value": 0,
+      "str_value": "",
+      "float_value": 0.0
+    },
+    {
+      "cid": 30,
+      "name": "keywords",
+      "type": "str",
+      "int_value": 0,
+      "str_value": "",
+      "float_value": 0.0
+    },
+    {
+      "cid": 30,
+      "name": "mode",
+      "type": "str",
+      "int_value": 0,
+      "str_value": "default",
+      "float_value": 0.0
+    },
+    {
+      "cid": 30,
+      "name": "thumb",
+      "type": "str",
+      "int_value": 0,
+      "str_value": "https://tc.andy-y.cn/i/2026/06/11/6a2ab03df14ef.png",
+      "float_value": 0.0
+    },
+    {
+      "cid": 30,
+      "name": "video",
+      "type": "str",
+      "int_value": 0,
+      "str_value": "",
+      "float_value": 0.0
+    },
+    {
+      "cid": 33,
+      "name": "abstract",
+      "type": "str",
+      "int_value": 0,
+      "str_value": "",
+      "float_value": 0.0
+    },
+    {
+      "cid": 33,
+      "name": "description",
+      "type": "str",
+      "int_value": 0,
+      "str_value": "",
+      "float_value": 0.0
+    },
+    {
+      "cid": 33,
+      "name": "keywords",
+      "type": "str",
+      "int_value": 0,
+      "str_value": "iSH,lz4,iphone,解压",
+      "float_value": 0.0
+    },
+    {
+      "cid": 33,
+      "name": "mode",
+      "type": "str",
+      "int_value": 0,
+      "str_value": "default",
+      "float_value": 0.0
+    },
+    {
+      "cid": 33,
+      "name": "thumb",
+      "type": "str",
+      "int_value": 0,
+      "str_value": "https://tc.andy-y.cn/i/2026/06/11/6a2aaea533d2f.png",
+      "float_value": 0.0
+    },
+    {
+      "cid": 33,
+      "name": "video",
+      "type": "str",
+      "int_value": 0,
+      "str_value": "",
+      "float_value": 0.0
+    },
+    {
+      "cid": 34,
+      "name": "abstract",
+      "type": "str",
+      "int_value": 0,
+      "str_value": "",
+      "float_value": 0.0
+    },
+    {
+      "cid": 34,
+      "name": "description",
+      "type": "str",
+      "int_value": 0,
+      "str_value": "",
+      "float_value": 0.0
+    },
+    {
+      "cid": 34,
+      "name": "keywords",
+      "type": "str",
+      "int_value": 0,
+      "str_value": "Silly Tavern,云酒馆,搭建",
+      "float_value": 0.0
+    },
+    {
+      "cid": 34,
+      "name": "mode",
+      "type": "str",
+      "int_value": 0,
+      "str_value": "default",
+      "float_value": 0.0
+    },
+    {
+      "cid": 34,
+      "name": "thumb",
+      "type": "str",
+      "int_value": 0,
+      "str_value": "https://tc.andy-y.cn/i/2026/06/11/6a2aadf75150e.png",
+      "float_value": 0.0
+    },
+    {
+      "cid": 34,
+      "name": "video",
+      "type": "str",
+      "int_value": 0,
+      "str_value": "",
+      "float_value": 0.0
+    },
+    {
+      "cid": 41,
+      "name": "abstract",
+      "type": "str",
+      "int_value": 0,
+      "str_value": "",
+      "float_value": 0.0
+    },
+    {
+      "cid": 41,
+      "name": "description",
+      "type": "str",
+      "int_value": 0,
+      "str_value": "",
+      "float_value": 0.0
+    },
+    {
+      "cid": 41,
+      "name": "keywords",
+      "type": "str",
+      "int_value": 0,
+      "str_value": "SSH,后台运行,screen",
+      "float_value": 0.0
+    },
+    {
+      "cid": 41,
+      "name": "mode",
+      "type": "str",
+      "int_value": 0,
+      "str_value": "default",
+      "float_value": 0.0
+    },
+    {
+      "cid": 41,
+      "name": "thumb",
+      "type": "str",
+      "int_value": 0,
+      "str_value": "https://tc.andy-y.cn/i/2026/06/11/6a2aacad947b2.png",
+      "float_value": 0.0
+    },
+    {
+      "cid": 41,
+      "name": "video",
+      "type": "str",
+      "int_value": 0,
+      "str_value": "",
+      "float_value": 0.0
+    },
+    {
+      "cid": 47,
+      "name": "abstract",
+      "type": "str",
+      "int_value": 0,
+      "str_value": "",
+      "float_value": 0.0
+    },
+    {
+      "cid": 47,
+      "name": "description",
+      "type": "str",
+      "int_value": 0,
+      "str_value": "",
+      "float_value": 0.0
+    },
+    {
+      "cid": 47,
+      "name": "keywords",
+      "type": "str",
+      "int_value": 0,
+      "str_value": "mermaid,typecho",
+      "float_value": 0.0
+    },
+    {
+      "cid": 47,
+      "name": "mode",
+      "type": "str",
+      "int_value": 0,
+      "str_value": "default",
+      "float_value": 0.0
+    },
+    {
+      "cid": 47,
+      "name": "thumb",
+      "type": "str",
+      "int_value": 0,
+      "str_value": "https://tc.andy-y.cn/i/2026/06/11/6a2aadbe6645d.png",
+      "float_value": 0.0
+    },
+    {
+      "cid": 47,
+      "name": "video",
+      "type": "str",
+      "int_value": 0,
+      "str_value": "",
+      "float_value": 0.0
+    },
+    {
+      "cid": 61,
+      "name": "abstract",
+      "type": "str",
+      "int_value": 0,
+      "str_value": "",
+      "float_value": 0.0
+    },
+    {
+      "cid": 61,
+      "name": "description",
+      "type": "str",
+      "int_value": 0,
+      "str_value": "",
+      "float_value": 0.0
+    },
+    {
+      "cid": 61,
+      "name": "keywords",
+      "type": "str",
+      "int_value": 0,
+      "str_value": "博客,封面",
+      "float_value": 0.0
+    },
+    {
+      "cid": 61,
+      "name": "mode",
+      "type": "str",
+      "int_value": 0,
+      "str_value": "default",
+      "float_value": 0.0
+    },
+    {
+      "cid": 61,
+      "name": "thumb",
+      "type": "str",
+      "int_value": 0,
+      "str_value": "https://tc.andy-y.cn/i/2026/06/11/6a2ab34dbcb2c.png",
+      "float_value": 0.0
+    },
+    {
+      "cid": 61,
+      "name": "video",
+      "type": "str",
+      "int_value": 0,
+      "str_value": "",
+      "float_value": 0.0
+    },
+    {
+      "cid": 62,
+      "name": "abstract",
+      "type": "str",
+      "int_value": 0,
+      "str_value": "",
+      "float_value": 0.0
+    },
+    {
+      "cid": 62,
+      "name": "description",
+      "type": "str",
+      "int_value": 0,
+      "str_value": "",
+      "float_value": 0.0
+    },
+    {
+      "cid": 62,
+      "name": "keywords",
+      "type": "str",
+      "int_value": 0,
+      "str_value": "StableDiffusion,comfyUI,下载,安装",
+      "float_value": 0.0
+    },
+    {
+      "cid": 62,
+      "name": "mode",
+      "type": "str",
+      "int_value": 0,
+      "str_value": "default",
+      "float_value": 0.0
+    },
+    {
+      "cid": 62,
+      "name": "thumb",
+      "type": "str",
+      "int_value": 0,
+      "str_value": "https://tc.andy-y.cn/i/2026/06/20/6a36482f7505b.png",
+      "float_value": 0.0
+    },
+    {
+      "cid": 62,
+      "name": "video",
+      "type": "str",
+      "int_value": 0,
+      "str_value": "",
+      "float_value": 0.0
+    },
+    {
+      "cid": 66,
+      "name": "abstract",
+      "type": "str",
+      "int_value": 0,
+      "str_value": "",
+      "float_value": 0.0
+    },
+    {
+      "cid": 66,
+      "name": "description",
+      "type": "str",
+      "int_value": 0,
+      "str_value": "",
+      "float_value": 0.0
+    },
+    {
+      "cid": 66,
+      "name": "keywords",
+      "type": "str",
+      "int_value": 0,
+      "str_value": "",
+      "float_value": 0.0
+    },
+    {
+      "cid": 66,
+      "name": "mode",
+      "type": "str",
+      "int_value": 0,
+      "str_value": "default",
+      "float_value": 0.0
+    },
+    {
+      "cid": 66,
+      "name": "thumb",
+      "type": "str",
+      "int_value": 0,
+      "str_value": "https://tc.andy-y.cn/i/2026/06/26/6a3e791bbc3fb.png",
+      "float_value": 0.0
+    },
+    {
+      "cid": 66,
+      "name": "video",
+      "type": "str",
+      "int_value": 0,
+      "str_value": "",
+      "float_value": 0.0
+    },
+    {
+      "cid": 68,
+      "name": "abstract",
+      "type": "str",
+      "int_value": 0,
+      "str_value": "",
+      "float_value": 0.0
+    },
+    {
+      "cid": 68,
+      "name": "description",
+      "type": "str",
+      "int_value": 0,
+      "str_value": "",
+      "float_value": 0.0
+    },
+    {
+      "cid": 68,
+      "name": "keywords",
+      "type": "str",
+      "int_value": 0,
+      "str_value": "DN42, 安全, Looking Glass, BIRD, CVE-2026-26514",
+      "float_value": 0.0
+    },
+    {
+      "cid": 68,
+      "name": "mode",
+      "type": "str",
+      "int_value": 0,
+      "str_value": "default",
+      "float_value": 0.0
+    },
+    {
+      "cid": 68,
+      "name": "thumb",
+      "type": "str",
+      "int_value": 0,
+      "str_value": "https://tc.andy-y.cn/i/2026/07/02/6a460345cf5a5.png",
+      "float_value": 0.0
+    },
+    {
+      "cid": 68,
+      "name": "video",
+      "type": "str",
+      "int_value": 0,
+      "str_value": "",
+      "float_value": 0.0
+    },
+    {
+      "cid": 76,
+      "name": "abstract",
+      "type": "str",
+      "int_value": 0,
+      "str_value": "",
+      "float_value": 0.0
+    },
+    {
+      "cid": 76,
+      "name": "description",
+      "type": "str",
+      "int_value": 0,
+      "str_value": "",
+      "float_value": 0.0
+    },
+    {
+      "cid": 76,
+      "name": "keywords",
+      "type": "str",
+      "int_value": 0,
+      "str_value": "PBX,tel42,Asterisk,Telephony42,kont",
+      "float_value": 0.0
+    },
+    {
+      "cid": 76,
+      "name": "mode",
+      "type": "str",
+      "int_value": 0,
+      "str_value": "default",
+      "float_value": 0.0
+    },
+    {
+      "cid": 76,
+      "name": "thumb",
+      "type": "str",
+      "int_value": 0,
+      "str_value": "https://tc.andy-y.cn/i/2026/07/12/6a535337341c5.png",
+      "float_value": 0.0
+    },
+    {
+      "cid": 76,
+      "name": "video",
+      "type": "str",
+      "int_value": 0,
+      "str_value": "",
+      "float_value": 0.0
+    }
+  ],
+  "contents": [
+    {
+      "cid": 2,
+      "slug": "start-page",
+      "text": "<!--markdown-->这是AndyYan的博客，本人目前是一名大一新生，平时喜欢捣鼓VPS，BGP之类的东西，很菜，学习中...",
+      "type": "page",
+      "order": 3,
+      "title": "关于",
+      "status": "publish",
+      "created": 1750679940,
+      "modified": 1781874879,
+      "password": "",
+      "template": "",
+      "allowFeed": "1",
+      "allowComment": "1"
+    },
+    {
+      "cid": 5,
+      "slug": "5",
+      "text": "<!--markdown-->",
+      "type": "page",
+      "order": 2,
+      "title": "友链",
+      "status": "publish",
+      "created": 1750682896,
+      "modified": 1750682896,
+      "password": "",
+      "template": "friends.php",
+      "allowFeed": "1",
+      "allowComment": "1"
+    },
+    {
+      "cid": 11,
+      "slug": "11",
+      "text": "<!--markdown-->#前言#\r\n今天在登陆OMV（Open Media Vault）的时候显示400 - Bad Request，但是我的密码都是自动填充的，不可能出错，而且我没有改过密码，折腾一段时间之后终于找到解决方法。\r\n#解决#\r\n##检查密码是否真的错误##\r\n进入 `ssh` ，输入\r\n```commend\r\nomv-firstaid\r\n```\r\n进入omv的恢复界面之后选择4并重置密码\r\n\r\n{message type=\"info\" content=\"若此时发现使用此密码无法登陆，则可以确定是omv从5.x到8.3的一个祖传bug\"/}\r\n##解决bug##\r\n非常简单，只需要\r\n```commend\r\nreboot\r\n```\r\n即可解决\r\n#问题溯源#\r\n- 在OMV官方论坛上，我找到了 [这个](https://forum.openmediavault.org/index.php?thread/52367-400-bad-request-unable-to-login-to-web-ui-after-update-to-6-9-15/) 帖子，上面通过重置密码解决了\r\n- 在贴吧，我找到了[这个](https://tieba.baidu.com/p/7785226421)帖子，上面说是系统盘满了导致的，我不认为是这个原因（我的系统盘占用不到一半）\r\n- 有人提到了删除浏览器的cookies，尝试无效\r\n- 而他们的解决方法都提到了 `reboot` ，所以我直接使用了万能重启法，成功解决\r\n-  ~~经过AI分析~~ ，似乎是php-fpm / openmediavault-engined 异常而导致子进程卡死，而nginx 无法正确解析响应，所以返回了400\r\n\r\n\r\n\r\n",
+      "type": "post",
+      "order": 0,
+      "title": "解决OMV登陆WebUI时400 Bad Request错误",
+      "status": "publish",
+      "created": 1769149500,
+      "modified": 1782977743,
+      "password": "",
+      "template": "",
+      "allowFeed": "1",
+      "allowComment": "1"
+    },
+    {
+      "cid": 13,
+      "slug": "13",
+      "text": "<!--markdown-->#灵感来源#\r\n最近一直在捣鼓QQ机器人，目前后端比较有名的就是[AstrBot](https://astrbot.app/)和 [MaiBot](https://docs.mai-mai.org/) 项目，其中AstrBot注重功能性（有多样化的插件服务）而MaiBot注重LLMs聊天与拟人化，遂想要同时给我的机器人接入两个项目，而由于TX的风控，部署在云服务器上的NapCat容易被下号，而由于网络环境问题，MaiBot最好运行在海外服务器上（可以方便的访问Gemini等AI的api），故想到了将AstrBot与NapCat部署在家里NAS上，MaiBot部署在公网服务器上的思路，拓扑图如下：\r\n```mermaid\r\ngraph LR\r\n    subgraph NAS\r\n        AstrBot <--> NapCat\r\n    end\r\n\r\n    subgraph Server\r\n        MaiBot\r\n    end\r\n\r\n    NapCat <-- WebSocket --> MaiBot\r\n```\r\n\r\n{message type=\"info\" content=\"这里将NapCat和AstrBot部署在同一个服务器上，这是因为AstrBot在执行一些功能的时候需要和NapCat共用文件夹，若分开部署则会出现很多问题\"/}\r\n\r\n#部署#\r\n##前期准备##\r\n {x} 一台公网服务器（最好2c2g及以上配置）\r\n {x} 一台家宽网络下的Linux服务器\r\n {x} docker环境\r\n##开始部署##\r\n- 首先进入家里云ssh\r\n```bash\r\nmkdir astrbot\r\ncd astrbot\r\nwget https://raw.githubusercontent.com/NapNeko/NapCat-Docker/main/compose/astrbot.yml\r\nsudo docker compose -f astrbot.yml up -d\r\n```\r\n完成\r\n- 然后进入公网服务器\r\n\r\n{message type=\"info\" content=\"该部分以下内容大多直接来自官方文档\"/}\r\n## 一、准备麦麦部署环境\r\n\r\n### 1.1 创建项目目录\r\n\r\n```bash\r\nmkdir -p maim-bot/docker-config/{mmc,adapters} && cd maim-bot\r\n```\r\n\r\n### 1.2 获取 Docker 编排文件\r\n\r\n```bash\r\nwget https://raw.githubusercontent.com/Mai-with-u/MaiBot/main/docker-compose.yml\r\n```\r\n\r\n> 备用下载方式  \r\n> 若 GitHub 直连不稳定，可使用镜像源：\r\n> \r\n> ```bash\r\n> wget https://fastly.jsdelivr.net/gh/Mai-with-u/MaiBot@main/docker-compose.yml\r\n> ```\r\n\r\n### 1.3删除其中的NapCat容器并取消注释`adapter`的端口映射\r\n使用`vim docker-compose.yml`编辑，编辑完成后如下:\r\n```toml\r\nservices:\r\n  adapters:\r\n    container_name: maim-bot-adapters\r\n    #### prod ####\r\n    image: unclas/maimbot-adapter:latest\r\n    # image: infinitycat/maimbot-adapter:latest\r\n    #### dev ####\r\n    # image: unclas/maimbot-adapter:dev\r\n    # image: infinitycat/maimbot-adapter:dev\r\n    environment:\r\n      - TZ=Asia/Shanghai\r\n    ports: #<--此处修改\r\n      - \"8095:8095\" #<--此处修改\r\n    volumes:\r\n      - ./docker-config/adapters/config.toml:/adapters/config.toml # 持久化adapters配置文件\r\n      - ./data/adapters:/adapters/data # adapters 数据持久化\r\n    restart: always\r\n    networks:\r\n      - maim_bot\r\n  core:\r\n    container_name: maim-bot-core\r\n    #### prod ####\r\n    image: sengokucola/maibot:dev\r\n    # image: infinitycat/maibot:latest\r\n    #### dev ####\r\n    # image: sengokucola/maibot:dev\r\n    # image: infinitycat/maibot:dev\r\n    environment:\r\n      - TZ=Asia/Shanghai\r\n      - EULA_AGREE=99f08e0cab0190de853cb6af7d64d4de # 同意EULA\r\n      - PRIVACY_AGREE=9943b855e72199d0f5016ea39052f1b6 # 同意EULA\r\n#    ports:\r\n#      - \"8000:8000\"\r\n    volumes:\r\n      - ./docker-config/mmc/.env:/MaiMBot/.env # 持久化env配置文件\r\n      - ./docker-config/mmc:/MaiMBot/config # 持久化bot配置文件\r\n      - ./data/MaiMBot/maibot_statistics.html:/MaiMBot/maibot_statistics.html #统计数据输出\r\n      - ./data/MaiMBot:/MaiMBot/data # 共享目录\r\n      - ./data/MaiMBot/plugins:/MaiMBot/plugins # 插件目录\r\n      - ./data/MaiMBot/logs:/MaiMBot/logs # 日志目录\r\n      - site-packages:/usr/local/lib/python3.13/site-packages # 持久化Python包\r\n    restart: always\r\n    networks:\r\n      - maim_bot\r\n  sqlite-web:\r\n    # 注意：coleifer/sqlite-web 镜像不支持arm64\r\n    image: coleifer/sqlite-web\r\n    container_name: sqlite-web\r\n    restart: always\r\n    ports:\r\n      - \"8120:8080\"\r\n    volumes:\r\n      - ./data/MaiMBot:/data/MaiMBot\r\n    environment:\r\n      - SQLITE_DATABASE=MaiMBot/MaiBot.db  # 你的数据库文件\r\n    networks:\r\n      - maim_bot\r\n\r\n  # chat2db占用相对较高但是功能强大\r\n  # 内存占用约600m，内存充足推荐选此\r\n  # chat2db:\r\n  #   image: chat2db/chat2db:latest\r\n  #   container_name: maim-bot-chat2db\r\n  #   restart: always\r\n  #   ports:\r\n  #     - \"10824:10824\"\r\n  #   volumes:\r\n  #     - ./data/MaiMBot:/data/MaiMBot\r\n  #   networks:\r\n  #     - maim_bot\r\n  \r\nvolumes:\r\n  site-packages:\r\nnetworks:\r\n  maim_bot:\r\n    driver: bridge\r\n\r\n```\r\n## 二、麦麦环境配置\r\n\r\n### 2.1 准备配置文件模板\r\n\r\n```bash\r\n# 获取核心组件配置模板\r\nwget https://raw.githubusercontent.com/MaiM-with-u/MaiBot/main/template/template.env      -O docker-config/mmc/.env\r\n# 若 GitHub 直连不稳定，可使用镜像源：https://fastly.jsdelivr.net/gh/Mai-with-u/MaiBot@main/template/template.env \r\n```\r\n\r\n获取 `adapter` 的 `config.toml`:\r\n\r\n```bash\r\nwget https://github.com/MaiM-with-u/MaiBot-Napcat-Adapter/raw/refs/heads/main/template/template_config.toml      -O docker-config/adapters/config.toml\r\n# 若 GitHub 直连不稳定，可使用镜像源：https://fastly.jsdelivr.net/gh/Mai-with-u/MaiBot-Napcat-Adapter@main/template/template_config.toml \r\n```\r\n\r\n> 配置文件里的服务名如不可用可替换为容器名  \r\n> * `MaiBot_Server` 配置可替换成 `maim-bot-core`  \r\n> * `napcat` ws 客户端可替换成 `ws://maim-bot-adapters:8095`\r\n\r\n### 2.2 预留文件\r\n\r\n这个文件是 MaiBot 运行统计报告。\r\n\r\n`MacOS/Linux`:\r\n\r\n```bash\r\nmkdir -p data/MaiMBot && touch ./data/MaiMBot/maibot_statistics.html\r\n```\r\n\r\n`Windows`:\r\n\r\n```cmd\r\nmkdir data\\MaiMBot && type nul > .\\data\\MaiMBot\\maibot_statistics.html\r\n```\r\n\r\n### 2.3 修改相关配置\r\n\r\n```bash\r\nvim docker-config/mmc/.env\r\n```\r\n\r\n需修改以下关键参数:\r\n\r\n```ini\r\n# 网络监听配置\r\nHOST=0.0.0.0\r\n```\r\n\r\n修改适配器配置文件:\r\n\r\n```bash\r\nvim docker-config/adapters/config.toml\r\n```\r\n\r\n```toml\r\n[napcat_server] # Napcat连接的ws服务设置\r\nhost = \"0.0.0.0\"\r\nport = 8095\r\nheartbeat_interval = 30\r\ntocken = '123123123' #这里必须要设置，为了NAS和公网服务器建立websocket连接时鉴权\r\n\r\n[maibot_server] # 连接麦麦的ws服务设置\r\nhost = \"core\"\r\nport = 8000\r\n```\r\n\r\n### 2.3 取消注释 docker-compose.yml 的 EULA\r\n\r\n```bash\r\nvim docker-compose.yml\r\n# 取消注释以下两行（30-31 行）\r\n- EULA_AGREE=bda99dca873f5d8044e9987eac417e01  # 同意 EULA\r\n- PRIVACY_AGREE=42dddb3cbe2b784b45a2781407b298a1 # 同意 Privacy\r\n```\r\n\r\n### 2.4 数据库管理工具\r\n\r\n```yaml\r\n#sqlite-web:\r\n#  # 注意：coleifer/sqlite-web 镜像不支持 arm64\r\n#  image: coleifer/sqlite-web\r\n#  container_name: sqlite-web\r\n#  restart: always\r\n#  ports:\r\n#    - \"8120:8080\"\r\n#  volumes:\r\n#    - ./data/MaiMBot:/data/MaiMBot\r\n#  environment:\r\n#    - SQLITE_DATABASE=MaiMBot/MaiBot.db\r\n#  networks:\r\n#    - maim_bot\r\n\r\n# chat2db 占用相对较高但是功能强大\r\n# 内存占用约 600m，内存充足推荐选此\r\nchat2db:\r\n  image: chat2db/chat2db:latest\r\n  container_name: maim-bot-chat2db\r\n  restart: always\r\n  ports:\r\n    - \"10824:10824\"\r\n  volumes:\r\n    - ./data/MaiMBot:/data/MaiMBot\r\n  networks:\r\n    - maim_bot\r\n```\r\n\r\n### 2.5 目录结构\r\n\r\n```\r\n.\r\n├── docker-compose.yml\r\n├── data\r\n│   └── MaiMBot\r\n│       └── maibot_statistics.html\r\n└── docker-config\r\n    ├── adapters\r\n    │   └── config.toml\r\n    └── mmc\r\n        └── .env\r\n```\r\n\r\n---\r\n\r\n## 三、初始化容器环境\r\n\r\n### 3.1 首次启动容器生成剩余配置文件\r\n\r\n```bash\r\ndocker compose up -d && sleep 15 && docker compose down\r\n```\r\n\r\n### 3.2 调整麦麦配置\r\n\r\n```bash\r\nvim docker-config/mmc/bot_config.toml\r\nvim docker-config/mmc/model_config.toml\r\n```\r\n\r\n---\r\n\r\n## 四、启动麦麦\r\n\r\n### 4.1 启动所有组件\r\n\r\n```bash\r\ndocker compose up -d\r\n```\r\n\r\n### 4.2 验证服务状态\r\n\r\n```bash\r\ndocker compose ps\r\n```\r\n\r\n---\r\n\r\n##配置NapCat\r\nNapcat 配置入口: http://公网服务器IP:6099  \r\n- 网络配置使用websocket客户端，url为ws://<你的公网服务器ip>:8095 tocken和你之前在adapter中的tocken一致，启用：\r\n ![NapCat-1](https://tc.andy-y.cn/i/2026/01/23/697328f72c599.png) \r\n大功告成！\r\n\r\n---\r\n#参考文档：\r\n\r\n1. [使用 Docker 部署 AstrBot](https://docs.astrbot.app/deploy/astrbot/docker.html)\r\n\r\n2. [使用 Docker 部署 MaiBot](https://docs.mai-mai.org/manual/deployment/mmc_deploy_docker.html)\r\n\r\n\r\n\r\n",
+      "type": "post",
+      "order": 0,
+      "title": "MaiBot+AstrBot+Napcat分离部署，实用、稳定且拟人化的QQBot部署方案",
+      "status": "publish",
+      "created": 1769155320,
+      "modified": 1782977711,
+      "password": "",
+      "template": "",
+      "allowFeed": "1",
+      "allowComment": "1"
+    },
+    {
+      "cid": 16,
+      "slug": "16",
+      "text": "<!--markdown-->##Basic Information\r\n- ASN: 4242422921\r\n- Maintainer: [AndyYan](https://explorer.burble.com/?#/mntner/ANDY-MNT)\r\n- IPv4 Block: 172.21.118.160/28\r\n- IPv6 Block: fdd2:e3e2:c922::/48\r\n\r\n{alert type=\"info\"}\r\n\r\nMy Looking Glass:lg.andy-y.cn\r\nMy Flap Alerted:flap.andy-y.cn\r\n\r\n{/alert}\r\n\r\n##Nodes\r\n\r\n####Topology\r\n\r\n```mermaid\r\ngraph TD\r\n    LAX[\"Los Angeles (LAX)  \r\nlax.andy-y.cn\"]\r\n    FRA[\"Germany (GE)  \r\nfra.andy-y.cn\"]\r\n    HKT[\"Hong Kong (HKT)  \r\nhkt.andy-y.cn\"]\r\n    TYO[\"Tokyo (TYO)  \r\ntyo.andy-y.cn\"]\r\n\r\n    LAX <--> FRA\r\n    LAX <--> TYO\r\n    LAX <--> HKT\r\n    FRA <--> TYO\r\n    FRA <--> HKT\r\n    HKT <--> TYO\r\n```\r\n\r\n\r\n## Los Angeles, USA\r\n\r\n- **Domain**: `lax.andy-y.cn`\r\n- **IPv4**: `lax.andy-y.cn`\r\n- **IPv6**: `v6.lax.andy-y.cn`\r\n- **WireGuard Port**: `2 + last 4 digits of your ASN`\r\n- **DN42 IPv4**: `172.21.118.165`\r\n- **DN42 IPv6**: `fdd2:e3e2:c922::5`\r\n- **IPv6 LLA**: `fe80::2921`\r\n- **Public key**: `ki4mnFa0PeY7SY9OlZdS6Tw9k5Xdgq/PdYVOef2SSBc=`\r\n- **Bandwidth**: `3000 Mbps`\r\n- **Extended next hop**: enabled\r\n- **MP-BGP**: enabled\r\n- **Tunnel MTU**: `1420`\r\n\r\n---\r\n\r\n## Frankfurt,Germany\r\n\r\n- **Domain**: `fra.dn42.andy-y.cn`\r\n- **IPv4**: `fra.dn42.andy-y.cn`\r\n- **IPv6**: `v6.fra.dn42.andy-y.cn`\r\n- **WireGuard Port**: `2 + last 4 digits of your ASN`\r\n- **DN42 IPv4**: `172.21.118.162`\r\n- **DN42 IPv6**: `fdd2:e3e2:c922::2`\r\n- **IPv6 LLA**: `fe80::2921`\r\n- **Public key**: `wZ939wRW+xLa1VV2STTxF4oss7UxqNJCZzEUEJ5ImRM=`\r\n- **Bandwidth**: `10 Gbps`\r\n- **Extended next hop**: enabled\r\n- **MP-BGP**: enabled\r\n- **Tunnel MTU**: `1420`\r\n\r\n---\r\n\r\n## Hong Kong, China\r\n\r\n- **Domain**: `hkt.andy-y.cn`\r\n- **IPv4**: `hkt.andy-y.cn`\r\n- **IPv6**: `None`\r\n- **WireGuard Port**: `2 + last 4 digits of your ASN`\r\n- **DN42 IPv4**: `172.21.118.164`\r\n- **DN42 IPv6**: `fdd2:e3e2:c922::4`\r\n- **IPv6 LLA**: `fe80::2921`\r\n- **Public key**: `c7Nx4qyVnIHAzV/VUn4wdiyNFMF84Vhsblk1UyCUqD8=`\r\n- **Bandwidth**: `30 Mbps`\r\n- **Extended next hop**: enabled\r\n- **MP-BGP**: enabled\r\n- **Tunnel MTU**: `1420`\r\n\r\n---\r\n\r\n## Tokyo, Japan\r\n\r\n- **Domain**: `tyo.andy-y.cn`\r\n- **IPv4**: `tyo.andy-y.cn`\r\n- **IPv6**: `v6.tyo.andy-y.cn`\r\n- **WireGuard Port**: `2 + last 4 digits of your ASN`\r\n- **DN42 IPv4**: `172.21.118.161`\r\n- **DN42 IPv6**: `fdd2:e3e2:c922::1`\r\n- **IPv6 LLA**: `fe80::2921`\r\n- **Public key**: `nLyNhDOzsFUQ5LK5lrpHBlkKYkUzpzOm/p2iThlX3Dg=`\r\n- **Bandwidth**: `3000 Mbps`\r\n- **Extended next hop**: enabled\r\n- **MP-BGP**: enabled\r\n- **Tunnel MTU**: `1420`\r\n\r\n##Features:\r\n- Multi Protocol BGP\r\n- Extended Next Hop\r\n\r\n#Contact:\r\n- Email:070127andy@gmail.com",
+      "type": "page",
+      "order": 1,
+      "title": "AndyYan's DN42 Network",
+      "status": "publish",
+      "created": 1769230800,
+      "modified": 1781182788,
+      "password": "",
+      "template": "",
+      "allowFeed": "1",
+      "allowComment": "1"
+    },
+    {
+      "cid": 30,
+      "slug": "30",
+      "text": "<!--markdown-->#写在前面\r\n本人在dn42网络中有4个节点，本来搭建了LookingGlass来监测节点运行状态，但考虑到不够直观 ~~其实是想折腾~~，所以打算搭建一个可以图形化监控每台节点Bird运行状态的仪表盘，在社区里面发现可以用Grafana搭配Prometheus作为数据源实现\r\n拓扑图如下：\r\n\r\n```mermaid\r\ngraph TD\r\n    subgraph DN42 Network\r\n        N1[Node 1] --> NE1(Node Exporter)\r\n        N1 --> BE1(Bird/FRR Exporter)\r\n        N2[Node 2] --> NE2(Node Exporter)\r\n        N2 --> BE2(Bird/FRR Exporter)\r\n        N3[Node 3] --> NE3(Node Exporter)\r\n        N3 --> BE3(Bird/FRR Exporter)\r\n        N4[Node 4] --> NE4(Node Exporter)\r\n        N4 --> BE4(Bird/FRR Exporter)\r\n    end\r\n\r\n    NE1 --> P(Prometheus Server)\r\n    NE2 --> P\r\n    NE3 --> P\r\n    NE4 --> P\r\n    BE1 --> P\r\n    BE2 --> P\r\n    BE3 --> P\r\n    BE4 --> P\r\n\r\n    P --> G(Grafana Server)\r\n\r\n    User[用户] --> G\r\n```\r\n\r\n#搭建\r\n##部署 Prometheus Server\r\n\r\nPrometheus Server 将运行在独立的监控服务器上。\r\n\r\n####  创建工作目录\r\n\r\n```bash\r\nmkdir -p /opt/prometheus/config /opt/prometheus/data\r\n```\r\n\r\n####  创建 Prometheus 配置文件 (`/opt/prometheus/config/prometheus.yml`)\r\n\r\n```yaml\r\nglobal:\r\n  scrape_interval: 15s # 默认抓取间隔\r\n\r\nscrape_configs:\r\n  - job_name: 'prometheus'\r\n    static_configs:\r\n      - targets: ['localhost:9090'] # 监控 Prometheus 自身\r\n\r\n  - job_name: 'node_exporter'\r\n    static_configs:\r\n      - targets: ['<node1_ip>:9100', '<node2_ip>:9100', '<node3_ip>:9100', '<node4_ip>:9100'] # 替换为您的 DN42 节点 IP\r\n\r\n  - job_name: 'bird_exporter'\r\n    static_configs:\r\n      - targets: ['<node1_ip>:9324', '<node2_ip>:9324', '<node3_ip>:9324', '<node4_ip>:9324'] # 替换为您的 DN42 节点 IP\r\n```\r\n\r\n**注意**: 请将 `<nodeX_ip>` 替换为您的 DN42 节点的实际 IP 地址。\r\n\r\n####  使用 Docker Compose 部署 Prometheus\r\n\r\n创建 `docker-compose.yml` 文件：\r\n\r\n```yaml\r\nservices:\r\n  prometheus:\r\n    image: prom/prometheus\r\n    container_name: prometheus\r\n    network_mode: host\r\n    ports:\r\n      - \"9090:9090\"\r\n    volumes:\r\n      - /opt/prometheus/config/prometheus.yml:/etc/prometheus/prometheus.yml\r\n      - /opt/prometheus/data:/prometheus\r\n    command: \r\n      - '--config.file=/etc/prometheus/prometheus.yml'\r\n      - '--storage.tsdb.path=/prometheus'\r\n      - '--web.enable-lifecycle'\r\n    restart: unless-stopped\r\n```\r\n\r\n将数据目录的权限赋予 Prometheus 用户：\r\n\r\n```bash\r\nchown -R 65534:65534 /opt/prometheus/data\r\n```\r\n\r\n启动 Prometheus：\r\n\r\n```bash\r\ndocker-compose up -d\r\n```\r\n\r\n通过访问 `http://<监控服务器IP>:9090` 来验证 Prometheus 是否正常运行。\r\n\r\n##部署 Node Exporter (每个 DN42 节点上)\r\n####创建工作目录\r\n\r\n```bash\r\nmkdir -p /opt/node_exporter\r\n```\r\n\r\n####方式1：使用 Docker 部署 Node Exporter\r\n\r\n```bash\r\ndocker run -d \\\r\n  --name node_exporter \\\r\n  --net=\"host\" \\\r\n  --pid=\"host\" \\\r\n  -v \"/:/host:ro,rslave\" \\\r\n  quay.io/prometheus/node-exporter:latest \\\r\n  --path.rootfs=/host\r\n```\r\n\r\n####方式2：使用二进制可执行文件部署 Node Exporter\r\n\r\n1.  **下载并解压 Node Exporter**\r\n\r\n    访问 [Prometheus 下载页面](https://prometheus.io/download/) 获取最新版本的 Node Exporter。以下示例使用 `1.7.0` 版本\r\n\r\n    ```bash\r\n    wget https://github.com/prometheus/node_exporter/releases/download/v1.7.0/node_exporter-1.7.0.linux-amd64.tar.gz\r\n    tar xvfz node_exporter-1.7.0.linux-amd64.tar.gz\r\n    sudo cp node_exporter-1.7.0.linux-amd64/node_exporter /usr/local/bin\r\n    sudo chown prometheus:prometheus /usr/local/bin/node_exporter\r\n    rm -rf node_exporter-1.7.0.linux-amd64.tar.gz node_exporter-1.7.0.linux-amd64\r\n    ```\r\n\r\n2.  **创建 Systemd 服务文件 (`/etc/systemd/system/node_exporter.service`)**\r\n\r\n    ```ini\r\n    [Unit]\r\n    Description=Node Exporter\r\n    Wants=network-online.target\r\n    After=network-online.target\r\n\r\n    [Service]\r\n    Type=simple\r\n    ExecStart=/usr/local/bin/node_exporter \\\r\n      --web.listen-address=\":9100\" \\\r\n      --collector.textfile.directory=\"/var/lib/node_exporter/textfile_collector\"\r\n\r\n    [Install]\r\n    WantedBy=multi-user.target\r\n    ```\r\n\r\n3.  **重新加载 Systemd 并启动 Node Exporter**\r\n\r\n    ```bash\r\n    sudo systemctl daemon-reload\r\n    sudo systemctl start node_exporter\r\n    sudo systemctl enable node_exporter\r\n    ```\r\n\r\n####Bird Exporter\r\n\r\n首先，确保 BIRD 配置允许 `bird_exporter` 访问其控制套接字。通常需要在 `/etc/bird/bird.conf` 或 `/etc/bird2/bird.conf` 中添加类似以下内容：\r\n\r\n```\r\ncontrol socket \"/var/run/bird/bird.ctl\" mode 0777;\r\n```\r\n\r\n然后，使用 Docker 部署 Bird Exporter (推荐用于内存充足的节点)：\r\n\r\n```bash\r\ndocker run -d \\\r\n  --name bird_exporter \\\r\n  --network host \\\r\n  -v /var/run/bird/bird.ctl:/var/run/bird/bird.ctl \\\r\n  czerwonk/bird_exporter:latest\r\n```\r\n\r\n####使用二进制方式部署 Bird Exporter\r\n1.  **下载并解压 Bird Exporter**\r\n\r\n    访问 [Bird Exporter GitHub Releases](https://github.com/czerwonk/bird_exporter/releases) 获取最新版本的 Bird Exporter。以下示例使用 `1.1.0` 版本，请根据实际情况替换。\r\n\r\n    ```bash\r\n    wget https://github.com/czerwonk/bird_exporter/releases/download/v1.1.0/bird_exporter-1.1.0.linux-amd64.tar.gz\r\n    tar xvfz bird_exporter-1.1.0.linux-amd64.tar.gz\r\n    sudo cp bird_exporter-1.1.0.linux-amd64/bird_exporter /usr/local/bin\r\n    sudo chown prometheus:prometheus /usr/local/bin/bird_exporter\r\n    rm -rf bird_exporter-1.1.0.linux-amd64.tar.gz bird_exporter-1.1.0.linux-amd64\r\n    ```\r\n\r\n2.  **创建 Systemd 服务文件 (`/etc/systemd/system/bird_exporter.service`)**\r\n\r\n    ```ini\r\n    [Unit]\r\n    Description=Bird Exporter\r\n    Wants=network-online.target\r\n    After=network-online.target\r\n\r\n    [Service]\r\n    Type=simple\r\n    ExecStart=/usr/local/bin/bird_exporter \\\r\n      --bird.socket=\"/var/run/bird/bird.ctl\" \\\r\n      --web.listen-address=\":9324\"\r\n\r\n    [Install]\r\n    WantedBy=multi-user.target\r\n    ```\r\n\r\n3.  **重新加载 Systemd 并启动 Bird Exporter**\r\n\r\n    ```bash\r\n    sudo systemctl daemon-reload\r\n    sudo systemctl start bird_exporter\r\n    sudo systemctl enable bird_exporter\r\n    ```\r\n###部署 Grafana Server\r\n\r\nGrafana Server 建议与 Prometheus Server 部署在同一台监控服务器上。\r\n\r\n####创建工作目录\r\n\r\n```bash\r\nmkdir -p /opt/grafana/data\r\n```\r\n\r\n#### 4.4.2 使用 Docker Compose 部署 Grafana\r\n\r\n更新之前创建的 `docker-compose.yml` 文件，添加 Grafana 服务：\r\n\r\n```yaml\r\nservices:\r\n  prometheus:\r\n    image: prom/prometheus\r\n    container_name: prometheus\r\n    ports:\r\n      - \"9090:9090\"\r\n    volumes:\r\n      - /opt/prometheus/config/prometheus.yml:/etc/prometheus/prometheus.yml\r\n      - /opt/prometheus/data:/prometheus\r\n    command: \r\n      - '--config.file=/etc/prometheus/prometheus.yml'\r\n      - '--storage.tsdb.path=/prometheus'\r\n      - '--web.enable-lifecycle'\r\n    restart: unless-stopped\r\n\r\n  grafana:\r\n    image: grafana/grafana\r\n    container_name: grafana\r\n    ports:\r\n      - \"3000:3000\"\r\n    volumes:\r\n      - /opt/grafana/data:/var/lib/grafana\r\n    environment:\r\n      - GF_SECURITY_ADMIN_USER=admin\r\n      - GF_SECURITY_ADMIN_PASSWORD=your_strong_password # 请替换为强密码\r\n    depends_on:\r\n      - prometheus\r\n    restart: unless-stopped\r\n```\r\n\r\n重新启动 Docker Compose 服务以启动 Grafana：\r\n\r\n```bash\r\ndocker-compose up -d\r\n```\r\n\r\n###配置 Grafana 数据源\r\n\r\n1.  登录 Grafana。\r\n2.  在左侧导航栏中，点击齿轮图标 (Configuration) -> Data Sources。\r\n3.  点击 \r\n`Add data source`。\r\n4.  选择 `Prometheus`。\r\n5.  在 `HTTP` 部分的 `URL` 字段中输入 `http://prometheus:9090` (如果 Prometheus 和 Grafana 在同一个 Docker Compose 网络中) 或 `http://localhost:9090` (如果 Prometheus 运行在宿主机上，且 Grafana 可以直接访问)。\r\n6.  点击 `Save & Test`。如果一切正常，您将看到 `Data source is working` 的消息。\r\n\r\n##导入 Grafana 仪表盘\r\n\r\nGrafana 社区提供了许多现成的仪表盘，可以大大简化监控配置。以下是一些推荐的仪表盘 ID：\r\n\r\n*   **Node Exporter Full**: ID `1860` (或搜索 `Node Exporter Full`)，用于监控主机操作系统指标。\r\n*   **BIRD RS**: ID `5259` (或搜索 `BIRD RS`)，用于监控 BIRD 路由协议状态。\r\n*   **FRR Exporter - BGP**: ID `22943` (或搜索 `FRR Exporter - BGP`)，用于监控 FRR BGP 状态。\r\n\r\n####导入步骤\r\n\r\n1.  在 Grafana 左侧导航栏中，点击 `+` 图标 (Create) -> `Import`。\r\n2.  在 `Import via grafana.com` 字段中输入上述仪表盘 ID，然后点击 `Load`。\r\n3.  选择您的 Prometheus 数据源。\r\n4.  点击 `Import`。\r\n\r\n重复此过程，导入所有您需要的仪表盘。\r\n\r\n##告警配置 (可选)\r\n\r\nGrafana 允许您基于 Prometheus 收集的指标配置告警规则。当指标达到预设阈值时，Grafana 可以通过邮件、Slack、Webhook 等方式发送通知。\r\n\r\n####配置告警通道\r\n\r\n1.  在 Grafana 左侧导航栏中，点击齿轮图标 (Configuration) -> `Alerting` -> `Notification channels`。\r\n2.  点击 `New channel`。\r\n3.  选择偏好的通知类型 (例如 `Email`, `Slack`) 并填写相关配置信息。\r\n4.  点击 `Save`。\r\n\r\n####创建告警规则\r\n\r\n1.  打开想要添加告警的仪表盘。\r\n2.  选择一个面板，点击面板标题，然后选择 `Edit`。\r\n3.  在面板编辑视图中，切换到 `Alert` 选项卡。\r\n4.  点击 `Create Alert`。\r\n5.  定义告警规则的条件、评估周期和通知通道。\r\n6.  点击 `Save`。\r\n7.  分享我的JSON\r\n\r\n{collapse}\r\n{collapse-item label=\"Sample\" close}\r\n```json\r\n{\r\n    \"annotations\":  {\r\n                        \"list\":  [\r\n                                     {\r\n                                         \"builtIn\":  1,\r\n                                         \"datasource\":  {\r\n                                                            \"uid\":  \"-- Grafana --\"\r\n                                                        },\r\n                                         \"enable\":  true,\r\n                                         \"hide\":  true,\r\n                                         \"iconColor\":  \"rgba(0, 211, 255, 1)\",\r\n                                         \"name\":  \"Annotations \\u0026 Alerts\",\r\n                                         \"type\":  \"dashboard\"\r\n                                     }\r\n                                 ]\r\n                    },\r\n    \"description\":  \"Live BIRD routing health, prefix visibility, session status and routing activity across all monitored routers.\",\r\n    \"editable\":  true,\r\n    \"fiscalYearStartMonth\":  0,\r\n    \"graphTooltip\":  1,\r\n    \"id\":  6,\r\n    \"links\":  [\r\n\r\n              ],\r\n    \"panels\":  [\r\n                   {\r\n                       \"datasource\":  {\r\n                                          \"type\":  \"prometheus\",\r\n                                          \"uid\":  \"dfdlzb2hrvlz4b\"\r\n                                      },\r\n                       \"description\":  \"Healthy Prometheus scrape targets for the selected BIRD exporters.\",\r\n                       \"fieldConfig\":  {\r\n                                           \"defaults\":  {\r\n                                                            \"color\":  {\r\n                                                                          \"mode\":  \"thresholds\"\r\n                                                                      },\r\n                                                            \"mappings\":  [\r\n\r\n                                                                         ],\r\n                                                            \"thresholds\":  {\r\n                                                                               \"mode\":  \"absolute\",\r\n                                                                               \"steps\":  [\r\n                                                                                             {\r\n                                                                                                 \"color\":  \"red\",\r\n                                                                                                 \"value\":  0\r\n                                                                                             },\r\n                                                                                             {\r\n                                                                                                 \"color\":  \"green\",\r\n                                                                                                 \"value\":  1\r\n                                                                                             }\r\n                                                                                         ]\r\n                                                                           },\r\n                                                            \"unit\":  \"short\"\r\n                                                        },\r\n                                           \"overrides\":  [\r\n\r\n                                                         ]\r\n                                       },\r\n                       \"gridPos\":  {\r\n                                       \"h\":  4,\r\n                                       \"w\":  6,\r\n                                       \"x\":  0,\r\n                                       \"y\":  0\r\n                                   },\r\n                       \"id\":  10,\r\n                       \"options\":  {\r\n                                       \"colorMode\":  \"background_solid\",\r\n                                       \"graphMode\":  \"none\",\r\n                                       \"justifyMode\":  \"center\",\r\n                                       \"orientation\":  \"horizontal\",\r\n                                       \"percentChangeColorMode\":  \"standard\",\r\n                                       \"reduceOptions\":  {\r\n                                                             \"calcs\":  [\r\n                                                                           \"lastNotNull\"\r\n                                                                       ],\r\n                                                             \"fields\":  \"\",\r\n                                                             \"values\":  false\r\n                                                         },\r\n                                       \"showPercentChange\":  false,\r\n                                       \"textMode\":  \"auto\",\r\n                                       \"wideLayout\":  true\r\n                                   },\r\n                       \"pluginVersion\":  \"12.3.3\",\r\n                       \"targets\":  [\r\n                                       {\r\n                                           \"datasource\":  {\r\n                                                              \"type\":  \"prometheus\",\r\n                                                              \"uid\":  \"dfdlzb2hrvlz4b\"\r\n                                                          },\r\n                                           \"editorMode\":  \"code\",\r\n                                           \"expr\":  \"count(up{job=\\\"bird_exporter\\\",instance=~\\\"$instance\\\"} == 1) or vector(0)\",\r\n                                           \"format\":  \"time_series\",\r\n                                           \"instant\":  true,\r\n                                           \"legendFormat\":  \"__auto\",\r\n                                           \"range\":  false,\r\n                                           \"refId\":  \"A\"\r\n                                       }\r\n                                   ],\r\n                       \"title\":  \"BIRD Exporters Online\",\r\n                       \"type\":  \"stat\"\r\n                   },\r\n                   {\r\n                       \"datasource\":  {\r\n                                          \"type\":  \"prometheus\",\r\n                                          \"uid\":  \"dfdlzb2hrvlz4b\"\r\n                                      },\r\n                       \"description\":  \"Established BGP sessions across the selected router scope.\",\r\n                       \"fieldConfig\":  {\r\n                                           \"defaults\":  {\r\n                                                            \"color\":  {\r\n                                                                          \"mode\":  \"thresholds\"\r\n                                                                      },\r\n                                                            \"mappings\":  [\r\n\r\n                                                                         ],\r\n                                                            \"thresholds\":  {\r\n                                                                               \"mode\":  \"absolute\",\r\n                                                                               \"steps\":  [\r\n                                                                                             {\r\n                                                                                                 \"color\":  \"red\",\r\n                                                                                                 \"value\":  0\r\n                                                                                             },\r\n                                                                                             {\r\n                                                                                                 \"color\":  \"green\",\r\n                                                                                                 \"value\":  1\r\n                                                                                             }\r\n                                                                                         ]\r\n                                                                           },\r\n                                                            \"unit\":  \"short\"\r\n                                                        },\r\n                                           \"overrides\":  [\r\n\r\n                                                         ]\r\n                                       },\r\n                       \"gridPos\":  {\r\n                                       \"h\":  4,\r\n                                       \"w\":  6,\r\n                                       \"x\":  6,\r\n                                       \"y\":  0\r\n                                   },\r\n                       \"id\":  11,\r\n                       \"options\":  {\r\n                                       \"colorMode\":  \"background_solid\",\r\n                                       \"graphMode\":  \"none\",\r\n                                       \"justifyMode\":  \"center\",\r\n                                       \"orientation\":  \"horizontal\",\r\n                                       \"percentChangeColorMode\":  \"standard\",\r\n                                       \"reduceOptions\":  {\r\n                                                             \"calcs\":  [\r\n                                                                           \"lastNotNull\"\r\n                                                                       ],\r\n                                                             \"fields\":  \"\",\r\n                                                             \"values\":  false\r\n                                                         },\r\n                                       \"showPercentChange\":  false,\r\n                                       \"textMode\":  \"auto\",\r\n                                       \"wideLayout\":  true\r\n                                   },\r\n                       \"pluginVersion\":  \"12.3.3\",\r\n                       \"targets\":  [\r\n                                       {\r\n                                           \"datasource\":  {\r\n                                                              \"type\":  \"prometheus\",\r\n                                                              \"uid\":  \"dfdlzb2hrvlz4b\"\r\n                                                          },\r\n                                           \"editorMode\":  \"code\",\r\n                                           \"expr\":  \"count(bird_protocol_up{proto=\\\"BGP\\\",instance=~\\\"$instance\\\"} == 1) or vector(0)\",\r\n                                           \"format\":  \"time_series\",\r\n                                           \"instant\":  true,\r\n                                           \"legendFormat\":  \"__auto\",\r\n                                           \"range\":  false,\r\n                                           \"refId\":  \"A\"\r\n                                       }\r\n                                   ],\r\n                       \"title\":  \"BGP Sessions Up\",\r\n                       \"type\":  \"stat\"\r\n                   },\r\n                   {\r\n                       \"datasource\":  {\r\n                                          \"type\":  \"prometheus\",\r\n                                          \"uid\":  \"dfdlzb2hrvlz4b\"\r\n                                      },\r\n                       \"description\":  \"BGP sessions currently not established.\",\r\n                       \"fieldConfig\":  {\r\n                                           \"defaults\":  {\r\n                                                            \"color\":  {\r\n                                                                          \"mode\":  \"thresholds\"\r\n                                                                      },\r\n                                                            \"mappings\":  [\r\n\r\n                                                                         ],\r\n                                                            \"thresholds\":  {\r\n                                                                               \"mode\":  \"absolute\",\r\n                                                                               \"steps\":  [\r\n                                                                                             {\r\n                                                                                                 \"color\":  \"green\",\r\n                                                                                                 \"value\":  0\r\n                                                                                             },\r\n                                                                                             {\r\n                                                                                                 \"color\":  \"red\",\r\n                                                                                                 \"value\":  1\r\n                                                                                             }\r\n                                                                                         ]\r\n                                                                           },\r\n                                                            \"unit\":  \"short\"\r\n                                                        },\r\n                                           \"overrides\":  [\r\n\r\n                                                         ]\r\n                                       },\r\n                       \"gridPos\":  {\r\n                                       \"h\":  4,\r\n                                       \"w\":  6,\r\n                                       \"x\":  12,\r\n                                       \"y\":  0\r\n                                   },\r\n                       \"id\":  12,\r\n                       \"options\":  {\r\n                                       \"colorMode\":  \"background_solid\",\r\n                                       \"graphMode\":  \"none\",\r\n                                       \"justifyMode\":  \"center\",\r\n                                       \"orientation\":  \"horizontal\",\r\n                                       \"percentChangeColorMode\":  \"standard\",\r\n                                       \"reduceOptions\":  {\r\n                                                             \"calcs\":  [\r\n                                                                           \"lastNotNull\"\r\n                                                                       ],\r\n                                                             \"fields\":  \"\",\r\n                                                             \"values\":  false\r\n                                                         },\r\n                                       \"showPercentChange\":  false,\r\n                                       \"textMode\":  \"auto\",\r\n                                       \"wideLayout\":  true\r\n                                   },\r\n                       \"pluginVersion\":  \"12.3.3\",\r\n                       \"targets\":  [\r\n                                       {\r\n                                           \"datasource\":  {\r\n                                                              \"type\":  \"prometheus\",\r\n                                                              \"uid\":  \"dfdlzb2hrvlz4b\"\r\n                                                          },\r\n                                           \"editorMode\":  \"code\",\r\n                                           \"expr\":  \"count(bird_protocol_up{proto=\\\"BGP\\\",instance=~\\\"$instance\\\"} == 0) or vector(0)\",\r\n                                           \"format\":  \"time_series\",\r\n                                           \"instant\":  true,\r\n                                           \"legendFormat\":  \"__auto\",\r\n                                           \"range\":  false,\r\n                                           \"refId\":  \"A\"\r\n                                       }\r\n                                   ],\r\n                       \"title\":  \"BGP Sessions Down\",\r\n                       \"type\":  \"stat\"\r\n                   },\r\n                   {\r\n                       \"datasource\":  {\r\n                                          \"type\":  \"prometheus\",\r\n                                          \"uid\":  \"dfdlzb2hrvlz4b\"\r\n                                      },\r\n                       \"description\":  \"Total adjacent OSPF and OSPFv3 neighbors.\",\r\n                       \"fieldConfig\":  {\r\n                                           \"defaults\":  {\r\n                                                            \"color\":  {\r\n                                                                          \"mode\":  \"thresholds\"\r\n                                                                      },\r\n                                                            \"mappings\":  [\r\n\r\n                                                                         ],\r\n                                                            \"thresholds\":  {\r\n                                                                               \"mode\":  \"absolute\",\r\n                                                                               \"steps\":  [\r\n                                                                                             {\r\n                                                                                                 \"color\":  \"red\",\r\n                                                                                                 \"value\":  0\r\n                                                                                             },\r\n                                                                                             {\r\n                                                                                                 \"color\":  \"green\",\r\n                                                                                                 \"value\":  1\r\n                                                                                             }\r\n                                                                                         ]\r\n                                                                           },\r\n                                                            \"unit\":  \"short\"\r\n                                                        },\r\n                                           \"overrides\":  [\r\n\r\n                                                         ]\r\n                                       },\r\n                       \"gridPos\":  {\r\n                                       \"h\":  4,\r\n                                       \"w\":  6,\r\n                                       \"x\":  18,\r\n                                       \"y\":  0\r\n                                   },\r\n                       \"id\":  13,\r\n                       \"options\":  {\r\n                                       \"colorMode\":  \"background_solid\",\r\n                                       \"graphMode\":  \"none\",\r\n                                       \"justifyMode\":  \"center\",\r\n                                       \"orientation\":  \"horizontal\",\r\n                                       \"percentChangeColorMode\":  \"standard\",\r\n                                       \"reduceOptions\":  {\r\n                                                             \"calcs\":  [\r\n                                                                           \"lastNotNull\"\r\n                                                                       ],\r\n                                                             \"fields\":  \"\",\r\n                                                             \"values\":  false\r\n                                                         },\r\n                                       \"showPercentChange\":  false,\r\n                                       \"textMode\":  \"auto\",\r\n                                       \"wideLayout\":  true\r\n                                   },\r\n                       \"pluginVersion\":  \"12.3.3\",\r\n                       \"targets\":  [\r\n                                       {\r\n                                           \"datasource\":  {\r\n                                                              \"type\":  \"prometheus\",\r\n                                                              \"uid\":  \"dfdlzb2hrvlz4b\"\r\n                                                          },\r\n                                           \"editorMode\":  \"code\",\r\n                                           \"expr\":  \"(sum(bird_ospf_neighbor_adjacent_count{instance=~\\\"$instance\\\"}) or vector(0)) + (sum(bird_ospfv3_neighbor_adjacent_count{instance=~\\\"$instance\\\"}) or vector(0))\",\r\n                                           \"format\":  \"time_series\",\r\n                                           \"instant\":  true,\r\n                                           \"legendFormat\":  \"__auto\",\r\n                                           \"range\":  false,\r\n                                           \"refId\":  \"A\"\r\n                                       }\r\n                                   ],\r\n                       \"title\":  \"OSPF Adjacent Neighbors\",\r\n                       \"type\":  \"stat\"\r\n                   },\r\n                   {\r\n                       \"datasource\":  {\r\n                                          \"type\":  \"prometheus\",\r\n                                          \"uid\":  \"dfdlzb2hrvlz4b\"\r\n                                      },\r\n                       \"description\":  \"Prefixes advertised to PITER-IX peers across the selected time range.\",\r\n                       \"fieldConfig\":  {\r\n                                           \"defaults\":  {\r\n                                                            \"color\":  {\r\n                                                                          \"mode\":  \"palette-classic\"\r\n                                                                      },\r\n                                                            \"custom\":  {\r\n                                                                           \"axisBorderShow\":  false,\r\n                                                                           \"axisCenteredZero\":  false,\r\n                                                                           \"axisColorMode\":  \"text\",\r\n                                                                           \"axisLabel\":  \"\",\r\n                                                                           \"axisPlacement\":  \"left\",\r\n                                                                           \"barAlignment\":  0,\r\n                                                                           \"barWidthFactor\":  0.6,\r\n                                                                           \"drawStyle\":  \"line\",\r\n                                                                           \"fillOpacity\":  0,\r\n                                                                           \"gradientMode\":  \"none\",\r\n                                                                           \"hideFrom\":  {\r\n                                                                                            \"legend\":  false,\r\n                                                                                            \"tooltip\":  false,\r\n                                                                                            \"viz\":  false\r\n                                                                                        },\r\n                                                                           \"insertNulls\":  false,\r\n                                                                           \"lineInterpolation\":  \"stepAfter\",\r\n                                                                           \"lineWidth\":  2,\r\n                                                                           \"pointSize\":  5,\r\n                                                                           \"scaleDistribution\":  {\r\n                                                                                                     \"type\":  \"linear\"\r\n                                                                                                 },\r\n                                                                           \"showPoints\":  \"never\",\r\n                                                                           \"showValues\":  false,\r\n                                                                           \"spanNulls\":  false,\r\n                                                                           \"stacking\":  {\r\n                                                                                            \"group\":  \"A\",\r\n                                                                                            \"mode\":  \"none\"\r\n                                                                                        },\r\n                                                                           \"thresholdsStyle\":  {\r\n                                                                                                   \"mode\":  \"off\"\r\n                                                                                               }\r\n                                                                       },\r\n                                                            \"mappings\":  [\r\n\r\n                                                                         ],\r\n                                                            \"thresholds\":  {\r\n                                                                               \"mode\":  \"absolute\",\r\n                                                                               \"steps\":  [\r\n                                                                                             {\r\n                                                                                                 \"color\":  \"green\",\r\n                                                                                                 \"value\":  0\r\n                                                                                             },\r\n                                                                                             {\r\n                                                                                                 \"color\":  \"red\",\r\n                                                                                                 \"value\":  80\r\n                                                                                             }\r\n                                                                                         ]\r\n                                                                           },\r\n                                                            \"unit\":  \"short\"\r\n                                                        },\r\n                                           \"overrides\":  [\r\n                                                             {\r\n                                                                 \"matcher\":  {\r\n                                                                                 \"id\":  \"byValue\",\r\n                                                                                 \"options\":  {\r\n                                                                                                 \"op\":  \"gte\",\r\n                                                                                                 \"reducer\":  \"allIsZero\",\r\n                                                                                                 \"value\":  0\r\n                                                                                             }\r\n                                                                             },\r\n                                                                 \"properties\":  [\r\n                                                                                    {\r\n                                                                                        \"id\":  \"custom.hideFrom\",\r\n                                                                                        \"value\":  {\r\n                                                                                                      \"legend\":  true,\r\n                                                                                                      \"tooltip\":  true,\r\n                                                                                                      \"viz\":  false\r\n                                                                                                  }\r\n                                                                                    }\r\n                                                                                ]\r\n                                                             },\r\n                                                             {\r\n                                                                 \"matcher\":  {\r\n                                                                                 \"id\":  \"byValue\",\r\n                                                                                 \"options\":  {\r\n                                                                                                 \"op\":  \"gte\",\r\n                                                                                                 \"reducer\":  \"allIsNull\",\r\n                                                                                                 \"value\":  0\r\n                                                                                             }\r\n                                                                             },\r\n                                                                 \"properties\":  [\r\n                                                                                    {\r\n                                                                                        \"id\":  \"custom.hideFrom\",\r\n                                                                                        \"value\":  {\r\n                                                                                                      \"legend\":  true,\r\n                                                                                                      \"tooltip\":  true,\r\n                                                                                                      \"viz\":  false\r\n                                                                                                  }\r\n                                                                                    }\r\n                                                                                ]\r\n                                                             },\r\n                                                             {\r\n                                                                 \"matcher\":  {\r\n                                                                                 \"id\":  \"byValue\",\r\n                                                                                 \"options\":  {\r\n                                                                                                 \"op\":  \"gte\",\r\n                                                                                                 \"reducer\":  \"allIsZero\",\r\n                                                                                                 \"value\":  0\r\n                                                                                             }\r\n                                                                             },\r\n                                                                 \"properties\":  [\r\n                                                                                    {\r\n                                                                                        \"id\":  \"custom.hideFrom\",\r\n                                                                                        \"value\":  {\r\n                                                                                                      \"legend\":  true,\r\n                                                                                                      \"tooltip\":  true,\r\n                                                                                                      \"viz\":  false\r\n                                                                                                  }\r\n                                                                                    }\r\n                                                                                ]\r\n                                                             },\r\n                                                             {\r\n                                                                 \"matcher\":  {\r\n                                                                                 \"id\":  \"byValue\",\r\n                                                                                 \"options\":  {\r\n                                                                                                 \"op\":  \"gte\",\r\n                                                                                                 \"reducer\":  \"allIsNull\",\r\n                                                                                                 \"value\":  0\r\n                                                                                             }\r\n                                                                             },\r\n                                                                 \"properties\":  [\r\n                                                                                    {\r\n                                                                                        \"id\":  \"custom.hideFrom\",\r\n                                                                                        \"value\":  {\r\n                                                                                                      \"legend\":  true,\r\n                                                                                                      \"tooltip\":  true,\r\n                                                                                                      \"viz\":  false\r\n                                                                                                  }\r\n                                                                                    }\r\n                                                                                ]\r\n                                                             },\r\n                                                             {\r\n                                                                 \"matcher\":  {\r\n                                                                                 \"id\":  \"byValue\",\r\n                                                                                 \"options\":  {\r\n                                                                                                 \"op\":  \"gte\",\r\n                                                                                                 \"reducer\":  \"allIsZero\",\r\n                                                                                                 \"value\":  0\r\n                                                                                             }\r\n                                                                             },\r\n                                                                 \"properties\":  [\r\n                                                                                    {\r\n                                                                                        \"id\":  \"custom.hideFrom\",\r\n                                                                                        \"value\":  {\r\n                                                                                                      \"legend\":  true,\r\n                                                                                                      \"tooltip\":  true,\r\n                                                                                                      \"viz\":  false\r\n                                                                                                  }\r\n                                                                                    }\r\n                                                                                ]\r\n                                                             },\r\n                                                             {\r\n                                                                 \"matcher\":  {\r\n                                                                                 \"id\":  \"byValue\",\r\n                                                                                 \"options\":  {\r\n                                                                                                 \"op\":  \"gte\",\r\n                                                                                                 \"reducer\":  \"allIsNull\",\r\n                                                                                                 \"value\":  0\r\n                                                                                             }\r\n                                                                             },\r\n                                                                 \"properties\":  [\r\n                                                                                    {\r\n                                                                                        \"id\":  \"custom.hideFrom\",\r\n                                                                                        \"value\":  {\r\n                                                                                                      \"legend\":  true,\r\n                                                                                                      \"tooltip\":  true,\r\n                                                                                                      \"viz\":  false\r\n                                                                                                  }\r\n                                                                                    }\r\n                                                                                ]\r\n                                                             }\r\n                                                         ]\r\n                                       },\r\n                       \"gridPos\":  {\r\n                                       \"h\":  8,\r\n                                       \"w\":  12,\r\n                                       \"x\":  0,\r\n                                       \"y\":  4\r\n                                   },\r\n                       \"id\":  2,\r\n                       \"options\":  {\r\n                                       \"legend\":  {\r\n                                                      \"calcs\":  [\r\n                                                                    \"lastNotNull\"\r\n                                                                ],\r\n                                                      \"displayMode\":  \"table\",\r\n                                                      \"placement\":  \"bottom\",\r\n                                                      \"showLegend\":  true\r\n                                                  },\r\n                                       \"tooltip\":  {\r\n                                                       \"hideZeros\":  true,\r\n                                                       \"mode\":  \"multi\",\r\n                                                       \"sort\":  \"desc\"\r\n                                                   }\r\n                                   },\r\n                       \"pluginVersion\":  \"12.3.3\",\r\n                       \"targets\":  [\r\n                                       {\r\n                                           \"datasource\":  {\r\n                                                              \"type\":  \"prometheus\",\r\n                                                              \"uid\":  \"dfdlzb2hrvlz4b\"\r\n                                                          },\r\n                                           \"dateTimeType\":  \"DATETIME\",\r\n                                           \"editorMode\":  \"code\",\r\n                                           \"expr\":  \"bird_protocol_prefix_export_count{\\n  instance=~\\\"$instance\\\",\\r\\n  name=~\\\"(dn42_peer_|dn42_)[0-9a-zA-Z]+\\\", \\r\\n  name!~\\\"dn42_ospf\\\",\\r\\n  name!~\\\"dn42_ospf6\\\", \\r\\n  ip_version=\\\"4\\\"\\r\\n} \\u003e 0\\r\\n\",\r\n                                           \"format\":  \"time_series\",\r\n                                           \"formattedQuery\":  \"SELECT $timeSeries as t, count() FROM $table WHERE $timeFilter GROUP BY t ORDER BY t\",\r\n                                           \"intervalFactor\":  1,\r\n                                           \"legendFormat\":  \"{{name}}\",\r\n                                           \"query\":  \"SELECT\\n    $timeSeries as t,\\n    count()\\nFROM $table\\nWHERE $timeFilter\\nGROUP BY t\\nORDER BY t\",\r\n                                           \"range\":  true,\r\n                                           \"refId\":  \"A\",\r\n                                           \"round\":  \"0s\"\r\n                                       }\r\n                                   ],\r\n                       \"title\":  \"PITER-IX · Exported Prefixes\",\r\n                       \"type\":  \"timeseries\"\r\n                   },\r\n                   {\r\n                       \"datasource\":  {\r\n                                          \"type\":  \"prometheus\",\r\n                                          \"uid\":  \"dfdlzb2hrvlz4b\"\r\n                                      },\r\n                       \"description\":  \"Prefixes received from PITER-IX peers across the selected time range.\",\r\n                       \"fieldConfig\":  {\r\n                                           \"defaults\":  {\r\n                                                            \"color\":  {\r\n                                                                          \"mode\":  \"palette-classic\"\r\n                                                                      },\r\n                                                            \"custom\":  {\r\n                                                                           \"axisBorderShow\":  false,\r\n                                                                           \"axisCenteredZero\":  false,\r\n                                                                           \"axisColorMode\":  \"text\",\r\n                                                                           \"axisLabel\":  \"prefixes\",\r\n                                                                           \"axisPlacement\":  \"left\",\r\n                                                                           \"barAlignment\":  0,\r\n                                                                           \"barWidthFactor\":  0.6,\r\n                                                                           \"drawStyle\":  \"line\",\r\n                                                                           \"fillOpacity\":  0,\r\n                                                                           \"gradientMode\":  \"none\",\r\n                                                                           \"hideFrom\":  {\r\n                                                                                            \"legend\":  false,\r\n                                                                                            \"tooltip\":  false,\r\n                                                                                            \"viz\":  false\r\n                                                                                        },\r\n                                                                           \"insertNulls\":  false,\r\n                                                                           \"lineInterpolation\":  \"stepAfter\",\r\n                                                                           \"lineWidth\":  2,\r\n                                                                           \"pointSize\":  5,\r\n                                                                           \"scaleDistribution\":  {\r\n                                                                                                     \"type\":  \"linear\"\r\n                                                                                                 },\r\n                                                                           \"showPoints\":  \"never\",\r\n                                                                           \"showValues\":  false,\r\n                                                                           \"spanNulls\":  false,\r\n                                                                           \"stacking\":  {\r\n                                                                                            \"group\":  \"A\",\r\n                                                                                            \"mode\":  \"none\"\r\n                                                                                        },\r\n                                                                           \"thresholdsStyle\":  {\r\n                                                                                                   \"mode\":  \"off\"\r\n                                                                                               }\r\n                                                                       },\r\n                                                            \"mappings\":  [\r\n\r\n                                                                         ],\r\n                                                            \"thresholds\":  {\r\n                                                                               \"mode\":  \"absolute\",\r\n                                                                               \"steps\":  [\r\n                                                                                             {\r\n                                                                                                 \"color\":  \"green\",\r\n                                                                                                 \"value\":  0\r\n                                                                                             },\r\n                                                                                             {\r\n                                                                                                 \"color\":  \"red\",\r\n                                                                                                 \"value\":  80\r\n                                                                                             }\r\n                                                                                         ]\r\n                                                                           },\r\n                                                            \"unit\":  \"none\"\r\n                                                        },\r\n                                           \"overrides\":  [\r\n                                                             {\r\n                                                                 \"matcher\":  {\r\n                                                                                 \"id\":  \"byValue\",\r\n                                                                                 \"options\":  {\r\n                                                                                                 \"op\":  \"gte\",\r\n                                                                                                 \"reducer\":  \"allIsZero\",\r\n                                                                                                 \"value\":  0\r\n                                                                                             }\r\n                                                                             },\r\n                                                                 \"properties\":  [\r\n                                                                                    {\r\n                                                                                        \"id\":  \"custom.hideFrom\",\r\n                                                                                        \"value\":  {\r\n                                                                                                      \"legend\":  true,\r\n                                                                                                      \"tooltip\":  true,\r\n                                                                                                      \"viz\":  false\r\n                                                                                                  }\r\n                                                                                    }\r\n                                                                                ]\r\n                                                             },\r\n                                                             {\r\n                                                                 \"matcher\":  {\r\n                                                                                 \"id\":  \"byValue\",\r\n                                                                                 \"options\":  {\r\n                                                                                                 \"op\":  \"gte\",\r\n                                                                                                 \"reducer\":  \"allIsNull\",\r\n                                                                                                 \"value\":  0\r\n                                                                                             }\r\n                                                                             },\r\n                                                                 \"properties\":  [\r\n                                                                                    {\r\n                                                                                        \"id\":  \"custom.hideFrom\",\r\n                                                                                        \"value\":  {\r\n                                                                                                      \"legend\":  true,\r\n                                                                                                      \"tooltip\":  true,\r\n                                                                                                      \"viz\":  false\r\n                                                                                                  }\r\n                                                                                    }\r\n                                                                                ]\r\n                                                             },\r\n                                                             {\r\n                                                                 \"matcher\":  {\r\n                                                                                 \"id\":  \"byValue\",\r\n                                                                                 \"options\":  {\r\n                                                                                                 \"op\":  \"gte\",\r\n                                                                                                 \"reducer\":  \"allIsZero\",\r\n                                                                                                 \"value\":  0\r\n                                                                                             }\r\n                                                                             },\r\n                                                                 \"properties\":  [\r\n                                                                                    {\r\n                                                                                        \"id\":  \"custom.hideFrom\",\r\n                                                                                        \"value\":  {\r\n                                                                                                      \"legend\":  true,\r\n                                                                                                      \"tooltip\":  true,\r\n                                                                                                      \"viz\":  false\r\n                                                                                                  }\r\n                                                                                    }\r\n                                                                                ]\r\n                                                             },\r\n                                                             {\r\n                                                                 \"matcher\":  {\r\n                                                                                 \"id\":  \"byValue\",\r\n                                                                                 \"options\":  {\r\n                                                                                                 \"op\":  \"gte\",\r\n                                                                                                 \"reducer\":  \"allIsNull\",\r\n                                                                                                 \"value\":  0\r\n                                                                                             }\r\n                                                                             },\r\n                                                                 \"properties\":  [\r\n                                                                                    {\r\n                                                                                        \"id\":  \"custom.hideFrom\",\r\n                                                                                        \"value\":  {\r\n                                                                                                      \"legend\":  true,\r\n                                                                                                      \"tooltip\":  true,\r\n                                                                                                      \"viz\":  false\r\n                                                                                                  }\r\n                                                                                    }\r\n                                                                                ]\r\n                                                             },\r\n                                                             {\r\n                                                                 \"matcher\":  {\r\n                                                                                 \"id\":  \"byValue\",\r\n                                                                                 \"options\":  {\r\n                                                                                                 \"op\":  \"gte\",\r\n                                                                                                 \"reducer\":  \"allIsZero\",\r\n                                                                                                 \"value\":  0\r\n                                                                                             }\r\n                                                                             },\r\n                                                                 \"properties\":  [\r\n                                                                                    {\r\n                                                                                        \"id\":  \"custom.hideFrom\",\r\n                                                                                        \"value\":  {\r\n                                                                                                      \"legend\":  true,\r\n                                                                                                      \"tooltip\":  true,\r\n                                                                                                      \"viz\":  false\r\n                                                                                                  }\r\n                                                                                    }\r\n                                                                                ]\r\n                                                             },\r\n                                                             {\r\n                                                                 \"matcher\":  {\r\n                                                                                 \"id\":  \"byValue\",\r\n                                                                                 \"options\":  {\r\n                                                                                                 \"op\":  \"gte\",\r\n                                                                                                 \"reducer\":  \"allIsNull\",\r\n                                                                                                 \"value\":  0\r\n                                                                                             }\r\n                                                                             },\r\n                                                                 \"properties\":  [\r\n                                                                                    {\r\n                                                                                        \"id\":  \"custom.hideFrom\",\r\n                                                                                        \"value\":  {\r\n                                                                                                      \"legend\":  true,\r\n                                                                                                      \"tooltip\":  true,\r\n                                                                                                      \"viz\":  false\r\n                                                                                                  }\r\n                                                                                    }\r\n                                                                                ]\r\n                                                             }\r\n                                                         ]\r\n                                       },\r\n                       \"gridPos\":  {\r\n                                       \"h\":  8,\r\n                                       \"w\":  12,\r\n                                       \"x\":  12,\r\n                                       \"y\":  4\r\n                                   },\r\n                       \"id\":  3,\r\n                       \"options\":  {\r\n                                       \"legend\":  {\r\n                                                      \"calcs\":  [\r\n                                                                    \"lastNotNull\"\r\n                                                                ],\r\n                                                      \"displayMode\":  \"table\",\r\n                                                      \"placement\":  \"bottom\",\r\n                                                      \"showLegend\":  true\r\n                                                  },\r\n                                       \"tooltip\":  {\r\n                                                       \"hideZeros\":  true,\r\n                                                       \"mode\":  \"multi\",\r\n                                                       \"sort\":  \"desc\"\r\n                                                   }\r\n                                   },\r\n                       \"pluginVersion\":  \"12.3.3\",\r\n                       \"targets\":  [\r\n                                       {\r\n                                           \"datasource\":  {\r\n                                                              \"type\":  \"prometheus\",\r\n                                                              \"uid\":  \"dfdlzb2hrvlz4b\"\r\n                                                          },\r\n                                           \"dateTimeType\":  \"DATETIME\",\r\n                                           \"editorMode\":  \"code\",\r\n                                           \"expr\":  \"bird_protocol_prefix_import_count{\\n  instance=~\\\"$instance\\\",\\r\\n  name=~\\\"(dn42_peer_|dn42_)[0-9a-zA-Z]+\\\", \\r\\n  name!~\\\"dn42_ospf\\\",\\r\\n  name!~\\\"dn42_ospf6\\\", \\r\\n  ip_version=\\\"4\\\"\\r\\n} \\u003e 0\",\r\n                                           \"format\":  \"time_series\",\r\n                                           \"formattedQuery\":  \"SELECT $timeSeries as t, count() FROM $table WHERE $timeFilter GROUP BY t ORDER BY t\",\r\n                                           \"intervalFactor\":  1,\r\n                                           \"legendFormat\":  \"{{name}}\",\r\n                                           \"query\":  \"SELECT\\n    $timeSeries as t,\\n    count()\\nFROM $table\\nWHERE $timeFilter\\nGROUP BY t\\nORDER BY t\",\r\n                                           \"range\":  true,\r\n                                           \"refId\":  \"A\",\r\n                                           \"round\":  \"0s\"\r\n                                       }\r\n                                   ],\r\n                       \"title\":  \"PITER-IX · Imported Prefixes\",\r\n                       \"type\":  \"timeseries\"\r\n                   },\r\n                   {\r\n                       \"datasource\":  {\r\n                                          \"type\":  \"prometheus\",\r\n                                          \"uid\":  \"dfdlzb2hrvlz4b\"\r\n                                      },\r\n                       \"description\":  \"Accepted route updates and withdrawals per second. Spikes make routing churn immediately visible.\",\r\n                       \"fieldConfig\":  {\r\n                                           \"defaults\":  {\r\n                                                            \"color\":  {\r\n                                                                          \"mode\":  \"palette-classic\"\r\n                                                                      },\r\n                                                            \"custom\":  {\r\n                                                                           \"axisBorderShow\":  false,\r\n                                                                           \"axisCenteredZero\":  false,\r\n                                                                           \"axisColorMode\":  \"text\",\r\n                                                                           \"axisLabel\":  \"events / second\",\r\n                                                                           \"axisPlacement\":  \"left\",\r\n                                                                           \"barAlignment\":  0,\r\n                                                                           \"barWidthFactor\":  0.6,\r\n                                                                           \"drawStyle\":  \"line\",\r\n                                                                           \"fillOpacity\":  8,\r\n                                                                           \"gradientMode\":  \"opacity\",\r\n                                                                           \"hideFrom\":  {\r\n                                                                                            \"legend\":  false,\r\n                                                                                            \"tooltip\":  false,\r\n                                                                                            \"viz\":  false\r\n                                                                                        },\r\n                                                                           \"insertNulls\":  false,\r\n                                                                           \"lineInterpolation\":  \"smooth\",\r\n                                                                           \"lineWidth\":  2,\r\n                                                                           \"pointSize\":  4,\r\n                                                                           \"scaleDistribution\":  {\r\n                                                                                                     \"type\":  \"linear\"\r\n                                                                                                 },\r\n                                                                           \"showPoints\":  \"never\",\r\n                                                                           \"showValues\":  false,\r\n                                                                           \"spanNulls\":  true,\r\n                                                                           \"stacking\":  {\r\n                                                                                            \"group\":  \"A\",\r\n                                                                                            \"mode\":  \"none\"\r\n                                                                                        },\r\n                                                                           \"thresholdsStyle\":  {\r\n                                                                                                   \"mode\":  \"off\"\r\n                                                                                               }\r\n                                                                       },\r\n                                                            \"mappings\":  [\r\n\r\n                                                                         ],\r\n                                                            \"thresholds\":  {\r\n                                                                               \"mode\":  \"absolute\",\r\n                                                                               \"steps\":  [\r\n                                                                                             {\r\n                                                                                                 \"color\":  \"green\",\r\n                                                                                                 \"value\":  0\r\n                                                                                             }\r\n                                                                                         ]\r\n                                                                           },\r\n                                                            \"unit\":  \"ops\"\r\n                                                        },\r\n                                           \"overrides\":  [\r\n\r\n                                                         ]\r\n                                       },\r\n                       \"gridPos\":  {\r\n                                       \"h\":  8,\r\n                                       \"w\":  12,\r\n                                       \"x\":  0,\r\n                                       \"y\":  12\r\n                                   },\r\n                       \"id\":  14,\r\n                       \"options\":  {\r\n                                       \"legend\":  {\r\n                                                      \"calcs\":  [\r\n                                                                    \"lastNotNull\"\r\n                                                                ],\r\n                                                      \"displayMode\":  \"table\",\r\n                                                      \"placement\":  \"bottom\",\r\n                                                      \"showLegend\":  true\r\n                                                  },\r\n                                       \"tooltip\":  {\r\n                                                       \"hideZeros\":  true,\r\n                                                       \"mode\":  \"multi\",\r\n                                                       \"sort\":  \"desc\"\r\n                                                   }\r\n                                   },\r\n                       \"pluginVersion\":  \"12.3.3\",\r\n                       \"targets\":  [\r\n                                       {\r\n                                           \"datasource\":  {\r\n                                                              \"type\":  \"prometheus\",\r\n                                                              \"uid\":  \"dfdlzb2hrvlz4b\"\r\n                                                          },\r\n                                           \"editorMode\":  \"code\",\r\n                                           \"expr\":  \"sum by (instance) (rate(bird_protocol_changes_update_import_accept_count{instance=~\\\"$instance\\\"}[$__rate_interval]))\",\r\n                                           \"format\":  \"time_series\",\r\n                                           \"legendFormat\":  \"{{instance}} · imported updates\",\r\n                                           \"range\":  true,\r\n                                           \"refId\":  \"A\"\r\n                                       },\r\n                                       {\r\n                                           \"datasource\":  {\r\n                                                              \"type\":  \"prometheus\",\r\n                                                              \"uid\":  \"dfdlzb2hrvlz4b\"\r\n                                                          },\r\n                                           \"editorMode\":  \"code\",\r\n                                           \"expr\":  \"sum by (instance) (rate(bird_protocol_changes_withdraw_import_accept_count{instance=~\\\"$instance\\\"}[$__rate_interval]))\",\r\n                                           \"format\":  \"time_series\",\r\n                                           \"legendFormat\":  \"{{instance}} · imported withdrawals\",\r\n                                           \"range\":  true,\r\n                                           \"refId\":  \"B\"\r\n                                       },\r\n                                       {\r\n                                           \"datasource\":  {\r\n                                                              \"type\":  \"prometheus\",\r\n                                                              \"uid\":  \"dfdlzb2hrvlz4b\"\r\n                                                          },\r\n                                           \"editorMode\":  \"code\",\r\n                                           \"expr\":  \"sum by (instance) (rate(bird_protocol_changes_update_export_accept_count{instance=~\\\"$instance\\\"}[$__rate_interval]))\",\r\n                                           \"format\":  \"time_series\",\r\n                                           \"legendFormat\":  \"{{instance}} · exported updates\",\r\n                                           \"range\":  true,\r\n                                           \"refId\":  \"C\"\r\n                                       },\r\n                                       {\r\n                                           \"datasource\":  {\r\n                                                              \"type\":  \"prometheus\",\r\n                                                              \"uid\":  \"dfdlzb2hrvlz4b\"\r\n                                                          },\r\n                                           \"editorMode\":  \"code\",\r\n                                           \"expr\":  \"sum by (instance) (rate(bird_protocol_changes_withdraw_export_accept_count{instance=~\\\"$instance\\\"}[$__rate_interval]))\",\r\n                                           \"format\":  \"time_series\",\r\n                                           \"legendFormat\":  \"{{instance}} · exported withdrawals\",\r\n                                           \"range\":  true,\r\n                                           \"refId\":  \"D\"\r\n                                       }\r\n                                   ],\r\n                       \"title\":  \"Routing Activity · Updates \\u0026 Withdrawals\",\r\n                       \"type\":  \"timeseries\"\r\n                   },\r\n                   {\r\n                       \"datasource\":  {\r\n                                          \"type\":  \"prometheus\",\r\n                                          \"uid\":  \"dfdlzb2hrvlz4b\"\r\n                                      },\r\n                       \"description\":  \"Only non-established BGP sessions are listed. An empty table means all matched sessions are healthy.\",\r\n                       \"fieldConfig\":  {\r\n                                           \"defaults\":  {\r\n                                                            \"color\":  {\r\n                                                                          \"mode\":  \"thresholds\"\r\n                                                                      },\r\n                                                            \"custom\":  {\r\n                                                                           \"align\":  \"auto\",\r\n                                                                           \"cellOptions\":  {\r\n                                                                                               \"type\":  \"auto\"\r\n                                                                                           },\r\n                                                                           \"filterable\":  true,\r\n                                                                           \"footer\":  {\r\n                                                                                          \"reducers\":  [\r\n\r\n                                                                                                       ]\r\n                                                                                      },\r\n                                                                           \"inspect\":  false\r\n                                                                       },\r\n                                                            \"mappings\":  [\r\n                                                                             {\r\n                                                                                 \"options\":  {\r\n                                                                                                 \"0\":  {\r\n                                                                                                           \"color\":  \"red\",\r\n                                                                                                           \"index\":  0,\r\n                                                                                                           \"text\":  \"DOWN\"\r\n                                                                                                       }\r\n                                                                                             },\r\n                                                                                 \"type\":  \"value\"\r\n                                                                             }\r\n                                                                         ],\r\n                                                            \"thresholds\":  {\r\n                                                                               \"mode\":  \"absolute\",\r\n                                                                               \"steps\":  [\r\n                                                                                             {\r\n                                                                                                 \"color\":  \"red\",\r\n                                                                                                 \"value\":  0\r\n                                                                                             }\r\n                                                                                         ]\r\n                                                                           }\r\n                                                        },\r\n                                           \"overrides\":  [\r\n\r\n                                                         ]\r\n                                       },\r\n                       \"gridPos\":  {\r\n                                       \"h\":  8,\r\n                                       \"w\":  12,\r\n                                       \"x\":  12,\r\n                                       \"y\":  12\r\n                                   },\r\n                       \"id\":  15,\r\n                       \"options\":  {\r\n                                       \"cellHeight\":  \"sm\",\r\n                                       \"footer\":  {\r\n                                                      \"countRows\":  false,\r\n                                                      \"enablePagination\":  true,\r\n                                                      \"fields\":  \"\",\r\n                                                      \"reducer\":  [\r\n                                                                      \"sum\"\r\n                                                                  ],\r\n                                                      \"show\":  false\r\n                                                  },\r\n                                       \"showHeader\":  true,\r\n                                       \"sortBy\":  [\r\n                                                      {\r\n                                                          \"desc\":  false,\r\n                                                          \"displayName\":  \"instance\"\r\n                                                      }\r\n                                                  ]\r\n                                   },\r\n                       \"pluginVersion\":  \"12.3.3\",\r\n                       \"targets\":  [\r\n                                       {\r\n                                           \"datasource\":  {\r\n                                                              \"type\":  \"prometheus\",\r\n                                                              \"uid\":  \"dfdlzb2hrvlz4b\"\r\n                                                          },\r\n                                           \"editorMode\":  \"code\",\r\n                                           \"expr\":  \"bird_protocol_up{proto=\\\"BGP\\\",instance=~\\\"$instance\\\"} == 0\",\r\n                                           \"format\":  \"table\",\r\n                                           \"instant\":  true,\r\n                                           \"legendFormat\":  \"{{instance}} · {{name}} · IPv{{ip_version}}\",\r\n                                           \"range\":  false,\r\n                                           \"refId\":  \"A\"\r\n                                       }\r\n                                   ],\r\n                       \"title\":  \"BGP Sessions Requiring Attention\",\r\n                       \"transformations\":  [\r\n                                               {\r\n                                                   \"id\":  \"organize\",\r\n                                                   \"options\":  {\r\n                                                                   \"excludeByName\":  {\r\n                                                                                         \"Time\":  true,\r\n                                                                                         \"__name__\":  true,\r\n                                                                                         \"export_filter\":  true,\r\n                                                                                         \"import_filter\":  true,\r\n                                                                                         \"job\":  true,\r\n                                                                                         \"proto\":  true\r\n                                                                                     },\r\n                                                                   \"indexByName\":  {\r\n                                                                                       \"Value\":  4,\r\n                                                                                       \"instance\":  0,\r\n                                                                                       \"ip_version\":  2,\r\n                                                                                       \"name\":  1,\r\n                                                                                       \"state\":  3\r\n                                                                                   },\r\n                                                                   \"renameByName\":  {\r\n                                                                                        \"Value\":  \"Status\",\r\n                                                                                        \"instance\":  \"Router\",\r\n                                                                                        \"ip_version\":  \"IP\",\r\n                                                                                        \"name\":  \"Session\",\r\n                                                                                        \"state\":  \"State\"\r\n                                                                                    }\r\n                                                               }\r\n                                               }\r\n                                           ],\r\n                       \"type\":  \"table\"\r\n                   },\r\n                   {\r\n                       \"datasource\":  {\r\n                                          \"type\":  \"prometheus\",\r\n                                          \"uid\":  \"dfdlzb2hrvlz4b\"\r\n                                      },\r\n                       \"description\":  \"IPv4 and IPv6 prefixes exported by the BIRD protocol named flapalerted. Use the Router selector to isolate a node.\",\r\n                       \"fieldConfig\":  {\r\n                                           \"defaults\":  {\r\n                                                            \"color\":  {\r\n                                                                          \"mode\":  \"palette-classic\"\r\n                                                                      },\r\n                                                            \"custom\":  {\r\n                                                                           \"axisBorderShow\":  false,\r\n                                                                           \"axisCenteredZero\":  false,\r\n                                                                           \"axisColorMode\":  \"text\",\r\n                                                                           \"axisLabel\":  \"events / second\",\r\n                                                                           \"axisPlacement\":  \"left\",\r\n                                                                           \"barAlignment\":  0,\r\n                                                                           \"barWidthFactor\":  0.6,\r\n                                                                           \"drawStyle\":  \"line\",\r\n                                                                           \"fillOpacity\":  6,\r\n                                                                           \"gradientMode\":  \"opacity\",\r\n                                                                           \"hideFrom\":  {\r\n                                                                                            \"legend\":  false,\r\n                                                                                            \"tooltip\":  false,\r\n                                                                                            \"viz\":  false\r\n                                                                                        },\r\n                                                                           \"insertNulls\":  false,\r\n                                                                           \"lineInterpolation\":  \"smooth\",\r\n                                                                           \"lineWidth\":  2,\r\n                                                                           \"pointSize\":  4,\r\n                                                                           \"scaleDistribution\":  {\r\n                                                                                                     \"type\":  \"linear\"\r\n                                                                                                 },\r\n                                                                           \"showPoints\":  \"never\",\r\n                                                                           \"showValues\":  false,\r\n                                                                           \"spanNulls\":  true,\r\n                                                                           \"stacking\":  {\r\n                                                                                            \"group\":  \"A\",\r\n                                                                                            \"mode\":  \"none\"\r\n                                                                                        },\r\n                                                                           \"thresholdsStyle\":  {\r\n                                                                                                   \"mode\":  \"off\"\r\n                                                                                               }\r\n                                                                       },\r\n                                                            \"mappings\":  [\r\n\r\n                                                                         ],\r\n                                                            \"thresholds\":  {\r\n                                                                               \"mode\":  \"absolute\",\r\n                                                                               \"steps\":  [\r\n                                                                                             {\r\n                                                                                                 \"color\":  \"green\",\r\n                                                                                                 \"value\":  0\r\n                                                                                             }\r\n                                                                                         ]\r\n                                                                           },\r\n                                                            \"unit\":  \"short\"\r\n                                                        },\r\n                                           \"overrides\":  [\r\n\r\n                                                         ]\r\n                                       },\r\n                       \"gridPos\":  {\r\n                                       \"h\":  8,\r\n                                       \"w\":  24,\r\n                                       \"x\":  0,\r\n                                       \"y\":  20\r\n                                   },\r\n                       \"id\":  16,\r\n                       \"options\":  {\r\n                                       \"legend\":  {\r\n                                                      \"calcs\":  [\r\n                                                                    \"lastNotNull\",\r\n                                                                    \"max\"\r\n                                                                ],\r\n                                                      \"displayMode\":  \"table\",\r\n                                                      \"placement\":  \"bottom\",\r\n                                                      \"showLegend\":  true\r\n                                                  },\r\n                                       \"tooltip\":  {\r\n                                                       \"hideZeros\":  true,\r\n                                                       \"mode\":  \"multi\",\r\n                                                       \"sort\":  \"desc\"\r\n                                                   }\r\n                                   },\r\n                       \"pluginVersion\":  \"12.3.3\",\r\n                       \"targets\":  [\r\n                                       {\r\n                                           \"datasource\":  {\r\n                                                              \"type\":  \"prometheus\",\r\n                                                              \"uid\":  \"dfdlzb2hrvlz4b\"\r\n                                                          },\r\n                                           \"editorMode\":  \"code\",\r\n                                           \"expr\":  \"bird_protocol_prefix_export_count{name=\\\"flapalerted\\\",instance=~\\\"$instance\\\"}\",\r\n                                           \"format\":  \"time_series\",\r\n                                           \"legendFormat\":  \"{{instance}} · IPv{{ip_version}}\",\r\n                                           \"range\":  true,\r\n                                           \"refId\":  \"A\"\r\n                                       }\r\n                                   ],\r\n                       \"title\":  \"FlapAlerted · Exported Prefixes\",\r\n                       \"type\":  \"timeseries\"\r\n                   }\r\n               ],\r\n    \"preload\":  false,\r\n    \"refresh\":  \"30s\",\r\n    \"schemaVersion\":  42,\r\n    \"tags\":  [\r\n\r\n             ],\r\n    \"templating\":  {\r\n                       \"list\":  [\r\n                                    {\r\n                                        \"current\":  {\r\n                                                        \"text\":  \"All\",\r\n                                                        \"value\":  \"$__all\"\r\n                                                    },\r\n                                        \"datasource\":  {\r\n                                                           \"type\":  \"prometheus\",\r\n                                                           \"uid\":  \"dfdlzb2hrvlz4b\"\r\n                                                       },\r\n                                        \"definition\":  \"label_values(up{job=\\\"bird_exporter\\\"}, instance)\",\r\n                                        \"includeAll\":  true,\r\n                                        \"label\":  \"Router\",\r\n                                        \"multi\":  true,\r\n                                        \"name\":  \"instance\",\r\n                                        \"options\":  [\r\n\r\n                                                    ],\r\n                                        \"query\":  {\r\n                                                      \"query\":  \"label_values(up{job=\\\"bird_exporter\\\"}, instance)\",\r\n                                                      \"refId\":  \"PrometheusVariableQueryEditor-VariableQuery\"\r\n                                                  },\r\n                                        \"refresh\":  1,\r\n                                        \"regex\":  \"\",\r\n                                        \"sort\":  1,\r\n                                        \"type\":  \"query\"\r\n                                    }\r\n                                ]\r\n                   },\r\n    \"time\":  {\r\n                 \"from\":  \"now-5m\",\r\n                 \"to\":  \"now\"\r\n             },\r\n    \"timepicker\":  {\r\n\r\n                   },\r\n    \"timezone\":  \"\",\r\n    \"title\":  \"BIRD · Routing Overview\",\r\n    \"uid\":  \"f6bde99c-ee14-44cf-9b57-17052329ab55\",\r\n    \"version\":  15\r\n}\r\n```\r\n{/collapse-item}\r\n{/collapse}\r\n\r\n\r\n\r\n##参考文献\r\n\r\n*   [Grafana Labs - FRR Exporter - BGP Dashboard](https://grafana.com/grafana/dashboards/22943-frr-exporter-bgp/)\r\n*   [Grafana Labs - BIRD RS Dashboard](https://grafana.com/grafana/dashboards/5259-bird-rs/)\r\n*   [Grafana Labs - Node Exporter Full Dashboard](https://grafana.com/grafana/dashboards/1860-node-exporter-full/)\r\n*   [GitHub - czerwonk/bird_exporter](https://github.com/czerwonk/bird_exporter)\r\n*   [GitHub - tynany/frr_exporter](https://github.com/tynany/frr_exporter)\r\n*   [Prometheus Documentation](https://prometheus.io/docs/)\r\n*   [Grafana Documentation](https://grafana.com/docs/grafana/latest/)",
+      "type": "post",
+      "order": 0,
+      "title": "搭建Grafana监测Bird运行状态",
+      "status": "publish",
+      "created": 1771511940,
+      "modified": 1782977688,
+      "password": "",
+      "template": "",
+      "allowFeed": "1",
+      "allowComment": "1"
+    },
+    {
+      "cid": 33,
+      "slug": "33",
+      "text": "<!--markdown-->##前言\r\n大家可能会遇到lz4格式的压缩包（多见于防止用户 ~~手贱~~ 在线解压的网盘资源），这时安卓可以使用ZArchiver方便的解压，但是ios就不行了，这里分享一个基于iSH的解压教程。\r\n\r\n##开整\r\n\r\n####1.下载iSH\r\n这里用到了一个叫做iSH的工具，这是一个适用于 iOS 设备的开源终端模拟器，相当于一个轻量化的linux环境。\r\n直接打开AppStore搜索 `iSH` 下载\r\n ![iSH下载界面](https://tc.andy-y.cn/i/2026/03/13/69b400cadf490.png) \r\n\r\n####2.打开 iSH，安装 lz4\r\n\r\n```bash\r\napk add lz4\r\n```\r\n\r\n####3.把.lz4文件导入iSH通过“文件”App分享 → iSH）\r\n\r\n####4.开始解压\r\n```bash\r\nlz4 -d <XXX.lz4> <输出文件名>  #注：自行替换尖括号里面的内容为实际名称\r\n```\r\n\r\n\r\n{collapse}\r\n{collapse-item label=\"example\" close}\r\n```bash\r\nlz4 -d test.lz4 test.rar\r\n```\r\n{/collapse-item}\r\n{/collapse}\r\n\r\n####5.验证解压结果\r\n```bash\r\nls -a\r\n```\r\n\r\n\r\n",
+      "type": "post",
+      "order": 0,
+      "title": "IOS系统解压.lz4格式压缩包",
+      "status": "publish",
+      "created": 1773404820,
+      "modified": 1782977680,
+      "password": "",
+      "template": "",
+      "allowFeed": "1",
+      "allowComment": "1"
+    },
+    {
+      "cid": 34,
+      "slug": "34",
+      "text": "<!--markdown-->{alert type=\"info\"}\r\n感谢McD大佬的指导\r\n{/alert}\r\n\r\n\r\n#前言\r\nSilly Tavern Chat（云酒馆） 是一个强大的AI Role Play网站，依赖于庞大的社区资源，可以实现多样化的角色互动。 支持国内外多种AI模型，有着比较直观 ~~但一点也不好看~~ 的用户界面。\r\n其实酒馆ai可以直接部署在很多设备上（安卓，Windows），但是不便于多端同步等等，将酒馆部署在云端可以使用WebUI方便的使用任何设备访问酒馆。下面是从0开始的云端Silly Tavern部署教程。\r\n##前期准备\r\n{x} 一台至少1核2G的云服务器（推荐JP区域）\r\n{x} 本地SSH工具（我使用的是termius）\r\n{x} 一点点linux基本使用技巧\r\n{x} 已对Silly Tavern有一定了解\r\n{x} 最好加入了[类脑ΟΔΥΣΣΕΙΑ](https://discord.gg/odysseia)社区，截至2026/03/12仍然是开放状态\r\n#开始部署\r\n##0.SSH的连接\r\n####0.1打开Termius（这里以电脑版举例）\r\n ![ ](https://tc.andy-y.cn/i/2026/03/13/69b40dcb357c3.png) \r\n####0.2点击 `NEW HOST`，在红框内填写IDC商家提供给你的信息\r\n![](https://tc.andy-y.cn/i/2026/03/13/69b40eb6ec83e.png) \r\n( `Lable` 就是你给vps起的名字)\r\n####0.3点击 `Connect` 连接\r\n###1.安装1panel面板\r\n为了方便萌新进行后续反代等等的搭建，建议先安装1p。\r\n输入下方这串命令，按提示操作（提示是否安装docker时直接按enter键）\r\n```bash\r\nbash -c \"$(curl -sSL https://resource.fit2cloud.com/1panel/package/v2/quick_start.sh)\"\r\n```\r\n\r\n{alert type=\"warning\"}\r\n安装完之后一定要记住访问地址与端口号！\r\n{/alert}\r\n\r\n###2.获取项目\r\n####2.1首先安装git\r\n```bash\r\nsudo apt update  ##一行一行执行\r\nsudo apt install git\r\n```\r\n####2.2从github拉取项目\r\n```bash\r\ngit clone https://github.com/SillyTavern/SillyTavern\r\n```\r\n等待一会拉取\r\n\r\n###3.启动容器，调整参数\r\n####3.1启动容器\r\n```bash\r\ncd SillyTavern/docker\r\ndocker compose up -d\r\n```\r\n####3.2编辑配置文件\r\n```bash\r\nsudo nano config/config.yaml\r\n```\r\n此时进入到你 `config` 配置文件\r\n点击向下，直到看到 `whitelistMode` \r\n![](https://tc.andy-y.cn/i/2026/03/13/69b412548e526.png)\r\n把后面的 `true` 改为 `false` \r\n再往下找到basicAuthMode\r\n![](https://tc.andy-y.cn/i/2026/03/13/69b4136a1aa0b.png)\r\n把false改为true\r\n最后在下方设置你的账号密码\r\n![](https://tc.andy-y.cn/i/2026/03/13/69b412b439d5c.png)\r\n按 `ctrl+O` ，再按 `enter` \r\n接着按 `ctrl+X` 保存退出nano编辑器\r\n\r\n####3.3重启容器，使改动生效\r\n```bash\r\ndocker compose restart sillytavern\r\n```\r\n到此处恭喜你酒馆AI搭建已经完成。打开浏览器输入 `http://<你的ip>:8000` 访问界面\r\n##4.基础参数设置\r\n打开WebUI跟随它的提示进行填写，这里不多提。\r\n##5.美化\r\n先贴一张效果图\r\n![](https://tc.andy-y.cn/i/2026/03/13/69b41a5ea9044.png)\r\n我使用的是类脑频道里面[这位](https://discordapp.com/channels/1134557553011998840/1312585645167738931)大佬的美化方案\r\n![](https://tc.andy-y.cn/i/2026/03/13/69b4168d19497.png)\r\n这个美化很重要的一点就是对手机端非常友好:在滑动 `正则` 时不会误触改变顺序\r\n没有进频道的我这里提供[下载链接](https://drive.andy-y.cn/Light_sky_2.0.json)\r\n修改方式如下：\r\n![](https://tc.andy-y.cn/i/2026/03/13/69b41bba81cb2.png)\r\n###6.优化与增强\r\n在最上面一栏从右往左第三个里可以安装拓展，从而增强酒馆游玩的舒适度\r\n主要是下面这几个：\r\n####6.1酒馆助手\r\n这是[项目地址](https://github.com/n0vi028/JS-Slash-Runner)\r\n####6.2提示词模板\r\n这是[项目地址](https://github.com/zonde306/ST-Prompt-Template)\r\n####6.3文生图插件\r\n这是[项目地址](https://github.com/shaochami/chami_tavern-scene-plugin.git)\r\n###7.域名反代\r\n { } 待完成\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n    ",
+      "type": "post",
+      "order": 0,
+      "title": "Linux环境下的Silly Tavern 云酒馆 AI 搭建与美化完善（几乎0基础？）",
+      "status": "publish",
+      "created": 1773414540,
+      "modified": 1786619550,
+      "password": "",
+      "template": "",
+      "allowFeed": "1",
+      "allowComment": "1"
+    },
+    {
+      "cid": 41,
+      "slug": "41",
+      "text": "<!--markdown-->##前言：\r\n在我们使用ssh的时候正常情况下，如果我们退出ssh，进程会被杀掉，导致一些需要运行较长时间（比如 `rsync/cp` ）的命令中断，十分的难受，这里提供两种解决办法：\r\n###1.使用screen\r\n####1.1开启 screen：\r\n```bash\r\nscreen -S upload\r\n```\r\n####1.2执行命令\r\n```bash\r\n##举例\r\nrsync -avh --progress /data/myfolder/ /mnt/myfolder/\r\n```\r\n####1.3退出SSH保持后台运行：\r\n```bash\r\n按：Ctrl + A 然后按 D\r\n```\r\n####1.4重新连接后恢复\r\n```bash\r\nscreen -r upload\r\n```\r\n##2.使用tmux\r\n####2.1启动tmux\r\n```bash\r\ntmux new -s upload\r\n```\r\n####2.2执行命令后，退出保持后台\r\n```bash\r\nCtrl + B 然后按 D\r\n```\r\n####2.3重新连接后恢复\r\n```bash\r\ntmux attach -t upload\r\n```\r\n",
+      "type": "post",
+      "order": 0,
+      "title": "使用screen/tmux命令实现SSH中任务后台运行",
+      "status": "publish",
+      "created": 1775388540,
+      "modified": 1782977647,
+      "password": "",
+      "template": "",
+      "allowFeed": "1",
+      "allowComment": "1"
+    },
+    {
+      "cid": 47,
+      "slug": "47",
+      "text": "<!--markdown-->阅前须知：由于博主现在 **并没有太多自己写代码甚至脚本的能力** ，本篇文章在我和AI共同解决了这个问题之后 **直接由AI生成** ，若你对此感到反感，可以现在 **关闭该帖** （ ~~我是废物~~ ）\r\n\r\n## 一、问题背景\r\n\r\n在 Typecho 中使用 Mermaid 一直不算难，但一旦换成 JOE 主题，问题就开始变得复杂：\r\n\r\n* 写好的 ` ```mermaid ` 代码块被当成普通代码高亮\r\n* 插件明明启用了，但图表不渲染\r\n* 翻页（PJAX）后 Mermaid 直接失效\r\n\r\n我一开始也尝试用常规方案（正则替换 HTML），结果发现：\r\n\r\n👉 **根本不稳定**\r\n\r\n---\r\n\r\n## 二、问题的本质\r\n\r\nJOE 主题做了很多“增强”，包括：\r\n\r\n* 自定义代码高亮（Prism / Highlight.js）\r\n* 改写 Markdown 输出结构\r\n* 使用 PJAX（局部刷新页面）\r\n\r\n这导致一个核心问题：\r\n\r\n> **你在后端生成的 HTML，很可能在前端被再次修改甚至覆盖**\r\n\r\n例如你期望的是：\r\n\r\n```html\r\n<pre><code class=\"language-mermaid\"></code></pre>\r\n```\r\n\r\n但实际可能变成：\r\n\r\n```html\r\n<pre class=\"language-mermaid\"></pre>\r\n```\r\n\r\n甚至：\r\n\r\n```html\r\n<div class=\"joe_code\">\r\n  <pre>...</pre>\r\n</div>\r\n```\r\n\r\n👉 **结构不稳定 → 正则必炸**\r\n\r\n---\r\n\r\n## 三、传统方案为什么不行？\r\n\r\n常见插件思路：\r\n\r\n```text\r\nMarkdown → HTML → 正则替换 → <pre class=\"mermaid\">\r\n```\r\n\r\n问题在于：\r\n\r\n* 依赖 HTML 结构（不可靠）\r\n* 容易被主题覆盖\r\n* PJAX 后不会重新执行\r\n\r\n结论：\r\n\r\n> **后端改 HTML，在 JOE 这种强主题下是错误方向**\r\n\r\n---\r\n\r\n## 四、最终解决方案：前端接管\r\n\r\n我最后采用的是：\r\n\r\n> ✅ **完全绕过后端，前端动态解析 Mermaid**\r\n\r\n核心流程：\r\n\r\n```text\r\n页面加载\r\n↓\r\n扫描所有 language-mermaid 代码块\r\n↓\r\n替换为 .mermaid DOM\r\n↓\r\n调用 Mermaid 渲染\r\n```\r\n\r\n---\r\n\r\n## 五、核心实现解析\r\n\r\n### 1. 扫描代码块\r\n\r\n```js\r\nconst blocks = document.querySelectorAll(\r\n    'pre code.language-mermaid, pre.language-mermaid'\r\n);\r\n```\r\n\r\n为什么这样写？\r\n\r\n👉 兼容两种结构：\r\n\r\n```html\r\n<pre><code class=\"language-mermaid\"></code></pre>\r\n```\r\n\r\n```html\r\n<pre class=\"language-mermaid\"></pre>\r\n```\r\n\r\n---\r\n\r\n### 2. 提取原始代码\r\n\r\n```js\r\nlet code = codeBlock.textContent;\r\n```\r\n\r\n👉 直接拿文本，不依赖 HTML 结构\r\n\r\n---\r\n\r\n### 3. 重建 DOM\r\n\r\n```js\r\nconst container = document.createElement('div');\r\ncontainer.className = 'mermaid-container';\r\n\r\nconst mermaidDiv = document.createElement('div');\r\nmermaidDiv.className = 'mermaid';\r\nmermaidDiv.textContent = code;\r\n\r\ncontainer.appendChild(mermaidDiv);\r\n```\r\n\r\n最终结构：\r\n\r\n```html\r\n<div class=\"mermaid-container\">\r\n  <div class=\"mermaid\">...</div>\r\n</div>\r\n```\r\n\r\n---\r\n\r\n### 4. 替换原代码块\r\n\r\n```js\r\npre.replaceWith(container);\r\n```\r\n\r\n👉 关键点：\r\n\r\n* 删除原代码高亮 DOM\r\n* 避免主题再次干扰\r\n\r\n---\r\n\r\n### 5. 渲染 Mermaid\r\n\r\n```js\r\nmermaid.initialize({\r\n    startOnLoad: false,\r\n    theme: getTheme()\r\n});\r\n\r\nmermaid.init(undefined, document.querySelectorAll('.mermaid'));\r\n```\r\n\r\n为什么不用自动加载？\r\n\r\n👉 因为 DOM 是动态生成的\r\n\r\n---\r\n\r\n### 6. 防止重复渲染\r\n\r\n```js\r\nif (codeBlock.dataset.mermaidDone) return;\r\n```\r\n\r\n👉 防止：\r\n\r\n* PJAX 重复执行\r\n* 多次渲染报错\r\n\r\n---\r\n\r\n### 7. 适配 PJAX（关键）\r\n\r\n```js\r\ndocument.addEventListener('pjax:complete', run);\r\n```\r\n\r\n👉 没有这行：\r\n\r\n❌ 翻页后 Mermaid 全部失效\r\n\r\n---\r\n\r\n## 六、主题适配（暗黑模式）\r\n\r\n```js\r\nfunction getTheme() {\r\n    if (document.body.classList.contains('dark')) {\r\n        return 'dark';\r\n    }\r\n    return 'default';\r\n}\r\n```\r\n\r\n👉 自动跟随主题切换\r\n\r\n---\r\n\r\n## 七、为什么这个方案最稳？\r\n\r\n对比一下：\r\n\r\n| 方案             | 稳定性 | 原因       |\r\n| -------------- | --- | -------- |\r\n| 后端正则替换         | ❌   | 依赖 HTML  |\r\n| 修改 Markdown 解析 | ❌   | 被主题覆盖    |\r\n| 前端接管（本方案）      | ✅   | 直接操作 DOM |\r\n\r\n---\r\n\r\n## 八、核心设计思想\r\n\r\n这次优化本质上是一次“架构调整”：\r\n\r\n### 1️⃣ 不和主题抢控制权\r\n\r\nJOE 已经接管了渲染链：\r\n\r\n👉 你再插手，只会冲突\r\n\r\n---\r\n\r\n### 2️⃣ 前端才是最终执行层\r\n\r\n只要页面上存在：\r\n\r\n```html\r\nlanguage-mermaid\r\n```\r\n\r\n👉 就一定能识别\r\n\r\n---\r\n\r\n### 3️⃣ 幂等设计\r\n\r\n```js\r\ndata-mermaidDone\r\n```\r\n\r\n👉 保证多次执行不会出问题\r\n\r\n---\r\n\r\n## 九、最终效果\r\n\r\n* ✅ 支持所有 Mermaid 图\r\n* ✅ 支持 PJAX\r\n* ✅ 不受代码高亮影响\r\n* ✅ 自动暗黑模式\r\n* ✅ 主题无关（通用）\r\n\r\n---\r\n\r\n## 十、一句话总结\r\n\r\n> 与其试图修补被主题打乱的 HTML，不如直接绕过它，在前端重建渲染链。\r\n\r\n---\r\n\r\n## 十一、源码附上\r\n\r\n{collapse}\r\n{collapse-item label=\"过长，已折叠，点击查看\" close}\r\n```js\r\n<?php\r\nif (!defined('__TYPECHO_ROOT_DIR__')) exit;\r\n\r\n/**\r\n * Mermaid 插件（JOE终极兼容版 / 前端解析）\r\n *\r\n * @package MermaidUltimate\r\n * @version 2.0.0\r\n */\r\nclass Mermaid_Plugin implements Typecho_Plugin_Interface\r\n{\r\n    public static function activate()\r\n    {\r\n        Typecho_Plugin::factory('Widget_Archive')->header = array('Mermaid_Plugin', 'header');\r\n        Typecho_Plugin::factory('Widget_Archive')->footer = array('Mermaid_Plugin', 'footer');\r\n    }\r\n\r\n    public static function deactivate() {}\r\n\r\n    public static function config(Typecho_Widget_Helper_Form $form)\r\n    {\r\n        $cdn = new Typecho_Widget_Helper_Form_Element_Text(\r\n            'cdn',\r\n            null,\r\n            'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js',\r\n            _t('Mermaid CDN'),\r\n            _t('推荐 jsdelivr 或 npmmirror')\r\n        );\r\n        $form->addInput($cdn);\r\n\r\n        $theme = new Typecho_Widget_Helper_Form_Element_Select(\r\n            'theme',\r\n            array(\r\n                'default' => 'Default',\r\n                'dark'    => 'Dark',\r\n                'forest'  => 'Forest',\r\n                'neutral' => 'Neutral',\r\n            ),\r\n            'default',\r\n            _t('主题'),\r\n            _t('Mermaid 渲染主题')\r\n        );\r\n        $form->addInput($theme);\r\n\r\n        $autoDark = new Typecho_Widget_Helper_Form_Element_Radio(\r\n            'autoDark',\r\n            array(\r\n                '1' => '开启',\r\n                '0' => '关闭'\r\n            ),\r\n            '1',\r\n            _t('自动暗黑模式'),\r\n            _t('根据 JOE 主题自动切换')\r\n        );\r\n        $form->addInput($autoDark);\r\n    }\r\n\r\n    public static function personalConfig(Typecho_Widget_Helper_Form $form) {}\r\n\r\n    public static function header()\r\n    {\r\n        echo '<style>\r\n        .mermaid-container {\r\n            text-align: center;\r\n            margin: 1em 0;\r\n        }\r\n        </style>';\r\n    }\r\n\r\n    public static function footer()\r\n    {\r\n        $options  = Helper::options()->plugin('Mermaid');\r\n        $cdn      = $options->cdn ?: 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js';\r\n        $theme    = $options->theme ?: 'default';\r\n        $autoDark = $options->autoDark;\r\n\r\n        echo <<<HTML\r\n<script src=\"{$cdn}\"></script>\r\n<script>\r\n(function () {\r\n\r\n    function getTheme() {\r\n        if ({$autoDark} == 1) {\r\n            if (document.documentElement.classList.contains('dark') ||\r\n                document.body.classList.contains('dark')) {\r\n                return 'dark';\r\n            }\r\n        }\r\n        return '{$theme}';\r\n    }\r\n\r\n    function convertMermaid() {\r\n        // 找到所有 mermaid 代码块\r\n        const blocks = document.querySelectorAll(\r\n            'pre code.language-mermaid, pre.language-mermaid'\r\n        );\r\n\r\n        blocks.forEach(function(codeBlock) {\r\n\r\n            // 防重复处理\r\n            if (codeBlock.dataset.mermaidDone) return;\r\n            codeBlock.dataset.mermaidDone = \"1\";\r\n\r\n            let code = codeBlock.textContent;\r\n\r\n            // 创建容器\r\n            const container = document.createElement('div');\r\n            container.className = 'mermaid-container';\r\n\r\n            const mermaidDiv = document.createElement('div');\r\n            mermaidDiv.className = 'mermaid';\r\n            mermaidDiv.textContent = code;\r\n\r\n            container.appendChild(mermaidDiv);\r\n\r\n            // 替换整个 pre\r\n            let pre = codeBlock.closest('pre');\r\n            if (pre) {\r\n                pre.replaceWith(container);\r\n            } else {\r\n                codeBlock.replaceWith(container);\r\n            }\r\n        });\r\n    }\r\n\r\n    function renderMermaid() {\r\n        if (typeof mermaid === 'undefined') {\r\n            console.warn('Mermaid not loaded');\r\n            return;\r\n        }\r\n\r\n        try {\r\n            mermaid.initialize({\r\n                startOnLoad: false,\r\n                theme: getTheme()\r\n            });\r\n\r\n            mermaid.init(undefined, document.querySelectorAll('.mermaid'));\r\n\r\n        } catch (e) {\r\n            console.error('Mermaid error:', e);\r\n        }\r\n    }\r\n\r\n    function run() {\r\n        convertMermaid();\r\n        renderMermaid();\r\n    }\r\n\r\n    // 首次加载\r\n    document.addEventListener('DOMContentLoaded', run);\r\n\r\n    // JOE PJAX\r\n    document.addEventListener('pjax:complete', function () {\r\n        run();\r\n    });\r\n\r\n})();\r\n</script>\r\nHTML;\r\n    }\r\n}\r\n```\r\n{/collapse-item}\r\n{/collapse}\r\n\r\n##十二、使用方法：\r\n把这个文件放到：\r\n```bash\r\n/usr/plugins/Mermaid/Plugin.php\r\n```\r\n进入 Typecho 后台： `控制台 → 插件 → 启用 Mermaid` \r\n写文章时使用 Mermaid就直接在 Markdown 里写：\r\n![](https://tc.andy-y.cn/i/2026/04/05/69d24faf4bde7.png)\r\n发布后就会自动渲染成图。\r\n\r\n\r\n",
+      "type": "post",
+      "order": 0,
+      "title": "Typecho + JOE 主题下 Mermaid 渲染的解决方案",
+      "status": "publish",
+      "created": 1775390640,
+      "modified": 1782977640,
+      "password": "",
+      "template": "",
+      "allowFeed": "1",
+      "allowComment": "0"
+    },
+    {
+      "cid": 61,
+      "slug": "61",
+      "text": "<!--markdown-->这个博客上的封面是怎么来的？\r\n其实是用 **GPT-Image-2**生成的\r\n随手让它写了个prompt可以保持创作风格：\r\n```context\r\n我会给你一篇技术博客原文，请你根据文章内容生成一张博客封面图。\r\n\r\n要求：\r\n1. 先理解文章主题，不要逐字照搬正文。\r\n2. 封面用于博客首页卡片展示，显示区域较小，所以画面必须简洁、清晰、缩略图可读。\r\n3. 图片比例为 3:2，横向构图，例如 1200x800。\r\n4. 风格为深色科技风、蓝紫霓虹、现代极客风，适合技术博客。\r\n5. 不要做复杂信息图，不要大量小字，不要密集代码，不要完整教程步骤。\r\n6. 画面只保留一个大标题、一个短副标题，以及 1 到 3 个能表达主题的简洁图标或抽象元素。\r\n7. 中文标题要大、粗、清晰，距离边缘留足安全边距，避免被博客卡片裁切。\r\n8. 右侧可以放终端、服务器、网络连接、代码窗口、流程节点、工具图标等抽象元素，但不要太复杂。\r\n9. 不要水印，不要真实品牌 Logo，不要生成过多装饰。\r\n10. 如果文章主题偏运维、Linux、网络、自建服务，请优先使用终端、服务器、连接线、状态图标等视觉元素。\r\n\r\n请根据下面的文章原文，自动提炼：\r\n- 封面主标题\r\n- 封面副标题\r\n- 画面主体元素\r\n- 最终生成一张 3:2 技术博客封面图\r\n\r\n文章原文如下：\r\n\r\n【在这里粘贴文章全文】\r\n```",
+      "type": "post",
+      "order": 0,
+      "title": "博客封面是怎么来的？",
+      "status": "publish",
+      "created": 1781183280,
+      "modified": 1782977620,
+      "password": "",
+      "template": "",
+      "allowFeed": "1",
+      "allowComment": "1"
+    },
+    {
+      "cid": 62,
+      "slug": "62",
+      "text": "<!--markdown-->#前言\r\n之前就一直想玩StableDiffusion奈何没有合适的显卡。高考完终于买了个5080的笔电想着是时候开玩了~\r\n#初步了解\r\n鉴于StableDiffusion的webui有段时间没更新了，我选择使用comfyUI作为可视化界面----更加现代化，并且拓展性更强\r\n#开整\r\n##1部署comfyUI\r\n对于新手来说，使用StabilityMatrix部署comfyUI是个不错的选择\r\n####1.1建一个固定目录\r\n在一个空间比较大的盘，新建一个文件夹用于存放后续文件，比如：\r\n```content\r\nD:\\AI\r\n```\r\n####1.2下载StabilityMatrix与安装\r\n前往github，在 [这里](https://github.com/LykosAI/StabilityMatrix/releases) 下载最新版release\r\n安装到：\r\n\r\n```content\r\nD:\\AI\\StabilityMatrix\r\n```\r\n\r\n{alert type=\"warning\"}\r\n注意：下载下来的压缩文件必须解压后运行，否则安装程序受限\r\n{/alert}\r\n\r\n第一次打开 Stability Matrix，通常会让你设置一个数据目录 / Library 路径。\r\n填写：\r\n\r\n```content\r\nD:\\AI\\AIData\r\n```\r\n以后模型、包、缓存都存这个目录。\r\n####1.3安装comfyUI\r\n打开 Stability Matrix 后，找到它里面的包 / Packages / Install入口。\r\n- 找到 ComfyUI\r\n- 安装 最新版\r\n- 其它设置都保持默认\r\n- 装完后，点击 Launch / 启动\r\n\r\n\r\n{alert type=\"warning\"}\r\n注意，下载过程需要从github拉取release，若使用代理，请开启tun模式。\r\n{/alert}\r\n\r\n若一切正常，应该会出现这个提示：\r\n```bash\r\n[INFO] To see the GUI go to: http://127.0.0.1:8188\r\n```\r\n访问即可。\r\n\r\n##2.加入模型，创建工作流\r\n\r\n####2.1模型获取\r\n新手可以直接使用我在网上找到的资源。~~只有度盘链接还请见谅~~ \r\n\r\n{cloud title=\"SD\" type=\"bd\" url=\"https://pan.baidu.com/s/1v2g_4hKDafaS9tcYEouYxA?pwd=1ajk\" password=\"1ajk\"/}\r\n\r\n\r\n或者前往 [C站](https://civitai.com/) 寻找模型\r\n\r\n{collapse}\r\n{collapse-item label=\"附C站Content Moderation设置指南\" close}\r\n1.  **代理** 访问https://civitai.red/\r\n2. 登录账号\r\n3. 点击右上角个人图标，选择最下方的齿轮图标进入账户设置\r\n4. 找到Content Moderation\r\n5. 修改\r\n注：一定要使用代理，也不要访问.com域名\r\n{/collapse-item}\r\n{/collapse}\r\n\r\n####2.2模型识别\r\n模型的识别比较重要，使用错误的模型+Lora会导致报错\r\n首先是 **模型文件类型** \r\n建议直接识别后缀\r\n1.`.safetensors / .ckpt` \r\n这个属于Checkpoint（大模型主体），可以单独出图\r\n模型代数识别：\r\n- sd15 / 1-5 / v1-5 → SD1.5\r\n- sd21 / 2-1 → SD2.1\r\n- xl / SDXL → SDXL\r\n\r\n2.`.safetensors` \r\n这个属于LoRA（风格/角色插件）不能单独出图，必须 + base model\r\n3.`.vae.safetensors`\r\n这个是VAE，是用来改善颜色/对比度的\r\n4.`.pt / .bin`\r\n这个属于Embedding / Textual Inversion，是用于用于触发关键词的\r\n\r\n####2.3创建工作流\r\n打开ComfyUI，你应该能看见一个空白画布\r\n1. 双击左键，搜索 `Load Checkpoint` ，添加节点\r\n2. 双击左键，搜索 `CLIP Text Encode` ，添加节点（要添加两个，这是正向和反向提示词的输入处）\r\n3. 双击左键，搜索 `KSampler` ，添加节点\r\n4. 双击左键，搜索 `VAE Decode` ，添加节点\r\n5. 双击左键，搜索 `Save Image` ，添加节点\r\n6. 连线规则：\r\n **从 Checkpoint加载器（简易）连出去：** \r\n- 模型 → KSampler 的 model\r\n- CLIP → 两个 CLIP文本编码 节点的 clip\r\n- VAE → VAE Decode 的 vae\r\n **文本节点：** \r\n- 正向 CLIP文本编码 → KSampler 的 positive\r\n- 负向 CLIP文本编码 → KSampler 的 negative\r\n **Empty Latent Image：** \r\n- 输出 → KSampler 的 latent_image\r\n **KSampler：** \r\n- 输出 → VAE Decode 的 samples\r\n **VAE Decode：** \r\n- 输出 → Save Image 的 images\r\n ![节点图](https://tc.andy-y.cn/i/2026/06/20/6a3648a34d580.png) \r\n##3.开始作画\r\n####3.1填入提示词\r\n **正向提示词**\r\n填到第一个 CLIP 文本编码里：\r\n```context\r\nmasterpiece, best quality, ultra detailed, 1girl, portrait, soft lighting, detailed eyes\r\n```\r\n **负向提示词**\r\n填到第二个 CLIP 文本编码里：\r\n```context\r\nlow quality, blurry, bad anatomy, extra fingers, deformed hands, watermark, text\r\n```\r\n **Empty Latent Image** \r\n 设置：\r\n```context\r\nwidth: 1024\r\nheight: 1024\r\nbatch_size: 1\r\n```\r\n **KSampler** \r\n 设置：\r\n ```context\r\nsteps: 28\r\ncfg: 6\r\nsampler_name: dpmpp_2m  //自行选择，推荐这个\r\nscheduler: karras\r\n```\r\n **最后点击 `运行` ** \r\n 成图：\r\n  ![sample](https://tc.andy-y.cn/i/2026/06/20/6a3648ba8c6ac.png) \r\n\r\n",
+      "type": "post",
+      "order": 0,
+      "title": "StableDiffusion学习札记_P1",
+      "status": "publish",
+      "created": 1781942280,
+      "modified": 1782977612,
+      "password": "",
+      "template": "",
+      "allowFeed": "1",
+      "allowComment": "1"
+    },
+    {
+      "cid": 66,
+      "slug": "66",
+      "text": "<!--markdown--> **声明：此项目二改自 [RP-Hub](https://github.com/STA1N156/RP-Hub) ，根据原项目作者要求，本人已得到原作者关于二改的授权。二改过程中使用了AI，若您对此反对可停止阅读** \r\n#前言\r\n众所周知，原版的Silly Tavern，动画是 **没有** 的，界面是 **臃肿** 的，对新手是 **地狱** 的。我一直想找到一个易用且现代的类Silly Tavern项目，某次偶然在B站看到了这个视频：\r\n\r\n{bilibili bvid=\"BV1yKSSBKERq\" page=\"\"/}\r\n\r\n可谓是正中下怀啊！\r\n但是仔细看了看项目发现，由于偏向仅前端开发，项目没有原版Silly Tavern的多用户功能，也没有多端同步能力，和我的预期相差较多，于是 ~~秉承着Plus订阅不用白不用的态度~~ 我决定手搓出多用户和同步功能。\r\n#博弈\r\n于是我便把项目克隆，打开了Codex，开始了和AI博弈的两天。\r\n过程就不多说了，本次二改项目使用了GLM-5.2、GPT-5.5，Claude-Opus-4.6模型共同开发，由GPT主写代码，GLM进行代码审批， ~~Claude负责摸鱼~~ 。\r\n跌跌撞撞花了不少token，反正是做出来了。\r\n ![CC-Switch统计](https://tc.andy-y.cn/i/2026/06/26/6a3e764fa806c.png) \r\n#成果\r\n **二改项目我已经放在了 [Github](https://github.com/AndyYJF/RP-Hub) ** \r\n 在原纯前端项目基础上，新增了以下功能（详见 [DEPLOY.md](https://github.com/AndyYJF/RP-Hub/blob/main/DEPLOY.md)）：\r\n\r\n### 多用户体系\r\n- JWT 认证（用户名 + 密码 + 刷新令牌轮转）\r\n- 用户数据云端同步（基于时间戳的智能合并，非整体覆盖）\r\n- 本地模式 / 服务端模式可切换（未登录时与原项目完全一致）\r\n\r\n### 公共角色库（自建）\r\n- 用户提交角色卡 → 管理员审核 → 公共展示 → 其他用户下载\r\n- 与原作者的「万相广场」并存，侧边栏明确区分\r\n\r\n### 后台管理（`admin.html`）\r\n- 系统统计（用户/角色卡/登录趋势）\r\n- 用户管理（增删改查、封禁/解封、API Key 绑定、配额）\r\n- 角色卡审核（预览、通过、拒绝带理由、下架）\r\n- 公告管理（创建/编辑/置顶，前端主页自动展示）\r\n- API 用量统计、审计日志\r\n\r\n### 站点公告系统\r\n- 管理员发布公告 → 前端主页弹窗展示（区别于原版本更新日志）\r\n",
+      "type": "post",
+      "order": 0,
+      "title": "RP Hub——更适合新手的类Silly Tavern项目",
+      "status": "publish",
+      "created": 1782479160,
+      "modified": 1782977604,
+      "password": "",
+      "template": "",
+      "allowFeed": "1",
+      "allowComment": "1"
+    },
+    {
+      "cid": 68,
+      "slug": "68",
+      "text": "<!--markdown-->> 本文隐去了真实主机名、域名与 IP，但保留了完整的攻击 payload 与处置命令，方便复现与自查。\r\n\r\n## TL;DR\r\n\r\n我的 DN42 集群跑着一个公网可访问的 [bird-lg-go](https://github.com/xddxdd/bird-lg-go) Looking Glass，四台节点共用一个前端。其中 `bird-lgproxy` **≤ v1.4.6** 存在参数注入漏洞（**CVE-2026-26514**，GHSA-3qm5-22pm-wqg9）：攻击者通过 traceroute 功能的 `q` 参数注入 mtr 的 `-F` 选项，把任意文件当作“报告文件”读出来，最终读到了每台机器的 `/etc/shadow`——也就是 root 密码哈希。注意 **v1.4.6 的修复不完整、可被绕过**，真正修好是在 **v1.4.7**。\r\n\r\n处置结论：**四台节点全部升级到 v1.4.7、轮换全部 root 密码、审计 SSH 密钥与计划任务、确认无后门与异常登录。** 漏洞在公网边缘已验证彻底关闭。\r\n\r\n## 漏洞原理\r\n\r\nLooking Glass 的 traceroute 功能，本质上是把用户输入的目标丢给系统的 `mtr` / `traceroute` 去跑。问题出在旧版 `bird-lgproxy` 直接把用户输入拼进 `exec.Command`，**既没有把它当成单一目标、也没有拒绝以 `-` 开头的输入**。于是用户输入里可以夹带选项。攻击者只要构造：\r\n\r\n```\r\n-F /etc/shadow test.invalid\r\n```\r\n\r\n它就被当成了 `mtr -F /etc/shadow test.invalid`。而 mtr 的 `-F` 选项恰好是“从文件读取主机列表（report file）”——mtr 会尝试打开 `/etc/shadow`，并在报错信息里带出文件内容；而 proxy 用 `CombinedOutput()` 把 stdout + stderr 一起回显给前端，于是文件内容就顺着错误输出泄露了出去。`test.invalid` 只是凑一个“看起来像目标”的占位。\r\n\r\n于是一条 HTTP GET 就能读任意文件：\r\n\r\n```bash\r\n# 攻击者视角：通过公网 LG 前端读取 /etc/shadow\r\ncurl 'https://<lg-frontend>/traceroute/<node>/-F%20%2Fetc%2Fshadow%20test.invalid'\r\n```\r\n\r\n这类问题的根源是老生常谈的一句话：**永远不要把用户输入拆成命令行参数**。目标就该当作一个不可拆分的整体字符串，任何以 `-` 开头的东西都不该被解释成选项。\r\n\r\n下面这张图把整条注入链路画出来了——注意红色路径是漏洞如何从一个 HTTP 参数一路变成任意文件读取的：\r\n\r\n```mermaid\r\nflowchart LR\r\n    A[公网攻击者] -->|\"GET /traceroute/node/<br/>-F /etc/shadow test.invalid\"| B[LG 前端<br/>bird-lg]\r\n    B -->|转发请求<br/>源 IP = 前端| C[节点 bird-lgproxy<br/>:8000]\r\n    C -->|\"输入直接进 exec.Command<br/>未拒绝 - 开头参数\"| D{\"mtr -F /etc/shadow<br/>test.invalid\"}\r\n    D -->|-F 被解释为<br/>read report file| E[[\"读取 /etc/shadow\"]]\r\n    E -->|回显文件内容| A\r\n\r\n    style A fill:#ffd5d5,stroke:#c0392b\r\n    style D fill:#ffe6cc,stroke:#e67e22\r\n    style E fill:#ffd5d5,stroke:#c0392b,stroke-width:2px\r\n```\r\n\r\n## 攻击时间线\r\n\r\n从被攻击节点的 `bird-lgproxy` 日志里，能看到一段非常“教科书”的探测→提权信息收集过程（时间为东八区，2026 年 7 月 1 日晚）：\r\n\r\n| 时间（UTC+8） | 谁 | 干了什么 |\r\n|---|---|---|\r\n| 07-01 21:47 | 攻击者（经前端转发） | `bird-lgproxy` 读 `/etc/passwd`（枚举用户、确认可读文件） |\r\n| 07-01 21:53 | 攻击者 | 读 `/root/.bash_history`（翻历史命令，找线索/凭据） |\r\n| 07-01 21:57 | 攻击者 | 读 `/etc/shadow`（拿到 root 密码哈希） |\r\n\r\n用时序图看这十分钟的动作更直观，也能看清“攻击者 → 前端 → proxy → 文件系统”这条链路上，日志分别记在了哪一层：\r\n\r\n```mermaid\r\nsequenceDiagram\r\n    autonumber\r\n    actor Atk as 攻击者（公网）\r\n    participant FE as LG 前端 bird-lg\r\n    participant PX as 节点 bird-lgproxy\r\n    participant FS as 节点文件系统\r\n\r\n    Note over Atk,FS: 2026-07-01 晚（UTC+8）\r\n    Atk->>FE: 21:47 GET -F /etc/passwd\r\n    FE->>PX: 转发（源 IP = 前端）\r\n    PX->>FS: mtr -F /etc/passwd\r\n    FS-->>Atk: 用户列表回显\r\n    Note right of PX: proxy 日志只记到<br/>前端 IP，非攻击者\r\n\r\n    Atk->>FE: 21:53 GET -F /root/.bash_history\r\n    FE->>PX: 转发\r\n    PX->>FS: 读取历史命令\r\n    FS-->>Atk: 命令历史回显\r\n\r\n    Atk->>FE: 21:57 GET -F /etc/shadow\r\n    FE->>PX: 转发\r\n    PX->>FS: mtr -F /etc/shadow\r\n    FS-->>Atk: root 密码哈希泄露\r\n```\r\n\r\n\r\n日志里的 payload 长这样（URL 编码前）：\r\n\r\n```\r\nGET /traceroute?q=-F+/etc/passwd+<占位主机>\r\nGET /traceroute?q=-F+/etc/shadow+<占位主机>\r\n```\r\n\r\n从 `passwd` → `bash_history` → `shadow` 的顺序很典型：先确认漏洞可用、再翻可能藏凭据的地方、最后直取密码哈希准备离线爆破。整个过程只花了十分钟。\r\n\r\n## 取证的一个坑：日志里的“攻击者 IP”是我自己的前端机\r\n\r\n这里有个值得单独拎出来讲的教训。\r\n\r\nbird-lg 是**前端 + 后端 proxy 分离**的架构：公网用户访问前端，前端再把 traceroute 请求转发给各节点的 `bird-lgproxy`。所以当我去被攻击节点的 proxy 日志里查“攻击者 IP”时，看到的源地址**全是前端机器自己的 IP**——因为对 proxy 来说，请求确实是前端发来的。\r\n\r\n真正的攻击者公网 IP，只存在于**前端（反向代理 / 前端容器）的访问日志**里。而等我开始做取证时：\r\n\r\n- proxy 容器在升级时被重建，日志只剩当天；\r\n- 前端所在机器的反代访问日志已经轮转，最早的记录已经晚于攻击发生的时间；\r\n- 各节点 journald 的留存窗口也已经滚过了原始攻击时刻。\r\n\r\n结果就是：**现存日志里所有 `-F /etc/shadow` 的请求，溯源后都指向我自己后来做的 PoC 验证和加固测试**（payload 里还带着我自己打的 `poc.invalid`、`codex-audit` 之类的标记）。原始攻击者的真实 IP，随日志轮转丢失了。\r\n\r\n溯源时对每一条 `-F /etc/shadow` 请求的判定逻辑大致是这样，最后能落到“真实攻击者 IP”的路径全被日志留存挡死了：\r\n\r\n```mermaid\r\nflowchart TD\r\n    Q[\"现存日志里的<br/>-F /etc/shadow 请求\"] --> M{\"payload 带<br/>poc.invalid / codex-audit ？\"}\r\n    M -->|是| SELF[\"自己的 PoC / 加固验证\"]\r\n    M -->|否| T{\"时间早于<br/>已知攻击时刻 ？\"}\r\n    T -->|否| SELF2[\"事后测试<br/>（仍是自己）\"]\r\n    T -->|是| L{\"能查到<br/>前端访问日志 ？\"}\r\n    L -->|否：已轮转/重建| LOST[\"真实攻击者 IP<br/>已丢失 ✗\"]\r\n    L -->|是| REAL[\"定位攻击者 IP ✓\"]\r\n\r\n    style SELF fill:#d5f5e3,stroke:#27ae60\r\n    style SELF2 fill:#d5f5e3,stroke:#27ae60\r\n    style LOST fill:#ffd5d5,stroke:#c0392b,stroke-width:2px\r\n    style REAL fill:#d6eaf8,stroke:#2980b9\r\n```\r\n\r\n\r\n也做了兜底核查——确认没有异常后果：\r\n\r\n- **登录审计**：所有成功的 root 登录源 IP 要么是我自己的出口，要么是我常用宽带 IP 段（带密钥登录用的是我自己的部署密钥），没有陌生境外 IP 成功登录，无横向移动迹象。\r\n- **authorized_keys**：逐个核对指纹，只有我自己的密钥，无陌生 key。\r\n- **计划任务 / 进程**：无后门 cron，无可疑常驻进程。\r\n\r\n教训很直接：**面向公网的服务，一定要把访问日志的留存时间调长、并集中收走**。等出事了再回头翻，日志往往已经不在了——尤其是这种“真实来源只记录在前端一层”的架构，取证窗口比你想的更短。\r\n\r\n## 漏洞报告与致谢\r\n\r\n发现异常后，我第一时间意识到这是个真实的安全问题，但我本身对安全研究并不在行。于是我把情况同步给了朋友 **[@KaguraiYoRoy](https://github.com/KaguraiYoRoy)**，最终由他完成了漏洞分析、复现与规范的安全报告，一起负责任地披露给了上游作者。上游据此发布了官方安全公告并修复：\r\n\r\n> **GHSA-3qm5-22pm-wqg9** — Argument Injection / Exposure of Sensitive Information\r\n> CVE-2026-26514 · CWE-88（Argument Injection）+ CWE-200（Sensitive Info Exposure）\r\n> CVSS 3.1: **7.5 High**（`AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N`）\r\n> 影响版本：`bird-lgproxy` ≤ 1.4.6 · 修复版本：1.4.7 · 发布：2026-07-02\r\n> 致谢：**KaguraiYoRoy**（Analyst）、**AndyYJF**（Reporter）\r\n>\r\n> 公告原文：<https://github.com/xddxdd/bird-lg-go/security/advisories/GHSA-3qm5-22pm-wqg9>\r\n\r\n借这次事，也想说一句：**不懂安全不丢人，但发现问题别憋着**。找个懂行的朋友一起走负责任披露的流程，比自己瞎折腾或者装作没看见都强得多。\r\n\r\n## 修复：升级到 v1.4.7\r\n\r\n需要强调的是：**v1.4.6 的第一次修复并不彻底**——它可以被无空格变体绕过，比如 `-F/etc/shadow`（选项和路径连在一起，绕过了当时基于空格的判断）。真正修好是在 **v1.4.7**：它对 traceroute 目标增加了 `strings.HasPrefix(query, \"-\")` 检查，**任何以 `-` 开头的输入直接拒绝**，从根上断掉了“把输入当选项”的可能。这样 `-F /etc/shadow` 会被直接拦下返回 `Invalid target.`，CVE 到这里彻底堵死。\r\n\r\n我把四台节点全部拉到了 v1.4.7。集群里有两种部署方式，处理方式不同：\r\n\r\n**systemd 直接跑二进制的节点**——换二进制 + 重启：\r\n\r\n```bash\r\ncd /tmp\r\ncurl -sLO https://github.com/xddxdd/bird-lg-go/releases/download/v1.4.7/bird-lgproxy-go-v1.4.7-linux-amd64.tar.gz\r\ntar xzf bird-lgproxy-go-v1.4.7-linux-amd64.tar.gz\r\ncp -a /usr/local/bin/bird-lgproxy-go /usr/local/bin/bird-lgproxy-go.pre-v1.4.7.bak  # 留回滚点\r\ncp -f bird-lgproxy-go /usr/local/bin/bird-lgproxy-go\r\nchmod +x /usr/local/bin/bird-lgproxy-go\r\nsystemctl restart bird-lgproxy\r\n```\r\n\r\n**Docker 部署的节点**——用 `FROM scratch` 的本地镜像，替换其中的 proxy 二进制后重建：\r\n\r\n```bash\r\n# 构建上下文里就一个 Dockerfile + proxy 二进制 + 自带的 traceroute\r\n# Dockerfile:\r\n#   FROM scratch\r\n#   COPY proxy /proxy\r\n#   COPY traceroute /traceroute\r\n#   ENTRYPOINT [\"/proxy\"]\r\ncp -f proxy.v147 ./bird-lgproxy-v1.4.7/proxy\r\ndocker compose up -d --build bird-lgproxy\r\n```\r\n\r\n## 验证：用攻击者的原始 payload 打自己\r\n\r\n修复不能只看版本号，得用**攻击者的真实路径**去验证。我把原始 payload 通过公网前端重放到每一台节点：\r\n\r\n```bash\r\nfor node in <node1> <node2> <node3> <node4>; do\r\n  curl -s \"https://<lg-frontend>/traceroute/$node/-F%20%2Fetc%2Fshadow%20test.invalid\" \\\r\n    | grep -c 'root:'   # 期望：0\r\ndone\r\n```\r\n\r\n四台全部返回 `Invalid target.`，`/etc/shadow` 内容零泄露。直接对本地 `:8000` 打也是同样结果：\r\n\r\n```bash\r\ncurl -s 'http://127.0.0.1:8000/traceroute?q=-F+/etc/shadow+8.8.8.8'\r\n# 旧版：吐出 /etc/shadow 内容\r\n# v1.4.7：HTTP 400 / Invalid target.\r\n```\r\n\r\n## 收尾清单\r\n\r\n-  {x}  四台节点升级到 v1.4.7，保留回滚二进制/compose\r\n-  {x}  用原始 payload 经公网前端重放验证，四台 `/etc/shadow` 零泄露\r\n-  {x}  轮换全部 root 密码（≥16 位混合）\r\n-  {x}  审计 `authorized_keys` 指纹、cron、常驻进程——无异常\r\n-  {x}  核查登录历史——无陌生 IP 成功登录\r\n\r\n## 几点反思\r\n\r\n1. **别把用户输入拆成命令行参数。** 这不是 LG 独有的坑，任何把外部输入拼进 `exec` 的地方都要警惕以 `-` 开头的注入。目标当整体字符串处理是底线。\r\n2. **公网服务的 proxy 别裸奔在 `0.0.0.0`。** 我这次四台的 `bird-lgproxy :8000` 都是公网直接可达的——下一步准备把它收敛到只允许前端访问（iptables / 只监听内网）。少一个公网入口，就少一层攻击面。\r\n3. **日志留存要提前配好、集中收走。** 出事后才发现真正的攻击者 IP 只记录在前端一层、而且已经轮转丢了。取证的黄金窗口比想象中短得多。\r\n\r\n---\r\n\r\n*本文用于记录与分享，已隐去全部真实主机名、域名与 IP。如果你也在跑公网 Looking Glass，建议立刻确认 `bird-lgproxy` 版本 ≥ v1.4.7。*\r\n",
+      "type": "post",
+      "order": 0,
+      "title": "一次 Looking Glass 参数注入事件的复盘：从 /etc/shadow 泄露到全集群加固",
+      "status": "publish",
+      "created": 1782973260,
+      "modified": 1782977946,
+      "password": "",
+      "template": "",
+      "allowFeed": "1",
+      "allowComment": "1"
+    },
+    {
+      "cid": 76,
+      "slug": "76",
+      "text": "<!--markdown-->> 提示：由于本人对于电话网络的了解停留在初步阶段，本博客仅仅是我初步的学习总结，不仅十分不完善，还可能出现部分知识性错误，如遇错误与意见可联系070127andy@gmail.com，感谢您的理解和指正！\r\n \r\n{message type=\"info\" content=\"另：本文默认您已经加入了DN42并至少和一位peer进行了对等连接。\"/}\r\n \r\n> 本文部分基础概念和图示基于 Yukari Chiba 的《telephony42 完全指南》整理和改写，原文采用 CC BY-SA 4.0，本文相应部分亦按 CC BY-SA 4.0 发布。\r\n#前言\r\n本人在DN42网络中扮演 **AS4242422921** 并拥有一个四节点的小集群，集群间建立了 **FullMesh** 的 **IBGP** 组网，通过 **OSPF** 作为 **IGP** 协议建立内部动态路由，并申请了 **andy.dn42** 作为我的域名，搭建了 **1主+1从** 的权威服务器（由knot驱动）。\r\n最近在DN42的群里看到了 [Yukari](https://0x7f.cc/) 大佬提到的telephony42，即一套实验性质的去中心化电话网络。我觉得自建一个电话网络很酷，于是打算跟着Yukari的 [这篇博客](https://0x7f.cc/telephony42-guide/) 搓一个 [PBX(Private Branch Exchange - 私有交换机)](https://en.wikipedia.org/wiki/Business_telephone_system) ，接入telephony42， ~~打电话骚扰群友~~ 。\r\n#前期准备\r\n {x} 一个DN42域名\r\n {x} 一台 **已接入DN42** 的，配置不低于1C1G的服务器\r\n {x} 自建的DN42内部权威DNS（这里以knot演示）\r\n#概念须知\r\n *PS：本篇博客仅是“最小加入指南”，后面譬如SRTP的进阶操作本人也在学习，还请自行了解，本部分参考了0x7f的博客内容。* \r\n \r\n\r\n| 组件 | 简要解释 |\r\n| :--: | :--: |\r\n| PBX (Private Branch Exchange - 私有交换机) | 视作 VoIP 网络中的路由器，负责处理信令和路由，有时也处理语音数据。 |\r\n| B2BUA (Back-to-Back User Agent - 背靠背用户代理) | Asterisk 之类的 PBX 就是一个典型的 B2BUA。与仅转发信令的 SIP 代理不同，当 A 通过 PBX 呼叫 B 时，PBX 实际上是先以被叫的身份接听了 A 的电话，然后再以主叫的身份向 B 发起一通全新的电话，最后在内部把这两个独立的通道桥接起来。这使得 PBX 能随时介入通话过程，进行录音、转码、甚至强制掐线。 |\r\n| Endpoint (终端设备) | 任何可以发起或接收呼叫的设备。它可以是电脑上的软件电话应用、桌面的实体 IP 电话机、ATA、网页上的 WebRTC 电话，甚至是另一个网络的 PBX。 |\r\n\r\n---\r\n\r\n| 协议 | 简要解释 |\r\n| :--: | :--: |\r\n| 会话发起协议 (SIP - RFC 3261) | 作为控制平面。采用纯文本格式，长得有点像 HTTP，包含 URI、头字段和正文。主要负责信令传输，例如传递呼叫的来源和目标、接通、挂断或拒接等，不负责传输具体的语音流。SIP 默认监听于 UDP/TCP 5060 端口（在报文较大时通常优先使用 TCP），TLS 加密状态下监听 TCP 5061 端口。 |\r\n| 实时传输协议 (RTP - RFC 3550) | 作为数据平面。当 SIP 握手与 SDP 协商完成后，双方会在协商好的高位动态端口（通常在 UDP 10000 至 20000 之间）互相传递 RTP 数据包。这些包对延迟和抖动极其敏感。如果防火墙只放行了 SIP (5060) 但没放行 RTP，就会遇到 VoIP 史上最著名的故障： 单通（接通了但听不到声音）。 |\r\n\r\n---\r\n\r\n| 路由 | 简要解释 |\r\n| :--: | :--: |\r\n| ENUM (E.164 Number Mapping) | 是一种自动发现路由的机制。当拨打目标是未知目的地的电话时，PBX 会根据号码查询 DNS 的 NAPTR 记录，查找到该号码对应的 SIP 目标地址，在DN42通过一个特殊的DNS查询实现 |\r\n| Context (上下文) | 是 Asterisk 拨号计划的关键组件。可以把它理解为 VoIP 系统中的 VRF。它可以把不信任的外部呼叫丢进一个没有外拨权限的隔离上下文中，并且能够通过 Goto 等语句实现在不同上下文间链式跳转，在后面的拦截伪造来电等功能上很有用 |\r\n\r\n---\r\n\r\n对于跨网的SIP呼叫，可以分为 **三个阶段** ：\r\n##第一部分：SIP 呼叫建立\r\nPBX将充当一个类似“ **中转站** ”的角色，先接听主叫设备的 **INVITE** ，使用 **ENUM DNS**  查询（ **后面会展开解释** ）与信令路由，查询到对方的PBX之后向其转发INVITE，由对方的PBX再呼叫被叫设备，接听后层层转发回200 OK\r\n```mermaid\r\nsequenceDiagram\r\n    participant Caller as 主叫设备 (A)\r\n    participant PBXA as 本地 PBX\r\n    participant PBXB as 对端 PBX\r\n    participant Callee as 被叫设备 (B)\r\n\r\n    Note over Callee, Caller: 控制平面交互 (SIP)\r\n\r\n    Caller->>PBXA: INVITE sip:B@PBXA_IP (含 SDP 提议)\r\n    PBXA->>Caller: 100 Trying\r\n\r\n    Note over PBXA, PBXB: ENUM DNS 查询与信令路由\r\n\r\n    PBXA->>PBXB: INVITE sip:B@PBXB_IP (含 SDP 提议)\r\n    PBXB->>PBXA: 100 Trying\r\n    PBXB->>Callee: INVITE (含 SDP 提议)\r\n\r\n    Callee->>PBXB: 180 Ringing (振铃)\r\n    PBXB->>PBXA: 180 Ringing\r\n    PBXA->>Caller: 180 Ringing\r\n\r\n    Note over Callee: 用户接听电话\r\n\r\n    Callee->>PBXB: 200 OK (含 SDP 应答)\r\n    PBXB->>PBXA: 200 OK (含 SDP 应答)\r\n    PBXA->>Caller: 200 OK (含 SDP 应答)\r\n\r\n    Caller->>PBXA: ACK\r\n    PBXA->>PBXB: ACK\r\n    PBXB->>Callee: ACK\r\n```\r\n##第二部分：RTP 语音传输\r\n在接通之后，通过两台PBX作为桥梁，两台终端即可在10000端口附近（可手动指定范围）互传udp数据包，即RTP语音流， *在本文关闭  `direct_media` 、由 PBX 锚定媒体的配置下* ，所有数据在逻辑上仍通过PBX转发\r\n```mermaid\r\nsequenceDiagram\r\n    participant Caller as 主叫设备 (A)\r\n    participant PBXA as 本地 PBX\r\n    participant PBXB as 对端 PBX\r\n    participant Callee as 被叫设备 (B)\r\n\r\n    Note over Caller, Callee: 数据平面交互 (RTP)\r\n\r\n    Caller-->>PBXA: RTP 语音流\r\n    PBXA-->>PBXB: RTP 语音流\r\n    PBXB-->>Callee: RTP 语音流\r\n\r\n    Callee-->>PBXB: RTP 语音流\r\n    PBXB-->>PBXA: RTP 语音流\r\n    PBXA-->>Caller: RTP 语音流\r\n```\r\n##第三部分：SIP 挂断\r\n在挂断阶段，仍是通过PBX转发BYE，回传200 OK进行挂断操作\r\n```mermaid\r\nsequenceDiagram\r\n    participant Caller as 主叫设备 (A)\r\n    participant PBXA as 本地 PBX\r\n    participant PBXB as 对端 PBX\r\n    participant Callee as 被叫设备 (B)\r\n\r\n    Note over Caller, Callee: 控制平面交互 (SIP)\r\n\r\n    Caller->>PBXA: BYE\r\n    PBXA->>PBXB: BYE\r\n    PBXB->>Callee: BYE\r\n\r\n    Callee->>PBXB: 200 OK\r\n    PBXB->>PBXA: 200 OK\r\n    PBXA->>Caller: 200 OK\r\n```\r\n> 通过以上内容，我们可以发现，主要的过程都离不开PBX交换机，故只要我们搭建好PBX即可初步建起自己的电话网络。而对于PBX的 **软交换平台** ，对于新手玩家Asterisk是比较好的选择。\r\n> PS：Yukari把PBX比作 **电话网络的自治系统** ，把Asterisk比作 **电话网络的 BIRD** \r\n#开始部署\r\n##1.SIP 域名创建\r\n在 `yourdomain.dn42`  Zone 中添加：\r\n```yaml\r\nsip.andy.dn42. 300 IN A     172.21.118.162  #ip对应你的PBX服务器\r\nsip.andy.dn42. 300 IN AAAA  fdd2:e3e2:c922::2  #ip对应你的PBX服务器\r\n\r\npbx.andy.dn42. 300 IN CNAME sip.andy.dn42.\r\n```\r\n##2.ENUM (E.164 Number Mapping)建立\r\n由上面的内容我们可以知道，要想呼叫其他PBX下的设备，必须 **知道对方的地址** ，故我们需要一种机制将电话号码翻译成 PBX 的 IP 地址，这就是 **ENUM** \r\nENUM基于 **DNS** ，它很像 rDNS 的解析方式，即先将电话号码翻转，加入点号分隔，再加上一个特定的域名后缀\r\n最后，利用 DNS 的  **NAPTR**  (Naming Authority Pointer) 记录，一个包含正则表达式的记录，就可以可以将这串倒写的号码解析成 SIP URI。\r\n下面是demo，此正则可以匹配该前缀下的所有号码\r\n```yaml\r\n$ORIGIN 4.3.2.1.0.4.2.4.tel.dn42.\r\n*  IN  NAPTR  10  100  \"u\"  \"E2U+sip\"  \"!^(.*)$!sip:\\\\1@pbx.yourdomain.dn42!\" .\r\n```\r\n我的权威DNS使用的是kont，下面是我创建ENUM的步骤：\r\n####2.1按号码计算出自己的ENUM Zone\r\n- 我的号码是 `+042429211001` \r\n- 去掉 +： `042429211001` \r\n- 逐位反转并加点： `1.0.0.1.1.2.9.2.4.2.4.0.tel.dn42.`\r\n- 号码前缀： `+04242921` \r\n- 对应的ENUM Zone： `1.2.9.2.4.2.4.0.tel.dn42.` \r\n####2.2创建对应 ENUM Zone\r\n创建Zone文件：\r\n```file\r\n/var/lib/knot/zones/1.2.9.2.4.2.4.0.tel.dn42.zone\r\n```\r\n内容：\r\n```yaml\r\n$ORIGIN 1.2.9.2.4.2.4.0.tel.dn42.\r\n$TTL 300\r\n\r\n@ IN SOA ns1.andy.dn42. admin.andy.dn42. (\r\n    2026071001\r\n    3600\r\n    900\r\n    604800\r\n    300\r\n)\r\n\r\n@ IN NS ns1.andy.dn42.\r\n@ IN NS ns2.andy.dn42.\r\n\r\n; +042429211001   #我准备创建两个分机\r\n1.0.0.1 300 IN NAPTR 100 10 \"u\" \"E2U+sip\" \\\r\n\"!^.*$!sip:1001@sip.andy.dn42!\" .\r\n\r\n; +042429211002\r\n2.0.0.1 300 IN NAPTR 100 10 \"u\" \"E2U+sip\" \\\r\n\"!^.*$!sip:1002@sip.andy.dn42!\" .\r\n```\r\n####2.3使用 ` kzonecheck ` 检查 ENUM Zone 文件的合法性。\r\n```bash\r\nkzonecheck -o \"$ZONE\" \"$ZONEFILE\"\r\n```\r\n退出码  `0`  即表示PASS。\r\n####2.4创建主NS对应的Knot DNS服务配置文件\r\n示例：\r\n```yaml\r\nkey:\r\n  - id: telephony42-xfr\r\n    algorithm: hmac-sha256\r\n    secret: \"[数据删除]\"\r\n\r\nremote:\r\n  - id: telephony42-secondary\r\n    address: 172.21.118.164\r\n    key: telephony42-xfr\r\n\r\nacl:\r\n  - id: telephony42-transfer\r\n    key: telephony42-xfr\r\n    action: transfer\r\n\r\nzone:\r\n  - domain: 1.2.9.2.4.2.4.0.tel.dn42.\r\n    file: /var/lib/knot/zones/1.2.9.2.4.2.4.0.tel.dn42.zone\r\n    notify: telephony42-secondary\r\n    acl: telephony42-transfer\r\n```\r\n在主配置中加入include：\r\n```yaml\r\ninclude: \"/etc/knot/conf.d/*.conf\"\r\n```\r\n检查合法性：\r\n```bash\r\nknotc conf-check\r\n```\r\n设置文件权限：\r\n```bash\r\nchown root:knot /etc/knot/conf.d\r\nchmod 750 /etc/knot/conf.d\r\n\r\nchown root:knot /etc/knot/conf.d/telephony42.conf\r\nchmod 640 /etc/knot/conf.d/telephony42.conf\r\n\r\nchown knot:knot /var/lib/knot/zones/1.2.9.2.4.2.4.0.tel.dn42.zone\r\nchmod 640 /var/lib/knot/zones/1.2.9.2.4.2.4.0.tel.dn42.zone\r\n```\r\n最后重载 `kont` \r\n####2.5同步到从服务器\r\n首先生成密钥：\r\n```bash\r\numask 077\r\n\r\nopenssl rand -base64 32 > /root/telephony42-xfr.secret\r\n\r\nchmod 600 /root/telephony42-xfr.secret\r\nchown root:root /root/telephony42-xfr.secret\r\n\r\nstat -c '%A %U:%G %s bytes %n' /root/telephony42-xfr.secret\r\n```\r\n把密钥文件存放到ns2上\r\n再到 ns2 执行：\r\n```bash\r\nchmod 600 /root/telephony42-xfr.secret\r\nchown root:root /root/telephony42-xfr.secret\r\n\r\nstat -c '%A %U:%G %s bytes %n' /root/telephony42-xfr.secret  #查看权限是否正确\r\n```\r\nns2通过AXFR从ns1同步。\r\n示例：\r\n```yaml\r\nkey:\r\n  - id: telephony42-key\r\n    algorithm: hmac-sha256\r\n    secret: \"[刚刚生成的密钥]\"\r\n\r\nremote:\r\n  - id: ns1\r\n    address: 172.21.118.161\r\n    key: telephony42-key\r\n\r\nzone:\r\n  - domain: 1.2.9.2.4.2.4.0.tel.dn42\r\n    master: ns1\r\n```\r\n重载kont。\r\n##3.安装并配置Asterisk\r\n我的系统是Debian13，其默认 trixie 仓库中没有完整的 Asterisk 主程序包，故打算自己编译安装。\r\n在询问ai之后，得知：\r\n> 教程中说可以 APT 安装，是因为它隐含使用了 Debian sid 仓库。对于已经运行 BIRD 和其他 DN42 服务的核心节点，不建议为了 Asterisk 混入 sid，可能导致基础库被大规模升级。\r\n####3.1源码编译 Asterisk\r\n安装编译依赖：\r\n```bash\r\napt install -y \\\r\n  build-essential pkg-config autoconf-archive bison flex \\\r\n  wget ca-certificates patch bzip2 python3-dev \\\r\n  libedit-dev libjansson-dev libsqlite3-dev uuid-dev libxml2-dev \\\r\n  libssl-dev libcurl4-openssl-dev liburiparser-dev libxslt1-dev \\\r\n  libcap-dev libnewt-dev libncurses-dev \\\r\n  libsrtp2-dev libgsm1-dev libspeexdsp-dev \\\r\n  libogg-dev libvorbis-dev \\\r\n  bind9-dnsutils\r\n```\r\n下载并解压 Asterisk 22.10.1：\r\n```bash\r\ncd /usr/src\r\nwget https://downloads.asterisk.org/pub/telephony/asterisk/releases/asterisk-22.10.1.tar.gz\r\ntar -xzf asterisk-22.10.1.tar.gz\r\ncd asterisk-22.10.1\r\n```\r\n配置时使用 Asterisk 自带的 pjproject：\r\n```bash\r\n./configure --with-pjproject-bundled\r\nmake menuselect.makeopts\r\n```\r\n启用所需模块：\r\n```bash\r\nfor MODULE in \\\r\n  res_pjsip \\\r\n  chan_pjsip \\\r\n  res_pjsip_authenticator_digest \\\r\n  res_pjsip_endpoint_identifier_ip \\\r\n  res_pjsip_registrar \\\r\n  res_pjsip_session \\\r\n  res_pjsip_sdp_rtp \\\r\n  res_rtp_asterisk \\\r\n  func_enum \\\r\n  app_dial \\\r\n  app_echo \\\r\n  app_playback \\\r\n  pbx_config \\\r\n  codec_alaw \\\r\n  codec_ulaw \\\r\n  codec_g722\r\ndo\r\n  menuselect/menuselect \\\r\n    --enable \"$MODULE\" \\\r\n    menuselect.makeopts\r\ndone\r\n```\r\n由于我的vps只有1c1g，故采用单线程编译：\r\n```bash\r\nmake -j1\r\n```\r\n完成后安装：\r\n```bash\r\nmake install\r\nmake samples\r\nmake config\r\nmake install-logrotate\r\nldconfig\r\n```\r\n####3.2创建Asterisk用户\r\n官方建议Asterisk以低权限运行，故创建专用用户：\r\n```bash\r\ngroupadd --system asterisk\r\n\r\nuseradd \\\r\n  --system \\\r\n  --gid asterisk \\\r\n  --home-dir /var/lib/asterisk \\\r\n  --shell /usr/sbin/nologin \\\r\n  asterisk\r\n  ```\r\n  准备目录：\r\n  ```bash\r\ninstall -d -o asterisk -g asterisk /run/asterisk\r\ninstall -d -o asterisk -g asterisk /var/log/asterisk\r\ninstall -d -o asterisk -g asterisk /var/spool/asterisk\r\ninstall -d -o asterisk -g asterisk /var/lib/asterisk\r\n```\r\n最后注册系统服务并保持自启\r\n####3.3配置Asterisk\r\n- 首先是最重要的： **Asterisk只应监听DN42内部网段!防止公网 SIP 扫描和暴力注册!**\r\n```yaml\r\n172.21.118.162:5060/UDP\r\n[fdd2:e3e2:c922::2]:5060/UDP\r\n```\r\n\r\n####3.4创建PJSIP 分机\r\n我打算创建两个分机：\r\n```yaml\r\n1001：Windows Blink\r\n1002：iOS SIP 客户端\r\n\r\n1001 → +042429211001\r\n1002 → +042429211002\r\n```\r\n核心配置：\r\n```ini\r\n[transport-dn42-ipv4]\r\ntype=transport\r\nprotocol=udp\r\nbind=172.21.118.162:5060\r\nlocal_net=172.20.0.0/14\r\n\r\n[transport-dn42-ipv6]\r\ntype=transport\r\nprotocol=udp\r\nbind=[fdd2:e3e2:c922::2]:5060\r\nlocal_net=fd00::/8\r\n```\r\n分机模板：\r\n```ini\r\n[local-endpoint](!)\r\ntype=endpoint\r\ncontext=from-local\r\ndisallow=all\r\nallow=g722\r\nallow=alaw\r\nallow=ulaw\r\ndirect_media=no\r\nrtp_symmetric=yes\r\nforce_rport=yes\r\nrewrite_contact=yes\r\ndtmf_mode=rfc4733\r\n```\r\n> 注：DNS NAPTR 定义的是外部号码如何找到本地分机；分机外呼时使用的 Telephony42 主叫号码则需要通过 endpoint 的 callerid 或拨号计划另行设置。\r\n####3.5缩小RTP范围\r\n我的内部网络目前只有两个分机，所以决定将 RTP 端口缩小到： `UDP 10000–10100` \r\n```ini\r\n[general]\r\nrtpstart=10000\r\nrtpend=10100\r\nstrictrtp=yes\r\n```\r\n####3.6拨号计划\r\n我的内部号码：\r\n `1001    1002` \r\n我打算使用一个号码进行本地ECHO测试：\r\n `5000` \r\n我的核心拨号计划：\r\n```bash\r\n[from-local]\r\nexten => _XXXX,1,NoOp(Local call)\r\n same => n,Goto(local-extensions,${EXTEN},1)\r\n\r\n[local-extensions]\r\nexten => 1001,1,Dial(PJSIP/1001,30)\r\n same => n,Hangup()\r\n\r\nexten => 1002,1,Dial(PJSIP/1002,30)\r\n same => n,Hangup()\r\n\r\nexten => 5000,1,Answer()\r\n same => n,Wait(1)\r\n same => n,Echo()\r\n same => n,Hangup()\r\n ```\r\n最后验证模块是否正常：\r\n```bash\r\nasterisk -rx 'module show like chan_pjsip'\r\nasterisk -rx 'module show like res_pjsip'\r\nasterisk -rx 'module show like res_rtp_asterisk'\r\nasterisk -rx 'module show like func_enum'\r\nasterisk -rx 'core show application Echo'\r\nasterisk -rx 'core show function ENUMLOOKUP'\r\n```\r\n重载Asterisk：\r\n```bash\r\nasterisk -rx \"pjsip reload\"\r\n```\r\n####3.7在PBX上部署分流 DNS\r\n由于PBX的默认DNS并不能解析tel.dn42，故应该部署dnsmasq对以下域名进行分流：\r\n```context\r\n<yourdomain>.dn42\r\ntel.dn42\r\n```\r\n安装dnsmasq：\r\n```bash\r\napt install -y dnsmasq\r\n```\r\n我的配置文件示例：\r\n `/etc/dnsmasq.d/dn42.conf` \r\n```ini\r\nserver=/andy.dn42/172.21.118.161\r\nserver=/andy.dn42/172.21.118.164\r\n\r\nserver=/tel.dn42/172.21.118.161\r\nserver=/tel.dn42/172.21.118.164\r\n#注：Knot DNS 只实现权威 DNS 服务，不是递归解析器，上面两行请设置成自己的权威DNS！\r\nlisten-address=127.0.0.1\r\nbind-interfaces\r\n```\r\n重启dnsmasq（由于 **监听地址** 变化，无法进行热重载）:\r\n```bash\r\nsystemctl restart dnsmasq\r\n```\r\n在Asterisk 中测试：\r\n```bash\r\nasterisk -rx \\\r\n  'dialplan eval function ENUMLOOKUP(+042429211001,sip,u,1,tel.dn42)'\r\n```\r\n如果正常，应该返回：\r\n```bash\r\nsip:1001@sip.andy.dn42\r\n```\r\n####3.8配置 Telephony42 外呼拨号计划\r\n由于ENUM只负责告诉Asterisk“打给谁”，但后续Asterisk需要决定用哪个PJSIP endpoint 发起呼叫等等，故我们需要一个通用出站模板`peer-enum-outbound` \r\n于是在 `pjsip.conf` 中配置一个无需注册的出站 endpoint。\r\n示例：\r\n```ini\r\n[peer-enum-outbound]\r\ntype=endpoint\r\ntransport=transport-udp\r\ncontext=from-enum\r\ndisallow=all\r\nallow=ulaw\r\nallow=alaw\r\naors=peer-enum-outbound\r\ndirect_media=no\r\n\r\n[peer-enum-outbound]\r\ntype=aor\r\n```\r\n实际目标由 ENUM 返回的 SIP URI 决定\r\n####3.9配置 Telephony42 外呼拨号计划\r\n在  `extensions.conf`  中添加：\r\n```ini\r\n[internal]\r\nexten => _+X.,1,NoOp(Telephony42 outbound: ${EXTEN})\r\n same => n,Set(ENUMURI=${ENUMLOOKUP(${EXTEN},sip,u,1,tel.dn42)})\r\n same => n,Set(ENUMURI=${ENUMLOOKUP(${ENUMNUM},sip,,1,tel.dn42)})\r\n same => n,NoOp(ENUM result: ${ENUMURI})\r\n same => n,GotoIf($[\"${ENUMURI}\"=\"\"]?enum-failed)\r\n same => n,Dial(PJSIP/${ENUMURI}@peer-enum-outbound,60)\r\n same => n,Hangup()\r\n\r\n same => n(enum-failed),Playback(invalid)\r\n same => n,Hangup()\r\n ```\r\n 重载Asterisk:\r\n ```bash\r\nasterisk -rx \"pjsip reload\"\r\nasterisk -rx \"dialplan reload\"\r\n```\r\n 此时通过 `1001` 拨打 `+042429211002`应该已经能通了。\r\n  **推荐使用 `sngrep` 进行通话流程分析，其是一个专用于 SIP 的 TUI 抓包与可视化工具（附有颜色标识）。** \r\n####3.10配置 Telephony42 入站 SIP\r\n为了接收其他 Telephony42 节点的呼叫，需要设置入站 endpoint。\r\n示例：\r\n```ini\r\n[peer-enum-inbound]\r\ntype=endpoint\r\ntransport=transport-udp\r\ncontext=context-enum\r\ndisallow=all\r\nallow=ulaw\r\nallow=alaw\r\ndirect_media=no\r\n```\r\n然后添加identify，让来自DN42的SIP包匹配到该endpoint。\r\n```ini\r\n[peer-enum-inbound-identify-v4]\r\ntype=identify\r\nendpoint=peer-enum-inbound\r\nmatch=10.0.0.0/8\r\nmatch=172.20.0.0/14\r\nmatch=172.31.0.0/16\r\n\r\n[peer-enum-inbound-identify-v6]\r\ntype=identify\r\nendpoint=peer-enum-inbound\r\nmatch=fd00::/8\r\n```\r\n再次强调： **千万不要把公网 0.0.0.0/0 放进去！！** \r\n####3.11配置独立入站 Context\r\n在入站时，通话会先被引入到一个独立的Context中。\r\n```ini\r\n[context-enum]\r\nexten => 1001,1,NoOp(Telephony42 inbound to 1001)\r\n same => n,Dial(PJSIP/1001,30)\r\n same => n,Hangup()\r\n\r\nexten => 1002,1,NoOp(Telephony42 inbound to 1002)\r\n same => n,Dial(PJSIP/1002,30)\r\n same => n,Hangup()\r\n ```\r\n 重新加载Asterisk\r\n ** 需要注意，独立的入站 Context 只能限制外部来电的拨号权限，不能证明 CallerID 真实有效。** \r\n##4.提交 Telephony42 Registry\r\n```ini\r\ntelephony:          +04242921\r\nnserver:            ns1.andy.dn42\r\nnserver:            ns2.andy.dn42\r\nadmin-c:            ANDY-DN42\r\ntech-c:             ANDY-DN42\r\nmnt-by:             ANDY-MNT\r\nsource:             DN42\r\n```\r\n##5.PR合并后验证\r\n父区委派生效后，你可以使用 DN42 递归 DNS 查询。\r\n```bash\r\nZONE=\"1.2.9.2.4.2.4.0.tel.dn42.\"\r\n#检查 NS：\r\ndig @172.20.0.53 \"$ZONE\" NS \\\r\n  +noall +answer +authority\r\n#正常应显示：\r\n#ns1.andy.dn42.\r\n#ns2.andy.dn42.\r\n```\r\n至此，大公告成！快访问yp.dn42拨打 ~~奇奇怪怪~~ 的电话吧！\r\n#参考文章：\r\n-  [telephony42 完全指南：从零开始在 dn42 构建电话网络](https://0x7f.cc/telephony42-guide/)\r\n-  [在 Telephony42 中配置 E.164 ENUM](https://0x7f.cc/e164-dn42/) \r\n",
+      "type": "post",
+      "order": 0,
+      "title": "通过Asterisk自建PBX以接入Telephony42",
+      "status": "publish",
+      "created": 1783845720,
+      "modified": 1786613210,
+      "password": "",
+      "template": "",
+      "allowFeed": "1",
+      "allowComment": "1"
+    }
+  ],
+  "relations": [
+    {
+      "cid": 11,
+      "mid": 1,
+      "name": "所有文章",
+      "slug": "default",
+      "type": "category",
+      "order": 0
+    },
+    {
+      "cid": 11,
+      "mid": 6,
+      "name": "NAS",
+      "slug": "NAS",
+      "type": "category",
+      "order": 1
+    },
+    {
+      "cid": 11,
+      "mid": 14,
+      "name": "运维",
+      "slug": "mnt",
+      "type": "category",
+      "order": 8
+    },
+    {
+      "cid": 13,
+      "mid": 1,
+      "name": "所有文章",
+      "slug": "default",
+      "type": "category",
+      "order": 0
+    },
+    {
+      "cid": 13,
+      "mid": 12,
+      "name": "AI",
+      "slug": "AI",
+      "type": "category",
+      "order": 6
+    },
+    {
+      "cid": 13,
+      "mid": 13,
+      "name": "调优",
+      "slug": "refine",
+      "type": "category",
+      "order": 7
+    },
+    {
+      "cid": 13,
+      "mid": 14,
+      "name": "运维",
+      "slug": "mnt",
+      "type": "category",
+      "order": 8
+    },
+    {
+      "cid": 30,
+      "mid": 1,
+      "name": "所有文章",
+      "slug": "default",
+      "type": "category",
+      "order": 0
+    },
+    {
+      "cid": 30,
+      "mid": 10,
+      "name": "DN42",
+      "slug": "DN42",
+      "type": "category",
+      "order": 4
+    },
+    {
+      "cid": 30,
+      "mid": 11,
+      "name": "开源项目",
+      "slug": "opensource",
+      "type": "category",
+      "order": 5
+    },
+    {
+      "cid": 30,
+      "mid": 13,
+      "name": "调优",
+      "slug": "refine",
+      "type": "category",
+      "order": 7
+    },
+    {
+      "cid": 30,
+      "mid": 14,
+      "name": "运维",
+      "slug": "mnt",
+      "type": "category",
+      "order": 8
+    },
+    {
+      "cid": 33,
+      "mid": 1,
+      "name": "所有文章",
+      "slug": "default",
+      "type": "category",
+      "order": 0
+    },
+    {
+      "cid": 33,
+      "mid": 11,
+      "name": "开源项目",
+      "slug": "opensource",
+      "type": "category",
+      "order": 5
+    },
+    {
+      "cid": 34,
+      "mid": 1,
+      "name": "所有文章",
+      "slug": "default",
+      "type": "category",
+      "order": 0
+    },
+    {
+      "cid": 34,
+      "mid": 11,
+      "name": "开源项目",
+      "slug": "opensource",
+      "type": "category",
+      "order": 5
+    },
+    {
+      "cid": 34,
+      "mid": 12,
+      "name": "AI",
+      "slug": "AI",
+      "type": "category",
+      "order": 6
+    },
+    {
+      "cid": 41,
+      "mid": 1,
+      "name": "所有文章",
+      "slug": "default",
+      "type": "category",
+      "order": 0
+    },
+    {
+      "cid": 41,
+      "mid": 13,
+      "name": "调优",
+      "slug": "refine",
+      "type": "category",
+      "order": 7
+    },
+    {
+      "cid": 41,
+      "mid": 14,
+      "name": "运维",
+      "slug": "mnt",
+      "type": "category",
+      "order": 8
+    },
+    {
+      "cid": 47,
+      "mid": 1,
+      "name": "所有文章",
+      "slug": "default",
+      "type": "category",
+      "order": 0
+    },
+    {
+      "cid": 47,
+      "mid": 11,
+      "name": "开源项目",
+      "slug": "opensource",
+      "type": "category",
+      "order": 5
+    },
+    {
+      "cid": 47,
+      "mid": 13,
+      "name": "调优",
+      "slug": "refine",
+      "type": "category",
+      "order": 7
+    },
+    {
+      "cid": 61,
+      "mid": 1,
+      "name": "所有文章",
+      "slug": "default",
+      "type": "category",
+      "order": 0
+    },
+    {
+      "cid": 61,
+      "mid": 12,
+      "name": "AI",
+      "slug": "AI",
+      "type": "category",
+      "order": 6
+    },
+    {
+      "cid": 62,
+      "mid": 1,
+      "name": "所有文章",
+      "slug": "default",
+      "type": "category",
+      "order": 0
+    },
+    {
+      "cid": 62,
+      "mid": 12,
+      "name": "AI",
+      "slug": "AI",
+      "type": "category",
+      "order": 6
+    },
+    {
+      "cid": 66,
+      "mid": 1,
+      "name": "所有文章",
+      "slug": "default",
+      "type": "category",
+      "order": 0
+    },
+    {
+      "cid": 66,
+      "mid": 11,
+      "name": "开源项目",
+      "slug": "opensource",
+      "type": "category",
+      "order": 5
+    },
+    {
+      "cid": 68,
+      "mid": 1,
+      "name": "所有文章",
+      "slug": "default",
+      "type": "category",
+      "order": 0
+    },
+    {
+      "cid": 68,
+      "mid": 10,
+      "name": "DN42",
+      "slug": "DN42",
+      "type": "category",
+      "order": 4
+    },
+    {
+      "cid": 68,
+      "mid": 15,
+      "name": "网络安全",
+      "slug": "cyber_safety",
+      "type": "category",
+      "order": 9
+    },
+    {
+      "cid": 76,
+      "mid": 10,
+      "name": "DN42",
+      "slug": "DN42",
+      "type": "category",
+      "order": 4
+    }
+  ],
+  "snapshotEpoch": 1786673780
+}

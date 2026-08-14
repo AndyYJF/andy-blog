@@ -76,6 +76,17 @@ export function normalizeMetaName(name, mid) {
   return KNOWN_META_NAMES.get(Number(mid)) || String(name || '').trim();
 }
 
+export function normalizeIncidentalTrailingWhitespace(markdown) {
+  return String(markdown || '')
+    .split('\n')
+    .map((line) => {
+      if (/^[ \t]+$/u.test(line)) return '';
+      if (/[^ \t][ \t]$/u.test(line)) return line.slice(0, -1);
+      return line;
+    })
+    .join('\n');
+}
+
 export function repairKnownContent(item, source) {
   let text = String(source || '');
   let count = 0;

@@ -111,7 +111,7 @@ services:
     volumes:
       - /opt/prometheus/config/prometheus.yml:/etc/prometheus/prometheus.yml
       - /opt/prometheus/data:/prometheus
-    command: 
+    command:
       - '--config.file=/etc/prometheus/prometheus.yml'
       - '--storage.tsdb.path=/prometheus'
       - '--web.enable-lifecycle'
@@ -271,7 +271,7 @@ services:
     volumes:
       - /opt/prometheus/config/prometheus.yml:/etc/prometheus/prometheus.yml
       - /opt/prometheus/data:/prometheus
-    command: 
+    command:
       - '--config.file=/etc/prometheus/prometheus.yml'
       - '--storage.tsdb.path=/prometheus'
       - '--web.enable-lifecycle'
@@ -302,7 +302,7 @@ docker-compose up -d
 
 1.  登录 Grafana。
 2.  在左侧导航栏中，点击齿轮图标 (Configuration) -> Data Sources。
-3.  点击 
+3.  点击
 `Add data source`。
 4.  选择 `Prometheus`。
 5.  在 `HTTP` 部分的 `URL` 字段中输入 `http://prometheus:9090` (如果 Prometheus 和 Grafana 在同一个 Docker Compose 网络中) 或 `http://localhost:9090` (如果 Prometheus 运行在宿主机上，且 Grafana 可以直接访问)。
