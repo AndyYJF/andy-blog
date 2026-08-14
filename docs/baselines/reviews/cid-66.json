@@ -4,7 +4,7 @@
   "kind": "post",
   "title": "RP Hub——更适合新手的类Silly Tavern项目",
   "canonicalPath": "/posts/rp-hub-silly-tavern/",
-  "snapshotEpoch": 1785565762,
+  "snapshotEpoch": 1786604456,
   "auditStatus": "warn",
   "blockers": [],
   "warnings": [
@@ -14,15 +14,16 @@
   "notes": [
     "converted shortcodes: 1",
     "headingFixes during sync: 3",
-    "built body chars≈861"
+    "built body chars≈854"
   ],
   "contentHashes": {
-    "sourceSha256": "4d4cd523a57c206d57ae528d1117fee8fdc98efd822af405d05efd43a6962ff1",
-    "distSha256": "a48de2ca6858362018458afdb71f5095bc7083741943f794cb705f0bc47cead9",
-    "hashedAt": "2026-08-02T10:50:31.184Z"
+    "sourceSha256": "1edca8224a34db02c4c1970b44b4921ff88fa76445e066eee4a266a76c501d8f",
+    "distSha256": "28751dcf4e3dd0321c99e6d63a231771d221fab6be50970814f10ebb74df6cb1",
+    "hashedAt": "2026-08-14T01:52:37.139Z"
   },
+  "reviewKind": "human",
   "verdict": "pass",
-  "reviewedAt": "2026-08-05T14:55:22.934Z",
+  "reviewedAt": "2026-08-14T01:52:37.139Z",
   "reviewer": "owner-final-accept",
   "checklist": {
     "sourceFormatOk": true,
@@ -39,8 +40,7 @@
     "noted: dist HTML missing — run build before final gate",
     "auto-noted: heading level skips: 1→3",
     "auto-noted: body contains 3 h1 heading(s) (page title is separate)",
-    "spot-verify: source/dist hash, canonical, no residual shortcodes/legacy archives, article markers",
-    "Owner accepted Stage 8 human Final complete on 2026-08-05 after Stage 9 staging deploy acceptance (new.andy-y.cn)."
-  ],
-  "reviewKind": "human"
+    "Owner accepted Stage 8 human Final complete on 2026-08-05 after Stage 9 staging deploy acceptance (new.andy-y.cn).",
+    "spot-verify: source/dist hash, canonical, no residual shortcodes/legacy archives, article markers"
+  ]
 }

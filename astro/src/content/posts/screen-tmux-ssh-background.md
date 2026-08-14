@@ -22,6 +22,7 @@ categories:
     slug: mnt
 tags: []
 sourceFormat: markdown
+description: 在我们使用ssh的时候正常情况下，如果我们退出ssh，进程会被杀掉，导致一些需要运行较长时间（比如 rsync/cp ）的命令中断，十分的难受，这里提供两种解决办法：
 cover: https://tc.andy-y.cn/i/2026/06/11/6a2aacad947b2.png
 ---
 

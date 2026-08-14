@@ -30,6 +30,8 @@ export type MetaRoute = {
   sourceSlug: string;
   legacyPaths?: string[];
   state: string;
+  count?: number;
+  discoverable?: boolean;
 };
 
 export function loadMetaRouteMap(): Record<string, MetaRoute> {

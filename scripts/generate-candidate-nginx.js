@@ -147,6 +147,14 @@ ${stagingAction}
     add_header X-Robots-Tag "noindex, nofollow, noarchive" always;
   }
 
+  error_page 404 /404.html;
+  location = /404.html {
+    internal;
+    try_files /404.html =500;
+    add_header Cache-Control "no-store" always;
+    add_header X-Robots-Tag "noindex, nofollow, noarchive" always;
+  }
+
   location / {
     try_files $uri $uri/index.html =404;
     add_header Cache-Control "public, max-age=0, s-maxage=600, must-revalidate" always;

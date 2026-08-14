@@ -2,6 +2,7 @@ import { createHash, createHmac } from 'node:crypto';
 
 export const CDN_PURGE_SITE = 'https://www.andy-y.cn';
 export const CDN_PURGE_SCHEMA_VERSION = 1;
+export const CDN_PREHEAT_SCHEMA_VERSION = 1;
 
 const FIXED_PATHS = [
   '/',
@@ -64,6 +65,15 @@ function planDigestPayload(plan) {
   });
 }
 
+function preheatPlanDigestPayload(plan) {
+  return JSON.stringify({
+    schemaVersion: plan.schemaVersion,
+    releaseId: plan.releaseId,
+    site: plan.site,
+    urls: plan.urls,
+  });
+}
+
 export function createPurgePlan({ releaseId, legacy, site = CDN_PURGE_SITE }) {
   if (!/^[0-9]{8}T[0-9]{6}Z-[0-9a-f]{8}$/.test(releaseId ?? '')) {
     throw new Error(`invalid release id: ${releaseId}`);
@@ -95,6 +105,53 @@ export function verifyPurgePlan(plan, expectedReleaseId) {
   }
   const digest = sha256Hex(planDigestPayload(plan));
   if (digest !== plan.sha256) throw new Error('purge plan digest mismatch');
+  return plan;
+}
+
+export function createPreheatPlan({ releaseId, urls, site = CDN_PURGE_SITE }) {
+  if (!/^[0-9]{8}T[0-9]{6}Z-[0-9a-f]{8}$/.test(releaseId ?? '')) {
+    throw new Error(`invalid release id: ${releaseId}`);
+  }
+  if (!Array.isArray(urls) || urls.length === 0) throw new Error('preheat URL list is empty');
+  const normalized = [...new Set(urls.map((value) => exactSiteUrl(value, site)))].sort();
+  const plan = {
+    schemaVersion: CDN_PREHEAT_SCHEMA_VERSION,
+    releaseId,
+    site,
+    urls: normalized,
+  };
+  plan.sha256 = sha256Hex(preheatPlanDigestPayload(plan));
+  return plan;
+}
+
+export function verifyPreheatPlan(plan, expectedReleaseId) {
+  if (!plan || plan.schemaVersion !== CDN_PREHEAT_SCHEMA_VERSION) throw new Error('unsupported preheat plan schema');
+  if (plan.releaseId !== expectedReleaseId) throw new Error('preheat plan release mismatch');
+  if (plan.site !== CDN_PURGE_SITE) throw new Error(`unexpected preheat site: ${plan.site}`);
+  if (!Array.isArray(plan.urls) || plan.urls.length === 0 || plan.urls.length > 1000) {
+    throw new Error(`invalid preheat URL count: ${plan.urls?.length}`);
+  }
+  if (new Set(plan.urls).size !== plan.urls.length) throw new Error('duplicate preheat URLs');
+  if ([...plan.urls].sort().some((url, index) => url !== plan.urls[index])) throw new Error('preheat URLs are not sorted');
+  for (const value of plan.urls) {
+    const url = new URL(value);
+    if (
+      url.protocol !== 'https:'
+      || url.hostname !== 'www.andy-y.cn'
+      || url.username
+      || url.password
+      || url.hash
+      || url.search
+      || url.pathname === '/__release'
+      || url.pathname.startsWith('/api/')
+      || url.pathname.startsWith('/admin/')
+      || url.pathname.startsWith('/ui/')
+    ) {
+      throw new Error(`preheat URL is not a canonical public object: ${value}`);
+    }
+  }
+  const digest = sha256Hex(preheatPlanDigestPayload(plan));
+  if (digest !== plan.sha256) throw new Error('preheat plan digest mismatch');
   return plan;
 }
 
@@ -183,11 +240,65 @@ export function createAliyunRefreshRequest({ urls, accessKeyId, accessKeySecret,
   });
 }
 
+export function createAliyunPreheatRequest({ urls, accessKeyId, accessKeySecret, date, nonce, securityToken }) {
+  if (!Array.isArray(urls) || urls.length === 0 || urls.length > 100) throw new Error('Aliyun preheat batch must contain 1..100 URLs');
+  const body = `ObjectPath=${encodeRfc3986(urls.join('\n'))}`;
+  return createAliyunV3SignedRequest({
+    accessKeyId,
+    accessKeySecret,
+    endpoint: 'cdn.aliyuncs.com',
+    action: 'PushObjectCache',
+    version: '2018-05-10',
+    body,
+    contentType: 'application/x-www-form-urlencoded',
+    date,
+    nonce,
+    securityToken,
+  });
+}
+
+export function createAliyunQuotaRequest({ accessKeyId, accessKeySecret, date, nonce, securityToken }) {
+  return createAliyunV3SignedRequest({
+    accessKeyId,
+    accessKeySecret,
+    endpoint: 'cdn.aliyuncs.com',
+    action: 'DescribeRefreshQuota',
+    version: '2018-05-10',
+    date,
+    nonce,
+    securityToken,
+  });
+}
+
 export function parseAliyunRefreshResponse(status, payload) {
   if (status < 200 || status >= 300 || !payload || typeof payload.RefreshTaskId !== 'string' || typeof payload.RequestId !== 'string') {
     throw new Error(`Aliyun purge rejected (HTTP ${status}, code=${String(payload?.Code ?? 'invalid-response')})`);
   }
   return { taskId: payload.RefreshTaskId, requestId: payload.RequestId };
+}
+
+export function parseAliyunPreheatResponse(status, payload) {
+  if (status < 200 || status >= 300 || !payload || typeof payload.PushTaskId !== 'string' || typeof payload.RequestId !== 'string') {
+    throw new Error(`Aliyun preheat rejected (HTTP ${status}, code=${String(payload?.Code ?? 'invalid-response')})`);
+  }
+  return { taskId: payload.PushTaskId, requestId: payload.RequestId };
+}
+
+export function parseAliyunQuotaResponse(status, payload) {
+  const urlRemain = Number(payload?.UrlRemain);
+  const preloadRemain = Number(payload?.PreloadRemain);
+  if (
+    status < 200
+    || status >= 300
+    || typeof payload?.RequestId !== 'string'
+    || !Number.isInteger(urlRemain)
+    || urlRemain < 0
+    || !Number.isInteger(preloadRemain)
+    || preloadRemain < 0
+  ) {
+    throw new Error(`Aliyun quota query rejected (HTTP ${status}, code=${String(payload?.Code ?? 'invalid-response')})`);
+  }
+  return { urlRemain, preloadRemain, requestId: payload.RequestId };
 }
 
 export function createCloudflarePurgeRequest({ zoneId, apiToken, urls }) {

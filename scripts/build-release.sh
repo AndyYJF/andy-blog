@@ -38,6 +38,8 @@ trap cleanup_building EXIT
 cd /app
 
 # Monorepo layout: /app is the repo root (not just astro/).
+node --test scripts/cleanup-old-releases.test.js
+node --test scripts/joe-task-markers.test.js
 node scripts/sync-typecho.js
 node scripts/build-legacy-url-map.js
 node scripts/generate-nginx.js --status "$REDIRECT_STATUS"
@@ -52,6 +54,10 @@ node scripts/finalize-manifest.js \
 # must never replay it against production Waline.
 
 npm --prefix astro run build
+node scripts/generate-cdn-preheat-plan.js \
+  --release-id "$RELEASE_ID" \
+  --site-dir astro/dist \
+  --out .cache/cdn-preheat-plan.json
 node scripts/render-gate.js
 node scripts/rss-gate.js
 # Observation gate asserts 302; skip when flipping to permanent 301.
@@ -70,6 +76,7 @@ cp .cache/manifest.json "$STAGE/manifest.json"
 cp .cache/comment-policy.json "$STAGE/comment-policy.json"
 cp .cache/comment-policy.staging.json "$STAGE/comment-policy.staging.json"
 cp .cache/cdn-purge-plan.json "$STAGE/cdn-purge-plan.json"
+cp .cache/cdn-preheat-plan.json "$STAGE/cdn-preheat-plan.json"
 printf '%s\n' "$RELEASE_ID" > "$STAGE/site/release-id.txt"
 
 if find "$STAGE" ! -type f ! -type d -print -quit | grep -q .; then

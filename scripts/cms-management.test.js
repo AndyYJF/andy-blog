@@ -53,23 +53,42 @@ test('automatic publishing preserves current production transition state', () =>
   assert.match(rebuild, /compose\.1panel-cms\.yml/);
   assert.match(rebuild, /builder bash \/app\/scripts\/build-release\.sh/);
   assert.match(rebuild, /rearm/);
+  assert.match(rebuild, /runtime\/cdn/);
+  assert.match(rebuild, /CDN_QUEUE_TEMP/);
+  assert.match(rebuild, /warning: release switched but Aliyun CDN enqueue failed/);
+  assert.match(rebuild, /cleanup-old-releases\.js/);
+  assert.match(rebuild, /RELEASE_RETENTION_COUNT:-3/);
+  assert.match(rebuild, /warning: release .* is live, but old release cleanup was refused or failed/);
+  assert.equal(
+    rebuild.indexOf('cleanup-old-releases.js') > rebuild.indexOf('mv -f "$JOB_FILE"'),
+    true,
+    'cleanup must run only after the successful switch, CDN enqueue attempt, and job archival',
+  );
   assert.match(switcher, /sha256sum -c/);
   assert.match(switcher, /cmp -s .*release-http\.conf/);
   assert.doesNotMatch(`${rebuild}\n${switcher}`, /cdn-purge|nginx -s reload|return 301/);
   assert.doesNotMatch(releaseBuild, /node scripts\/migrate-comments/);
-  const executableModes = execFileSync('git', [
-    'ls-files', '--stage', '--',
+  assert.match(releaseBuild, /generate-cdn-preheat-plan\.js/);
+  assert.match(releaseBuild, /cleanup-old-releases\.test\.js/);
+  const executableFiles = [
     'host/blog-rebuild-1panel.sh',
     'host/switch-release-1panel.sh',
-  ], { cwd: ROOT, encoding: 'utf8' });
-  assert.equal(executableModes.trim().split('\n').every((line) => line.startsWith('100755 ')), true);
-  for (const file of [
-    'host/blog-rebuild-1panel.sh',
-    'host/switch-release-1panel.sh',
-    'scripts/build-release.sh',
-  ]) {
-    const indexed = execFileSync('git', ['show', `:${file}`], { cwd: ROOT });
-    assert.equal(indexed.includes(13), false, `${file} must use LF in the Git index`);
+  ];
+  if (fs.existsSync(path.join(ROOT, '.git'))) {
+    const executableModes = execFileSync('git', [
+      'ls-files', '--stage', '--', ...executableFiles,
+    ], { cwd: ROOT, encoding: 'utf8' });
+    assert.equal(executableModes.trim().split('\n').every((line) => line.startsWith('100755 ')), true);
+  } else {
+    for (const file of executableFiles) {
+      assert.notEqual(fs.statSync(path.join(ROOT, file)).mode & 0o111, 0, `${file} must be executable`);
+    }
+  }
+  for (const file of [...executableFiles, 'scripts/build-release.sh']) {
+    const bytes = fs.existsSync(path.join(ROOT, '.git'))
+      ? execFileSync('git', ['show', `:${file}`], { cwd: ROOT })
+      : fs.readFileSync(path.join(ROOT, file));
+    assert.equal(bytes.includes(13), false, `${file} must use LF`);
   }
 });
 

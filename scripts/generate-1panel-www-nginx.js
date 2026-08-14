@@ -15,7 +15,7 @@ const arg = (name) => {
 const input = path.resolve(ROOT, arg('--input') || '.cache/stage10-nginx/www-cutover-http.conf');
 const output = path.resolve(ROOT, arg('--out') || '.cache/stage10-nginx/www.andy-y.cn.conf');
 const siteRoot = arg('--site-root') || '/www/sites/www.andy-y.cn/deploy/current/site';
-const uploadsAlias = arg('--uploads-alias') || '/opt/1panel/apps/typecho/typecho/usr/uploads/';
+const uploadsAlias = arg('--uploads-alias') || '/opt/1panel/apps/typecho/typecho/data/usr/uploads/';
 const certDir = arg('--cert-dir') || '/www/sites/www.andy-y.cn/ssl';
 const walineUpstream = arg('--waline-upstream') || '127.0.0.1:8360';
 
@@ -47,8 +47,13 @@ if (!config.includes(`root ${siteRoot};`)) throw new Error('site root not adapte
 if (config.includes('proxy_pass http://waline:8360') || config.includes('/etc/letsencrypt/live/andy-y.cn')) {
   throw new Error('unadapted production references remain');
 }
-if (config.includes('X-Robots-Tag "noindex')) {
-  throw new Error('production www must not carry staging noindex');
+const noindexHeaders = config.match(/add_header X-Robots-Tag "noindex[^"\r\n]*" always;/g) || [];
+if (
+  noindexHeaders.length !== 1
+  || noindexHeaders[0] !== 'add_header X-Robots-Tag "noindex, follow" always;'
+  || !config.includes('error_page 404 /404.html;')
+) {
+  throw new Error('production www may carry only the exact custom-404 noindex header');
 }
 
 fs.mkdirSync(path.dirname(output), { recursive: true });

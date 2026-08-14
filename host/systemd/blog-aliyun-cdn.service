@@ -1,0 +1,24 @@
+[Unit]
+Description=Submit current Andy blog release to Aliyun CDN
+After=network-online.target
+Wants=network-online.target
+StartLimitIntervalSec=0
+
+[Service]
+Type=oneshot
+User=root
+Group=root
+Environment=WWW_ROOT=/opt/1panel/www/sites/www.andy-y.cn/deploy
+Environment=COMPOSE_DIR=/var/www/andy-blog
+Environment=CDN_RUNTIME_DIR=/var/www/andy-blog/runtime/cdn
+Environment=STATE_DIR=/opt/1panel/www/sites/www.andy-y.cn/deploy/state
+EnvironmentFile=/etc/andy-blog/aliyun-cdn.env
+WorkingDirectory=/var/www/andy-blog
+ExecStart=/var/www/andy-blog/host/aliyun-cdn-release.sh
+TimeoutStartSec=2min
+Restart=on-failure
+RestartSec=15min
+Nice=5
+
+[Install]
+WantedBy=multi-user.target

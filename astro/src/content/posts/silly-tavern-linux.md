@@ -22,6 +22,7 @@ categories:
     slug: AI
 tags: []
 sourceFormat: markdown
+description: Silly Tavern Chat（云酒馆） 是一个强大的AI Role Play网站，依赖于庞大的社区资源，可以实现多样化的角色互动。 支持国内外多种AI模型，有着比较直观 但一点也不好看 的用户界面。…
 cover: https://tc.andy-y.cn/i/2026/06/11/6a2aadf75150e.png
 ---
 
@@ -36,11 +37,11 @@ cover: https://tc.andy-y.cn/i/2026/06/11/6a2aadf75150e.png
 Silly Tavern Chat（云酒馆） 是一个强大的AI Role Play网站，依赖于庞大的社区资源，可以实现多样化的角色互动。 支持国内外多种AI模型，有着比较直观 ~~但一点也不好看~~ 的用户界面。
 其实酒馆ai可以直接部署在很多设备上（安卓，Windows），但是不便于多端同步等等，将酒馆部署在云端可以使用WebUI方便的使用任何设备访问酒馆。下面是从0开始的云端Silly Tavern部署教程。
 ## 前期准备
-{x} 一台至少1核2G的云服务器（推荐JP区域）
-{x} 本地SSH工具（我使用的是termius）
-{x} 一点点linux基本使用技巧
-{x} 已对Silly Tavern有一定了解
-{x} 最好加入了[类脑ΟΔΥΣΣΕΙΑ](https://discord.gg/odysseia)社区，截至2026/03/12仍然是开放状态
+- [x] 一台至少1核2G的云服务器（推荐JP区域）
+- [x] 本地SSH工具（我使用的是termius）
+- [x] 一点点linux基本使用技巧
+- [x] 已对Silly Tavern有一定了解
+- [x] 最好加入了[类脑ΟΔΥΣΣΕΙΑ](https://discord.gg/odysseia)社区，截至2026/03/12仍然是开放状态
 # 开始部署
 ## 0.SSH的连接
 #### 0.1打开Termius（这里以电脑版举例）
@@ -123,7 +124,7 @@ docker compose restart sillytavern
 #### 6.3文生图插件
 这是[项目地址](https://github.com/shaochami/chami_tavern-scene-plugin.git)
 ### 7.域名反代
- { } 待完成
+ - [ ] 待完成
 
 
 

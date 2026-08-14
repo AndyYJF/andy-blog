@@ -12,6 +12,13 @@ import slugify from 'slugify';
 import { convertShortcodes } from './lib/shortcodes.js';
 import { normalizeHeadings } from './lib/headings.js';
 import { remapFenceLangs } from './lib/fence-langs.js';
+import { normalizeJoeTaskMarkers } from './lib/joe-task-markers.js';
+import {
+  deriveDescription,
+  isDiscoverableMeta,
+  normalizeMetaName,
+  repairKnownContent,
+} from './lib/content-presentation.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..');
@@ -206,7 +213,7 @@ function relationsFor(cid, relations) {
   for (const r of relations.filter((x) => Number(x.cid) === Number(cid))) {
     const meta = {
       mid: Number(r.mid),
-      name: r.name,
+      name: normalizeMetaName(r.name, r.mid),
       slug: r.slug,
     };
     if (r.type === 'category') cats.push({ ...meta, order: Number(r.order) });
@@ -228,6 +235,19 @@ function coverFor(cid, fields) {
 }
 
 function buildMarkdown(item, route, rels, cover) {
+  let body = stripMarkdownMarker(item.text).replace(/\r\n/g, '\n');
+  const sourceFormat = detectFormat(item.text);
+  const repaired = repairKnownContent(item, body);
+  body = repaired.text;
+  const joeTasks = normalizeJoeTaskMarkers(body, { sourceFormat });
+  body = joeTasks.text;
+  const headings = normalizeHeadings(body);
+  body = headings.text;
+  const converted = convertShortcodes(body, item.cid);
+  body = converted.text;
+  const fences = remapFenceLangs(body);
+  body = fences.text;
+
   const fm = {
     slug: route.routeId,
     kind: item.type,
@@ -242,17 +262,10 @@ function buildMarkdown(item, route, rels, cover) {
     updatedDate: isoFromUnix(item.modified),
     categories: rels.categories,
     tags: rels.tags,
-    sourceFormat: detectFormat(item.text),
+    sourceFormat,
   };
+  if (item.type === 'post') fm.description = deriveDescription(body);
   if (cover) fm.cover = cover;
-
-  let body = stripMarkdownMarker(item.text).replace(/\r\n/g, '\n');
-  const headings = normalizeHeadings(body);
-  body = headings.text;
-  const converted = convertShortcodes(body, item.cid);
-  body = converted.text;
-  const fences = remapFenceLangs(body);
-  body = fences.text;
 
   const dumped = yaml.dump(fm, {
     lineWidth: -1,
@@ -264,6 +277,8 @@ function buildMarkdown(item, route, rels, cover) {
     shortcodeHits: converted.hits,
     headingFixes: headings.count,
     fenceRemaps: fences.remaps,
+    contentRepairs: repaired.count,
+    joeTaskMarkers: joeTasks.count,
   };
 }
 
@@ -306,6 +321,8 @@ async function main() {
     localUploadRefs: [],
     headingFixes: [],
     fenceRemaps: [],
+    contentRepairs: [],
+    joeTaskMarkers: [],
   };
 
   for (const item of pubs.sort((a, b) => a.cid - b.cid)) {
@@ -317,7 +334,7 @@ async function main() {
 
     const rels = relationsFor(item.cid, snapshot.relations);
     const cover = coverFor(item.cid, snapshot.fields);
-    const { markdown: md, shortcodeHits, headingFixes, fenceRemaps } = buildMarkdown(item, route, rels, cover);
+    const { markdown: md, shortcodeHits, headingFixes, fenceRemaps, contentRepairs, joeTaskMarkers } = buildMarkdown(item, route, rels, cover);
     const outName = `${route.routeId}.md`;
     const outDir = item.type === 'post' ? postsDir : pagesDir;
     await atomicWriteText(path.join(outDir, outName), md);
@@ -327,6 +344,8 @@ async function main() {
     if (shortcodeHits.length) reports.shortcodeHints.push({ cid: item.cid, hits: shortcodeHits });
     if (headingFixes > 0) reports.headingFixes.push({ cid: item.cid, count: headingFixes });
     if (fenceRemaps.length) reports.fenceRemaps.push({ cid: item.cid, remaps: fenceRemaps });
+    if (contentRepairs > 0) reports.contentRepairs.push({ cid: item.cid, count: contentRepairs });
+    if (joeTaskMarkers > 0) reports.joeTaskMarkers.push({ cid: item.cid, count: joeTaskMarkers });
 
     entries.push({
       cid: Number(item.cid),
@@ -352,8 +371,20 @@ async function main() {
     const key = String(meta.mid);
     const entry = metaMap[key];
     if (!entry || entry.state !== 'active') continue;
-    entry.name = meta.name;
+    entry.name = normalizeMetaName(meta.name, meta.mid);
     entry.sourceSlug = meta.slug;
+  }
+
+  for (const [midStr, meta] of Object.entries(metaMap)) {
+    if (meta.state !== 'active') continue;
+    const mid = Number(midStr);
+    const count = entries.filter((entry) => {
+      if (entry.kind !== 'post') return false;
+      const bag = meta.type === 'category' ? entry.categoryMids : entry.tagMids;
+      return bag.includes(mid);
+    }).length;
+    meta.count = count;
+    meta.discoverable = isDiscoverableMeta(meta, count, mid);
   }
   await atomicWriteJson(META_ROUTE_MAP_PATH, metaMap);
 
@@ -372,7 +403,8 @@ async function main() {
     sitemapLastmod['/archive/'] = latestPost.updatedDate;
   }
 
-  // Home pagination lastmod (pub-date order mirrors astro/src/lib/posts.ts)
+  // Article index pagination lastmod (pub-date order mirrors astro/src/lib/posts.ts).
+  // Page one lives at /posts/; /page/<n>/ remains the compatibility route for n >= 2.
   const pubByCid = new Map(pubs.map((p) => [Number(p.cid), Number(p.created)]));
   const postsSorted = [...entries]
     .filter((e) => e.kind === 'post')
@@ -389,7 +421,7 @@ async function main() {
       .sort()
       .at(-1);
     if (!maxUpdated) continue;
-    if (n === 1) sitemapLastmod['/'] = maxUpdated;
+    if (n === 1) sitemapLastmod['/posts/'] = maxUpdated;
     else sitemapLastmod[`/page/${n}/`] = maxUpdated;
   }
 
@@ -406,15 +438,20 @@ async function main() {
       .map((e) => e.updatedDate)
       .sort()
       .at(-1);
-    sitemapLastmod[meta.canonicalPath] = maxUpdated ?? latestPost?.updatedDate ?? new Date(0).toISOString();
+    if (meta.discoverable && maxUpdated) sitemapLastmod[meta.canonicalPath] = maxUpdated;
   }
+
+  const sitemapExclude = Object.values(metaMap)
+    .filter((meta) => meta.state === 'active' && meta.discoverable === false)
+    .map((meta) => meta.canonicalPath)
+    .sort();
 
   const manifest = {
     snapshotEpoch: epoch,
     source: snapshot.source,
     entries: entries.sort((a, b) => a.cid - b.cid),
     sitemapLastmod,
-    sitemapExclude: [],
+    sitemapExclude,
   };
 
   // Deterministic normalized digest (exclude run metadata)
@@ -425,6 +462,11 @@ async function main() {
     routeMapActive: Object.fromEntries(
       Object.entries(routeMap)
         .filter(([, v]) => v.state === 'active')
+        .sort(([a], [b]) => Number(a) - Number(b)),
+    ),
+    metaRouteMapActive: Object.fromEntries(
+      Object.entries(metaMap)
+        .filter(([, value]) => value.state === 'active')
         .sort(([a], [b]) => Number(a) - Number(b)),
     ),
   };

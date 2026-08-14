@@ -19,6 +19,7 @@ categories:
     slug: AI
 tags: []
 sourceFormat: markdown
+description: 这个博客上的封面是怎么来的？ 其实是用 GPT-Image-2生成的 随手让它写了个prompt可以保持创作风格：
 cover: https://tc.andy-y.cn/i/2026/06/11/6a2ab34dbcb2c.png
 ---
 

@@ -22,6 +22,7 @@ categories:
     slug: cyber_safety
 tags: []
 sourceFormat: markdown
+description: 本文隐去了真实主机名、域名与 IP，但保留了完整的攻击 payload 与处置命令，方便复现与自查。
 cover: https://tc.andy-y.cn/i/2026/07/02/6a460345cf5a5.png
 ---
 
@@ -222,11 +223,11 @@ curl -s 'http://127.0.0.1:8000/traceroute?q=-F+/etc/shadow+8.8.8.8'
 
 ## 收尾清单
 
--  {x}  四台节点升级到 v1.4.7，保留回滚二进制/compose
--  {x}  用原始 payload 经公网前端重放验证，四台 `/etc/shadow` 零泄露
--  {x}  轮换全部 root 密码（≥16 位混合）
--  {x}  审计 `authorized_keys` 指纹、cron、常驻进程——无异常
--  {x}  核查登录历史——无陌生 IP 成功登录
+- [x] 四台节点升级到 v1.4.7，保留回滚二进制/compose
+- [x] 用原始 payload 经公网前端重放验证，四台 `/etc/shadow` 零泄露
+- [x] 轮换全部 root 密码（≥16 位混合）
+- [x] 审计 `authorized_keys` 指纹、cron、常驻进程——无异常
+- [x] 核查登录历史——无陌生 IP 成功登录
 
 ## 几点反思
 

@@ -23,6 +23,7 @@
 
 - docker compose base config skipped: spawnSync docker ENOENT
 - docker compose staging config skipped: spawnSync docker ENOENT
+- SKIP_LIGHTHOUSE=1 — lighthouse autorun skipped
 - dual-CDN live probe skipped (set SKIP_CDN_PROBE=0 to run against www)
 
 ## Failures

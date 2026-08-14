@@ -4,7 +4,6 @@
   "/archive/": "2026-07-12T11:00:32.000Z",
   "/category/ai/": "2026-07-02T07:35:11.000Z",
   "/category/cyber-safety/": "2026-07-02T07:39:06.000Z",
-  "/category/default/": "2026-07-02T07:39:06.000Z",
   "/category/dn42/": "2026-07-12T11:00:32.000Z",
   "/category/mnt/": "2026-07-02T07:35:43.000Z",
   "/category/nas/": "2026-07-02T07:35:43.000Z",
@@ -13,6 +12,7 @@
   "/dn42/": "2026-06-11T12:59:48.000Z",
   "/friends/": "2025-06-23T12:48:16.000Z",
   "/page/2/": "2026-07-02T07:35:43.000Z",
+  "/posts/": "2026-07-12T11:00:32.000Z",
   "/posts/asterisk-telephony42/": "2026-07-12T11:00:32.000Z",
   "/posts/blog-cover-origin/": "2026-07-02T07:33:40.000Z",
   "/posts/grafana-bird-status/": "2026-07-02T07:34:48.000Z",
@@ -24,10 +24,5 @@
   "/posts/screen-tmux-ssh-background/": "2026-07-02T07:34:07.000Z",
   "/posts/silly-tavern-linux/": "2026-07-02T07:34:15.000Z",
   "/posts/stable-diffusion-notes-p1/": "2026-07-02T07:33:32.000Z",
-  "/posts/typecho-joe-mermaid/": "2026-07-02T07:34:00.000Z",
-  "/tag/app/": "2026-07-12T11:00:32.000Z",
-  "/tag/argue/": "2026-07-12T11:00:32.000Z",
-  "/tag/fen-x/": "2026-07-12T11:00:32.000Z",
-  "/tag/music/": "2026-07-12T11:00:32.000Z",
-  "/tag/tec/": "2026-07-12T11:00:32.000Z"
+  "/posts/typecho-joe-mermaid/": "2026-07-02T07:34:00.000Z"
 }

@@ -4,7 +4,7 @@
   "kind": "post",
   "title": "搭建Grafana监测Bird运行状态",
   "canonicalPath": "/posts/grafana-bird-status/",
-  "snapshotEpoch": 1785565762,
+  "snapshotEpoch": 1786604456,
   "auditStatus": "warn",
   "blockers": [],
   "warnings": [
@@ -14,15 +14,16 @@
   "notes": [
     "converted shortcodes: 1",
     "headingFixes during sync: 18",
-    "built body chars≈24858"
+    "built body chars≈24851"
   ],
   "contentHashes": {
-    "sourceSha256": "34c114fbd543ae8fae489a7c857c0284583ab016b886b9dc456e0f4849c57a1e",
-    "distSha256": "27ca962289ce5ce9d2cdfeb152df7c4f082bd761234e25ad25eb1a7ddf7b845c",
-    "hashedAt": "2026-08-02T10:50:31.184Z"
+    "sourceSha256": "012d31035aa3e77499e3e571af48cb1fe9a90cd17d11260c58f1c69bbfbf63b2",
+    "distSha256": "bee8467beecf6716ccbfa137de1d116df463c6a78c5577399ae0b2df782df9e5",
+    "hashedAt": "2026-08-14T01:52:37.139Z"
   },
+  "reviewKind": "human",
   "verdict": "pass",
-  "reviewedAt": "2026-08-05T14:55:22.934Z",
+  "reviewedAt": "2026-08-14T01:52:37.139Z",
   "reviewer": "owner-final-accept",
   "checklist": {
     "sourceFormatOk": true,
@@ -39,8 +40,7 @@
     "noted: dist HTML missing — run build before final gate",
     "auto-noted: heading level skips: 2→4",
     "auto-noted: body contains 2 h1 heading(s) (page title is separate)",
-    "spot-verify: source/dist hash, canonical, no residual shortcodes/legacy archives, article markers",
-    "Owner accepted Stage 8 human Final complete on 2026-08-05 after Stage 9 staging deploy acceptance (new.andy-y.cn)."
-  ],
-  "reviewKind": "human"
+    "Owner accepted Stage 8 human Final complete on 2026-08-05 after Stage 9 staging deploy acceptance (new.andy-y.cn).",
+    "spot-verify: source/dist hash, canonical, no residual shortcodes/legacy archives, article markers"
+  ]
 }

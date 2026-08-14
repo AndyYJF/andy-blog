@@ -4,23 +4,24 @@
   "kind": "post",
   "title": "Typecho + JOE 主题下 Mermaid 渲染的解决方案",
   "canonicalPath": "/posts/typecho-joe-mermaid/",
-  "snapshotEpoch": 1785565762,
+  "snapshotEpoch": 1786604456,
   "auditStatus": "pass",
   "blockers": [],
   "warnings": [],
   "notes": [
     "converted shortcodes: 1",
     "headingFixes during sync: 1",
-    "built body chars≈9061"
+    "built body chars≈9054"
   ],
   "contentHashes": {
-    "sourceSha256": "b132fefd6942449656f9ef7173e2070d7567ff360accbb6d7026f2cb193e6494",
-    "distSha256": "05a79dd021ea509052a51dd508b7f9dc379e2e4f877d64205ff0d49eb2d39759",
-    "hashedAt": "2026-08-09T10:13:03.420Z"
+    "sourceSha256": "6f6628d08722c6dcb0513f3fc4e231891098b5dccdb7d58ed40f21129cb5719a",
+    "distSha256": "895a59d8f51a42ab84108d514098385e5afce09e391ba831db5e67c6bfc9d18c",
+    "hashedAt": "2026-08-14T01:52:37.139Z"
   },
+  "reviewKind": "human",
   "verdict": "pass",
-  "reviewedAt": "2026-08-05T14:55:22.934Z",
-  "reviewer": "owner-final-accept",
+  "reviewedAt": "2026-08-14T01:52:37.139Z",
+  "reviewer": "owner-latest-content-authority",
   "checklist": {
     "sourceFormatOk": true,
     "tablesListsOk": true,
@@ -32,8 +33,8 @@
   },
   "manualNotes": [
     "noted: dist HTML missing — run build before final gate",
-    "spot-verify: source/dist hash, canonical, no residual shortcodes/legacy archives, article markers",
-    "Owner accepted Stage 8 human Final complete on 2026-08-05 after Stage 9 staging deploy acceptance (new.andy-y.cn)."
-  ],
-  "reviewKind": "human"
+    "Owner accepted Stage 8 human Final complete on 2026-08-05 after Stage 9 staging deploy acceptance (new.andy-y.cn).",
+    "Owner instructed on 2026-08-12 that the latest synchronized article state prevails. The production Typecho snapshot 1786531586 changed allowComment=true→false; normalized article body is unchanged.",
+    "spot-verify: source/dist hash, canonical, no residual shortcodes/legacy archives, article markers"
+  ]
 }

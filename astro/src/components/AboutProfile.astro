@@ -1,0 +1,38 @@
+---
+import { profile } from '../data/profile';
+---
+<div class="about-profile">
+  <p class="about-lead">{profile.role}。</p>
+  <p>
+    这里既是个人介绍，也是这本技术账本的索引。网络实验、自托管服务和故障复盘会持续整理成可以复现的记录。
+  </p>
+
+  <section class="about-section" aria-labelledby="about-focus-title">
+    <header class="about-section-heading">
+      <p class="profile-kicker">FOCUS</p>
+      <h2 id="about-focus-title">目前在做什么</h2>
+    </header>
+    <ul class="about-focus-list">
+      {profile.focus.map((item) => (
+        <li>
+          <h3>{item.title}</h3>
+          <p>{item.description}</p>
+        </li>
+      ))}
+    </ul>
+</section>
+  <section class="about-section" aria-labelledby="about-site-title">
+    <header class="about-section-heading">
+      <p class="profile-kicker">THIS SITE</p>
+      <h2 id="about-site-title">这个站点</h2>
+    </header>
+    <p>
+      页面由 Astro 静态生成，文章仍以 Typecho 为内容来源，并通过 Pagefind 提供按需加载的站内搜索。
+    </p>
+    <p class="about-actions">
+      <a href="/posts/">浏览文章</a>
+      <a href="/dn42/">查看 DN42 网络</a>
+      <a href={`mailto:${profile.email}`}>通过邮件联系</a>
+    </p>
+  </section>
+</div>

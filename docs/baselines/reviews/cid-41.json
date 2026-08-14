@@ -4,7 +4,7 @@
   "kind": "post",
   "title": "使用screen/tmux命令实现SSH中任务后台运行",
   "canonicalPath": "/posts/screen-tmux-ssh-background/",
-  "snapshotEpoch": 1785565762,
+  "snapshotEpoch": 1786604456,
   "auditStatus": "warn",
   "blockers": [],
   "warnings": [
@@ -12,15 +12,16 @@
   ],
   "notes": [
     "headingFixes during sync: 10",
-    "built body chars≈526"
+    "built body chars≈519"
   ],
   "contentHashes": {
-    "sourceSha256": "c96f5cb92ab38453e45c29d8f283268aed9621c76541a09b25c17394ed7384c5",
-    "distSha256": "2b42d6e5eedf3a4fd6f6154719a32acfd4d2cd9fc5d88b74af1a8116fdbe4b3a",
-    "hashedAt": "2026-08-02T10:50:31.184Z"
+    "sourceSha256": "e2b253d8a3e12a76215d5b8c56dc7f28e4e6f00b751d15f9f0738736dd323116",
+    "distSha256": "341e25c2615d211bc12e0811e1bf0a7a418d32aba99c2191b9a65f6b941902fe",
+    "hashedAt": "2026-08-14T01:52:37.139Z"
   },
+  "reviewKind": "human",
   "verdict": "pass",
-  "reviewedAt": "2026-08-05T14:55:22.934Z",
+  "reviewedAt": "2026-08-14T01:52:37.139Z",
   "reviewer": "owner-final-accept",
   "checklist": {
     "sourceFormatOk": true,
@@ -35,8 +36,7 @@
     "noted: heading level skips: 2→4",
     "noted: dist HTML missing — run build before final gate",
     "auto-noted: heading level skips: 2→4",
-    "spot-verify: source/dist hash, canonical, no residual shortcodes/legacy archives, article markers",
-    "Owner accepted Stage 8 human Final complete on 2026-08-05 after Stage 9 staging deploy acceptance (new.andy-y.cn)."
-  ],
-  "reviewKind": "human"
+    "Owner accepted Stage 8 human Final complete on 2026-08-05 after Stage 9 staging deploy acceptance (new.andy-y.cn).",
+    "spot-verify: source/dist hash, canonical, no residual shortcodes/legacy archives, article markers"
+  ]
 }

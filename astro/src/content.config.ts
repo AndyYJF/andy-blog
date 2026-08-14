@@ -22,6 +22,7 @@ const commonSchema = z.object({
   categories: z.array(meta).default([]),
   primaryCategoryMid: z.number().int().positive().optional(),
   tags: z.array(meta).default([]),
+  description: z.string().min(24).max(180).optional(),
   cover: z.string().optional(),
   sourceFormat: z.enum(['markdown', 'html']),
 });
@@ -29,7 +30,10 @@ const commonSchema = z.object({
 export const collections = {
   posts: defineCollection({
     loader: glob({ base: './src/content/posts', pattern: '**/*.md' }),
-    schema: commonSchema.extend({ kind: z.literal('post') }),
+    schema: commonSchema.extend({
+      kind: z.literal('post'),
+      description: z.string().min(24).max(180),
+    }),
   }),
   pages: defineCollection({
     loader: glob({ base: './src/content/pages', pattern: '**/*.md' }),

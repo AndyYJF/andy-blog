@@ -25,6 +25,7 @@ categories:
     slug: mnt
 tags: []
 sourceFormat: markdown
+description: 最近一直在捣鼓QQ机器人，目前后端比较有名的就是AstrBot和 MaiBot 项目，其中AstrBot注重功能性（有多样化的插件服务）而MaiBot注重LLMs聊天与拟人化，遂想要同时给我的机器人接入两个项目，而由于TX的风控，部署在云服务器上的NapCat容易被下号，而由于网络环境问题，MaiB…
 cover: https://tc.andy-y.cn/i/2026/06/11/6a2aaf9a001b3.png
 ---
 
@@ -51,9 +52,9 @@ graph LR
 
 # 部署#
 ## 前期准备##
- {x} 一台公网服务器（最好2c2g及以上配置）
- {x} 一台家宽网络下的Linux服务器
- {x} docker环境
+ - [x] 一台公网服务器（最好2c2g及以上配置）
+ - [x] 一台家宽网络下的Linux服务器
+ - [x] docker环境
 ## 开始部署##
 - 首先进入家里云ssh
 ```bash

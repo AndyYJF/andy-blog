@@ -3,13 +3,13 @@
   "chromePath": "C:\\Users\\AndyYan\\AppData\\Local\\ms-playwright\\chromium_headless_shell-1234\\chrome-headless-shell-win64\\chrome-headless-shell.exe",
   "scores": [
     {
-      "url": "http://127.0.0.1:4334/",
-      "performance": 1,
+      "url": "http://127.0.0.1:8685/",
+      "performance": 0.99,
       "seo": 1,
       "accessibility": 1
     },
     {
-      "url": "http://127.0.0.1:4334/posts/maibot-astrbot-napcat/",
+      "url": "http://127.0.0.1:8685/posts/maibot-astrbot-napcat/",
       "performance": 0.98,
       "seo": 1,
       "accessibility": 1

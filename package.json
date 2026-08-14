@@ -26,6 +26,7 @@
     "lighthouse:local": "node scripts/lighthouse-gate.js",
     "cdn:probe": "node scripts/probe-dual-cdn.js",
     "cdn:purge:test": "node --test scripts/cdn-purge.test.js",
+    "cdn:aliyun:test": "node --test scripts/aliyun-cdn-release.test.js",
     "mapping:repair:test": "node --test scripts/mapping-repair.test.js",
     "friends:extract": "python scripts/extract-joe-friends.py",
     "comments:migrate": "node scripts/migrate-comments.js --epoch 1785565762 --backend memory --twice",
@@ -33,7 +34,10 @@
     "comments:export": "node scripts/export-typecho-comments-mysql.js",
     "comments:test": "node --test scripts/comment-migration-core.test.js scripts/comment-migration-mysql.test.js scripts/comment-migration-cli.test.js scripts/typecho-comment-export.test.js scripts/typecho-comment-readonly-guard.test.js scripts/phase9c-comment-enable.test.js",
     "cms:management:test": "node --test scripts/cms-management.test.js",
-    "build": "npm run sync && npm run legacy:map && npm run nginx:302 && npm --prefix astro run build && npm run render:gate && npm run rss:gate && npm run stage4:gate && npm run stage6:gate && npm run stage7:gate && npm run stage8:gate"
+    "release:cleanup:test": "node --test scripts/cleanup-old-releases.test.js",
+    "content:presentation:test": "node --test scripts/content-presentation.test.js",
+    "content:joe-task:test": "node --test scripts/joe-task-markers.test.js",
+    "build": "npm run release:cleanup:test && npm run content:presentation:test && npm run content:joe-task:test && npm run sync && npm run legacy:map && npm run nginx:302 && npm --prefix astro run build && npm run render:gate && npm run rss:gate && npm run stage4:gate && npm run stage6:gate && npm run stage7:gate && npm run stage8:gate"
   },
   "dependencies": {
     "js-yaml": "^4.1.0",

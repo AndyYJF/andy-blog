@@ -4,20 +4,21 @@
   "kind": "post",
   "title": "博客封面是怎么来的？",
   "canonicalPath": "/posts/blog-cover-origin/",
-  "snapshotEpoch": 1785565762,
+  "snapshotEpoch": 1786604456,
   "auditStatus": "pass",
   "blockers": [],
   "warnings": [],
   "notes": [
-    "built body chars≈573"
+    "built body chars≈566"
   ],
   "contentHashes": {
-    "sourceSha256": "95924eac1f01119b922c3d671bf90541b3c824d84406b39f3a16676c3a5aead6",
-    "distSha256": "d86fe3bd8ca85cd4549eef1a12f5748e414b23dd16edbbbb14ab54f6bc8c3da9",
-    "hashedAt": "2026-08-02T10:50:31.184Z"
+    "sourceSha256": "d90a056206d0338da4eb670b74a53863ed9452dffcc6fb2602a0869553114e54",
+    "distSha256": "5a237947ae95d17bdb07c104c8eced5afbfd3c5ae792c31b93cb36ed269a8eea",
+    "hashedAt": "2026-08-14T01:52:37.139Z"
   },
+  "reviewKind": "human",
   "verdict": "pass",
-  "reviewedAt": "2026-08-05T14:55:22.934Z",
+  "reviewedAt": "2026-08-14T01:52:37.139Z",
   "reviewer": "owner-final-accept",
   "checklist": {
     "sourceFormatOk": true,
@@ -30,8 +31,7 @@
   },
   "manualNotes": [
     "noted: dist HTML missing — run build before final gate",
-    "spot-verify: source/dist hash, canonical, no residual shortcodes/legacy archives, article markers",
-    "Owner accepted Stage 8 human Final complete on 2026-08-05 after Stage 9 staging deploy acceptance (new.andy-y.cn)."
-  ],
-  "reviewKind": "human"
+    "Owner accepted Stage 8 human Final complete on 2026-08-05 after Stage 9 staging deploy acceptance (new.andy-y.cn).",
+    "spot-verify: source/dist hash, canonical, no residual shortcodes/legacy archives, article markers"
+  ]
 }

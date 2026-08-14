@@ -19,7 +19,9 @@ const check = (cond, msg) => {
 
 const legacy = readJson('data/legacy-url-map.json');
 const routeMap = readJson('data/route-map.json');
+const metaMap = readJson('data/meta-route-map.json');
 const lastmod = readJson('data/lastmod.json');
+const syncManifest = readJson('astro/.cache/manifest.json');
 const nginx = read('nginx/release-http.conf');
 const manifest = readJson('nginx/release-manifest.json');
 
@@ -28,6 +30,8 @@ check(manifest.redirectStatus === 302, `expected observation 302, got ${manifest
 check(nginx.includes('return 302 https://www.andy-y.cn$legacy_target'), 'nginx missing path 302');
 check(nginx.includes('return 302 https://www.andy-y.cn$legacy_query_target'), 'nginx missing query 302');
 check(!nginx.includes('return 301 https://www.andy-y.cn$legacy_target'), 'observation nginx must not use 301 for legacy');
+check(nginx.includes('error_page 404 /404.html;'), 'nginx must route misses to Astro 404');
+check(/location = \/404\.html \{[\s\S]*?internal;[\s\S]*?Cache-Control "no-store"[\s\S]*?X-Robots-Tag "noindex, follow"/u.test(nginx), 'nginx Astro 404 location must be internal, no-store, and noindex');
 
 const pathKeys = new Set();
 const normalizedPathKeys = new Set();
@@ -155,10 +159,12 @@ for (const route of Object.values(routeMap)) {
   check(!!lastmod[route.canonicalPath], `missing lastmod for ${route.canonicalPath}`);
 }
 check(!!lastmod['/'], 'missing lastmod for /');
+check(!!lastmod['/posts/'], 'missing lastmod for /posts/');
 
 // Dist checks
 const rss = fs.readFileSync(path.join(DIST, 'rss.xml'), 'utf8');
 check(rss.includes('<guid isPermaLink="false">'), 'rss missing custom guid');
+check((rss.match(/<item>[\s\S]*?<description>/gu) || []).length === 10, 'RSS items must contain real descriptions');
 check(fs.existsSync(path.join(DIST, 'robots.txt')), 'robots.txt missing');
 check(
   fs.readFileSync(path.join(DIST, 'robots.txt'), 'utf8').includes('Sitemap: https://www.andy-y.cn/sitemap-index.xml'),
@@ -169,6 +175,9 @@ const sitemapXml = sitemapFiles.map((n) => fs.readFileSync(path.join(DIST, n), '
 check(sitemapXml.includes('<lastmod>'), 'sitemap has no lastmod');
 check(fs.existsSync(path.join(DIST, 'sitemap-index.xml')), 'sitemap-index.xml missing');
 check(fs.existsSync(path.join(DIST, 'og-default.png')), 'og-default.png missing');
+check(fs.existsSync(path.join(DIST, 'favicon.svg')), 'favicon.svg missing');
+check(fs.existsSync(path.join(DIST, 'apple-touch-icon.png')), 'apple-touch-icon.png missing');
+check(fs.existsSync(path.join(DIST, 'site.webmanifest')), 'site.webmanifest missing');
 
 // Every active canonical appears in sitemap; every sitemap URL has lastmod.
 const sitemapUrls = [...sitemapXml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1]);
@@ -184,7 +193,19 @@ for (const route of Object.values(routeMap)) {
   const abs = `https://www.andy-y.cn${route.canonicalPath}`;
   check(sitemapUrls.includes(abs), `sitemap missing ${abs}`);
 }
+const excludedSitemapPaths = new Set(syncManifest.sitemapExclude || []);
+for (const meta of Object.values(metaMap)) {
+  if (meta.state !== 'active') continue;
+  const abs = `https://www.andy-y.cn${meta.canonicalPath}`;
+  if (meta.discoverable === false) {
+    check(excludedSitemapPaths.has(meta.canonicalPath), `manifest must exclude hidden taxonomy ${meta.canonicalPath}`);
+    check(!sitemapUrls.includes(abs), `sitemap must hide taxonomy ${abs}`);
+  } else {
+    check(sitemapUrls.includes(abs), `sitemap missing discoverable taxonomy ${abs}`);
+  }
+}
 check(sitemapUrls.includes('https://www.andy-y.cn/'), 'sitemap missing home');
+check(sitemapUrls.includes('https://www.andy-y.cn/posts/'), 'sitemap missing article index');
 
 // HTML SEO sample
 const postHtml = fs.readFileSync(
@@ -196,6 +217,11 @@ check(postHtml.includes('property="og:image"'), 'og:image missing');
 check(postHtml.includes('name="twitter:card" content="summary_large_image"'), 'twitter card missing');
 check(postHtml.includes('application/ld+json'), 'json-ld missing');
 check(postHtml.includes('"@type":"BlogPosting"') || postHtml.includes('"@type": "BlogPosting"'), 'BlogPosting ld missing');
+const description = /<meta name="description" content="([^"]+)"/u.exec(postHtml)?.[1] || '';
+check(description.length >= 24, 'article meta description must contain a real summary');
+check(!description.endsWith('· AndyYan 的技术博客'), 'article meta description must not repeat title boilerplate');
+check(postHtml.includes('rel="icon" type="image/svg+xml" href="/favicon.svg"'), 'favicon link missing');
+check(postHtml.includes('rel="manifest" href="/site.webmanifest"'), 'webmanifest link missing');
 
 // Ensure JSON-LD is real JSON (set:html), not literal {title}
 check(!postHtml.includes('"{title}"'), 'json-ld not interpolated');

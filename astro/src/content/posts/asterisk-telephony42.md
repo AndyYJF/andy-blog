@@ -16,6 +16,7 @@ categories:
     slug: DN42
 tags: []
 sourceFormat: markdown
+description: 本人在DN42网络中扮演 AS4242422921 并拥有一个四节点的小集群，集群间建立了 FullMesh 的 IBGP 组网，通过 OSPF 作为 IGP 协议建立内部动态路由，并申请了 andy.dn42 作为我的域名，搭建了 1主+1从 的权威服务器（由knot驱动）。…
 cover: https://tc.andy-y.cn/i/2026/07/12/6a535337341c5.png
 ---
 
@@ -26,9 +27,9 @@ cover: https://tc.andy-y.cn/i/2026/07/12/6a535337341c5.png
 本人在DN42网络中扮演 **AS4242422921** 并拥有一个四节点的小集群，集群间建立了 **FullMesh** 的 **IBGP** 组网，通过 **OSPF** 作为 **IGP** 协议建立内部动态路由，并申请了 **andy.dn42** 作为我的域名，搭建了 **1主+1从** 的权威服务器（由knot驱动）。
 最近在DN42的群里看到了 [Yukari](https://0x7f.cc/) 大佬提到的telephony42，即一套实验性质的去中心化电话网络。我觉得自建一个电话网络很酷，于是打算跟着Yukari的 [这篇博客](https://0x7f.cc/telephony42-guide/) 搓一个 [PBX(Private Branch Exchange - 私有交换机)](https://en.wikipedia.org/wiki/Business_telephone_system) ，接入telephony42， ~~打电话骚扰群友~~ 。
 # 前期准备
- {x} 一个DN42域名
- {x} 一台 **已接入DN42** 的，配置不低于1C1G的服务器
- {x} 自建的DN42内部权威DNS（这里以knot演示）
+ - [x] 一个DN42域名
+ - [x] 一台 **已接入DN42** 的，配置不低于1C1G的服务器
+ - [x] 自建的DN42内部权威DNS（这里以knot演示）
 # 概念须知
  *PS：本篇博客仅是“最小加入指南”，后面譬如SRTP的进阶操作本人也在学习，还请自行了解，本部分参考了0x7f的博客内容。* 
  

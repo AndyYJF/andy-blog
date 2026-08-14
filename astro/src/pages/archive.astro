@@ -5,8 +5,8 @@ import { sortPosts } from "../lib/posts";
 import { activeMetaOfType } from "../lib/meta-routes";
 
 const posts = sortPosts(await getCollection("posts"));
-const categories = activeMetaOfType("category");
-const tags = activeMetaOfType("tag");
+const categories = activeMetaOfType("category").filter(({ meta }) => meta.discoverable !== false);
+const tags = activeMetaOfType("tag").filter(({ meta }) => meta.discoverable !== false);
 
 const byYear = new Map<number, typeof posts>();
 for (const post of posts) {

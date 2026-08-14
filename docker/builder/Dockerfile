@@ -19,12 +19,12 @@ COPY package.json package-lock.json ./
 COPY astro/package.json astro/package-lock.json ./astro/
 RUN --mount=type=cache,target=/root/.npm npm ci --no-audit --no-fund
 RUN --mount=type=cache,target=/root/.npm npm --prefix astro ci --no-audit --no-fund
-RUN sed -i 's|deb.debian.org|mirrors.aliyun.com|g' /etc/apt/sources.list.d/debian.sources
 RUN cd astro && npx playwright install --with-deps chromium
 
 COPY --chown=node:node . .
 RUN mkdir -p /app/.cache /app/astro/.cache /runtime/build \
   && cp /app/docs/baselines/fixtures/img-dims.json /app/astro/.cache/img-dims.json \
+  && chmod 0755 /app/host/*.sh /app/scripts/*.sh \
   && chown -R node:node /app /runtime/build /ms-playwright
 
 USER node

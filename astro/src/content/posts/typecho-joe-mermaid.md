@@ -22,6 +22,7 @@ categories:
     slug: refine
 tags: []
 sourceFormat: markdown
+description: 在 Typecho 中使用 Mermaid 一直不算难，但一旦换成 JOE 主题，问题就开始变得复杂：
 cover: https://tc.andy-y.cn/i/2026/06/11/6a2aadbe6645d.png
 ---
 

@@ -4,20 +4,21 @@
   "kind": "page",
   "title": "关于",
   "canonicalPath": "/about/",
-  "snapshotEpoch": 1785565762,
+  "snapshotEpoch": 1786604456,
   "auditStatus": "pass",
   "blockers": [],
   "warnings": [],
   "notes": [
-    "built body chars≈53"
+    "built body chars≈278"
   ],
   "contentHashes": {
     "sourceSha256": "a068d0bfacc0081c0764ceeded899a31bc87e966a59199ef7aeb007c9a907687",
-    "distSha256": "69e46611c493c6597deed31baaa4b70301a4bc8ae6a2fff845572cc463c9a674",
-    "hashedAt": "2026-08-02T10:50:31.184Z"
+    "distSha256": "5532f6a950cdc52262d6618567440112bf86a224051fdd88b13c68717b3315cd",
+    "hashedAt": "2026-08-14T01:52:37.139Z"
   },
+  "reviewKind": "human",
   "verdict": "pass",
-  "reviewedAt": "2026-08-05T14:55:22.934Z",
+  "reviewedAt": "2026-08-14T01:52:37.139Z",
   "reviewer": "owner-final-accept",
   "checklist": {
     "sourceFormatOk": true,
@@ -30,8 +31,7 @@
   },
   "manualNotes": [
     "noted: dist HTML missing — run build before final gate",
-    "spot-verify: source/dist hash, canonical, no residual shortcodes/legacy archives, article markers",
-    "Owner accepted Stage 8 human Final complete on 2026-08-05 after Stage 9 staging deploy acceptance (new.andy-y.cn)."
-  ],
-  "reviewKind": "human"
+    "Owner accepted Stage 8 human Final complete on 2026-08-05 after Stage 9 staging deploy acceptance (new.andy-y.cn).",
+    "spot-verify: source/dist hash, canonical, no residual shortcodes/legacy archives, article markers"
+  ]
 }

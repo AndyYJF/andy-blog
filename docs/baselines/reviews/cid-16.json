@@ -4,25 +4,25 @@
   "kind": "page",
   "title": "AndyYan's DN42 Network",
   "canonicalPath": "/dn42/",
-  "snapshotEpoch": 1785565762,
+  "snapshotEpoch": 1786604456,
   "auditStatus": "warn",
   "blockers": [],
   "warnings": [
-    "heading level skips: 2→4",
-    "body contains 1 h1 heading(s) (page title is separate)"
+    "heading level skips: 2→4"
   ],
   "notes": [
     "converted shortcodes: 1",
-    "headingFixes during sync: 5",
-    "built body chars≈1654"
+    "headingFixes during sync: 3",
+    "built body chars≈1662"
   ],
   "contentHashes": {
-    "sourceSha256": "4b4b66771ea7fdf0bd4bf392af944e1cec9e9195cc79ee0be40b88353f702991",
-    "distSha256": "a2c7fb75a69c2a6e16410c467a67987a9f6e3e794779a0065c15d4e74eeb3c1f",
-    "hashedAt": "2026-08-02T10:50:31.184Z"
+    "sourceSha256": "063f142f1136914873f6e19e6b35da9728a58021e2ae43d44c98607ca5804563",
+    "distSha256": "03e0b72ef8c034f90511a9b4537465279cb37b4cf7d638197e4cff49983c5f75",
+    "hashedAt": "2026-08-14T01:52:37.139Z"
   },
+  "reviewKind": "human",
   "verdict": "pass",
-  "reviewedAt": "2026-08-05T14:55:22.934Z",
+  "reviewedAt": "2026-08-14T01:52:37.139Z",
   "reviewer": "owner-final-accept",
   "checklist": {
     "sourceFormatOk": true,
@@ -39,8 +39,7 @@
     "noted: dist HTML missing — run build before final gate",
     "auto-noted: heading level skips: 2→4",
     "auto-noted: body contains 1 h1 heading(s) (page title is separate)",
-    "spot-verify: source/dist hash, canonical, no residual shortcodes/legacy archives, article markers",
-    "Owner accepted Stage 8 human Final complete on 2026-08-05 after Stage 9 staging deploy acceptance (new.andy-y.cn)."
-  ],
-  "reviewKind": "human"
+    "Owner accepted Stage 8 human Final complete on 2026-08-05 after Stage 9 staging deploy acceptance (new.andy-y.cn).",
+    "spot-verify: source/dist hash, canonical, no residual shortcodes/legacy archives, article markers"
+  ]
 }

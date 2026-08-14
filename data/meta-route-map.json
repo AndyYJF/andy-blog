@@ -9,7 +9,9 @@
       "/index.php/category/default/",
       "/category/default/"
     ],
-    "state": "active"
+    "state": "active",
+    "count": 11,
+    "discoverable": false
   },
   "2": {
     "type": "tag",
@@ -21,7 +23,9 @@
       "/index.php/tag/music/",
       "/tag/music/"
     ],
-    "state": "active"
+    "state": "active",
+    "count": 0,
+    "discoverable": false
   },
   "3": {
     "type": "tag",
@@ -33,7 +37,9 @@
       "/index.php/tag/app/",
       "/tag/app/"
     ],
-    "state": "active"
+    "state": "active",
+    "count": 0,
+    "discoverable": false
   },
   "4": {
     "type": "tag",
@@ -45,7 +51,9 @@
       "/index.php/tag/tec/",
       "/tag/tec/"
     ],
-    "state": "active"
+    "state": "active",
+    "count": 0,
+    "discoverable": false
   },
   "5": {
     "type": "tag",
@@ -57,7 +65,9 @@
       "/index.php/tag/argue/",
       "/tag/argue/"
     ],
-    "state": "active"
+    "state": "active",
+    "count": 0,
+    "discoverable": false
   },
   "6": {
     "type": "category",
@@ -69,19 +79,23 @@
       "/index.php/category/NAS/",
       "/category/NAS/"
     ],
-    "state": "active"
+    "state": "active",
+    "count": 1,
+    "discoverable": true
   },
   "7": {
     "type": "tag",
     "routeId": "fen-x",
     "canonicalPath": "/tag/fen-x/",
-    "name": "技术fen'x",
+    "name": "技术分析",
     "sourceSlug": "技术fen-x",
     "legacyPaths": [
       "/index.php/tag/%E5%88%86%E6%9E%90fen-x/",
       "/tag/fen-x/"
     ],
-    "state": "active"
+    "state": "active",
+    "count": 0,
+    "discoverable": false
   },
   "10": {
     "type": "category",
@@ -93,7 +107,9 @@
       "/index.php/category/DN42/",
       "/category/DN42/"
     ],
-    "state": "active"
+    "state": "active",
+    "count": 3,
+    "discoverable": true
   },
   "11": {
     "type": "category",
@@ -105,7 +121,9 @@
       "/index.php/category/opensource/",
       "/category/opensource/"
     ],
-    "state": "active"
+    "state": "active",
+    "count": 5,
+    "discoverable": true
   },
   "12": {
     "type": "category",
@@ -117,7 +135,9 @@
       "/index.php/category/AI/",
       "/category/AI/"
     ],
-    "state": "active"
+    "state": "active",
+    "count": 4,
+    "discoverable": true
   },
   "13": {
     "type": "category",
@@ -129,7 +149,9 @@
       "/index.php/category/refine/",
       "/category/refine/"
     ],
-    "state": "active"
+    "state": "active",
+    "count": 4,
+    "discoverable": true
   },
   "14": {
     "type": "category",
@@ -141,7 +163,9 @@
       "/index.php/category/mnt/",
       "/category/mnt/"
     ],
-    "state": "active"
+    "state": "active",
+    "count": 4,
+    "discoverable": true
   },
   "15": {
     "type": "category",
@@ -153,6 +177,8 @@
       "/index.php/category/cyber_safety/",
       "/category/cyber_safety/"
     ],
-    "state": "active"
+    "state": "active",
+    "count": 1,
+    "discoverable": true
   }
 }

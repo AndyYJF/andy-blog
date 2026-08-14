@@ -1,0 +1,10 @@
+[Unit]
+Description=Watch durable Aliyun CDN release queue
+After=network-online.target
+
+[Path]
+DirectoryNotEmpty=/var/www/andy-blog/runtime/cdn/pending
+Unit=blog-aliyun-cdn.service
+
+[Install]
+WantedBy=multi-user.target

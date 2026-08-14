@@ -31,6 +31,12 @@ for (const rel of [
   'scripts/generate-cdn-purge-plan.js',
   'scripts/run-cdn-purge.js',
   'scripts/cdn-purge.test.js',
+  'host/aliyun-cdn-release.sh',
+  'host/systemd/blog-aliyun-cdn.path',
+  'host/systemd/blog-aliyun-cdn.service',
+  'scripts/generate-cdn-preheat-plan.js',
+  'scripts/run-aliyun-cdn-release.js',
+  'scripts/aliyun-cdn-release.test.js',
   'host/deploy-mapping-repair-1panel.sh',
   'scripts/validate-1panel-mapping-repair.js',
   'scripts/mapping-repair.test.js',
@@ -103,6 +109,16 @@ check(cdnCore.includes('ACS3-HMAC-SHA256') && cdnCore.includes('RefreshObjectCac
 check(cdnCore.includes('api.cloudflare.com/client/v4/zones/'), 'Cloudflare purge integration missing');
 check(!/purge_everything|"hosts"|"prefixes"/.test(`${cdn}\n${cdnCore}\n${cdnRunner}`), 'cdn-purge escaped exact-URL scope');
 check(read('scripts/build-release.sh').includes('cdn-purge-plan.json'), 'release build must embed immutable CDN purge plan');
+check(read('scripts/build-release.sh').includes('cdn-preheat-plan.json'), 'release build must embed immutable CDN preheat plan');
+const aliyunAutomatic = read('scripts/run-aliyun-cdn-release.js');
+const aliyunHost = read('host/aliyun-cdn-release.sh');
+const aliyunService = read('host/systemd/blog-aliyun-cdn.service');
+check(cdnCore.includes('DescribeRefreshQuota') && aliyunAutomatic.includes('createAliyunQuotaRequest'), 'automatic Aliyun runner must check daily quota');
+check(cdnCore.includes('PushObjectCache') && aliyunAutomatic.includes('createAliyunPreheatRequest'), 'automatic Aliyun runner must submit preheat batches');
+check(cdnCore.includes('RefreshObjectCaches') && aliyunAutomatic.includes('createAliyunRefreshRequest'), 'automatic Aliyun runner must submit refresh batches');
+check(aliyunHost.includes('aliyun-submitted') && !aliyunHost.includes("edge-purged"), 'Aliyun submission must not impersonate dual-edge verification');
+check(aliyunService.includes('EnvironmentFile=/etc/andy-blog/aliyun-cdn.env'), 'Aliyun credentials must remain host-side');
+check(!/CF_API_TOKEN|CF_ZONE_ID/.test(`${aliyunAutomatic}\n${aliyunHost}\n${aliyunService}`), 'automatic Aliyun queue must not call Cloudflare');
 
 const mappingRepair = read('host/deploy-mapping-repair-1panel.sh');
 const mappingValidator = read('scripts/validate-1panel-mapping-repair.js');
@@ -277,7 +293,7 @@ const wwwHttp = fs.readFileSync(path.join(outNginx, 'www-cutover-http.conf'), 'u
 check(wwwHttp.includes('server_name www.andy-y.cn;'), 'www-cutover missing www server');
 check(wwwHttp.includes('return 302 https://www.andy-y.cn'), 'www-cutover must use 302 in observation');
 check(wwwHttp.includes('proxy_pass http://waline:8360'), 'www-cutover must default to compose waline');
-check(!/noindex/.test(wwwHttp), 'www-cutover must not noindex production');
+check(!/^  add_header X-Robots-Tag .*noindex/m.test(wwwHttp), 'www-cutover must not apply a server-wide production noindex');
 check(wwwHttp.includes('map $uri $legacy_target'), 'www-cutover missing legacy maps');
 check(wwwHttp.includes('分析fen-x'), 'www-cutover must use the decoded nginx $uri key for the encoded Chinese legacy path');
 check(!wwwHttp.includes('%E5%88%86%E6%9E%90fen-x'), 'www-cutover must not compare encoded text against nginx $uri');
@@ -301,7 +317,7 @@ if (onePanelGen.status === 0) {
   check(adapted.includes('proxy_pass http://127.0.0.1:8360'), '1Panel www Waline upstream wrong');
   check(adapted.includes('/www/sites/www.andy-y.cn/ssl/fullchain.pem'), '1Panel www cert path wrong');
   check(!adapted.includes('proxy_pass http://waline:8360'), '1Panel www retains Compose waline upstream');
-  check(!/noindex/.test(adapted), '1Panel www must not noindex');
+  check(!/^  add_header X-Robots-Tag .*noindex/m.test(adapted), '1Panel www must not apply a server-wide noindex');
   check(adapted.includes('分析fen-x'), '1Panel www must retain the decoded nginx $uri key');
   check(!adapted.includes('%E5%88%86%E6%9E%90fen-x'), '1Panel www must not restore the encoded nginx $uri key');
 }

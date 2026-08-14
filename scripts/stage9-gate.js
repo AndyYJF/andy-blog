@@ -107,7 +107,7 @@ check(stagingHttp.includes('server_name new.andy-y.cn'), 'staging-http missing n
 check(stagingHttp.includes('waline-staging:8360'), 'staging-http must proxy to waline-staging');
 check(stagingHttp.includes('X-Robots-Tag'), 'staging-http missing noindex');
 check(
-  (stagingHttp.match(/add_header X-Robots-Tag "noindex, nofollow, noarchive" always;/g) || []).length === 7,
+  (stagingHttp.match(/add_header X-Robots-Tag "noindex, nofollow, noarchive" always;/g) || []).length === 8,
   'staging-http must repeat noindex in every header-owning location',
 );
 check(stagingHttp.includes('$staging_legacy_target'), 'staging-http missing staging maps');
@@ -138,7 +138,7 @@ if (onePanelGen.status === 0) {
   check(onePanelNginx.includes('/www/sites/www.andy-y.cn/ssl/fullchain.pem'), '1Panel wildcard certificate path wrong');
   check(!onePanelNginx.includes('waline-staging:8360'), '1Panel config retains Compose-only upstream');
   check(
-    (onePanelNginx.match(/add_header X-Robots-Tag "noindex, nofollow, noarchive" always;/g) || []).length === 7,
+    (onePanelNginx.match(/add_header X-Robots-Tag "noindex, nofollow, noarchive" always;/g) || []).length === 8,
     '1Panel config must retain all staging noindex headers',
   );
 }

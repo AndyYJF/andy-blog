@@ -22,6 +22,7 @@ export async function GET(context) {
       title: post.data.title,
       pubDate: post.data.pubDate,
       link: post.data.canonicalPath,
+      description: post.data.description,
       // @astrojs/rss strips a top-level `guid`; override via customData.
       customData: `<guid isPermaLink="false">${escapeXml(post.data.feedGuid)}</guid>`,
     }));

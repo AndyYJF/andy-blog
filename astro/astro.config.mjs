@@ -20,10 +20,17 @@ import { rehypeDiagramImages } from './src/plugins/rehype-diagram-images.js';
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 /** @type {Record<string, string>} */
 let lastmodByPath = {};
+const sitemapExclude = new Set();
 try {
   lastmodByPath = JSON.parse(readFileSync(path.join(root, 'data', 'lastmod.json'), 'utf8'));
 } catch {
   lastmodByPath = {};
+}
+try {
+  const manifest = JSON.parse(readFileSync(path.join(root, 'astro', '.cache', 'manifest.json'), 'utf8'));
+  for (const pathname of manifest.sitemapExclude || []) sitemapExclude.add(pathname);
+} catch {
+  // First config load before sync: no exclusions are known yet.
 }
 
 export default defineConfig({
@@ -55,6 +62,7 @@ export default defineConfig({
         const pathname = new URL(page).pathname;
         if (pathname === '/rss.xml') return false;
         if (pathname === '/404.html' || pathname === '/404/') return false;
+        if (sitemapExclude.has(pathname)) return false;
         return true;
       },
       serialize(item) {

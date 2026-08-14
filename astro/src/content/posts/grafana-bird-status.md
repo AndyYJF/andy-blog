@@ -28,6 +28,7 @@ categories:
     slug: mnt
 tags: []
 sourceFormat: markdown
+description: 本人在dn42网络中有4个节点，本来搭建了LookingGlass来监测节点运行状态，但考虑到不够直观 其实是想折腾，所以打算搭建一个可以图形化监控每台节点Bird运行状态的仪表盘，在社区里面发现可以用Grafana搭配Prometheus作为数据源实现 拓扑图如下：
 cover: https://tc.andy-y.cn/i/2026/06/11/6a2ab03df14ef.png
 ---
 

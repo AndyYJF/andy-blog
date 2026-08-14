@@ -19,6 +19,7 @@ categories:
     slug: opensource
 tags: []
 sourceFormat: markdown
+description: 众所周知，原版的Silly Tavern，动画是 没有 的，界面是 臃肿 的，对新手是 地狱 的。我一直想找到一个易用且现代的类Silly Tavern项目，某次偶然在B站看到了这个视频：
 cover: https://tc.andy-y.cn/i/2026/06/26/6a3e791bbc3fb.png
 ---
 

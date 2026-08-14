@@ -85,6 +85,26 @@ const main = async () => {
     }
   }
 
+  const checkedFixture = readFileSync(
+    path.join(DIST, 'posts', 'asterisk-telephony42', 'index.html'),
+    'utf8',
+  );
+  const checkedInputs = checkedFixture.match(/<input type="checkbox" checked disabled>/g) ?? [];
+  if (!checkedFixture.includes('class="contains-task-list"') || checkedInputs.length !== 3) {
+    failures.push('posts/asterisk-telephony42: Joe checked tasks did not render as 3 disabled checkboxes');
+  }
+
+  const mixedFixture = readFileSync(
+    path.join(DIST, 'posts', 'silly-tavern-linux', 'index.html'),
+    'utf8',
+  );
+  if (!mixedFixture.includes('<input type="checkbox" disabled>')) {
+    failures.push('posts/silly-tavern-linux: Joe unchecked task did not render as a disabled checkbox');
+  }
+  if (/\{(?:x|X| )\}/u.test(checkedFixture) || /\{(?:x|X| )\}/u.test(mixedFixture)) {
+    failures.push('Joe task marker remained visible in rendered article HTML');
+  }
+
   if (failures.length > 0) {
     console.error('渲染门禁未通过：');
     for (const failure of failures) console.error(`  - ${failure}`);
