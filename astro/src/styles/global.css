@@ -112,6 +112,19 @@ main:focus-visible {
   animation: vt-fade-in var(--t-state) var(--ease) both;
 }
 
+/* 主题切换圆形扩散：旧快照静置垫底，新快照用 clip-path 圆从按钮处展开 */
+html.theme-ripple::view-transition-old(root),
+html.theme-ripple::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+html.theme-ripple::view-transition-old(root) {
+  z-index: 1;
+}
+html.theme-ripple::view-transition-new(root) {
+  z-index: 2147483646;
+}
+
 /* 4. sticky nav */
 .site-header {
   position: sticky;
