@@ -2,7 +2,7 @@
 import CommonHead from "../components/CommonHead.astro";
 import ThemeInit from "../components/ThemeInit.astro";
 import SearchDialog from "../components/SearchDialog.astro";
-import PageOrnaments from "../components/PageOrnaments.astro";
+import PageEmblem from "../components/PageEmblem.astro";
 import "../styles/global.css";
 
 interface Props {
@@ -16,7 +16,6 @@ interface Props {
   updatedDate?: Date;
   noindex?: boolean;
   jsonLd?: Record<string, unknown> | Record<string, unknown>[];
-  pageMotif?: "dn42";
   katex?: boolean;
 }
 
@@ -31,7 +30,6 @@ const {
   updatedDate,
   noindex = false,
   jsonLd,
-  pageMotif,
   katex = false,
 } = Astro.props;
 
@@ -53,6 +51,17 @@ const navItems = [
 ];
 const isNavActive = (href: string) =>
   href === "/posts/" ? articleNavActive : currentPath === href;
+
+// 独立页的左侧页边动态徽章（文章页不渲染，保持清爽）
+const emblemPage = currentPath.startsWith("/posts/") || /^\/page\/\d+\/?$/.test(currentPath)
+  ? "posts"
+  : currentPath === "/archive/"
+    ? "archive"
+    : currentPath === "/friends/"
+      ? "friends"
+      : currentPath === "/about/"
+        ? "about"
+        : undefined;
 
 const defaultLd =
   type === "article"
@@ -118,6 +127,18 @@ const ldPayload = jsonLd ?? defaultLd;
   </head>
   <body>
     <div data-top-sentinel aria-hidden="true"></div>
+    <div class="bg-fx" aria-hidden="true"></div>
+    {!article && (
+      <>
+        <nav class="spine" data-spine aria-label="页面章节"></nav>
+        <div class="prog" data-prog aria-hidden="true">
+          <span class="prog-label">00%</span>
+          <div class="prog-track"><div class="prog-fill"></div></div>
+        </div>
+        <div class="spot" data-spot aria-hidden="true"></div>
+        {emblemPage && <PageEmblem page={emblemPage} />}
+      </>
+    )}
     <a class="skip-link" href="#main">跳到正文</a>
     <header class="site-header">
       <div class="site-header-inner">
@@ -162,8 +183,6 @@ const ldPayload = jsonLd ?? defaultLd;
         </nav>
       </div>
     </header>
-
-    {pageMotif === "dn42" && <PageOrnaments motif="dn42" />}
 
     <main class="wrap" id="main" tabindex="-1">
       <slot />
@@ -236,10 +255,183 @@ const ldPayload = jsonLd ?? defaultLd;
         return () => details.removeEventListener("toggle", sync);
       }
 
+      /* 桌面端页边导航：左侧章节索引脊 + 右侧阅读进度 + 光标探照灯 */
+      function initEdgeNav(): Dispose {
+        const spine = document.querySelector<HTMLElement>("[data-spine]");
+        const prog = document.querySelector<HTMLElement>("[data-prog]");
+        const spot = document.querySelector<HTMLElement>("[data-spot]");
+        if (!spine || !prog || !spot) return () => {};
+
+        const secs = Array.from(document.querySelectorAll<HTMLElement>("main section"));
+        const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+        // 索引脊：标签依次取 kicker → aria-label → 首个标题；
+        // 首页 hero 的 kicker 太长，第一个条目收敛为 INTRO。
+        // 条目太少撑不起导航（归档 2 条、关于 3 条），只在 section 充足时渲染
+        let setActive: ((i: number) => void) | undefined;
+        let placeMarkerAt: ((i: number) => void) | undefined;
+        let marker: HTMLElement | undefined;
+        if (secs.length >= 4) {
+          // 悬停预览卡（共享一个浮层，内容随条目切换）
+          const preview = document.createElement("div");
+          preview.className = "spine-preview";
+          preview.setAttribute("aria-hidden", "true");
+          spine.appendChild(preview);
+
+          // 每个章节预提取预览内容：标题 + 前三条条目；
+          // 无列表型内容的章节（如 CONTACT）退化为直接文本/链接
+          const previewData = secs.map((sec) => {
+            const title =
+              sec.querySelector("h1, h2")?.textContent?.trim() ?? "";
+            let entries = Array.from(
+              sec.querySelectorAll("h3, .post-card a, li a"),
+            )
+              .map((el) => el.textContent?.trim().replace(/\s+/g, " ") ?? "")
+              .filter((t) => t.length > 0 && t.length < 60);
+            if (entries.length === 0) {
+              entries = Array.from(sec.querySelectorAll("p, a"))
+                .filter(
+                  (el) =>
+                    !el.closest(".section-heading") &&
+                    !(el instanceof Element && /kicker/.test(el.className)),
+                )
+                .map((el) => el.textContent?.trim().replace(/\s+/g, " ") ?? "")
+                .filter((t) => t.length > 0 && t.length < 60);
+            }
+            return { title, entries: entries.slice(0, 3), total: entries.length };
+          });
+
+          const showPreview = (i: number, anchor: HTMLElement) => {
+            const data = previewData[i];
+            if (!data) return;
+            preview.textContent = "";
+            const heading = document.createElement("h5");
+            heading.textContent =
+              data.title +
+              (data.total ? ` · ${String(data.total).padStart(2, "0")}` : "");
+            preview.appendChild(heading);
+            if (data.entries.length > 0) {
+              const list = document.createElement("ul");
+              for (const t of data.entries) {
+                const li = document.createElement("li");
+                li.textContent = t;
+                list.appendChild(li);
+              }
+              preview.appendChild(list);
+            }
+            preview.style.top = `${anchor.offsetTop}px`;
+            // 重启动画：条目间直接切换时也能重新弹出
+            preview.removeAttribute("data-show");
+            void preview.offsetWidth;
+            preview.setAttribute("data-show", "");
+          };
+          const hidePreview = () => preview.removeAttribute("data-show");
+          spine.addEventListener("mouseleave", hidePreview);
+
+          const links = secs.map((sec, i) => {
+            const kicker = sec.querySelector(
+              ".section-heading p, [class*=kicker], header p",
+            );
+            let label =
+              kicker?.textContent?.trim() ||
+              sec.getAttribute("aria-label")?.trim() ||
+              sec.querySelector("h2, h3")?.textContent?.trim() ||
+              `SEC 0${i + 1}`;
+            if (i === 0 && label.length > 14) label = "INTRO";
+            const a = document.createElement("a");
+            const text = document.createElement("span");
+            text.textContent = label;
+            const tick = document.createElement("i");
+            tick.className = "tick";
+            a.append(text, tick);
+            a.addEventListener("click", () => {
+              // 立即反馈，避免等平滑滚动结束才高亮
+              activeIdx = i;
+              setActive?.(i);
+              sec.scrollIntoView({ behavior: reduce ? "auto" : "smooth" });
+            });
+            a.addEventListener("mouseenter", () => showPreview(i, a));
+            spine.appendChild(a);
+            return a;
+          });
+
+          // 滑动标记：外层负责位置（回弹滑动），内层圆点负责跳跃形变与弧线
+          marker = document.createElement("i");
+          marker.className = "spine-marker";
+          const markerDot = document.createElement("i");
+          markerDot.className = "spine-marker-dot";
+          marker.appendChild(markerDot);
+          spine.appendChild(marker);
+          let lastMarkerY: number | undefined;
+          placeMarkerAt = (i: number) => {
+            const a = links[i];
+            if (!marker || !a) return;
+            const y = a.offsetTop + a.offsetHeight / 2;
+            if (lastMarkerY !== undefined && y !== lastMarkerY) {
+              // 位置真的变化才触发果冻跳（初始定位不跳）
+              markerDot.classList.remove("spine-hop");
+              void markerDot.offsetWidth;
+              markerDot.classList.add("spine-hop");
+            }
+            lastMarkerY = y;
+            marker.style.transform = `translateY(${y}px)`;
+          };
+          setActive = (current: number) => {
+            links.forEach((a, i) => a.toggleAttribute("data-active", i === current));
+            placeMarkerAt(current);
+          };
+          setActive(0);
+        }
+
+        // 阅读进度 + 索引脊激活（滚动计算，避免 IO 窄带探测不到末尾章节）
+        const fill = prog.querySelector<HTMLElement>(".prog-fill");
+        const progLabel = prog.querySelector<HTMLElement>(".prog-label");
+        let activeIdx = 0;
+        const onScroll = () => {
+          const el = document.documentElement;
+          const range = el.scrollHeight - el.clientHeight;
+          const p = range > 0 ? Math.min(1, Math.max(0, el.scrollTop / range)) : 0;
+          if (fill) fill.style.height = `${p * 100}%`;
+          if (progLabel)
+            progLabel.textContent = `${String(Math.round(p * 100)).padStart(2, "0")}%`;
+
+          if (setActive) {
+            // 探测线 30%：须小于最短 section 高度（~381px），
+            // 否则点击跳转后下一节也进入探测区，激活态会越位
+            const probe = el.clientHeight * 0.3;
+            let idx = 0;
+            secs.forEach((sec, i) => {
+              if (sec.getBoundingClientRect().top <= probe) idx = i;
+            });
+            // 滚到底部时直接激活最后一节（短章节可能永远进不了探测线）
+            if (range > 0 && el.scrollTop >= range - 2) idx = secs.length - 1;
+            if (idx !== activeIdx) {
+              activeIdx = idx;
+              setActive(idx);
+            }
+          }
+        };
+        window.addEventListener("scroll", onScroll, { passive: true });
+        onScroll();
+
+        // 光标探照灯
+        const onPointer = (e: PointerEvent) => {
+          spot.style.setProperty("--sx", `${e.clientX}px`);
+          spot.style.setProperty("--sy", `${e.clientY}px`);
+        };
+        window.addEventListener("pointermove", onPointer, { passive: true });
+
+        return () => {
+          window.removeEventListener("scroll", onScroll);
+          window.removeEventListener("pointermove", onPointer);
+        };
+      }
+
       async function mount() {
         const current = ++generation;
         disposers.push(initBackToTop());
         disposers.push(initSiteMenu());
+        disposers.push(initEdgeNav());
 
         const article = document.querySelector<HTMLElement>("[data-article]");
         if (!article) return;

@@ -1,0 +1,61 @@
+---
+// 桌面端左侧页边的页面专属动态徽章（纯 SVG + CSS 动画，无 JS）
+// 仅在 BaseLayout 对非文章页传入匹配 page 时渲染
+interface Props {
+  page: "posts" | "archive" | "friends" | "about";
+}
+
+const { page } = Astro.props;
+---
+
+{page === "posts" && (
+  <svg class="emblem emblem--posts" viewBox="0 0 120 140" aria-hidden="true">
+    <rect class="em-frame" x="14" y="10" width="92" height="120" rx="2" />
+    <rect class="em-line" x="28" y="32" width="64" height="4" />
+    <rect class="em-line" x="28" y="46" width="48" height="4" />
+    <rect class="em-line" x="28" y="60" width="58" height="4" />
+    <rect class="em-line" x="28" y="88" width="40" height="4" />
+    <rect class="em-line" x="28" y="102" width="55" height="4" />
+    <rect class="em-typing" x="28" y="74" width="44" height="4" />
+    <rect class="em-caret" x="76" y="72" width="3" height="8" />
+  </svg>
+)}
+
+{page === "archive" && (
+  <svg class="emblem emblem--archive" viewBox="0 0 120 140" aria-hidden="true">
+    <line class="em-axis" x1="34" y1="16" x2="34" y2="124" />
+    <circle class="em-node" cx="34" cy="26" r="3" />
+    <circle class="em-node" cx="34" cy="58" r="3" />
+    <circle class="em-node" cx="34" cy="90" r="3" />
+    <circle class="em-node" cx="34" cy="122" r="3" />
+    <circle class="em-travel" cx="34" cy="26" r="5" />
+    <text class="em-text" x="48" y="29">2026</text>
+    <text class="em-text" x="48" y="61">2025</text>
+    <text class="em-text" x="48" y="93">…</text>
+  </svg>
+)}
+
+{page === "friends" && (
+  <svg class="emblem emblem--friends" viewBox="0 0 120 140" aria-hidden="true">
+    <path class="em-edge em-edge--1" d="M60 36 L32 104" />
+    <path class="em-edge em-edge--2" d="M60 36 L88 104" />
+    <path class="em-edge em-edge--3" d="M32 104 L88 104" />
+    <circle class="em-node em-node--pulse" cx="60" cy="36" r="5" />
+    <circle class="em-node em-node--pulse" cx="32" cy="104" r="5" style="animation-delay: .8s" />
+    <circle class="em-node em-node--pulse" cx="88" cy="104" r="5" style="animation-delay: 1.6s" />
+  </svg>
+)}
+
+{page === "about" && (
+  <svg class="emblem emblem--about" viewBox="0 0 120 140" aria-hidden="true">
+    <rect class="em-frame" x="10" y="34" width="100" height="72" rx="3" />
+    <circle class="em-windot" cx="21" cy="43" r="1.6" />
+    <circle class="em-windot" cx="29" cy="43" r="1.6" />
+    <circle class="em-windot" cx="37" cy="43" r="1.6" />
+    <line class="em-axis" x1="10" y1="52" x2="110" y2="52" />
+    <text class="em-text" x="18" y="72">$</text>
+    <rect class="em-line" x="30" y="66" width="42" height="4" />
+    <text class="em-text" x="18" y="92">$</text>
+    <rect class="em-caret em-caret--block" x="30" y="84" width="7" height="9" />
+  </svg>
+)}

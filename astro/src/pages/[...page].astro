@@ -21,7 +21,6 @@ const { page } = Astro.props;
 const { Content, remarkPluginFrontmatter } = await render(page);
 const katex = remarkPluginFrontmatter.hasKatex === true;
 
-const pageMotif = page.data.canonicalPath === "/dn42/" ? "dn42" : undefined;
 const isAbout = page.data.canonicalPath === "/about/";
 const description = isAbout
   ? "关于 AndyYan：网络实践、自托管项目与技术记录。"
@@ -35,7 +34,6 @@ const description = isAbout
   type="website"
   pubDate={page.data.pubDate}
   updatedDate={page.data.updatedDate}
-  pageMotif={pageMotif}
   katex={katex}
 >
   <article class="prose" data-article data-pagefind-body>

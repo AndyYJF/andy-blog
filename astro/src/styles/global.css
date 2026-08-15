@@ -595,7 +595,6 @@ h1 + .muted {
   }
 }
 .profile-kicker,
-.section-heading > p,
 .section-heading > div > p,
 .project-marker {
   margin: 0 0 0.55rem;
@@ -1842,5 +1841,400 @@ html[data-theme="dark"] .beoe-light {
   ::view-transition-old(*),
   ::view-transition-new(*) {
     animation: none !important;
+  }
+}
+
+/* ============================================================
+   桌面端装饰：背景点阵 + 深色辉光 + 页边导航（索引脊/进度线/探照灯）
+   全部颜色由 --text/--muted/--accent 经 color-mix 派生，双主题自适应
+   ============================================================ */
+.bg-fx {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image: radial-gradient(
+    circle at 1px 1px,
+    color-mix(in srgb, var(--text) 9%, transparent) 1px,
+    transparent 1.5px
+  );
+  background-size: 26px 26px;
+}
+
+html[data-theme="dark"] .bg-fx {
+  background-image:
+    radial-gradient(
+      circle at 1px 1px,
+      color-mix(in srgb, var(--text) 7%, transparent) 1px,
+      transparent 1.5px
+    ),
+    radial-gradient(
+      70rem 34rem at 50% -14rem,
+      color-mix(in srgb, var(--accent) 12%, transparent),
+      transparent 70%
+    );
+  background-size: 26px 26px, auto;
+}
+
+/* 左侧：章节索引脊（JS 从 main section 的 kicker 提取标签） */
+.spine {
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 5;
+  right: calc(50vw + var(--measure) / 2 + 2.25rem);
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-align: right;
+}
+
+.spine a {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.6rem;
+  color: var(--muted);
+  cursor: pointer;
+  transform-origin: right center;
+  transition:
+    color var(--t-move) var(--ease),
+    transform var(--t-move) var(--ease);
+}
+
+.spine a .tick {
+  width: 14px;
+  height: 1px;
+  flex: none;
+  background: var(--border);
+  transition:
+    width var(--t-move) var(--ease),
+    background-color var(--t-move) var(--ease);
+}
+
+.spine a[data-active] {
+  color: var(--accent-text);
+}
+
+.spine a[data-active] .tick {
+  width: 26px;
+  background: var(--accent);
+}
+
+/* 悬停反馈（放大 + 中性色长横线），刻意与激活态的琥珀色区分 */
+.spine a:hover:not([data-active]) {
+  color: var(--text);
+  transform: scale(1.15);
+}
+
+.spine a:hover:not([data-active]) .tick {
+  width: 26px;
+  background: var(--muted);
+}
+
+/* 滑动标记：吸附当前条目横线中心，切换时平滑滑动 */
+.spine-marker {
+  position: absolute;
+  top: 0;
+  right: -0.55rem;
+  width: 5px;
+  height: 5px;
+  margin-top: -2.5px;
+  transition: transform 0.45s cubic-bezier(0.34, 1.8, 0.5, 1);
+  pointer-events: none;
+}
+
+/* 内层圆点：跳跃时纵向拉伸 + 向右抛出一道弧线再落回 */
+.spine-marker-dot {
+  display: block;
+  width: 5px;
+  height: 5px;
+  background: var(--accent);
+}
+
+.spine-marker-dot.spine-hop {
+  animation: spine-hop 0.45s var(--ease);
+}
+
+@keyframes spine-hop {
+  0% {
+    transform: translateX(0) scale(1, 1);
+  }
+  25% {
+    transform: translateX(7px) scale(0.7, 1.7);
+  }
+  55% {
+    transform: translateX(9px) scale(1.25, 0.8);
+  }
+  80% {
+    transform: translateX(3px) scale(0.9, 1.15);
+  }
+  100% {
+    transform: translateX(0) scale(1, 1);
+  }
+}
+
+/* 悬停预览卡：浮于条目左侧，内容由 JS 填充 */
+.spine-preview {
+  position: absolute;
+  top: 0;
+  right: calc(100% + 1.75rem);
+  width: 13rem;
+  padding: 0.7rem 0.85rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-panel);
+  background: color-mix(in srgb, var(--surface) 88%, transparent);
+  backdrop-filter: blur(6px);
+  text-align: left;
+  letter-spacing: normal;
+  opacity: 0;
+  transform: translateX(10px) scale(0.96);
+  transform-origin: right center;
+  transition:
+    opacity var(--t-state) var(--ease),
+    transform var(--t-state) var(--ease);
+  pointer-events: none;
+}
+
+.spine-preview[data-show] {
+  opacity: 1;
+  transform: none;
+  animation: spine-pop 0.28s var(--ease);
+}
+
+@keyframes spine-pop {
+  from {
+    opacity: 0;
+    transform: translateX(14px) scale(0.94);
+  }
+  60% {
+    opacity: 1;
+    transform: translateX(-2px) scale(1.01);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.spine-preview h5 {
+  margin: 0 0 0.4rem;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  color: var(--accent-text);
+}
+
+.spine-preview ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.spine-preview li {
+  padding: 0.25rem 0;
+  border-top: 1px solid var(--border);
+  font-family: var(--font-sans);
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* 右侧：阅读进度 */
+.prog {
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 5;
+  left: calc(50vw + var(--measure) / 2 + 2.25rem);
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  pointer-events: none;
+}
+
+.prog-track {
+  position: relative;
+  width: 1px;
+  height: 9rem;
+  background: var(--border);
+}
+
+.prog-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1px;
+  height: 0%;
+  background: var(--accent);
+}
+
+.prog-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  color: var(--muted);
+  writing-mode: vertical-rl;
+}
+
+/* 光标探照灯（位置由 JS 写入 --sx/--sy） */
+.spot {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    16rem 16rem at var(--sx, 50vw) var(--sy, 30vh),
+    color-mix(in srgb, var(--accent) 6%, transparent),
+    transparent 70%
+  );
+}
+
+html[data-theme="dark"] .spot {
+  background: radial-gradient(
+    16rem 16rem at var(--sx, 50vw) var(--sy, 30vh),
+    color-mix(in srgb, var(--accent) 9%, transparent),
+    transparent 70%
+  );
+}
+
+/* 页边模块需要较宽的页边，比内容断点更早收起 */
+@media (width <= 1299px) {
+  .spine,
+  .prog,
+  .spot {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spine a,
+  .spine a .tick,
+  .spine-marker,
+  .spine-preview {
+    transition: none;
+  }
+}
+
+/* ============================================================
+   独立页左侧页边：页面专属动态徽章（PageEmblem.astro）
+   颜色由 --muted/--accent 派生，双主题自适应；动画全局收敛于 reduced-motion
+   ============================================================ */
+.emblem {
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  right: calc(50vw + var(--measure) / 2 + 2.25rem);
+  z-index: 0;
+  width: 8rem;
+  height: auto;
+  pointer-events: none;
+  overflow: visible;
+}
+
+.emblem .em-frame,
+.emblem .em-axis {
+  fill: none;
+  stroke: color-mix(in srgb, var(--muted) 45%, transparent);
+  stroke-width: 1;
+}
+
+.emblem .em-line {
+  fill: color-mix(in srgb, var(--muted) 35%, transparent);
+}
+
+.emblem .em-node {
+  fill: none;
+  stroke: color-mix(in srgb, var(--muted) 55%, transparent);
+  stroke-width: 1;
+}
+
+.emblem .em-text {
+  fill: color-mix(in srgb, var(--muted) 65%, transparent);
+  font-family: var(--font-mono);
+  font-size: 8px;
+  letter-spacing: 0.08em;
+}
+
+.emblem .em-windot {
+  fill: color-mix(in srgb, var(--muted) 45%, transparent);
+}
+
+/* posts：打字行循环书写 + 光标闪烁 */
+.emblem .em-typing {
+  fill: color-mix(in srgb, var(--accent) 70%, transparent);
+  transform-origin: 28px 0;
+  animation: em-type 4.8s var(--ease) infinite;
+}
+
+@keyframes em-type {
+  0%, 12% { transform: scaleX(0); }
+  55%, 78% { transform: scaleX(1); }
+  92%, 100% { transform: scaleX(0); }
+}
+
+.emblem .em-caret {
+  fill: var(--accent);
+  animation: em-blink 1.1s steps(1) infinite;
+}
+
+.emblem .em-caret--block {
+  fill: color-mix(in srgb, var(--accent) 80%, transparent);
+}
+
+@keyframes em-blink {
+  0%, 55% { opacity: 1; }
+  56%, 100% { opacity: 0; }
+}
+
+/* archive：琥珀节点沿时间轴循环下行 */
+.emblem .em-travel {
+  fill: var(--accent);
+  animation: em-travel 6s linear infinite;
+}
+
+@keyframes em-travel {
+  0% { transform: translateY(0); opacity: 0; }
+  8% { opacity: 0.9; }
+  86% { opacity: 0.9; }
+  100% { transform: translateY(96px); opacity: 0; }
+}
+
+/* friends：链路虚线流动 + 节点呼吸 */
+.emblem .em-edge {
+  fill: none;
+  stroke: color-mix(in srgb, var(--accent) 45%, transparent);
+  stroke-width: 1;
+  stroke-dasharray: 4 4;
+  animation: em-dash 3.6s linear infinite;
+}
+
+.emblem .em-edge--2 { animation-delay: -1.2s; }
+.emblem .em-edge--3 { animation-delay: -2.4s; }
+
+@keyframes em-dash {
+  to { stroke-dashoffset: -32; }
+}
+
+.emblem .em-node--pulse {
+  fill: color-mix(in srgb, var(--accent) 75%, transparent);
+  stroke: none;
+  animation: em-pulse 3.2s ease-in-out infinite;
+}
+
+@keyframes em-pulse {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
+
+@media (width <= 1299px) {
+  .emblem {
+    display: none;
   }
 }
