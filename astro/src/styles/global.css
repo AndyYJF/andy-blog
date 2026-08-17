@@ -449,7 +449,9 @@ h1 + .muted {
 }
 
 /* cover-driven cards: 有封面时左侧封面栏 + 右侧正文；无封面保持纯文字样式。
-   用 :has(> .card-cover) 而非额外类名——stage6 gate 要求 li 精确为 class="post-card" */
+   用 :has(> .card-cover) 而非额外类名——stage6 gate 要求 li 精确为 class="post-card"
+   桌面端封面栏拉满卡片高度；图片 contain 保持 3:2 整图，
+   留白画在 img 自己的背景上（父级背景透不过 object-fit 信箱）。 */
 .post-card:has(> .card-cover) {
   display: grid;
   grid-template-columns: 15rem minmax(0, 1fr);
@@ -459,15 +461,19 @@ h1 + .muted {
 .card-cover {
   display: block;
   overflow: hidden;
-  height: 100%;
+  align-self: stretch;
   min-height: 0;
-  background: color-mix(in srgb, var(--muted) 12%, transparent);
 }
 .card-cover img {
   display: block;
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
+  object-position: top center;
+  background-color: #fff;
+  background-image: var(--card-cover);
+  background-size: cover;
+  background-position: top center;
   transition: transform var(--t-move) var(--ease);
 }
 @media (hover: hover) and (pointer: fine) {
@@ -486,11 +492,10 @@ h1 + .muted {
     grid-template-columns: minmax(0, 1fr);
   }
   .card-cover {
-    height: auto;
+    aspect-ratio: 3 / 2;
   }
   .card-cover img {
-    height: auto;
-    aspect-ratio: 3 / 2;
+    object-fit: cover;
   }
 }
 
