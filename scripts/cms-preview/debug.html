@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Astro 编辑预览调试</title>
+    <link rel="stylesheet" href="/preview.css" />
+    <link rel="stylesheet" href="/katex.min.css" />
+    <style>
+      body {
+        margin: 0;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        min-height: 100vh;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", sans-serif;
+      }
+      textarea {
+        width: 100%;
+        height: 100vh;
+        border: 0;
+        border-right: 1px solid #d1d5db;
+        padding: 1rem;
+        resize: none;
+        font: 14px/1.6 ui-monospace, SFMono-Regular, Consolas, monospace;
+      }
+      .cm-preview {
+        overflow: auto;
+        height: 100vh;
+      }
+      .cm-preview-content {
+        min-height: 100%;
+      }
+      @media (max-width: 800px) {
+        body {
+          grid-template-columns: 1fr;
+        }
+        textarea,
+        .cm-preview {
+          height: 50vh;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <textarea id="source" spellcheck="false"></textarea>
+    <div class="cm-preview">
+      <div class="cm-preview-content" id="preview"></div>
+    </div>
+    <script>
+      window.AndyAstroPreviewMermaidSrc = "/mermaid.min.js";
+    </script>
+    <script src="/preview.js"></script>
+    <script>
+      const source = document.getElementById("source");
+      const preview = document.getElementById("preview");
+      const params = new URLSearchParams(location.search);
+      const sample = params.get("sample") || "omv-webui-400-bad-request";
+
+      const render = () => {
+        preview.innerHTML = window.AndyAstroPreview.render(source.value);
+      };
+
+      fetch("/samples/" + encodeURIComponent(sample) + ".md")
+        .then((res) => (res.ok ? res.text() : Promise.reject(res.status)))
+        .then((text) => {
+          source.value = text.replace(/^---[\s\S]*?---\s*/, "");
+          render();
+        })
+        .catch(() => {
+          source.value =
+            '{alert type="info"}这是一条提示{/alert}\n\n## 标题\n\n行内公式 $E=mc^2$\n\n```js\nconsole.log("hi")\n```\n';
+          render();
+        });
+
+      let timer = 0;
+      source.addEventListener("input", () => {
+        clearTimeout(timer);
+        timer = setTimeout(render, 200);
+      });
+    </script>
+  </body>
+</html>

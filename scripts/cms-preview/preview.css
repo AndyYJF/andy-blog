@@ -1,0 +1,462 @@
+/* Astro article preview inside Joe's .cm-preview-content */
+.cm-preview:has(.astro-preview) {
+  background: var(--ap-bg, #fafafa);
+}
+.cm-preview:has(.astro-preview)::-webkit-scrollbar-track {
+  background: var(--ap-bg, #fafafa);
+}
+
+.cm-preview-content:has(.astro-preview) {
+  padding: 0 !important;
+  font-size: 16px !important;
+  font-family: var(--font-sans, inherit) !important;
+  color: var(--text, inherit) !important;
+  line-height: 1.75 !important;
+  background: transparent !important;
+}
+
+.cm-preview-content .astro-preview,
+.astro-preview-standalone {
+  --bg: #fafafa;
+  --text: #1a1a1a;
+  --muted: #6b7280;
+  --accent: #d97706;
+  --accent-text: #9a3412;
+  --ok: #15803d;
+  --surface: #ffffff;
+  --border: color-mix(in srgb, var(--muted) 28%, transparent);
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+    "Noto Sans CJK SC", "Microsoft YaHei", sans-serif;
+  --font-mono: "JetBrains Mono", "Fira Code", "Cascadia Code",
+    "Noto Sans Mono CJK SC", monospace;
+  --ap-bg: var(--bg);
+  --ap-text: var(--text);
+  --ap-muted: var(--muted);
+  --ap-accent: var(--accent);
+  --ap-accent-text: var(--accent-text);
+  --ap-surface: var(--surface);
+  --ap-border: var(--border);
+  --ap-ok: var(--ok);
+  --ap-font-sans: var(--font-sans);
+  --ap-font-mono: var(--font-mono);
+  color-scheme: light;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.75;
+  border-left: 3px solid var(--accent);
+}
+
+.cm-preview-content .astro-preview[data-theme="dark"],
+.astro-preview-standalone[data-theme="dark"] {
+  --bg: #0a0a0a;
+  --text: #e5e5e5;
+  --muted: #9ca3af;
+  --accent: #fbbf24;
+  --accent-text: #fbbf24;
+  --ok: #34d399;
+  --surface: #15181d;
+  color-scheme: dark;
+}
+
+.cm-preview-content .astro-preview * {
+  box-sizing: border-box;
+}
+
+.astro-preview-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.55rem 0.85rem;
+  border-bottom: 1px solid var(--ap-border);
+  background: color-mix(in srgb, var(--ap-surface) 88%, transparent);
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+
+.astro-preview-hint {
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent-text);
+}
+
+.astro-preview-theme {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 3.2rem;
+  height: 1.85rem;
+  padding: 0 0.55rem;
+  border: 1px solid var(--ap-border);
+  border-radius: 4px;
+  background: transparent;
+  color: var(--ap-muted);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.78rem;
+}
+
+.astro-preview-theme:hover,
+.astro-preview-theme:focus-visible {
+  color: var(--ap-accent-text);
+  border-color: color-mix(in srgb, var(--ap-accent) 50%, transparent);
+}
+
+.cm-preview-content .astro-preview .prose,
+.astro-preview-standalone .prose {
+  padding: 1.1rem 1.25rem 2rem;
+  overflow-wrap: break-word;
+}
+
+.cm-preview-content .astro-preview h1,
+.cm-preview-content .astro-preview h2,
+.cm-preview-content .astro-preview h3,
+.cm-preview-content .astro-preview h4,
+.cm-preview-content .astro-preview h5,
+.cm-preview-content .astro-preview h6 {
+  color: var(--text) !important;
+  position: relative;
+  padding: 0 !important;
+  line-height: 1.3 !important;
+  letter-spacing: -0.01em;
+  font-weight: 700;
+  background: none !important;
+  background-image: none !important;
+}
+
+.cm-preview-content .astro-preview h1::before,
+.cm-preview-content .astro-preview h2::before,
+.cm-preview-content .astro-preview h3::before,
+.cm-preview-content .astro-preview h4::before,
+.cm-preview-content .astro-preview h5::before,
+.cm-preview-content .astro-preview h6::before,
+.cm-preview-content .astro-preview h4::after,
+.cm-preview-content .astro-preview h5::after,
+.cm-preview-content .astro-preview h6::after {
+  content: none !important;
+  display: none !important;
+  background: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  margin: 0 !important;
+}
+
+/* Body `#` headings stay h1 on the public article; match global.css h1 / .prose h2–h4. */
+.cm-preview-content .astro-preview h1 {
+  font-size: 1.75rem !important;
+  margin: 0 0 0.5rem !important;
+}
+.cm-preview-content .astro-preview h2 {
+  font-size: 1.35rem !important;
+  margin: 2.25rem 0 0.75rem !important;
+}
+.cm-preview-content .astro-preview h3 {
+  font-size: 1.15rem !important;
+  margin: 1.75rem 0 0.6rem !important;
+}
+.cm-preview-content .astro-preview h4 {
+  font-size: 1rem !important;
+  margin: 1.5rem 0 0.5rem !important;
+}
+.cm-preview-content .astro-preview .prose > h1:first-child,
+.cm-preview-content .astro-preview .prose > h2:first-child {
+  margin-top: 0 !important;
+}
+
+.cm-preview-content .astro-preview p,
+.cm-preview-content .astro-preview ul,
+.cm-preview-content .astro-preview ol {
+  margin: 0.9rem 0 !important;
+  line-height: 1.75;
+  color: var(--ap-text);
+  padding-left: 0;
+}
+
+.cm-preview-content .astro-preview ul,
+.cm-preview-content .astro-preview ol {
+  padding-left: 1.4rem !important;
+}
+
+.cm-preview-content .astro-preview li {
+  margin: 0.3rem 0;
+  line-height: 1.75;
+  list-style: inherit;
+}
+
+.cm-preview-content .astro-preview a {
+  color: var(--text);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.18em;
+  text-decoration-color: color-mix(in srgb, var(--muted) 60%, transparent);
+}
+
+.cm-preview-content .astro-preview a:hover {
+  text-decoration-color: var(--accent-text);
+}
+
+.cm-preview-content .astro-preview a.anchor {
+  margin-left: 0.35rem;
+  color: var(--ap-muted);
+  text-decoration: none;
+  opacity: 0;
+}
+
+.cm-preview-content .astro-preview h2:hover a.anchor,
+.cm-preview-content .astro-preview h3:hover a.anchor,
+.cm-preview-content .astro-preview a.anchor:focus-visible {
+  opacity: 1;
+}
+
+.cm-preview-content .astro-preview hr {
+  border: none;
+  border-top: 1px solid var(--ap-border);
+  margin: 2.25rem 0;
+  height: 0;
+  background: none;
+}
+
+.cm-preview-content .astro-preview :not(pre) > code,
+.cm-preview-content .astro-preview code.ap-code {
+  display: inline !important;
+  font-family: var(--font-mono) !important;
+  font-size: 0.88em !important;
+  padding: 0.15em 0.4em !important;
+  border-radius: 4px !important;
+  border: 0 !important;
+  background: color-mix(in srgb, var(--accent) 14%, var(--surface)) !important;
+  color: var(--accent-text) !important;
+  vertical-align: baseline !important;
+  word-break: break-word !important;
+}
+
+.cm-preview-content .astro-preview li::marker {
+  color: var(--accent);
+}
+
+.cm-preview-content .astro-preview ::selection {
+  background: color-mix(in srgb, var(--accent) 30%, transparent);
+}
+
+.cm-preview-content .astro-preview img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  border-radius: 6px;
+  margin: 1rem auto;
+}
+
+.cm-preview-content .astro-preview pre {
+  margin: 1rem 0;
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--ap-border);
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--ap-muted) 8%, var(--ap-surface));
+  overflow: auto;
+  font-family: var(--ap-font-mono);
+  font-size: 0.86rem;
+  line-height: 1.55;
+}
+
+.cm-preview-content .astro-preview pre code {
+  display: block !important;
+  background: none !important;
+  color: inherit !important;
+  padding: 0 !important;
+  font-size: inherit !important;
+  vertical-align: baseline !important;
+  border-radius: 0 !important;
+}
+
+.cm-preview-content .astro-preview blockquote {
+  margin: 1.25rem 0 !important;
+  padding: 0.25rem 0 0.25rem 1rem !important;
+  border-left: 2px solid color-mix(in srgb, var(--ap-accent) 55%, transparent);
+  border-radius: 0;
+  background: transparent;
+  color: var(--ap-muted);
+}
+
+.cm-preview-content .astro-preview table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.92rem;
+  color: var(--ap-text);
+  table-layout: auto;
+}
+
+.cm-preview-content .astro-preview th,
+.cm-preview-content .astro-preview td {
+  border: 1px solid var(--ap-border);
+  padding: 0.45rem 0.65rem;
+  background: transparent;
+}
+
+.cm-preview-content .astro-preview th {
+  background: color-mix(in srgb, var(--ap-muted) 8%, transparent);
+  text-align: left;
+  font-weight: 600;
+}
+
+.cm-preview-content .astro-preview .contains-task-list,
+.cm-preview-content .astro-preview ul.contains-task-list {
+  padding-left: 0 !important;
+  list-style: none;
+}
+
+.cm-preview-content .astro-preview .task-list-item,
+.cm-preview-content .astro-preview li.task-list-item {
+  list-style: none;
+}
+
+.cm-preview-content .astro-preview input[type="checkbox"] {
+  appearance: none;
+  width: 1.05rem;
+  height: 1.05rem;
+  margin: 0 0.55rem 0 0;
+  border: 1px solid var(--ap-accent-text);
+  border-radius: 3px;
+  background-color: transparent;
+  vertical-align: -0.14rem;
+}
+
+.cm-preview-content .astro-preview input[type="checkbox"]:checked {
+  background-color: var(--ap-accent-text);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='none' stroke='white' stroke-linecap='round' stroke-linejoin='round' stroke-width='2.25' d='m3.5 8.2 2.8 2.8 6.2-6.2'/%3E%3C/svg%3E");
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.cm-preview-content .astro-preview .alert {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.5rem 0.7rem;
+  align-items: start;
+  margin: 1.25rem 0;
+  padding: 0.85rem 1rem;
+  border: 1px solid color-mix(in srgb, var(--ap-accent) 45%, transparent);
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--ap-accent) 8%, var(--ap-bg));
+}
+
+.cm-preview-content .astro-preview .alert p {
+  margin: 0.2rem 0 !important;
+}
+
+.cm-preview-content .astro-preview .alert .ico {
+  width: 1.1rem;
+  height: 1.1rem;
+  margin-top: 0.35rem;
+  color: var(--ap-accent-text);
+}
+
+.cm-preview-content .astro-preview .alert-warning {
+  border-color: color-mix(in srgb, #d97706 60%, transparent);
+  background: color-mix(in srgb, #d97706 8%, var(--ap-bg));
+}
+.cm-preview-content .astro-preview .alert-danger {
+  border-color: color-mix(in srgb, #dc2626 60%, transparent);
+  background: color-mix(in srgb, #dc2626 8%, var(--ap-bg));
+}
+.cm-preview-content .astro-preview .alert-danger .ico {
+  color: #dc2626;
+}
+.cm-preview-content .astro-preview .alert-success {
+  border-color: color-mix(in srgb, #16a34a 60%, transparent);
+  background: color-mix(in srgb, #16a34a 8%, var(--ap-bg));
+}
+.cm-preview-content .astro-preview .alert-success .ico {
+  color: #16a34a;
+}
+
+.cm-preview-content .astro-preview .cloud-card {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0.9rem 0;
+  padding: 0.65rem 0.9rem;
+  border: 1px solid var(--ap-border);
+  border-radius: 6px;
+  background: var(--ap-surface);
+  text-decoration: none;
+  color: var(--ap-text);
+}
+
+.cm-preview-content .astro-preview .cloud-card .ico {
+  width: 1.1rem;
+  height: 1.1rem;
+  color: var(--ap-accent-text);
+}
+
+.cm-preview-content .astro-preview .collapse {
+  margin: 1.25rem 0;
+  border: 1px solid var(--ap-border);
+  border-radius: 6px;
+  background: var(--ap-surface);
+}
+
+.cm-preview-content .astro-preview .collapse-summary {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.6rem 0.9rem;
+  cursor: pointer;
+  color: var(--ap-muted);
+  font-size: 0.92rem;
+  list-style: none;
+}
+
+.cm-preview-content .astro-preview .collapse-summary .ico {
+  width: 1rem;
+  height: 1rem;
+  color: var(--ap-accent-text);
+}
+
+.cm-preview-content .astro-preview .collapse[open] > .collapse-summary .ico {
+  transform: rotate(90deg);
+}
+
+.cm-preview-content .astro-preview .collapse > :not(.collapse-summary) {
+  margin-inline: 0.9rem;
+}
+
+.cm-preview-content .astro-preview .bili-embed {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border: 0;
+  border-radius: 6px;
+  margin: 1.25rem 0;
+}
+
+.cm-preview-content .astro-preview .katex {
+  font-size: 1.05em;
+}
+
+.cm-preview-content .astro-preview .katex-display {
+  margin: 1rem 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.cm-preview-content .astro-preview .beoe svg,
+.cm-preview-content .astro-preview .astro-preview-mermaid-svg svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin-inline: auto;
+}
+
+.astro-preview-standalone {
+  min-height: 100vh;
+}
+
+.astro-preview-standalone .prose {
+  max-width: 42rem;
+  margin: 0 auto;
+  padding: 1.25rem 1rem 3rem;
+}

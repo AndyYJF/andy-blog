@@ -28,9 +28,10 @@ const shield = (text) => {
 /**
  * @param {string} text
  * @param {number|string} cid
- * @returns {{ text: string, hits: Array<{ kind: string, detail: string }> }}
+ * @param {{ strict?: boolean }} [options]
+ * @returns {{ text: string, hits: Array<{ kind: string, detail: string }>, leftover: string[] }}
  */
-export function convertShortcodes(text, cid) {
+export function convertShortcodes(text, cid, { strict = true } = {}) {
   const [masked, unshield] = shield(text);
   let out = masked;
   const hits = [];
@@ -83,14 +84,14 @@ export function convertShortcodes(text, cid) {
   // the outer {collapse} wrapper carries no data of its own
   out = out.replace(/\{\/?collapse\}[ \t]*\n?/g, '\n');
 
-  const leftover = out.match(/\{(alert|message|cloud|bilibili|collapse|\/collapse)[^}]*\}/g);
-  if (leftover) {
+  const leftover = out.match(/\{(alert|message|cloud|bilibili|collapse|\/collapse)[^}]*\}/g) || [];
+  if (strict && leftover.length) {
     throw new Error(`cid=${cid} 短代码残留: ${leftover.join(', ')}`);
   }
 
-  return { text: unshield(out), hits };
+  return { text: unshield(out), hits, leftover };
 }
 
-export function convertShortcodesText(text, cid) {
-  return convertShortcodes(text, cid).text;
+export function convertShortcodesText(text, cid, options) {
+  return convertShortcodes(text, cid, options).text;
 }

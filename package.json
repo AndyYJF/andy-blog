@@ -34,6 +34,9 @@
     "comments:export": "node scripts/export-typecho-comments-mysql.js",
     "comments:test": "node --test scripts/comment-migration-core.test.js scripts/comment-migration-mysql.test.js scripts/comment-migration-cli.test.js scripts/typecho-comment-export.test.js scripts/typecho-comment-readonly-guard.test.js scripts/phase9c-comment-enable.test.js",
     "cms:management:test": "node --test scripts/cms-management.test.js",
+    "cms:preview:test": "node --test scripts/cms-preview.test.js",
+    "cms:preview:build": "node scripts/cms-preview/build.mjs",
+    "cms:preview:dev": "node scripts/cms-preview/dev.mjs",
     "release:cleanup:test": "node --test scripts/cleanup-old-releases.test.js",
     "content:presentation:test": "node --test scripts/content-presentation.test.js",
     "content:joe-task:test": "node --test scripts/joe-task-markers.test.js",
@@ -43,11 +46,13 @@
   },
   "dependencies": {
     "js-yaml": "^4.1.0",
+    "marked": "^18.0.9",
     "mysql2": "^3.23.2",
     "slugify": "^1.6.9"
   },
   "devDependencies": {
     "chrome-launcher": "^1.2.1",
+    "esbuild": "^0.28.2",
     "lighthouse": "^13.4.1",
     "pagefind": "^1.5.2"
   }

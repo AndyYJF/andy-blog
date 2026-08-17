@@ -14,6 +14,12 @@ secrets/
 id_rsa*
 id_ed25519*
 
+# Generated CMS preview assets (npm run cms:preview:build)
+typecho/usr/plugins/AstroPreview/assets/
+
+# Local agent planning, packets, and deploy receipts
+.planning/
+
 # Node / Astro
 node_modules/
 dist/
