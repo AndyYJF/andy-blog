@@ -55,7 +55,9 @@
         return;
       }
 
-      // 以按钮中心为圆心的圆形扩散过渡
+      // 以按钮中心为圆心的圆形扩散过渡：圆心/半径通过 CSS 变量传给
+      // keyframes（见 global.css 的 theme-ripple-reveal），Safari 不支持
+      // WAAPI 的 pseudoElement 动画，必须走 CSS 动画
       const rect = button.getBoundingClientRect();
       const x = rect.left + rect.width / 2;
       const y = rect.top + rect.height / 2;
@@ -64,28 +66,19 @@
         Math.max(y, window.innerHeight - y),
       );
       const root = document.documentElement;
+      root.style.setProperty('--ripple-x', `${x}px`);
+      root.style.setProperty('--ripple-y', `${y}px`);
+      root.style.setProperty('--ripple-r', `${radius}px`);
       root.classList.add('theme-ripple');
       const transition = document.startViewTransition(apply);
-      transition.ready
-        .then(() => {
-          root.animate(
-            {
-              clipPath: [
-                `circle(0px at ${x}px ${y}px)`,
-                `circle(${radius}px at ${x}px ${y}px)`,
-              ],
-            },
-            {
-              duration: 520,
-              easing: 'cubic-bezier(0.4, 0, 0.2, 1)',
-              pseudoElement: '::view-transition-new(root)',
-            },
-          );
-        })
-        .catch(() => {});
       transition.finished
         .catch(() => {})
-        .then(() => root.classList.remove('theme-ripple'));
+        .then(() => {
+          root.classList.remove('theme-ripple');
+          root.style.removeProperty('--ripple-x');
+          root.style.removeProperty('--ripple-y');
+          root.style.removeProperty('--ripple-r');
+        });
     });
   })();
 </script>

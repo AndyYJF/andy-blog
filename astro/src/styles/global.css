@@ -121,8 +121,19 @@ html.theme-ripple::view-transition-new(root) {
 html.theme-ripple::view-transition-old(root) {
   z-index: 1;
 }
+/* 用 CSS keyframes 做扩散动画（而不是 WAAPI 的 pseudoElement 选项），
+   Safari/WebKit 只认 CSS 形式的 view-transition 伪元素动画 */
 html.theme-ripple::view-transition-new(root) {
   z-index: 2147483646;
+  animation: theme-ripple-reveal 520ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+@keyframes theme-ripple-reveal {
+  from {
+    clip-path: circle(0px at var(--ripple-x, 50%) var(--ripple-y, 50%));
+  }
+  to {
+    clip-path: circle(var(--ripple-r, 150vmax) at var(--ripple-x, 50%) var(--ripple-y, 50%));
+  }
 }
 
 /* 4. sticky nav */
