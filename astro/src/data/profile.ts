@@ -36,7 +36,7 @@ export const profile = {
       title: "AndyYan Blog",
       description:
         "以 Astro 生成静态页面，保留 Typecho 内容来源，并使用 Pagefind 提供按需加载的站内搜索。",
-      href: "/posts/",
+      href: "/posts/astro/",
       linkLabel: "浏览技术文章",
     },
   ],
