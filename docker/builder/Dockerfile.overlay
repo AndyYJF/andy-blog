@@ -1,0 +1,20 @@
+# syntax=docker/dockerfile:1
+
+ARG BASE_IMAGE=andy-blog-cms-builder:latest
+FROM ${BASE_IMAGE}
+
+ARG SOURCE_REVISION=unknown
+LABEL org.opencontainers.image.revision=$SOURCE_REVISION
+
+USER root
+WORKDIR /app
+
+# Dependency manifests are validated against BASE_IMAGE before this Dockerfile
+# is used. COPY updates only the reviewed source while retaining the base image's
+# node_modules and Playwright browser installation.
+COPY --chown=node:node . .
+RUN cp /app/docs/baselines/fixtures/img-dims.json /app/astro/.cache/img-dims.json \
+  && chmod 0755 /app/host/*.sh /app/scripts/*.sh \
+  && chown node:node /app/astro/.cache/img-dims.json
+
+USER node

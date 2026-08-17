@@ -1,8 +1,11 @@
 /**
- * RSS fixture gate (§5.4).
+ * RSS guid stability gate (§5.4).
  *
- * First release must keep the same 10 GUIDs, in the same order, as the live
- * Typecho fixture. Each item must contain exactly one <guid>.
+ * Cutover locked the 10 GUIDs from the 2026-08-01 Typecho feed, in order.
+ * After cutover, new posts may appear at the front of the 10-item window.
+ * The fixture sequence must remain a contiguous prefix of whatever is left
+ * after that new prefix (older fixture items may fall off the window).
+ * Each item must contain exactly one <guid>.
  */
 import fs from 'node:fs';
 import path from 'node:path';
@@ -35,13 +38,23 @@ if (actual.length !== expected.length) {
   throw new Error(`built RSS has ${actual.length} items, fixture has ${expected.length}`);
 }
 
-const mismatches = [];
-for (let i = 0; i < expected.length; i += 1) {
-  if (expected[i] !== actual[i]) {
-    mismatches.push({ index: i, expected: expected[i], actual: actual[i] });
+const newPrefix = (() => {
+  for (let offset = 0; offset < actual.length; offset += 1) {
+    const kept = actual.length - offset;
+    if (expected.slice(0, kept).every((guid, i) => guid === actual[offset + i])) {
+      return offset;
+    }
   }
-}
-if (mismatches.length) {
+  return -1;
+})();
+
+if (newPrefix === -1) {
+  const mismatches = [];
+  for (let i = 0; i < expected.length; i += 1) {
+    if (expected[i] !== actual[i]) {
+      mismatches.push({ index: i, expected: expected[i], actual: actual[i] });
+    }
+  }
   console.error(JSON.stringify({ mismatches }, null, 2));
   process.exit(1);
 }
@@ -58,6 +71,7 @@ console.log(
     {
       ok: true,
       count: actual.length,
+      newItems: newPrefix,
       guids: actual,
     },
     null,

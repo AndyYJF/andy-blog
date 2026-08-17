@@ -76,7 +76,8 @@ const main = async () => {
       );
     }
 
-    const diagrams = (stripFrontmatter(source).match(/^```mermaid/gm) ?? []).length;
+    // Fences may be indented inside lists; Astro still renders those as mermaid.
+    const diagrams = (stripFrontmatter(source).match(/^[ \t]*```mermaid\b/gm) ?? []).length;
     const rendered_diagrams = (rendered.match(/beoe-light/g) ?? []).length;
     if (diagrams !== rendered_diagrams) {
       failures.push(
@@ -101,7 +102,9 @@ const main = async () => {
   if (!mixedFixture.includes('<input type="checkbox" disabled>')) {
     failures.push('posts/silly-tavern-linux: Joe unchecked task did not render as a disabled checkbox');
   }
-  if (/\{(?:x|X| )\}/u.test(checkedFixture) || /\{(?:x|X| )\}/u.test(mixedFixture)) {
+  const checkedArticle = articleBody(checkedFixture) ?? '';
+  const mixedArticle = articleBody(mixedFixture) ?? '';
+  if (/\{(?:x|X| )\}/u.test(checkedArticle) || /\{(?:x|X| )\}/u.test(mixedArticle)) {
     failures.push('Joe task marker remained visible in rendered article HTML');
   }
 

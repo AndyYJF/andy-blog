@@ -38,10 +38,11 @@ node -e '
 OLD_ID=""
 if [[ -L "$WWW_ROOT/current" ]]; then
   OLD_ID="$(basename "$(readlink -f "$WWW_ROOT/current")")"
-  cmp -s "$WWW_ROOT/current/nginx/release-http.conf" "$RELEASE_DIR/nginx/release-http.conf" || {
-    echo "release nginx policy changed; refusing unattended switch" >&2
-    exit 69
-  }
+  # Identical nginx, or extra map entries for newly published posts, is allowed.
+  # Status flips, location/server drift, removals, and retargets still exit 69.
+  node "$(dirname "$0")/../scripts/compare-nginx-policy.js" \
+    "$WWW_ROOT/current/nginx/release-http.conf" \
+    "$RELEASE_DIR/nginx/release-http.conf"
 fi
 
 ln -sfn "releases/$RELEASE_ID" "$WWW_ROOT/current.next"
