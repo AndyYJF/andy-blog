@@ -1293,6 +1293,21 @@ html[data-theme="dark"] .beoe-light {
   display: flex;
   gap: 1rem;
 }
+.site-footer-legal {
+  display: flex;
+  align-items: baseline;
+  gap: 0.9rem;
+  flex-wrap: wrap;
+}
+.site-footer-legal .icp-link {
+  color: var(--muted);
+  text-decoration: none;
+  transition: color var(--t-state) var(--ease);
+}
+.site-footer-legal .icp-link:hover,
+.site-footer-legal .icp-link:focus-visible {
+  color: var(--text);
+}
 
 .pagination {
   display: flex;
