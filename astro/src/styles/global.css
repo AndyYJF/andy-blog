@@ -250,16 +250,16 @@ html.theme-ripple::view-transition-new(root) {
   background-image:
     radial-gradient(900px 500px at 12% -10%, rgb(217 119 6 / 0.10), transparent 60%),
     radial-gradient(700px 500px at 95% 110%, rgb(40 110 190 / 0.06), transparent 60%),
-    repeating-linear-gradient(0deg, transparent 0 47px, rgb(107 114 128 / 0.07) 47px 48px),
-    repeating-linear-gradient(90deg, transparent 0 47px, rgb(107 114 128 / 0.07) 47px 48px);
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48'%3E%3Cpath d='M48 .5H.5V48' fill='none' stroke='%236b7280' stroke-opacity='0.07'/%3E%3C/svg%3E");
+  background-size: auto, auto, 48px 48px;
 }
 .theme-ripple-cover[data-theme="dark"] {
   background-color: #0a0a0a;
   background-image:
     radial-gradient(900px 500px at 12% -10%, rgb(251 191 36 / 0.07), transparent 60%),
     radial-gradient(700px 500px at 95% 110%, rgb(108 182 255 / 0.05), transparent 60%),
-    repeating-linear-gradient(0deg, transparent 0 47px, rgb(156 163 175 / 0.05) 47px 48px),
-    repeating-linear-gradient(90deg, transparent 0 47px, rgb(156 163 175 / 0.05) 47px 48px);
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48'%3E%3Cpath d='M48 .5H.5V48' fill='none' stroke='%239ca3af' stroke-opacity='0.05'/%3E%3C/svg%3E");
+  background-size: auto, auto, 48px 48px;
 }
 
 /* 4. sticky nav */
@@ -2017,18 +2017,20 @@ html[data-theme="dark"] .beoe-light {
 /* ============================================================
    背景氛围（移植自 dn42-peering 的 NOC 面板风）：蓝图网格 +
    琥珀/冷蓝溢光 + 扫描线；页边导航（索引脊/进度线/探照灯）
-   网格与溢光颜色由 --muted/--accent 经 color-mix 派生，双主题自适应
+   溢光由 --accent 经 color-mix 派生；网格因 SVG 瓦片限制按主题写死
    ============================================================ */
 .bg-fx {
   position: fixed;
   inset: 0;
   z-index: -1;
   pointer-events: none;
+  /* 网格用 SVG 瓦片而不是 repeating-linear-gradient：
+     移动端 WebKit 会把 fixed 背景上 1px 的渐变线按瓦片取整丢掉 */
   background-image:
     radial-gradient(900px 500px at 12% -10%, color-mix(in srgb, var(--accent) 10%, transparent), transparent 60%),
     radial-gradient(700px 500px at 95% 110%, rgb(40 110 190 / 0.06), transparent 60%),
-    repeating-linear-gradient(0deg, transparent 0 47px, color-mix(in srgb, var(--muted) 7%, transparent) 47px 48px),
-    repeating-linear-gradient(90deg, transparent 0 47px, color-mix(in srgb, var(--muted) 7%, transparent) 47px 48px);
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48'%3E%3Cpath d='M48 .5H.5V48' fill='none' stroke='%236b7280' stroke-opacity='0.07'/%3E%3C/svg%3E");
+  background-size: auto, auto, 48px 48px;
 }
 /* 扫描线：只铺在背景层（z-index -1），不压正文以保证阅读 */
 .bg-fx::after {
@@ -2043,8 +2045,8 @@ html[data-theme="dark"] .bg-fx {
   background-image:
     radial-gradient(900px 500px at 12% -10%, color-mix(in srgb, var(--accent) 7%, transparent), transparent 60%),
     radial-gradient(700px 500px at 95% 110%, rgb(108 182 255 / 0.05), transparent 60%),
-    repeating-linear-gradient(0deg, transparent 0 47px, color-mix(in srgb, var(--muted) 5%, transparent) 47px 48px),
-    repeating-linear-gradient(90deg, transparent 0 47px, color-mix(in srgb, var(--muted) 5%, transparent) 47px 48px);
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48'%3E%3Cpath d='M48 .5H.5V48' fill='none' stroke='%239ca3af' stroke-opacity='0.05'/%3E%3C/svg%3E");
+  background-size: auto, auto, 48px 48px;
 }
 html[data-theme="dark"] .bg-fx::after {
   background: repeating-linear-gradient(0deg, rgb(0 0 0 / 0.16) 0 1px, transparent 1px 3px);
