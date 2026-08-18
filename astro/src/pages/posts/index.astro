@@ -16,7 +16,7 @@ const { posts, current, totalPages } = pageSlice(all, 1);
   <div class="post-index" data-post-index>
     <header class="page-heading">
       <p class="profile-kicker">WRITING / {all.length}</p>
-      <h1>文章</h1>
+      <h1 transition:name="page-title" transition:animate="none">文章</h1>
       <p class="muted">技术笔记、部署过程与问题复盘</p>
     </header>
     <PostList posts={posts.map((post) => ({

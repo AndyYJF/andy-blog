@@ -33,7 +33,7 @@ function label(meta: { name?: string; sourceSlug: string }) {
   description="全部文章与分类、标签索引"
   canonicalPath="/archive/"
 >
-  <h1>归档</h1>
+  <h1 transition:name="page-title" transition:animate="none">归档</h1>
   <p class="muted">共 {posts.length} 篇文章</p>
 
   <section class="archive-taxonomies" aria-label="分类与标签">

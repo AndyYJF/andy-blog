@@ -35,7 +35,7 @@ const jsonLd = {
     <section class="profile-hero" aria-labelledby="profile-title">
       <div class="hero-text">
         <p class="profile-kicker">{profile.eyebrow}</p>
-        <h1 id="profile-title">{profile.name}</h1>
+        <h1 id="profile-title" transition:name="page-title" transition:animate="none">{profile.name}</h1>
         <p class="profile-role">{profile.role}</p>
         <p class="profile-intro">{profile.intro}</p>
       </div>

@@ -26,7 +26,7 @@ const titleName =
   canonicalPath={meta.canonicalPath}
   noindex={meta.discoverable === false}
 >
-  <h1>{titleName}</h1>
+  <h1 transition:name="page-title" transition:animate="none">{titleName}</h1>
   <p class="muted">标签 · {posts.length} 篇</p>
   <PostList
     emptyText="该标签暂无文章"

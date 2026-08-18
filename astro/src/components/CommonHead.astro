@@ -2,3 +2,32 @@
 import { ClientRouter } from "astro:transitions";
 ---
 <ClientRouter />
+<script is:inline>
+  (() => {
+    if (window.__andyNavDirInstalled) return;
+    window.__andyNavDirInstalled = true;
+    // 顶栏导航的线性权重：目标序号更大 = 前进（新页从右滑入），反之 = 后退
+    // 不在表里的路由（tag/category 等）不设置方向，回退为淡入淡出
+    const NAV_ORDER = { "": 0, posts: 1, page: 1, archive: 2, friends: 3, dn42: 4, about: 5 };
+    const segmentFor = (url) => url.pathname.split("/").filter(Boolean)[0] || "";
+    let pendingDir;
+    document.addEventListener("astro:before-preparation", (event) => {
+      const root = document.documentElement;
+      pendingDir = undefined;
+      delete root.dataset.navDir;
+      try {
+        const fromIdx = NAV_ORDER[segmentFor(event.from)];
+        const toIdx = NAV_ORDER[segmentFor(event.to)];
+        if (fromIdx === undefined || toIdx === undefined || fromIdx === toIdx) return;
+        // 目标页面序号 > 当前页面序号 => forward（前进），反之 => back（后退）
+        pendingDir = toIdx > fromIdx ? "forward" : "back";
+        root.dataset.navDir = pendingDir;
+      } catch {}
+    });
+    // swap 会用新文档的 <html> 属性覆盖当前文档，方向标记要同步给新文档，
+    // 否则过渡后半段选择器失配、滑动退化成淡入淡出
+    document.addEventListener("astro:before-swap", (event) => {
+      if (pendingDir) event.newDocument.documentElement.dataset.navDir = pendingDir;
+    });
+  })();
+</script>

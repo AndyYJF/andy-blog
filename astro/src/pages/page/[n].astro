@@ -25,7 +25,7 @@ const canonicalPath = `/page/${current}/`;
   description={`AndyYan 博客文章列表第 ${current} 页`}
   canonicalPath={canonicalPath}
 >
-  <h1>文章列表</h1>
+  <h1 transition:name="page-title" transition:animate="none">文章列表</h1>
   <p class="muted">第 {current} / {totalPages} 页</p>
   <PostList posts={posts.map((p) => ({
     title: p.data.title,

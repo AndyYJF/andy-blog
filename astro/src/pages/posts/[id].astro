@@ -31,7 +31,7 @@ const displayCategories = post.data.categories.filter((category) => category.mid
 >
   <article class="prose" data-article data-pagefind-body>
     <header class="entry-header">
-      <h1>{post.data.title}</h1>
+      <h1 transition:name="page-title" transition:animate="none">{post.data.title}</h1>
       <p class="entry-meta">
         <time datetime={post.data.pubDate.toISOString()}>
           {post.data.pubDate.toISOString().slice(0, 10)}
