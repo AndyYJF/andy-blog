@@ -136,6 +136,22 @@ html.theme-ripple::view-transition-new(root) {
   }
 }
 
+/* 兜底圆形扩散（无 View Transitions 的环境，如 iOS 17-）：
+   新主题背景色遮罩，JS 用 clip-path 圆展开后在其下方切换主题再淡出。
+   背景色取值与 :root / html[data-theme="dark"] 的 --bg 保持一致 */
+.theme-ripple-cover {
+  position: fixed;
+  inset: 0;
+  z-index: 70;
+  pointer-events: none;
+}
+.theme-ripple-cover[data-theme="light"] {
+  background: #fafafa;
+}
+.theme-ripple-cover[data-theme="dark"] {
+  background: #0a0a0a;
+}
+
 /* 4. sticky nav */
 .site-header {
   position: sticky;
