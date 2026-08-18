@@ -12,7 +12,9 @@ Environment=COMPOSE_DIR=/var/www/andy-blog
 Environment=RUNTIME_DIR=/var/www/andy-blog/runtime/build
 Environment=STATE_DIR=/opt/1panel/www/sites/www.andy-y.cn/deploy/state
 WorkingDirectory=/var/www/andy-blog
+EnvironmentFile=-/etc/andy-blog/offbox-builder.env
 ExecStart=/var/www/andy-blog/host/blog-rebuild-1panel.sh
+TimeoutStartSec=900
 Nice=5
 
 [Install]

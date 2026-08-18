@@ -51,6 +51,10 @@ test('automatic publishing preserves current production transition state', () =>
   assert.match(rebuild, /REDIRECT_STATUS" == "302"/);
   assert.match(rebuild, /COMMENT_WRITE_MODE" == "enabled"/);
   assert.match(rebuild, /compose\.1panel-cms\.yml/);
+  assert.match(rebuild, /ANDY_BLOG_BUILDER:-offbox/);
+  assert.match(rebuild, /offbox-remote-build\.sh/);
+  assert.match(rebuild, /export-typecho-snapshot\.js/);
+  assert.match(rebuild, /ANDY_BLOG_BUILDER" == "vps-overlay"/);
   assert.match(rebuild, /builder bash \/app\/scripts\/build-release\.sh/);
   assert.match(rebuild, /rearm/);
   assert.match(rebuild, /runtime\/cdn/);
@@ -59,24 +63,35 @@ test('automatic publishing preserves current production transition state', () =>
   assert.match(rebuild, /cleanup-old-releases\.js/);
   assert.match(rebuild, /RELEASE_RETENTION_COUNT:-3/);
   assert.match(rebuild, /warning: release .* is live, but old release cleanup was refused or failed/);
+  assert.doesNotMatch(rebuild, /TYPECHO_RO_DB_PASSWORD|DB_PASSWORD=/);
   assert.equal(
     rebuild.indexOf('cleanup-old-releases.js') > rebuild.indexOf('mv -f "$JOB_FILE"'),
     true,
     'cleanup must run only after the successful switch, CDN enqueue attempt, and job archival',
   );
   assert.match(switcher, /sha256sum -c/);
-  assert.match(switcher, /cmp -s .*release-http\.conf/);
+  assert.match(switcher, /compare-nginx-policy\.js/);
   assert.doesNotMatch(`${rebuild}\n${switcher}`, /cdn-purge|nginx -s reload|return 301/);
   assert.doesNotMatch(releaseBuild, /node scripts\/migrate-comments/);
   assert.match(releaseBuild, /generate-cdn-preheat-plan\.js/);
   assert.match(releaseBuild, /cleanup-old-releases\.test\.js/);
+  assert.match(releaseBuild, /BUILD_LOCK_DIR:-\/runtime\/build/);
+  assert.match(releaseBuild, /APP_ROOT:-\/app/);
+  const envExample = read('host/offbox-builder.env.example');
+  assert.match(envExample, /ANDY_BLOG_BUILDER=offbox/);
+  assert.doesNotMatch(envExample, /BEGIN OPENSSH|PRIVATE KEY/);
   const executableFiles = [
     'host/blog-rebuild-1panel.sh',
     'host/switch-release-1panel.sh',
+    'host/offbox-remote-build.sh',
   ];
-  if (fs.existsSync(path.join(ROOT, '.git'))) {
+  const gitRoot = fs.existsSync(path.join(ROOT, '.git'));
+  const trackedExecutableFiles = executableFiles.filter((file) =>
+    gitRoot && execFileSync('git', ['ls-files', '--', file], { cwd: ROOT, encoding: 'utf8' }).trim(),
+  );
+  if (trackedExecutableFiles.length) {
     const executableModes = execFileSync('git', [
-      'ls-files', '--stage', '--', ...executableFiles,
+      'ls-files', '--stage', '--', ...trackedExecutableFiles,
     ], { cwd: ROOT, encoding: 'utf8' });
     assert.equal(executableModes.trim().split('\n').every((line) => line.startsWith('100755 ')), true);
   } else {
@@ -85,7 +100,9 @@ test('automatic publishing preserves current production transition state', () =>
     }
   }
   for (const file of [...executableFiles, 'scripts/build-release.sh']) {
-    const bytes = fs.existsSync(path.join(ROOT, '.git'))
+    const tracked = gitRoot
+      && execFileSync('git', ['ls-files', '--', file], { cwd: ROOT, encoding: 'utf8' }).trim();
+    const bytes = tracked
       ? execFileSync('git', ['show', `:${file}`], { cwd: ROOT })
       : fs.readFileSync(path.join(ROOT, file));
     assert.equal(bytes.includes(13), false, `${file} must use LF`);

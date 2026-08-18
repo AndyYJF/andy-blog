@@ -1,14 +1,17 @@
 #!/usr/bin/env bash
-# scripts/build-release.sh — runs inside the builder container.
+# scripts/build-release.sh — builder container or native off-box host.
 # stdout: exactly one release ID matching ^[0-9TZ-]+[0-9a-f]{8}$
 # stderr/journal: all build logs
 set -Eeuo pipefail
 umask 027
 
+APP_ROOT="${APP_ROOT:-/app}"
+BUILD_LOCK_DIR="${BUILD_LOCK_DIR:-/runtime/build}"
+
 exec 3>&1
 exec 1>&2
-mkdir -p /runtime/build
-exec 9>/runtime/build/rebuild.lock
+mkdir -p "$BUILD_LOCK_DIR"
+exec 9>"$BUILD_LOCK_DIR/rebuild.lock"
 flock 9
 
 RELEASE_ID="$(date -u +%Y%m%dT%H%M%SZ)-$(openssl rand -hex 4)"
@@ -28,14 +31,14 @@ test ! -e "$FINAL"
 
 # Mark in-flight so rebuild-api can flip to dirty.
 printf '%s\n' "{\"releaseId\":\"$RELEASE_ID\",\"startedAt\":\"$(date -u +%Y-%m-%dT%H:%M:%SZ)\"}" \
-  >/runtime/build/building
+  >"$BUILD_LOCK_DIR/building"
 
 cleanup_building() {
-  rm -f /runtime/build/building
+  rm -f "$BUILD_LOCK_DIR/building"
 }
 trap cleanup_building EXIT
 
-cd /app
+cd "$APP_ROOT"
 
 # Monorepo layout: /app is the repo root (not just astro/).
 node --test scripts/cleanup-old-releases.test.js
@@ -91,5 +94,5 @@ chmod 0644 "$STAGE/checksums.sha256"
 mv -T "$STAGE" "$FINAL"
 
 # Clear pending; if dirty was set mid-build, leave it for the host to re-queue.
-rm -f /runtime/build/pending
+rm -f "$BUILD_LOCK_DIR/pending"
 printf '%s\n' "$RELEASE_ID" >&3
