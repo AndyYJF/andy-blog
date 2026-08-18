@@ -237,7 +237,7 @@ html.theme-ripple::view-transition-new(root) {
 
 /* 兜底圆形扩散（无 View Transitions 的环境，如 iOS 17-）：
    新主题背景色遮罩，JS 用 clip-path 圆展开后在其下方切换主题再淡出。
-   背景色与点阵/辉光取值跟 :root、html[data-theme="dark"] 的 --bg 及
+   背景色与网格/溢光取值跟 :root、html[data-theme="dark"] 的 --bg 及
    .bg-fx 保持一致，让遮罩看起来像新主题的背景而不是纯色空块 */
 .theme-ripple-cover {
   position: fixed;
@@ -247,27 +247,19 @@ html.theme-ripple::view-transition-new(root) {
 }
 .theme-ripple-cover[data-theme="light"] {
   background-color: #fafafa;
-  background-image: radial-gradient(
-    circle at 1px 1px,
-    rgb(26 26 26 / 0.09) 1px,
-    transparent 1.5px
-  );
-  background-size: 26px 26px;
+  background-image:
+    radial-gradient(900px 500px at 12% -10%, rgb(217 119 6 / 0.10), transparent 60%),
+    radial-gradient(700px 500px at 95% 110%, rgb(40 110 190 / 0.06), transparent 60%),
+    repeating-linear-gradient(0deg, transparent 0 47px, rgb(107 114 128 / 0.07) 47px 48px),
+    repeating-linear-gradient(90deg, transparent 0 47px, rgb(107 114 128 / 0.07) 47px 48px);
 }
 .theme-ripple-cover[data-theme="dark"] {
   background-color: #0a0a0a;
   background-image:
-    radial-gradient(
-      circle at 1px 1px,
-      rgb(229 229 229 / 0.07) 1px,
-      transparent 1.5px
-    ),
-    radial-gradient(
-      70rem 34rem at 50% -14rem,
-      rgb(251 191 36 / 0.12),
-      transparent 70%
-    );
-  background-size: 26px 26px, auto;
+    radial-gradient(900px 500px at 12% -10%, rgb(251 191 36 / 0.07), transparent 60%),
+    radial-gradient(700px 500px at 95% 110%, rgb(108 182 255 / 0.05), transparent 60%),
+    repeating-linear-gradient(0deg, transparent 0 47px, rgb(156 163 175 / 0.05) 47px 48px),
+    repeating-linear-gradient(90deg, transparent 0 47px, rgb(156 163 175 / 0.05) 47px 48px);
 }
 
 /* 4. sticky nav */
@@ -2023,35 +2015,41 @@ html[data-theme="dark"] .beoe-light {
 }
 
 /* ============================================================
-   桌面端装饰：背景点阵 + 深色辉光 + 页边导航（索引脊/进度线/探照灯）
-   全部颜色由 --text/--muted/--accent 经 color-mix 派生，双主题自适应
+   背景氛围（移植自 dn42-peering 的 NOC 面板风）：蓝图网格 +
+   琥珀/冷蓝溢光 + 扫描线；页边导航（索引脊/进度线/探照灯）
+   网格与溢光颜色由 --muted/--accent 经 color-mix 派生，双主题自适应
    ============================================================ */
 .bg-fx {
   position: fixed;
   inset: 0;
   z-index: -1;
   pointer-events: none;
-  background-image: radial-gradient(
-    circle at 1px 1px,
-    color-mix(in srgb, var(--text) 9%, transparent) 1px,
-    transparent 1.5px
-  );
-  background-size: 26px 26px;
+  background-image:
+    radial-gradient(900px 500px at 12% -10%, color-mix(in srgb, var(--accent) 10%, transparent), transparent 60%),
+    radial-gradient(700px 500px at 95% 110%, rgb(40 110 190 / 0.06), transparent 60%),
+    repeating-linear-gradient(0deg, transparent 0 47px, color-mix(in srgb, var(--muted) 7%, transparent) 47px 48px),
+    repeating-linear-gradient(90deg, transparent 0 47px, color-mix(in srgb, var(--muted) 7%, transparent) 47px 48px);
+}
+/* 扫描线：只铺在背景层（z-index -1），不压正文以保证阅读 */
+.bg-fx::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(0deg, rgb(120 140 170 / 0.10) 0 1px, transparent 1px 3px);
+  opacity: 0.5;
 }
 
 html[data-theme="dark"] .bg-fx {
   background-image:
-    radial-gradient(
-      circle at 1px 1px,
-      color-mix(in srgb, var(--text) 7%, transparent) 1px,
-      transparent 1.5px
-    ),
-    radial-gradient(
-      70rem 34rem at 50% -14rem,
-      color-mix(in srgb, var(--accent) 12%, transparent),
-      transparent 70%
-    );
-  background-size: 26px 26px, auto;
+    radial-gradient(900px 500px at 12% -10%, color-mix(in srgb, var(--accent) 7%, transparent), transparent 60%),
+    radial-gradient(700px 500px at 95% 110%, rgb(108 182 255 / 0.05), transparent 60%),
+    repeating-linear-gradient(0deg, transparent 0 47px, color-mix(in srgb, var(--muted) 5%, transparent) 47px 48px),
+    repeating-linear-gradient(90deg, transparent 0 47px, color-mix(in srgb, var(--muted) 5%, transparent) 47px 48px);
+}
+html[data-theme="dark"] .bg-fx::after {
+  background: repeating-linear-gradient(0deg, rgb(0 0 0 / 0.16) 0 1px, transparent 1px 3px);
+  opacity: 0.35;
+  mix-blend-mode: multiply;
 }
 
 /* 左侧：章节索引脊（JS 从 main section 的 kicker 提取标签） */
