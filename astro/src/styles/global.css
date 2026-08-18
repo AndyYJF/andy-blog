@@ -138,7 +138,8 @@ html.theme-ripple::view-transition-new(root) {
 
 /* 兜底圆形扩散（无 View Transitions 的环境，如 iOS 17-）：
    新主题背景色遮罩，JS 用 clip-path 圆展开后在其下方切换主题再淡出。
-   背景色取值与 :root / html[data-theme="dark"] 的 --bg 保持一致 */
+   背景色与点阵/辉光取值跟 :root、html[data-theme="dark"] 的 --bg 及
+   .bg-fx 保持一致，让遮罩看起来像新主题的背景而不是纯色空块 */
 .theme-ripple-cover {
   position: fixed;
   inset: 0;
@@ -146,10 +147,28 @@ html.theme-ripple::view-transition-new(root) {
   pointer-events: none;
 }
 .theme-ripple-cover[data-theme="light"] {
-  background: #fafafa;
+  background-color: #fafafa;
+  background-image: radial-gradient(
+    circle at 1px 1px,
+    rgb(26 26 26 / 0.09) 1px,
+    transparent 1.5px
+  );
+  background-size: 26px 26px;
 }
 .theme-ripple-cover[data-theme="dark"] {
-  background: #0a0a0a;
+  background-color: #0a0a0a;
+  background-image:
+    radial-gradient(
+      circle at 1px 1px,
+      rgb(229 229 229 / 0.07) 1px,
+      transparent 1.5px
+    ),
+    radial-gradient(
+      70rem 34rem at 50% -14rem,
+      rgb(251 191 36 / 0.12),
+      transparent 70%
+    );
+  background-size: 26px 26px, auto;
 }
 
 /* 4. sticky nav */

@@ -80,7 +80,7 @@
                 `circle(${radius}px at ${x}px ${y}px)`,
               ],
             },
-            { duration: 480, easing: 'cubic-bezier(0.4, 0, 0.2, 1)', fill: 'forwards' },
+            { duration: 340, easing: 'cubic-bezier(0.4, 0, 0.2, 1)', fill: 'forwards' },
           );
           expand.finished
             .catch(() => {})
@@ -88,7 +88,7 @@
               apply();
               return cover.animate(
                 { opacity: [1, 0] },
-                { duration: 160, fill: 'forwards' },
+                { duration: 140, fill: 'forwards' },
               ).finished.catch(() => {});
             })
             .then(() => cover.remove());
