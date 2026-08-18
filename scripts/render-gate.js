@@ -84,6 +84,13 @@ const main = async () => {
         `${collection}/${slug}: mermaid 图 ${diagrams} 张，产物中 ${rendered_diagrams} 张`,
       );
     }
+    const beoeSrcs = [...rendered.matchAll(/src="(\/beoe\/[^"]+)"/g)].map((match) => match[1]);
+    for (const src of beoeSrcs) {
+      const file = path.join(DIST, src.replace(/^\//, ''));
+      if (!existsSync(file)) {
+        failures.push(`${collection}/${slug}: mermaid 产物缺失 ${src}`);
+      }
+    }
   }
 
   const checkedFixture = readFileSync(

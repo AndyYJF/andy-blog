@@ -44,6 +44,7 @@ cd "$APP_ROOT"
 node --test scripts/cleanup-old-releases.test.js
 node --test scripts/joe-task-markers.test.js
 node --test scripts/compare-nginx-policy.test.js
+node --test scripts/copy-beoe-to-dist.test.js
 node scripts/sync-typecho.js
 node scripts/build-legacy-url-map.js
 node scripts/generate-nginx.js --status "$REDIRECT_STATUS"
