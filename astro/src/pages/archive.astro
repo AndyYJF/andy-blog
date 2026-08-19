@@ -70,7 +70,9 @@ function label(meta: { name?: string; sourceSlug: string }) {
             <time datetime={post.data.pubDate.toISOString()}>
               {post.data.pubDate.toISOString().slice(5, 10)}
             </time>
-            <a href={post.data.canonicalPath}>{post.data.title}</a>
+            <span class="archive-title">
+              <a href={post.data.canonicalPath}>{post.data.title}</a>
+            </span>
           </li>
         ))}
       </ul>
