@@ -53,6 +53,9 @@ const navItems = [
 const isNavActive = (href: string) =>
   href === "/posts/" ? articleNavActive : currentPath === href;
 
+// 二级分类导航条的显示范围：文章列表/详情/分页 + 分类页
+const catBarVisible = articleNavActive || currentPath.startsWith("/category/");
+
 // 顶栏下方的二级分类导航条；「所有文章」指向文章列表主页
 const catBarItems = activeMetaOfType("category").map(({ mid, meta }) => ({
   href: mid === 1 ? "/posts/" : meta.canonicalPath,
@@ -190,7 +193,7 @@ const ldPayload = jsonLd ?? defaultLd;
           </button>
         </nav>
       </div>
-      {articleNavActive && (
+      {catBarVisible && (
         <nav class="cat-bar" aria-label="分类导航">
           <div class="cat-bar-inner">
             {catBarItems.map((item) => (
