@@ -1879,39 +1879,221 @@ html[data-theme="dark"] .beoe-light {
 .about-section-heading > * {
   margin: 0;
 }
-.about-focus-list {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 0;
+/* ELSEWHERE：图标小矩形卡 */
+.about-social {
+  list-style: none;
   margin: 0;
   padding: 0;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.65rem;
+}
+.about-social a {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  column-gap: 0.55rem;
+  align-items: center;
+  padding: 0.7rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-panel);
+  color: inherit;
+  text-decoration: none;
+  transition:
+    border-color var(--t-state) var(--ease),
+    background-color var(--t-state) var(--ease);
+}
+.about-social a:hover,
+.about-social a:focus-visible {
+  border-color: color-mix(in srgb, var(--accent) 45%, var(--border));
+  background: color-mix(in srgb, var(--accent) 5%, var(--surface));
+}
+/* 卡片整格可点，prose 的外链角标会换行撑高卡片，这里禁用 */
+.prose .about-social a[href^="http"]::after {
+  content: none;
+}
+.about-social svg {
+  grid-row: 1 / span 2;
+  width: 1.15rem;
+  height: 1.15rem;
+  color: var(--muted);
+  transition: color var(--t-fast) var(--ease);
+}
+.about-social a:hover svg,
+.about-social a:focus-visible svg {
+  color: var(--accent-text);
+}
+.about-social .s-label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  line-height: 1.2;
+}
+.about-social .s-handle {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--muted);
+  line-height: 1.3;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+/* 长 handle（邮箱）：独占一整行并缩小字号，完整显示不截断 */
+.about-social .s-wide svg {
+  grid-row: 1;
+}
+.about-social .s-wide .s-handle {
+  grid-column: 1 / -1;
+  font-size: 0.66rem;
+}
+
+/* TIMELINE：竖轨 + 节点圆点 */
+.about-timeline {
   list-style: none;
-  border-top: 1px solid var(--border);
-  border-bottom: 1px solid var(--border);
+  margin: 0;
+  padding: 0;
+  position: relative;
 }
-.about-focus-list li {
-  padding: 1rem;
+/* 沿竖轨循环下行的信号光点（轨心 x=0.5px，点宽 5px → left -2px 居中） */
+.about-timeline::after {
+  content: "";
+  position: absolute;
+  left: -2px;
+  top: 0;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 6px 1px color-mix(in srgb, var(--accent) 55%, transparent);
+  opacity: 0;
+  animation: tl-signal 6s linear infinite;
 }
-.about-focus-list li + li {
+@keyframes tl-signal {
+  0% {
+    top: 0;
+    opacity: 0;
+  }
+  8% {
+    opacity: 1;
+  }
+  88% {
+    opacity: 1;
+  }
+  100% {
+    top: calc(100% - 5px);
+    opacity: 0;
+  }
+}
+.about-timeline li {
+  position: relative;
+  display: grid;
+  grid-template-columns: 6.8rem 1fr;
+  gap: 0.9rem;
+  align-items: baseline;
+  padding: 0.45rem 0 0.45rem 1.2rem;
   border-left: 1px solid var(--border);
 }
-.about-focus-list h3,
-.about-focus-list p {
-  margin: 0;
+/* 定位基准是 padding box（边框内侧 x=1px），left -5.5px 让圆点中心落在轨心 0.5px */
+.about-timeline li::before {
+  content: "";
+  position: absolute;
+  left: -5.5px;
+  top: 0.95rem;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--bg);
+  border: 1.5px solid var(--muted);
+  transition:
+    border-color var(--t-fast) var(--ease),
+    box-shadow var(--t-fast) var(--ease);
+  animation: tl-node 6s ease-in-out infinite;
 }
-.about-focus-list h3 {
-  margin-bottom: 0.4rem;
-  font-size: 1rem;
+/* 节点依次亮起，模拟信号经过（与 tl-signal 同周期、按条目均分延迟） */
+.about-timeline li:nth-child(2)::before {
+  animation-delay: 1.5s;
 }
-.about-focus-list p {
+.about-timeline li:nth-child(3)::before {
+  animation-delay: 3s;
+}
+.about-timeline li:nth-child(4)::before {
+  animation-delay: 4.5s;
+}
+@keyframes tl-node {
+  0%,
+  22%,
+  100% {
+    box-shadow: 0 0 0 0 transparent;
+  }
+  10% {
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 20%, transparent);
+  }
+}
+.about-timeline li:hover::before {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 22%, transparent);
+}
+.about-timeline time {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
   color: var(--muted);
-  font-size: 0.9rem;
+  font-variant-numeric: tabular-nums;
 }
-.about-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.6rem 1.25rem;
+/* 滚动进入视口时逐条淡入上移（JS 加 tl-armed/tl-in，无 JS 时保持原样） */
+.about-timeline.tl-armed li {
+  opacity: 0;
+  transform: translateY(8px);
+  transition:
+    opacity var(--t-move) var(--ease),
+    transform var(--t-move) var(--ease);
+}
+.about-timeline.tl-in li {
+  opacity: 1;
+  transform: none;
+}
+.about-timeline.tl-in li:nth-child(2) {
+  transition-delay: 70ms;
+}
+.about-timeline.tl-in li:nth-child(3) {
+  transition-delay: 140ms;
+}
+.about-timeline.tl-in li:nth-child(4) {
+  transition-delay: 210ms;
+}
+
+/* SETUP：2×2 磁贴 */
+.about-setup {
+  list-style: none;
   margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.65rem;
+}
+.about-setup li {
+  display: grid;
+  gap: 0.25rem;
+  padding: 0.75rem 0.85rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-panel);
+  transition:
+    border-color var(--t-state) var(--ease),
+    background-color var(--t-state) var(--ease);
+}
+.about-setup li:hover {
+  border-color: color-mix(in srgb, var(--accent) 45%, var(--border));
+  background: color-mix(in srgb, var(--accent) 5%, var(--surface));
+}
+.about-setup .k {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+.about-setup strong {
+  font-size: 0.95rem;
+}
+.about-setup small {
+  color: var(--muted);
+  font-size: 0.8rem;
 }
 
 .friends-list {
@@ -2030,19 +2212,22 @@ html[data-theme="dark"] .beoe-light {
   .section-heading {
     align-items: flex-start;
   }
-  .about-focus-list {
-    grid-template-columns: 1fr;
-  }
-  .about-focus-list li + li {
-    border-top: 1px solid var(--border);
-    border-left: 0;
-  }
   .profile-contact {
     align-items: flex-start;
     flex-direction: column;
   }
   .archive-list li {
     grid-template-columns: 2.9rem 1fr;
+    gap: 0.6rem;
+  }
+  .about-social {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .about-setup {
+    grid-template-columns: 1fr;
+  }
+  .about-timeline li {
+    grid-template-columns: 5.6rem 1fr;
     gap: 0.6rem;
   }
   .friend-card {

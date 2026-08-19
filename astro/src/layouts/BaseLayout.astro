@@ -455,11 +455,81 @@ const ldPayload = jsonLd ?? defaultLd;
         };
       }
 
+      /* 关于页时间线：滚入视口时逐条入场 */
+      function initTimelineReveal(): Dispose {
+        const tl = document.querySelector<HTMLElement>(".about-timeline");
+        if (!tl) return () => {};
+        if (matchMedia("(prefers-reduced-motion: reduce)").matches) return () => {};
+        tl.classList.add("tl-armed");
+        const io = new IntersectionObserver(
+          ([entry]) => {
+            if (entry.isIntersecting) {
+              tl.classList.add("tl-in");
+              io.disconnect();
+            }
+          },
+          { threshold: 0.25 },
+        );
+        io.observe(tl);
+        return () => io.disconnect();
+      }
+
+      /* 按访问者国家码隐藏指定入口（如 Telegram 对中国大陆隐藏）。
+         失败一律保持显示（fail-open）；结果存 sessionStorage 避免换页重复请求 */
+      function initGeoHide(): Dispose {
+        const targets = Array.from(
+          document.querySelectorAll<HTMLElement>("[data-geo-hide]"),
+        );
+        if (targets.length === 0) return () => {};
+
+        const apply = (cc: string) => {
+          for (const el of targets) {
+            const codes = (el.getAttribute("data-geo-hide") ?? "").split(/\s+/);
+            if (codes.includes(cc)) el.remove();
+          }
+        };
+
+        let cached: string | null = null;
+        try {
+          cached = sessionStorage.getItem("geo-cc");
+        } catch {}
+        if (cached !== null) {
+          if (cached) apply(cached);
+          return () => {};
+        }
+
+        const controller = new AbortController();
+        const timer = setTimeout(() => controller.abort(), 4000);
+        fetch("https://ipwho.is/", { signal: controller.signal })
+          .then((r) => (r.ok ? r.json() : Promise.reject(new Error("geo http"))))
+          .then((data) => {
+            const cc =
+              data && data.success !== false && typeof data.country_code === "string"
+                ? data.country_code
+                : "";
+            try {
+              sessionStorage.setItem("geo-cc", cc);
+            } catch {}
+            if (cc) apply(cc);
+          })
+          .catch(() => {
+            /* fail-open：查询失败保持卡片可见 */
+          })
+          .finally(() => clearTimeout(timer));
+
+        return () => {
+          clearTimeout(timer);
+          controller.abort();
+        };
+      }
+
       async function mount() {
         const current = ++generation;
         disposers.push(initBackToTop());
         disposers.push(initSiteMenu());
         disposers.push(initEdgeNav());
+        disposers.push(initTimelineReveal());
+        disposers.push(initGeoHide());
 
         const article = document.querySelector<HTMLElement>("[data-article]");
         if (!article) return;

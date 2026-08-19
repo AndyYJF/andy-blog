@@ -38,6 +38,7 @@ const description = isAbout
 >
   <article class="prose" data-article data-pagefind-body>
     <header class="entry-header">
+      {isAbout && <p class="profile-kicker">ABOUT / WHO</p>}
       <h1 transition:name="page-title" transition:animate="none">{page.data.title}</h1>
     </header>
     {isAbout ? <AboutProfile /> : <Content />}
