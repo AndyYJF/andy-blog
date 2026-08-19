@@ -3,6 +3,7 @@
  * Shared post list card markup for home / taxonomies / pagination.
  */
 import { categoryTone } from "../lib/category-tone";
+import { loadMetaRouteMap } from "../lib/meta-routes";
 
 interface PostItem {
   title: string;
@@ -19,6 +20,7 @@ interface Props {
 }
 
 const { posts, emptyText = "暂无文章" } = Astro.props;
+const metaRoutes = loadMetaRouteMap();
 ---
 {posts.length === 0 ? (
   <p class="muted">{emptyText}</p>
@@ -50,10 +52,16 @@ const { posts, emptyText = "暂无文章" } = Astro.props;
               <p class="card-meta">
                 {displayCategories.map((category, index) => {
                   const tone = categoryTone(category.slug);
+                  const route = metaRoutes[String(category.mid)];
+                  const href = route && route.state === "active" ? route.canonicalPath : undefined;
                   return (
                     <>
                       {index > 0 && <span class="cat-sep" aria-hidden="true"> / </span>}
-                      <span class:list={["cat", tone && `tone-${tone}`]}>{category.name}</span>
+                      {href ? (
+                        <a class:list={["cat", tone && `tone-${tone}`]} href={href}>{category.name}</a>
+                      ) : (
+                        <span class:list={["cat", tone && `tone-${tone}`]}>{category.name}</span>
+                      )}
                     </>
                   );
                 })}

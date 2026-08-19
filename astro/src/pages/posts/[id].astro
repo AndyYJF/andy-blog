@@ -3,6 +3,7 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 import Comments from "../../components/Comments.astro";
 import { getCollection, render } from "astro:content";
 import { categoryTone } from "../../lib/category-tone";
+import { loadMetaRouteMap } from "../../lib/meta-routes";
 
 export async function getStaticPaths() {
   const posts = await getCollection("posts");
@@ -16,7 +17,17 @@ const { post } = Astro.props;
 const { Content, remarkPluginFrontmatter } = await render(post);
 const katex = remarkPluginFrontmatter.hasKatex === true;
 const description = post.data.description;
-const displayCategories = post.data.categories.filter((category) => category.mid !== 1);
+const metaRoutes = loadMetaRouteMap();
+const displayCategories = post.data.categories
+  .filter((category) => category.mid !== 1)
+  .map((category) => {
+    const route = metaRoutes[String(category.mid)];
+    return {
+      ...category,
+      tone: categoryTone(category.slug),
+      href: route && route.state === "active" ? route.canonicalPath : undefined,
+    };
+  });
 ---
 <BaseLayout
   title={`${post.data.title} · AndyYan`}
@@ -31,22 +42,32 @@ const displayCategories = post.data.categories.filter((category) => category.mid
 >
   <article class="prose" data-article data-pagefind-body>
     <header class="entry-header">
-      <h1 transition:name="page-title" transition:animate="none">{post.data.title}</h1>
+      <div transition:name="page-title" transition:animate="none">
+        {displayCategories.length > 0 && (
+          <p class="entry-kicker" aria-label="文章分类">
+            {displayCategories.map((category, index) => (
+              <>
+                {index > 0 && <span class="cat-sep"> / </span>}
+                {category.href ? (
+                  <a
+                    class:list={["cat", category.tone && `tone-${category.tone}`]}
+                    href={category.href}
+                  >{category.name}</a>
+                ) : (
+                  <span
+                    class:list={["cat", category.tone && `tone-${category.tone}`]}
+                  >{category.name}</span>
+                )}
+              </>
+            ))}
+          </p>
+        )}
+        <h1>{post.data.title}</h1>
+      </div>
       <p class="entry-meta">
         <time datetime={post.data.pubDate.toISOString()}>
           {post.data.pubDate.toISOString().slice(0, 10)}
         </time>
-        {displayCategories.length > 0 && (
-          <> · {displayCategories.map((category, index) => {
-            const tone = categoryTone(category.slug);
-            return (
-              <>
-                {index > 0 && " / "}
-                <span class:list={["cat", tone && `tone-${tone}`]}>{category.name}</span>
-              </>
-            );
-          })}</>
-        )}
       </p>
     </header>
     <Content />

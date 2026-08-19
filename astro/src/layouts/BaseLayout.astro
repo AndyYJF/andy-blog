@@ -3,6 +3,7 @@ import CommonHead from "../components/CommonHead.astro";
 import ThemeInit from "../components/ThemeInit.astro";
 import SearchDialog from "../components/SearchDialog.astro";
 import PageEmblem from "../components/PageEmblem.astro";
+import { activeMetaOfType } from "../lib/meta-routes";
 import "../styles/global.css";
 
 interface Props {
@@ -51,6 +52,13 @@ const navItems = [
 ];
 const isNavActive = (href: string) =>
   href === "/posts/" ? articleNavActive : currentPath === href;
+
+// 顶栏下方的二级分类导航条；「所有文章」指向文章列表主页
+const catBarItems = activeMetaOfType("category").map(({ mid, meta }) => ({
+  href: mid === 1 ? "/posts/" : meta.canonicalPath,
+  label: meta.name?.trim() || meta.sourceSlug,
+  active: mid === 1 ? articleNavActive : currentPath === meta.canonicalPath,
+}));
 
 // 独立页的左侧页边动态徽章（文章页不渲染，保持清爽）
 const emblemPage = currentPath.startsWith("/posts/") || /^\/page\/\d+\/?$/.test(currentPath)
@@ -182,6 +190,15 @@ const ldPayload = jsonLd ?? defaultLd;
           </button>
         </nav>
       </div>
+      {articleNavActive && (
+        <nav class="cat-bar" aria-label="分类导航">
+          <div class="cat-bar-inner">
+            {catBarItems.map((item) => (
+              <a href={item.href} aria-current={item.active ? "page" : undefined}>{item.label}</a>
+            ))}
+          </div>
+        </nav>
+      )}
     </header>
 
     <main class="wrap page-enter" id="main" tabindex="-1" transition:name="page-main" transition:animate="none">
