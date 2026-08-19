@@ -1650,6 +1650,14 @@ html[data-theme="dark"] .beoe-light {
 #pagefind-container .pagefind-ui__result-link {
   color: var(--text);
 }
+/* 子结果（↳ 前缀）不再画全宽分隔线，避免与标题悬停下划线贴成双横线 */
+#pagefind-container .pagefind-ui__result-nested .pagefind-ui__result,
+#pagefind-container .pagefind-ui__result-nested .pagefind-ui__result:last-of-type {
+  border-top: none;
+  border-bottom: none;
+  padding-top: calc(10px * var(--pagefind-ui-scale));
+  padding-bottom: calc(10px * var(--pagefind-ui-scale));
+}
 #pagefind-container mark {
   background: color-mix(in srgb, var(--accent) 35%, transparent);
   color: inherit;
