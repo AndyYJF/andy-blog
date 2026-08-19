@@ -2564,8 +2564,10 @@ html[data-theme="dark"] .spot {
    ============================================================ */
 .emblem {
   position: fixed;
-  top: 50%;
-  transform: translateY(-50%);
+  /* 索引脊占左页边垂直中段，徽章沉到下方区域错开 */
+  top: auto;
+  bottom: 9%;
+  transform: none;
   right: calc(50vw + var(--measure) / 2 + 2.25rem);
   z-index: 0;
   width: 8rem;
