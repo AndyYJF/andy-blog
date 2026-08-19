@@ -592,9 +592,13 @@ h1 + .muted {
   font-size: 1.1rem;
   line-height: 1.45;
 }
+/* inline + box-decoration-break: 多行标题的悬停下划线按行片段分别生长，
+   否则会退化成整条盒子底部的一根全宽线 */
 .post-card h2 a {
-  display: inline-block;
+  display: inline;
   padding: 0.1rem 0;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
 }
 .post-card time,
 .post-card .card-meta {
