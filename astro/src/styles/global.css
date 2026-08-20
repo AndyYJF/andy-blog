@@ -1650,6 +1650,12 @@ html[data-theme="dark"] .beoe-light {
 #pagefind-container .pagefind-ui__result-link {
   color: var(--text);
 }
+/* 搜索弹窗嵌在 .site-nav 里，结果链接会误中导航链接的背景下划线和内边距，
+   多行标题时盒底整条背景线会与 Pagefind 悬停下划线叠成双横线，这里剥离 */
+.search-dialog a {
+  padding: 0;
+  background-image: none;
+}
 /* 子结果（↳ 前缀）不再画全宽分隔线，避免与标题悬停下划线贴成双横线 */
 #pagefind-container .pagefind-ui__result-nested .pagefind-ui__result,
 #pagefind-container .pagefind-ui__result-nested .pagefind-ui__result:last-of-type {
