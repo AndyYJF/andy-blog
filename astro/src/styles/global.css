@@ -1656,6 +1656,23 @@ html[data-theme="dark"] .beoe-light {
   padding: 0;
   background-image: none;
 }
+/* 剥离后补回全站统一的背景下划线生长动画（按行片段逐行生长），
+   并覆盖 Pagefind 默认的瞬时 text-decoration 悬停下划线 */
+#pagefind-container .pagefind-ui__result-link {
+  text-decoration: none;
+  background-image: linear-gradient(currentColor, currentColor);
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  background-size: 0 1px;
+  transition: background-size var(--t-fast) var(--ease);
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+#pagefind-container .pagefind-ui__result-link:hover,
+#pagefind-container .pagefind-ui__result-link:focus-visible {
+  background-size: 100% 1px;
+  text-decoration: none;
+}
 /* 子结果（↳ 前缀）不再画全宽分隔线，避免与标题悬停下划线贴成双横线 */
 #pagefind-container .pagefind-ui__result-nested .pagefind-ui__result,
 #pagefind-container .pagefind-ui__result-nested .pagefind-ui__result:last-of-type {
