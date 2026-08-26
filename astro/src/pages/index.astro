@@ -172,8 +172,21 @@ const jsonLd = {
 </BaseLayout>
 
 <script>
+  import {
+    TOPO_PACKET_SPEED,
+    advanceOffsetDist,
+    clampFrameDt,
+    packetPhase,
+    packetPointDistance,
+  } from "../lib/topo-packet-progress";
+
   /* 首页 DN42 拓扑卡：指针倾斜 + 高光、边巡航数据包、节点探针 */
   {
+    type TopoWin = Window & {
+      __andyTopoBound?: boolean;
+      __andyTopoDispose?: () => void;
+    };
+    const win = window as TopoWin;
     const NODES: Record<string, { label: string; city: string; x: number; y: number }> = {
       lax: { label: "LAX", city: "洛杉矶", x: 30, y: 80 },
       fra: { label: "FRA", city: "法兰克福", x: 132, y: 42 },
@@ -237,7 +250,7 @@ const jsonLd = {
       let raf = 0;
       if (!reduce) {
         const layer = svg.querySelector("[data-topo-packets]");
-        const SPEED = 26; // viewBox 单位/秒
+        layer?.replaceChildren();
         const nodeEls = new Map(
           Object.keys(NODES).map((key) => {
             const g = svg.querySelector<SVGGElement>(`.topo-node-g[data-node="${key}"]`);
@@ -261,7 +274,15 @@ const jsonLd = {
           c.setAttribute("class", "topo-packet");
           c.setAttribute("r", "1.7");
           layer?.appendChild(c);
-          return { path: e.el, el: c, offset: i / edges.length, reverse: i % 2 === 1 };
+          const measured = e.el.getTotalLength();
+          const refLen = Number.isFinite(measured) && measured >= 1e-3 ? measured : 1;
+          return {
+            path: e.el,
+            el: c,
+            refLen,
+            offsetDist: (i / edges.length) * refLen,
+            reverse: i % 2 === 1,
+          };
         });
         const driftOf = (key: string, t: number) => {
           const n = NODES[key];
@@ -271,9 +292,12 @@ const jsonLd = {
             y: n.y + d.ay * Math.cos(t * d.wy + d.ph * 1.7),
           };
         };
-        const t0 = performance.now();
+        let last: number | undefined;
+        let t = 0;
         const tick = (now: number) => {
-          const t = (now - t0) / 1000;
+          const dt = last === undefined ? 0 : clampFrameDt(now, last);
+          last = now;
+          t += dt;
           const P: Record<string, { x: number; y: number }> = {};
           for (const key of Object.keys(NODES)) {
             const p = driftOf(key, t);
@@ -300,18 +324,23 @@ const jsonLd = {
             );
           }
           for (const pk of packets) {
+            pk.offsetDist = advanceOffsetDist(pk.offsetDist, dt, TOPO_PACKET_SPEED);
+            pk.offsetDist = ((pk.offsetDist % pk.refLen) + pk.refLen) % pk.refLen;
             const len = pk.path.getTotalLength();
-            let u = (pk.offset + (t * SPEED) / len) % 1;
-            if (u < 0) u += 1;
-            const d = pk.reverse ? 1 - u : u;
-            const pt = pk.path.getPointAtLength(d * len);
+            const u = packetPhase(pk.offsetDist, len, pk.refLen);
+            if (u === null) continue;
+            const pt = pk.path.getPointAtLength(packetPointDistance(u, len, pk.reverse));
             pk.el.setAttribute("cx", pt.x.toFixed(1));
             pk.el.setAttribute("cy", pt.y.toFixed(1));
           }
           raf = requestAnimationFrame(tick);
         };
         raf = requestAnimationFrame(tick);
-        cleanups.push(() => cancelAnimationFrame(raf));
+        cleanups.push(() => {
+          cancelAnimationFrame(raf);
+          raf = 0;
+          layer?.replaceChildren();
+        });
       }
 
       /* 节点探针：高亮相连边、淡出其余、状态栏切换 */
@@ -350,17 +379,19 @@ const jsonLd = {
       return () => cleanups.forEach((fn) => fn());
     }
 
-    let topoDispose: (() => void) | undefined;
     const start = () => {
-      topoDispose?.();
-      topoDispose = initTopoCard();
+      win.__andyTopoDispose?.();
+      win.__andyTopoDispose = initTopoCard();
     };
-    document.addEventListener("astro:page-load", start);
-    document.addEventListener("astro:before-swap", () => {
-      topoDispose?.();
-      topoDispose = undefined;
-    });
-    // 本脚本位于页面内容末尾，astro:page-load 可能已先于模块执行派发，直接启动一次
-    start();
+    if (!win.__andyTopoBound) {
+      win.__andyTopoBound = true;
+      document.addEventListener("astro:page-load", start);
+      document.addEventListener("astro:before-swap", () => {
+        win.__andyTopoDispose?.();
+        win.__andyTopoDispose = undefined;
+      });
+    }
+    // page-load 可能已先于模块执行派发；仅在卡存在时 dispose-then-init
+    if (document.querySelector("[data-topo-card]")) start();
   }
 </script>
