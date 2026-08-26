@@ -231,6 +231,9 @@ const ldPayload = jsonLd ?? defaultLd;
             target="_blank"
             rel="noopener noreferrer"
           >皖ICP备2025089361号-1</a>
+          <span class="site-uptime">
+            本站已运行 <time data-uptime datetime="2025-06-13T00:00:00+08:00">…</time>
+          </span>
         </div>
         <nav aria-label="页脚导航">
           <a href="/about/">关于</a>
@@ -523,6 +526,27 @@ const ldPayload = jsonLd ?? defaultLd;
         };
       }
 
+      /* 页脚运行时长：自 2025-06-13（+08:00）建站起实时走秒 */
+      function initUptime(): Dispose {
+        const el = document.querySelector<HTMLElement>("[data-uptime]");
+        if (!el) return () => {};
+        const epoch = new Date("2025-06-13T00:00:00+08:00").getTime();
+        const pad = (n: number) => String(n).padStart(2, "0");
+        const render = () => {
+          const diff = Math.max(0, Date.now() - epoch);
+          const days = Math.floor(diff / 86400000);
+          const h = Math.floor(diff / 3600000) % 24;
+          const m = Math.floor(diff / 60000) % 60;
+          const s = Math.floor(diff / 1000) % 60;
+          const years = Math.floor(days / 365);
+          const dayPart = years > 0 ? `${years} 年 ${days % 365} 天` : `${days} 天`;
+          el.textContent = `${dayPart} ${h} 时 ${pad(m)} 分 ${pad(s)} 秒`;
+        };
+        render();
+        const timer = setInterval(render, 1000);
+        return () => clearInterval(timer);
+      }
+
       async function mount() {
         const current = ++generation;
         disposers.push(initBackToTop());
@@ -530,6 +554,7 @@ const ldPayload = jsonLd ?? defaultLd;
         disposers.push(initEdgeNav());
         disposers.push(initTimelineReveal());
         disposers.push(initGeoHide());
+        disposers.push(initUptime());
 
         const article = document.querySelector<HTMLElement>("[data-article]");
         if (!article) return;
