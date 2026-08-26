@@ -1,127 +1,98 @@
 # andy-blog
 
-Typecho 1.2.1 (headless CMS) → Astro 7 static site for andy-y.cn.
+[www.andy-y.cn](https://www.andy-y.cn) — Typecho 1.2.1 无头 CMS → **Astro 7 全静态站**。
 
-## Stage 0
+编辑在 Typecho，访客读 Astro；构建在 off-box，发布走蓝绿不可变 release。评论走 Waline（经 www 反代）。
 
-**Status: baselines + Astro spike complete (2026-08-01).**
+## 架构
 
-- Evidence: `docs/baselines/` (SQL gates, RSS fixture, URL crawl, reports)
-- Dump / article bodies / uploads: `backups/` (gitignored)
-- Spike notes: `docs/baselines/reports/astro-spike.md`
+```
+Typecho 后台 ──HMAC──► rebuild-api ──► blog-rebuild-1panel.sh
+                                            │
+                     off-box builder (Astro + Playwright / mermaid)
+                                            │
+                     release.tar.gz + checksums ──► VPS releases/
+                                            │
+                     mv -T 原子切 current ←→ previous（可回滚）
+                                            │
+                     OpenResty www + 阿里云 / Cloudflare CDN 刷新
+```
 
-## Stage 1
+独立状态面：`build.fei.cx` → Caddy → 环回 off-box status UI（密码会话，fail-closed）。
 
-**Status: sync + immutable routes + content collections complete.**
+## 目录
+
+| 路径 | 用途 |
+|------|------|
+| `astro/` | 站点源码（内容、组件、样式、构建） |
+| `typecho/` | CMS 插件 / 配置脚手架（AutoRebuild、AstroPreview） |
+| `scripts/` | 同步、门禁、nginx 生成、评论迁移、CDN |
+| `host/` | VPS / off-box 发布脚本、systemd、status UI |
+| `docker/` | rebuild-api、Waline |
+| `nginx/` | 生成产物 `release-http.conf`（勿手改，用 `generate-nginx.js`） |
+| `data/` | 路由图、legacy URL map、lastmod |
+| `docs/` | 分期基线、计划、授权 runbook |
+| `audit/` | 2026-08-26 安全 / 前端审计报告 |
+
+## 本地开发
+
+需要 **Node ≥ 22.12**。Mermaid 构建依赖 Playwright Chromium：
 
 ```powershell
-$env:SNAPSHOT_EPOCH = "1785565762"
-npm run sync
-node scripts/stage1-gate.js
+npm install
+npm --prefix astro install
+
+# Playwright 浏览器路径（未设置时 mermaid 可能静默丢正文）
 $env:PLAYWRIGHT_BROWSERS_PATH = "$env:LOCALAPPDATA\ms-playwright"
-npm --prefix astro run build
-```
 
-## Stage 2
+# 仅前端迭代
+npm --prefix astro run dev
 
-**Status: shortcodes + markdown pipeline + image dims complete.**
-
-See `docs/baselines/reports/stage2-gates.md`.
-
-## Stage 3
-
-**Status: visuals + all 10 animations + dual theme complete.**
-
-See `docs/baselines/reports/stage3-gates.md`. JS is 8.88 KB gzip against a 12 KB budget.
-
-## Stage 4
-
-**Status: SEO + RSS + legacy URL map + Nginx 302 release complete.**
-
-See `docs/baselines/reports/stage4-gates.md`.
-
-## Stage 5
-
-**Status: Joe CMS editor + admin-origin patch + AutoRebuild/rebuild-api + host control plane scaffold (incomplete vs plan Final).**
-
-See `docs/baselines/reports/stage5-gates.md` and `stage5-editor-decision.md`.
-
-Honest gaps (adversarial AA-06/07/08):
-
-- `typecho/` tree is plugin/config scaffold only — full CMS vertical login/upload not proven in-repo
-- CDN purge stubs record `not-implemented` (never fake `ok`) until OpenAPI is wired
-- Baidu push diffs against previous success id captured **before** `last-success-release` overwrite
-
-```powershell
-node docker/rebuild-api/test.js
-node scripts/stage5-gate.js
-```
-
-## Stage 6
-
-**Status: Pagefind + taxonomies + pagination + 404 complete.**
-
-See `docs/baselines/reports/stage6-gates.md`. Search UI loads Pagefind only on first open; verify hits with `astro preview`, not `dev`.
-
-## Stage 7
-
-**Status: Waline scaffold + lazy Comments + fail-closed policy middleware + fixture migration dry-run.**
-
-See `docs/baselines/reports/stage7-gates.md` and `stage7-comment-migration.md`. Production writes stay disabled (`release-state.productionWriteEnabled=false`) until Stage 10 cutover. Mutating `/api/comment` and `/api/comment/*` go through policy; other `/api/*` writes are 403. Live MySQL apply / digest pin / mail remain Stage 9–10.
-
-## Stage 8
-
-**Status: automated audit + agent spot-verify for all 15 public CIDs; blockers = 0. Human Final = 1/15 (friends).**
-
-See `docs/baselines/reports/stage8-gates.md`, `stage8-audit.md`, and `docs/baselines/reviews/cid-*.json`.
-
-Verdict taxonomy:
-
-- `pass` + human reviewer → Final
-- `agent-spot` → automated spot-verify only (gate warns; **not** human Final)
-- `audit-clean` → `--sync-audit` only
-
-```powershell
-node scripts/spot-verify-reviews.js --write
-node scripts/stage8-gate.js
-```
-
-```powershell
-$env:SNAPSHOT_EPOCH = "1785565762"
-$env:PLAYWRIGHT_BROWSERS_PATH = "$env:LOCALAPPDATA\ms-playwright"
+# 全量：同步 Typecho 快照 → 门禁 → Astro build → Pagefind(zh)
+$env:SNAPSHOT_EPOCH = "1785565762"   # 或当前快照 epoch
 npm run build
 npm --prefix astro run preview -- --host 127.0.0.1 --port 4321
 ```
 
-`PLAYWRIGHT_BROWSERS_PATH` is mandatory: when Chromium cannot launch,
-`@beoe/rehype-mermaid` silently drops the entire document instead of failing the build.
-`npm run render:gate` catches that, but only after the fact.
-
-Never commit secrets or `backups/`.
-
-## Stage 9
-
-**Status: in-repo deploy scaffold (compose staging, new.andy-y.cn vhost, gates). Live VPS drills need write authorization.**
-
-See `docs/baselines/reports/stage9-gates.md` and `stage9-staging-enable.md`.
+常用检查：
 
 ```powershell
-npm install
-$env:SKIP_LIGHTHOUSE = "1"   # omit after build if you want LHCI budgets enforced
-$env:SKIP_CDN_PROBE = "1"    # default in gate; set "0" for live dual-edge hash probe
-npm run stage9:gate
-
-# After npm run build — Lighthouse Perf≥95 / SEO 100 / A11y≥95 against astro/dist:
-npm run lighthouse:local
-
-# Optional read-only dual CDN probe (direct + 127.0.0.1:7892):
-$env:SKIP_CDN_PROBE = "0"; npm run cdn:probe
+node --test host/offbox-status-ui/server.test.js
+npm run stage10:gate
+npm run lighthouse:local    # 对 astro/dist
 ```
 
-Staging preview (`new.andy-y.cn`) enable order on the host is documented in
-`docs/baselines/reports/stage9-staging-enable.md`. Do not cut www DNS here (Stage 10).
+## 内容与前端要点
 
-## Rules
+- Markdown / HTML 经 `rehype-raw` → **`rehype-sanitize`**；`:::cloud` 仅 `http(s)` 或同源路径
+- 正文 `#` 标题构建期降为 `h2`（目录 / 阅读进度依赖 `h2`）
+- Mermaid：构建期 BEOE 双主题 SVG，访客可点 lightbox
+- 搜索：Pagefind，`--force-language zh`
+- 主题：亮 / 暗 + View Transitions；`prefers-reduced-motion` 全局降级
+- 按需加载：KaTeX / Pagefind UI / Waline
 
-- Production SSH/MySQL: SELECT / dump / file pull only. No writes, restarts, or config changes.
-- Credentials stay in local session env vars, not in this repo.
+## 发布与运维
+
+- 触发：Typecho AutoRebuild（管理员 + CSRF）→ 签名 → rebuild-api 入队
+- 构建：off-box 拉快照、Astro build、回传 tar；解包前校验路径穿越与特殊文件
+- 切换：`checksums.sha256` 全量校验 → `current` / `previous` 蓝绿
+- 回滚 / 前进：`host/rollback-release.sh` · `host/roll-forward-release.sh`
+- Nginx 重定向状态：`npm run nginx:302` / `nginx:301`（改 `data/legacy-url-map.json` 后再生）
+
+生产凭据只放主机 env / secret 文件，**不要**写入本仓库。SSH 脚本需 `SSH_HOST` / `SSH_USER` / `SSH_PASS`，主机密钥走 `RejectPolicy` + known_hosts。
+
+## 安全
+
+2026-08-26 审计见 [`audit/2026-08-26/`](./audit/2026-08-26/)（前端复审 [`audit/2026-08-26-2/`](./audit/2026-08-26-2/)）。已落地包括：
+
+- www HSTS / CSP / nosniff / frame deny 等响应头
+- status UI fail-closed + 登录限速
+- tar 路径校验、Markdown 消毒、短代码协议限制、SSH 去硬编码默认
+
+剩余 Medium / Low 与革新项仍以审计报告为准。
+
+## 规则
+
+- 生产 SSH / MySQL：默认可读；写操作须单独授权与 runbook
+- 不提交 `secrets/`、`backups/`、`.env`、私钥
+- 本地规划包在 `.planning/`（已 gitignore）
