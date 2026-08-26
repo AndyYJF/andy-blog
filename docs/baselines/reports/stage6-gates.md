@@ -1,6 +1,6 @@
 # Stage 6 gates
 
-**Result:** PASS
+**Result:** FAIL
 
 - Pagefind artifacts: 29 files under dist/pagefind
 - lastmod keys: 26
@@ -13,4 +13,10 @@
 
 ## Failures
 
-(none)
+- sitemap must hide https://www.andy-y.cn/category/default/
+- sitemap must hide https://www.andy-y.cn/tag/music/
+- sitemap must hide https://www.andy-y.cn/tag/app/
+- sitemap must hide https://www.andy-y.cn/tag/tec/
+- sitemap must hide https://www.andy-y.cn/tag/argue/
+- sitemap must hide https://www.andy-y.cn/tag/fen-x/
+- About must render the factual profile sections

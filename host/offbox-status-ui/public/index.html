@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>构建状态</title>
+    <link rel="stylesheet" href="/app.css" />
+  </head>
+  <body>
+    <main id="app">
+      <header class="ledger-head">
+        <h1>构建状态</h1>
+        <nav class="ledger-nav" aria-label="页面">
+          <a href="/" aria-current="page">当前</a>
+          <a href="/history">历史</a>
+        </nav>
+        <p id="banner" class="banner" hidden></p>
+        <a class="logout" href="/logout">退出</a>
+      </header>
+
+      <section class="meta" aria-label="概要">
+        <dl>
+          <div>
+            <dt>状态</dt>
+            <dd id="status">—</dd>
+          </div>
+          <div>
+            <dt>阶段</dt>
+            <dd id="phase">—</dd>
+          </div>
+          <div>
+            <dt>构建机</dt>
+            <dd id="builder">—</dd>
+          </div>
+          <div>
+            <dt>发布 ID</dt>
+            <dd id="releaseId">—</dd>
+          </div>
+          <div>
+            <dt>当前</dt>
+            <dd id="current">—</dd>
+          </div>
+          <div>
+            <dt>上一版</dt>
+            <dd id="previous">—</dd>
+          </div>
+          <div>
+            <dt>开始</dt>
+            <dd id="startedAt">—</dd>
+          </div>
+          <div>
+            <dt>更新</dt>
+            <dd id="updatedAt">—</dd>
+          </div>
+          <div>
+            <dt>排队</dt>
+            <dd id="queued">—</dd>
+          </div>
+          <div>
+            <dt>构建中</dt>
+            <dd id="building">—</dd>
+          </div>
+          <div>
+            <dt>脏标记</dt>
+            <dd id="dirty">—</dd>
+          </div>
+          <div>
+            <dt>重试</dt>
+            <dd id="retry">—</dd>
+          </div>
+          <div class="wide">
+            <dt>上次结果</dt>
+            <dd id="lastOutcome">—</dd>
+          </div>
+          <div class="wide">
+            <dt>错误</dt>
+            <dd id="error">—</dd>
+          </div>
+          <div class="wide">
+            <dt>上次失败</dt>
+            <dd id="lastFailure">—</dd>
+          </div>
+        </dl>
+      </section>
+
+      <section aria-label="步骤">
+        <h2>步骤</h2>
+        <ol id="steps" class="steps"></ol>
+      </section>
+
+      <section class="log-section" aria-label="日志">
+        <h2>日志 <span id="logFollow" class="log-follow">跟随</span></h2>
+        <pre id="tail" class="tail">暂无日志</pre>
+      </section>
+    </main>
+    <script src="/app.js"></script>
+  </body>
+</html>

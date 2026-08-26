@@ -53,7 +53,16 @@ const parseMaps = (text) => {
   return maps;
 };
 
-export const compareNginxPolicy = (currentText, candidateText) => {
+const rewriteLegacyReturns = (text, fromStatus, toStatus) => {
+  const site = 'https://www.andy-y.cn';
+  return text
+    .replace(`# redirect status: ${fromStatus}`, `# redirect status: ${toStatus}`)
+    .replaceAll(`return ${fromStatus} ${site}$legacy_query_target`, `return ${toStatus} ${site}$legacy_query_target`)
+    .replaceAll(`return ${fromStatus} ${site}$legacy_target`, `return ${toStatus} ${site}$legacy_target`);
+};
+
+export const compareNginxPolicy = (currentText, candidateText, options = {}) => {
+  const allowAdded = options.allowAdded !== false;
   const currentStatus = STATUS_RE.exec(currentText)?.[1];
   const candidateStatus = STATUS_RE.exec(candidateText)?.[1];
   if (!currentStatus || !candidateStatus) {
@@ -109,21 +118,40 @@ export const compareNginxPolicy = (currentText, candidateText) => {
       }
     }
     for (const [key, value] of to.entries) {
-      if (!from.entries.has(key)) added.push({ map: from.variable, key, value });
+      if (!from.entries.has(key)) {
+        if (!allowAdded) {
+          return { ok: false, reason: `added ${from.variable} ${key}` };
+        }
+        added.push({ map: from.variable, key, value });
+      }
     }
   }
 
   return { ok: true, added };
 };
 
+export const compareNginxPolicy301Flip = (currentText, candidateText) => {
+  const currentStatus = STATUS_RE.exec(currentText)?.[1];
+  const candidateStatus = STATUS_RE.exec(candidateText)?.[1];
+  if (currentStatus !== '302' || candidateStatus !== '301') {
+    return {
+      ok: false,
+      reason: `expected 302 -> 301, got ${currentStatus || 'missing'} -> ${candidateStatus || 'missing'}`,
+    };
+  }
+  return compareNginxPolicy(rewriteLegacyReturns(currentText, '302', '301'), candidateText, { allowAdded: false });
+};
+
 const invokedDirectly = String(process.argv[1] || '').replaceAll('\\', '/').endsWith('/compare-nginx-policy.js');
 if (invokedDirectly) {
-  const [, , currentPath, candidatePath] = process.argv;
+  const statusFlip = process.argv.includes('--status-flip-301');
+  const paths = process.argv.slice(2).filter((value) => value !== '--status-flip-301');
+  const [currentPath, candidatePath] = paths;
   if (!currentPath || !candidatePath) {
-    console.error('usage: node scripts/compare-nginx-policy.js <current.conf> <candidate.conf>');
+    console.error('usage: node scripts/compare-nginx-policy.js [--status-flip-301] <current.conf> <candidate.conf>');
     process.exit(64);
   }
-  const result = compareNginxPolicy(
+  const result = (statusFlip ? compareNginxPolicy301Flip : compareNginxPolicy)(
     fs.readFileSync(currentPath, 'utf8'),
     fs.readFileSync(candidatePath, 'utf8'),
   );

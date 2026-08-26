@@ -48,7 +48,7 @@ test('automatic publishing preserves current production transition state', () =>
   const rebuild = read('host/blog-rebuild-1panel.sh');
   const switcher = read('host/switch-release-1panel.sh');
   const releaseBuild = read('scripts/build-release.sh');
-  assert.match(rebuild, /REDIRECT_STATUS" == "302"/);
+  assert.match(rebuild, /case "\$REDIRECT_STATUS" in 302\|301\)/);
   assert.match(rebuild, /COMMENT_WRITE_MODE" == "enabled"/);
   assert.match(rebuild, /compose\.1panel-cms\.yml/);
   assert.match(rebuild, /ANDY_BLOG_BUILDER:-offbox/);
@@ -63,7 +63,26 @@ test('automatic publishing preserves current production transition state', () =>
   assert.match(rebuild, /cleanup-old-releases\.js/);
   assert.match(rebuild, /RELEASE_RETENTION_COUNT:-3/);
   assert.match(rebuild, /warning: release .* is live, but old release cleanup was refused or failed/);
+  assert.match(rebuild, /last-failure\.json/);
+  assert.match(rebuild, /rebuild-progress\.js/);
+  assert.match(rebuild, /progress_pipe/);
+  assert.match(rebuild, /progress_push/);
+  assert.match(rebuild, /astro\/public\/beoe/);
+  assert.match(rebuild, /node "\$PROGRESS_JS"/);
+  assert.match(rebuild, />\/dev\/null/);
+  assert.match(rebuild, /OFFBOX_PROGRESS_LOCAL/);
   assert.doesNotMatch(rebuild, /TYPECHO_RO_DB_PASSWORD|DB_PASSWORD=/);
+  const offboxRemote = read('host/offbox-remote-build.sh');
+  assert.match(rebuild, /ANDY_BLOG_REBUILD_MAX_RETRIES:-3/);
+  assert.match(rebuild, /consume_pending/);
+  assert.match(rebuild, /history\.jsonl/);
+  assert.match(rebuild, /retries exhausted/);
+  assert.match(offboxRemote, /rebuild-progress\.js/);
+  assert.match(offboxRemote, /progress_local/);
+  assert.match(offboxRemote, /grep -E '\^\[0-9\]\{8\}T\[0-9\]\{6\}Z-\[0-9a-f\]\{8\}\$'/);
+  assert.match(offboxRemote, /astro\/\.cache/);
+  assert.match(offboxRemote, /astro\/public\/beoe/);
+  assert.match(offboxRemote, /build-release\.sh" 2>/);
   assert.equal(
     rebuild.indexOf('cleanup-old-releases.js') > rebuild.indexOf('mv -f "$JOB_FILE"'),
     true,
@@ -77,9 +96,19 @@ test('automatic publishing preserves current production transition state', () =>
   assert.match(releaseBuild, /cleanup-old-releases\.test\.js/);
   assert.match(releaseBuild, /BUILD_LOCK_DIR:-\/runtime\/build/);
   assert.match(releaseBuild, /APP_ROOT:-\/app/);
+  assert.match(releaseBuild, /PROGRESS %s/);
+  assert.match(releaseBuild, /rebuild-progress\.test\.js/);
+  assert.match(releaseBuild, /stage4-gate.js --expected-redirect "\$REDIRECT_STATUS"/);
+  assert.doesNotMatch(releaseBuild, /skip when flipping/);
   const envExample = read('host/offbox-builder.env.example');
   assert.match(envExample, /ANDY_BLOG_BUILDER=offbox/);
+  assert.match(envExample, /OFFBOX_SSH_JUMP/);
+  assert.match(envExample, /OFFBOX_SSH_JUMP_KEY/);
   assert.doesNotMatch(envExample, /BEGIN OPENSSH|PRIVATE KEY/);
+  assert.match(rebuild, /ProxyJump offbox-jump/);
+  assert.match(rebuild, /offbox-builder/);
+  assert.match(rebuild, /OFFBOX_SSH_JUMP_KEY/);
+  assert.doesNotMatch(rebuild, /sshpass|relay-bootstrap/);
   const executableFiles = [
     'host/blog-rebuild-1panel.sh',
     'host/switch-release-1panel.sh',
@@ -117,8 +146,28 @@ test('Typecho webhook target and secret fallback are fail-closed', () => {
   assert.match(plugin, /hash_hmac\('sha256'/);
   assert.match(plugin, /implements PluginInterface/);
   assert.match(plugin, /Plugin::factory\(\$hook\)/);
+  assert.match(plugin, /Helper::addAction\('rebuild-status'/);
+  assert.match(plugin, /Common::url\('\/action\/rebuild-status', \$options->index\)/);
+  assert.match(plugin, /admin\/footer\.php/);
+  assert.match(plugin, /index\.php/);
+  assert.match(plugin, /metas-tag-edit/);
+  assert.match(plugin, /metas-category-edit/);
+  assert.match(plugin, /register_shutdown_function/);
+  const action = read('typecho/usr/plugins/AutoRebuild/Action.php');
+  assert.match(action, /AUTO_REBUILD_STATUS_ENDPOINT/);
+  assert.match(action, /endpoint !== 'http:\/\/rebuild-api:9000\/status'/);
+  assert.match(action, /pass\('administrator'/);
+  assert.match(action, /Security::alloc\(\)->protect\(\)/);
+  assert.doesNotMatch(action, /127\.0\.0\.1/);
+  const api = read('docker/rebuild-api/server.js');
+  assert.match(api, /req\.url === '\/status'/);
+  assert.match(api, /statusCanonical/);
+  assert.doesNotMatch(api, /docker\.sock|journalctl/);
   assert.match(installer, /Plugin::activate\(\$pluginName\)/);
+  assert.match(installer, /Plugin::deactivate\(\$pluginName\)/);
   assert.match(installer, /where\('name = \?', 'plugins'\)/);
+  assert.match(installer, /watchMetaWrites/);
+  assert.match(installer, /Options::alloc\(\)/);
 });
 
 test('production builder bakes source, dependencies, browser, and reviewed image dimensions', () => {
@@ -137,4 +186,33 @@ test('Waline management uses the direct upstream only on a loopback host port', 
   assert.equal(dockerfile.includes("RUN sed -i 's/\\r$//' entrypoint.sh"), true);
   assert.match(compose, /127\.0\.0\.1:\$\{WALINE_ADMIN_HOST_PORT:-8362\}:8361/);
   assert.match(compose, /COMMENT_AUDIT: 'true'/);
+});
+
+test('offbox status UI is loopback ledger cookie auth and lives outside rsync work', () => {
+  const unit = read('host/systemd/offbox-status-ui.service');
+  const envExample = read('host/offbox-status-ui.env.example');
+  const server = read('host/offbox-status-ui/server.js');
+  assert.match(unit, /\/opt\/andy-blog-offbox\/status-ui\/server\.js/);
+  assert.doesNotMatch(unit, /\/work\/host\/offbox-status-ui/);
+  assert.doesNotMatch(unit, /docker\.sock/);
+  assert.match(envExample, /STATUS_UI_PASSWORD_FILE=\/etc\/andy-blog\/offbox-status-ui\.password/);
+  assert.match(envExample, /OFFBOX_STATUS_BIND=127\.0\.0\.1/);
+  assert.match(server, /OFFBOX_STATUS_BIND \|\| '127\.0\.0\.1'/);
+  assert.doesNotMatch(server, /OFFBOX_STATUS_BIND \|\| '0\.0\.0\.0'/);
+  assert.doesNotMatch(envExample, /BEGIN OPENSSH|PRIVATE KEY|DB_PASSWORD=/);
+  const caddy = read('host/offbox-status-ui.caddyfile');
+  assert.match(caddy, /build\.fei\.cx/);
+  assert.match(caddy, /reverse_proxy 127\.0\.0\.1:8787/);
+  assert.doesNotMatch(caddy, /STATUS_UI_PASSWORD|PRIVATE KEY/);
+  assert.match(server, /STATUS_UI_PASSWORD_FILE required when not binding to loopback/);
+  assert.doesNotMatch(server, /www-authenticate|Basic realm/);
+  assert.match(server, /timingSafeEqual/);
+  assert.match(read('host/offbox-status-ui/public/history.js'), /api\/history/);
+  assert.match(server, /\/api\/history/);
+  assert.match(read('host/offbox-status-ui/public/index.html'), /href="\/history"/);
+  assert.match(read('host/offbox-status-ui/public/login.html'), /login-form/);
+  assert.match(read('host/offbox-status-ui/public/login.html'), /app\.css/);
+  assert.match(read('host/offbox-status-ui/public/app.js'), /stickToBottom/);
+  assert.doesNotMatch(read('host/offbox-status-ui/public/login.html'), /weui-btn/);
+  assert.doesNotMatch(server, /docker\.sock|journalctl/);
 });

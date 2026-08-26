@@ -91,12 +91,14 @@
     const root = document.querySelector('[data-pagefind-root]');
     if (!root || !window.PagefindUI) return;
     root.replaceChildren();
+    // No top-level PagefindUI `language`; html lang + translations.language set zh locale.
     state.ui = new window.PagefindUI({
       element: '[data-pagefind-root]',
       showImages: false,
       showSubResults: true,
       excerptLength: 20,
       translations: {
+        language: 'zh',
         placeholder: '搜索文章…',
         clear_search: '清除',
         load_more: '加载更多',

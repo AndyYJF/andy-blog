@@ -26,7 +26,7 @@ fi
 
 REDIRECT_STATUS="$(cat "$STATE_DIR/redirect-status")"
 COMMENT_WRITE_MODE="$(cat "$STATE_DIR/comment-write-mode")"
-[[ "$REDIRECT_STATUS" == "302" ]] || { echo "observation window requires redirect-status=302" >&2; exit 68; }
+case "$REDIRECT_STATUS" in 302|301) ;; *) echo "redirect-status must be 302 or 301" >&2; exit 68; esac
 [[ "$COMMENT_WRITE_MODE" == "enabled" ]] || { echo "expected comment-write-mode=enabled" >&2; exit 68; }
 node -e '
   const fs=require("fs");

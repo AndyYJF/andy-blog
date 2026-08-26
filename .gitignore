@@ -20,6 +20,10 @@ typecho/usr/plugins/AstroPreview/assets/
 # Local agent planning, packets, and deploy receipts
 .planning/
 
+# Python
+__pycache__/
+*.py[cod]
+
 # Node / Astro
 node_modules/
 dist/

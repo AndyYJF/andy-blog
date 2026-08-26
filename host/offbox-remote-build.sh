@@ -29,6 +29,22 @@ test -f "$OFFBOX_WORK/scripts/build-release.sh"
 mkdir -p "$BUILD_LOCK_DIR" "$WWW_ROOT/releases" "$OFFBOX_ROOT/in" "$OFFBOX_ROOT/out" "$OFFBOX_ROOT/state"
 
 cd "$OFFBOX_WORK"
+# rsync --delete wipes generated mermaid SVGs; leftover Astro cache then
+# skips Playwright and finishes in ~2s with no astro/public/beoe.
+rm -rf astro/.cache astro/node_modules/.astro
+progress_local() {
+  local phase="$1"
+  shift || true
+  local js="$OFFBOX_WORK/scripts/rebuild-progress.js"
+  if [[ -f "$js" ]]; then
+    node "$js" --runtime "$BUILD_LOCK_DIR" --status running --phase "$phase" --builder offbox "$@" >/dev/null || true
+  fi
+}
+progress() {
+  printf 'PROGRESS %s\n' "$1" >&2
+  progress_local "$@"
+}
+progress deps
 STAMP_FILE="$OFFBOX_ROOT/state/deps.sha256"
 NEW_STAMP="$(sha256sum package-lock.json astro/package.json astro/package-lock.json | sha256sum | awk '{print $1}')"
 OLD_STAMP=""
@@ -46,8 +62,19 @@ if [[ ! -d "$PLAYWRIGHT_BROWSERS_PATH" ]]; then
   exit 65
 fi
 
-RELEASE_ID="$(bash "$OFFBOX_WORK/scripts/build-release.sh")"
-RELEASE_ID="$(printf '%s' "$RELEASE_ID" | tr -d '\r' | tail -n1)"
+RELEASE_ID="$(
+  bash "$OFFBOX_WORK/scripts/build-release.sh" 2> >(
+    while IFS= read -r line || [[ -n "$line" ]]; do
+      printf '%s\n' "$line" >&2
+      if [[ "$line" == PROGRESS\ * ]]; then
+        progress_local "${line#PROGRESS }"
+      else
+        printf '%s\n' "$line" >>"$BUILD_LOCK_DIR/progress.log" || true
+      fi
+    done
+  )
+)"
+RELEASE_ID="$(printf '%s' "$RELEASE_ID" | tr -d '\r' | grep -E '^[0-9]{8}T[0-9]{6}Z-[0-9a-f]{8}$' | tail -n1)"
 [[ "$RELEASE_ID" =~ ^[0-9]{8}T[0-9]{6}Z-[0-9a-f]{8}$ ]] || {
   echo "offbox build-release produced no release id" >&2
   exit 66
@@ -62,4 +89,5 @@ tar -C "$WWW_ROOT/releases" -czf "$TAR" "$RELEASE_ID"
 printf '%s\n' "$RELEASE_ID" >"$OFFBOX_ROOT/out/release-id.txt"
 chmod 0644 "$OFFBOX_ROOT/out/release-id.txt"
 chmod 0644 "$TAR"
+progress package --release-id "$RELEASE_ID"
 printf '%s\n' "$RELEASE_ID" >&3

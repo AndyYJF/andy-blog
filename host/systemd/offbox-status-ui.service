@@ -1,0 +1,16 @@
+[Unit]
+Description=Andy blog off-box rebuild status UI
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=root
+EnvironmentFile=-/etc/andy-blog/offbox-status-ui.env
+WorkingDirectory=/opt/andy-blog-offbox/status-ui
+ExecStart=/usr/bin/node /opt/andy-blog-offbox/status-ui/server.js
+Restart=on-failure
+RestartSec=3
+NoNewPrivileges=true
+
+[Install]
+WantedBy=multi-user.target

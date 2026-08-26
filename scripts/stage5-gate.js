@@ -24,8 +24,12 @@ check(Object.keys(hashes.original || {}).length === 3, 'expected 3 original hash
 // AutoRebuild plugin
 const plugin = fs.readFileSync(path.join(ROOT, 'typecho/usr/plugins/AutoRebuild/Plugin.php'), 'utf8');
 check(plugin.includes('finishPublish'), 'plugin missing finishPublish');
+check(plugin.includes('metas-tag-edit'), 'plugin must enqueue rebuild on tag edits');
+check(plugin.includes('metas-category-edit'), 'plugin must enqueue rebuild on category edits');
 check(plugin.includes('rebuild-api:9000'), 'plugin must call service name, not 127.0.0.1');
 check(plugin.includes('hash_hmac'), 'plugin missing HMAC');
+check(plugin.includes("addAction('rebuild-status'"), 'plugin must register rebuild-status action');
+check(plugin.includes("Common::url('/action/rebuild-status', $options->index)"), 'rebuild-status URL must use rewrite-aware index');
 
 // rebuild-api unit tests
 const apiTest = spawnSync('node', ['test.js'], {

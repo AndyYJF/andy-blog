@@ -8,6 +8,8 @@ const LUCIDE = {
   success: 'circle-check',
 };
 
+const SAFE_BVID = /^BV[\w]+$/i;
+
 const iconSvg = (name) => {
   const i = icons.icons[name];
   if (!i) return '';
@@ -20,6 +22,30 @@ const escapeHtml = (value) =>
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;');
+
+/**
+ * Allow only http(s) absolute URLs and same-origin paths starting with a single `/`.
+ * Rejects javascript:/data:/vbscript:, protocol-relative `//…`, and other schemes.
+ */
+const safeHttpUrl = (value) => {
+  const raw = String(value ?? '').trim();
+  if (!raw) return null;
+
+  // Same-origin absolute path: `/files/x` — not `//evil.com`
+  if (raw.startsWith('/') && !raw.startsWith('//')) {
+    return raw;
+  }
+
+  try {
+    const parsed = new URL(raw);
+    if (parsed.protocol === 'http:' || parsed.protocol === 'https:') {
+      return parsed.href;
+    }
+  } catch {
+    return null;
+  }
+  return null;
+};
 
 export function remarkCustomDirectives() {
   return (tree) => {
@@ -41,22 +67,33 @@ export function remarkCustomDirectives() {
       }
 
       if (node.name === 'cloud') {
-        node.data = {
-          hName: 'a',
-          hProperties: {
-            className: ['cloud-card'],
-            href: attrs.url || '#',
-            rel: 'noopener noreferrer',
-            target: '_blank',
-          },
+        const href = safeHttpUrl(attrs.url);
+        const titleChild = {
+          type: 'html',
+          value: `<span class="cloud-title">${escapeHtml(attrs.title ?? '文件')}</span>`,
         };
-        node.children = [
-          { type: 'html', value: iconSvg('hard-drive-download') },
-          {
-            type: 'html',
-            value: `<span class="cloud-title">${escapeHtml(attrs.title ?? '文件')}</span>`,
-          },
-        ];
+        const iconChild = { type: 'html', value: iconSvg('hard-drive-download') };
+
+        if (href) {
+          node.data = {
+            hName: 'a',
+            hProperties: {
+              className: ['cloud-card'],
+              href,
+              rel: 'noopener noreferrer',
+              target: '_blank',
+            },
+          };
+        } else {
+          // Non-clickable fallback — never put unsanitized attrs.url into href
+          node.data = {
+            hName: 'span',
+            hProperties: {
+              className: ['cloud-card'],
+            },
+          };
+        }
+        node.children = [iconChild, titleChild];
       }
 
       if (node.name === 'collapse') {
@@ -74,17 +111,26 @@ export function remarkCustomDirectives() {
       }
 
       if (node.name === 'bilibili') {
-        node.data = {
-          hName: 'iframe',
-          hProperties: {
-            className: ['bili-embed'],
-            loading: 'lazy',
-            allowfullscreen: true,
-            title: `Bilibili 视频 ${attrs.bvid || ''}`,
-            src: `https://player.bilibili.com/player.html?bvid=${encodeURIComponent(attrs.bvid || '')}&autoplay=0`,
-          },
-        };
-        node.children = [];
+        const bvid = String(attrs.bvid ?? '').trim();
+        if (SAFE_BVID.test(bvid)) {
+          node.data = {
+            hName: 'iframe',
+            hProperties: {
+              className: ['bili-embed'],
+              loading: 'lazy',
+              allowfullscreen: true,
+              title: `Bilibili 视频 ${bvid}`,
+              src: `https://player.bilibili.com/player.html?bvid=${encodeURIComponent(bvid)}&autoplay=0`,
+            },
+          };
+          node.children = [];
+        } else {
+          node.data = {
+            hName: 'p',
+            hProperties: { className: ['bili-embed-fallback'] },
+          };
+          node.children = [{ type: 'text', value: '无效的 Bilibili 视频' }];
+        }
       }
     });
   };

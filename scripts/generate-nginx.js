@@ -36,6 +36,25 @@ const parseStatus = () => {
   return raw;
 };
 
+/** WWW security response headers (nginx clears inherited add_header per location). */
+const WWW_CSP =
+  "default-src 'self'; script-src 'self' 'unsafe-inline' https://umami.andy-y.cn; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https://umami.andy-y.cn https://ipwho.is; frame-src https://player.bilibili.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'; upgrade-insecure-requests";
+
+const wwwSecurityHeaders = (indent = '  ') =>
+  [
+    'add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload" always;',
+    'add_header X-Content-Type-Options "nosniff" always;',
+    'add_header X-Frame-Options "DENY" always;',
+    'add_header Referrer-Policy "strict-origin-when-cross-origin" always;',
+    'add_header Permissions-Policy "camera=(), microphone=(), geolocation=()" always;',
+    `add_header Content-Security-Policy "${WWW_CSP}" always;`,
+  ]
+    .map((line) => `${indent}${line}`)
+    .join('\n');
+
+const HSTS_HEADER =
+  'add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload" always;';
+
 /**
  * Build an nginx map.
  * Path maps use case-sensitive regex keys (`~^...$`) because ngx_http_map_module
@@ -160,6 +179,7 @@ server {
   server_name andy-y.cn;
   ssl_certificate     /etc/letsencrypt/live/andy-y.cn/fullchain.pem;
   ssl_certificate_key /etc/letsencrypt/live/andy-y.cn/privkey.pem;
+  ${HSTS_HEADER}
 ${legacyActionSnippet(status)}
   return 301 ${SITE}$request_uri;
 }`;
@@ -178,11 +198,14 @@ ${legacyActionSnippet(status)}
   gzip_types text/css application/javascript application/json image/svg+xml application/xml+rss;
   gzip_min_length 1024;
 
+${wwwSecurityHeaders()}
+
 ${legacyActionSnippet(status)}
 
   location = /admin { return 404; }
   location ^~ /admin/ { return 404; }
   location ~ \\.php(?:/|$) { return 404; }
+  location ~ /\\.(?!well-known/) { deny all; }
 
   location /usr/uploads/ {
     alias /var/www/typecho/usr/uploads/;
@@ -214,6 +237,7 @@ ${legacyActionSnippet(status)}
     try_files $uri =404;
     expires 1y;
     add_header Cache-Control "public, max-age=31536000, immutable";
+${wwwSecurityHeaders('    ')}
   }
 
   location = /__release {
@@ -227,11 +251,13 @@ ${legacyActionSnippet(status)}
     try_files /404.html =500;
     add_header Cache-Control "no-store" always;
     add_header X-Robots-Tag "noindex, follow" always;
+${wwwSecurityHeaders('    ')}
   }
 
   location / {
     try_files $uri $uri/index.html =404;
     add_header Cache-Control "public, max-age=0, s-maxage=600, must-revalidate" always;
+${wwwSecurityHeaders('    ')}
   }
 }`;
 

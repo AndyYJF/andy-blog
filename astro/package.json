@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "astro dev",
-    "build": "node ../scripts/run-with-playwright.mjs astro build && node ../scripts/copy-beoe-to-dist.js && pagefind --site dist && node ../scripts/patch-beoe-alt.js",
+    "build": "node ../scripts/run-with-playwright.mjs astro build && node ../scripts/copy-beoe-to-dist.js && pagefind --site dist --force-language zh && node ../scripts/patch-beoe-alt.js",
     "preview": "astro preview"
   },
   "engines": {
@@ -25,6 +25,7 @@
     "rehype-autolink-headings": "^7.1.0",
     "rehype-katex": "^7.0.1",
     "rehype-raw": "^7.0.0",
+    "rehype-sanitize": "^6.0.0",
     "rehype-slug": "^6.0.0",
     "remark-directive": "^4.0.0",
     "remark-math": "^6.0.0",

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>构建状态</title>
+    <link rel="stylesheet" href="/app.css" />
+  </head>
+  <body class="login">
+    <main id="app" class="login-app">
+      <header class="ledger-head">
+        <h1>构建状态</h1>
+      </header>
+      <p id="banner" class="banner" hidden></p>
+      <form class="login-form meta" id="login-form" method="post" action="/login">
+        <p class="login-desc">请输入访问密码</p>
+        <label class="login-field" for="password">
+          <span>密码</span>
+          <input
+            id="password"
+            name="password"
+            type="password"
+            placeholder="请输入密码"
+            autocomplete="current-password"
+            required
+          />
+        </label>
+        <button type="submit" class="ledger-btn" id="submit">确定</button>
+      </form>
+    </main>
+    <script src="/login.js"></script>
+  </body>
+</html>

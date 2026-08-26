@@ -12,26 +12,12 @@ from pathlib import Path
 
 import paramiko
 
-HOST = os.environ.get("SSH_HOST", "139.224.71.200")
-USER = os.environ.get("SSH_USER", "root")
-PASS = os.environ["SSH_PASS"]
+from ssh_readonly import connect, require_env, require_ssh_target
+
 ROOT = Path(__file__).resolve().parents[1]
 BASELINES = ROOT / "docs" / "baselines"
 BACKUPS = ROOT / "backups"
 TS = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
-
-
-def connect() -> paramiko.SSHClient:
-    client = paramiko.SSHClient()
-    client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-    transport = paramiko.Transport((HOST, 22))
-    transport.connect()
-    try:
-        transport.auth_password(USER, PASS)
-    except paramiko.AuthenticationException:
-        transport.auth_interactive(USER, lambda t, i, prompts: [PASS for _ in prompts])
-    client._transport = transport
-    return client
 
 
 def run(client: paramiko.SSHClient, cmd: str, timeout: int = 600) -> tuple[int, str, str]:
@@ -147,6 +133,10 @@ def sftp_get(client: paramiko.SSHClient, remote: str, local: Path) -> None:
 
 
 def main() -> int:
+    host, user = require_ssh_target()
+    password = require_env("SSH_PASS")
+    port = int(os.environ.get("SSH_PORT", "22"))
+
     BASELINES.mkdir(parents=True, exist_ok=True)
     (BACKUPS / "mysql").mkdir(parents=True, exist_ok=True)
     (BACKUPS / "typecho-uploads").mkdir(parents=True, exist_ok=True)
@@ -155,7 +145,7 @@ def main() -> int:
     (BASELINES / "rss").mkdir(parents=True, exist_ok=True)
     (BASELINES / "urls").mkdir(parents=True, exist_ok=True)
 
-    client = connect()
+    client = connect(host, user, password, port)
     try:
         # upload helper
         remote_script = f"/tmp/andy-blog-stage0-helper-{int(time.time())}.sh"

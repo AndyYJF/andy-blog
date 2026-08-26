@@ -48,17 +48,19 @@ function label(meta: { name?: string; sourceSlug: string }) {
         ))}
       </ul>
     </div>
-    <div>
-      <h2>标签</h2>
-      <ul class="taxonomy-index">
-        {tags.map(({ mid, meta }) => (
-          <li>
-            <a href={meta.canonicalPath}>{label(meta)}</a>
-            <span class="count">{countFor(mid, "tag")}</span>
-          </li>
-        ))}
-      </ul>
-    </div>
+    {tags.length > 0 && (
+      <div>
+        <h2>标签</h2>
+        <ul class="taxonomy-index">
+          {tags.map(({ mid, meta }) => (
+            <li>
+              <a href={meta.canonicalPath}>{label(meta)}</a>
+              <span class="count">{countFor(mid, "tag")}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    )}
   </section>
 
   {years.map((year) => (

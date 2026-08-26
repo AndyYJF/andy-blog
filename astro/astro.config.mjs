@@ -6,17 +6,80 @@ import path from 'node:path';
 import { unified } from '@astrojs/markdown-remark';
 import sitemap from '@astrojs/sitemap';
 import expressiveCode from 'astro-expressive-code';
+import { pluginFramesTexts } from '@expressive-code/plugin-frames';
 import remarkMath from 'remark-math';
 import remarkDirective from 'remark-directive';
 import rehypeRaw from 'rehype-raw';
+import rehypeSanitize, { defaultSchema } from 'rehype-sanitize';
 import rehypeKatex from 'rehype-katex';
 import rehypeMermaid from '@beoe/rehype-mermaid';
 import rehypeSlug from 'rehype-slug';
 import rehypeAutolinkHeadings from 'rehype-autolink-headings';
+import { toString } from 'hast-util-to-string';
 import { remarkCustomDirectives } from './src/plugins/remark-directives.js';
 import { remarkImageSize } from './src/plugins/remark-image-size.js';
 import { rehypeDiagramImages } from './src/plugins/rehype-diagram-images.js';
+import { rehypeDemoteH1 } from './src/plugins/rehype-demote-h1.js';
 import { rehypeFlagKatex } from './src/plugins/rehype-flag-katex.js';
+
+pluginFramesTexts.addLocale('zh-CN', {
+  copyButtonTooltip: '复制',
+  copyButtonCopied: '已复制',
+});
+
+/** Drop prior definitions for a property so a later unrestricted entry wins. */
+function withoutProp(list = [], name) {
+  return list.filter((entry) => (Array.isArray(entry) ? entry[0] : entry) !== name);
+}
+
+const svgPresentation = [
+  'fill',
+  'stroke',
+  'strokeWidth',
+  'strokeLineCap',
+  'strokeLineJoin',
+];
+
+/** Allowlist for CMS/directive HTML after rehypeRaw; katex/mermaid run after this. */
+const markdownSanitizeSchema = {
+  ...defaultSchema,
+  tagNames: [
+    ...(defaultSchema.tagNames || []),
+    'svg',
+    'path',
+    'g',
+    'circle',
+    'rect',
+    'iframe',
+  ],
+  attributes: {
+    ...defaultSchema.attributes,
+    '*': [...(defaultSchema.attributes?.['*'] || []), 'className'],
+    a: [...withoutProp(defaultSchema.attributes?.a, 'className'), 'className', 'rel', 'target'],
+    img: [
+      ...withoutProp(defaultSchema.attributes?.img, 'className'),
+      'className',
+      'loading',
+      'decoding',
+    ],
+    iframe: ['src', 'className', 'loading', 'allowFullScreen', 'title'],
+    svg: ['viewBox', 'ariaHidden', 'className', 'width', 'height', ...svgPresentation],
+    path: ['d', ...svgPresentation],
+    g: [...svgPresentation],
+    circle: ['cx', 'cy', 'r', ...svgPresentation],
+    rect: ['x', 'y', 'width', 'height', 'rx', 'ry', ...svgPresentation],
+    div: [...withoutProp(defaultSchema.attributes?.div, 'className'), 'className', 'role'],
+    details: ['className', 'open'],
+    summary: [...withoutProp(defaultSchema.attributes?.summary, 'className'), 'className'],
+    span: ['className'],
+    pre: ['className'],
+  },
+  protocols: {
+    ...defaultSchema.protocols,
+    href: ['http', 'https', 'mailto'],
+    src: ['http', 'https'],
+  },
+};
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 /** @type {Record<string, string>} */
@@ -37,10 +100,20 @@ try {
 export default defineConfig({
   site: 'https://www.andy-y.cn',
   trailingSlash: 'always',
+  redirects: {
+    '/archives': '/archive/',
+    '/archives/': '/archive/',
+  },
+  vite: {
+    build: {
+      cssTarget: ['chrome111', 'firefox128', 'safari16.4', 'edge111'],
+    },
+  },
   integrations: [
     expressiveCode({
       themes: ['github-light', 'github-dark'],
       useDarkModeMediaQuery: false,
+      defaultLocale: 'zh-CN',
       themeCssSelector: (theme) =>
         theme.name === 'github-dark'
           ? "[data-theme='dark']"
@@ -84,6 +157,7 @@ export default defineConfig({
       ],
       rehypePlugins: [
         rehypeRaw,
+        [rehypeSanitize, markdownSanitizeSchema],
         rehypeKatex,
         rehypeFlagKatex,
         [
@@ -96,13 +170,17 @@ export default defineConfig({
           },
         ],
         rehypeDiagramImages,
+        rehypeDemoteH1,
         rehypeSlug,
         [
           rehypeAutolinkHeadings,
           {
             behavior: 'append',
             content: { type: 'text', value: '#' },
-            properties: { className: ['anchor'], ariaLabel: '本节锚点' },
+            properties: (node) => ({
+              className: ['anchor'],
+              ariaLabel: `链接到「${toString(node)}」`,
+            }),
           },
         ],
       ],

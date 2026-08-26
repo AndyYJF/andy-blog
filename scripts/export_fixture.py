@@ -7,11 +7,8 @@ import os
 import time
 from pathlib import Path
 
-import paramiko
+from ssh_readonly import connect, require_env, require_ssh_target
 
-HOST = os.environ.get("SSH_HOST", "139.224.71.200")
-USER = os.environ.get("SSH_USER", "root")
-PASS = os.environ["SSH_PASS"]
 ROOT = Path(__file__).resolve().parents[1]
 EPOCH = os.environ.get("SNAPSHOT_EPOCH", "1785565762")
 OUT = ROOT / "docs" / "baselines" / "fixtures" / f"snapshot-{EPOCH}.json"
@@ -81,24 +78,14 @@ echo PACK=/tmp/andy-fixture-$EPOCH.json
 '''
 
 
-def connect():
-    client = paramiko.SSHClient()
-    client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-    t = paramiko.Transport((HOST, 22))
-    t.connect()
-    try:
-        t.auth_password(USER, PASS)
-    except paramiko.AuthenticationException:
-        t.auth_interactive(USER, lambda title, instr, prompts: [PASS for _ in prompts])
-    client._transport = t
-    return client
-
-
 def main():
+    host, user = require_ssh_target()
+    password = require_env("SSH_PASS")
+    port = int(os.environ.get("SSH_PORT", "22"))
     OUT.parent.mkdir(parents=True, exist_ok=True)
     script = REMOTE.replace("__EPOCH__", EPOCH)
     remote_path = f"/tmp/andy-fixture-export-{int(time.time())}.sh"
-    client = connect()
+    client = connect(host, user, password, port)
     try:
         sftp = client.open_sftp()
         with sftp.file(remote_path, "w") as f:

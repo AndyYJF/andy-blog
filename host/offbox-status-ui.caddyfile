@@ -1,0 +1,14 @@
+# Snippet for /etc/caddy/Caddyfile on the off-box builder.
+# Public hostname: build.fei.cx → loopback status UI.
+# Do not put passwords here. Node serves a WeUI password page and a session cookie.
+
+build.fei.cx {
+	encode gzip
+	reverse_proxy 127.0.0.1:8787
+	header {
+		X-Robots-Tag "noindex, nofollow, noarchive"
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options nosniff
+		Referrer-Policy no-referrer
+	}
+}

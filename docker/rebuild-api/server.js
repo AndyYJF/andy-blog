@@ -19,10 +19,15 @@ const PATHS = {
   pending: path.join(RUNTIME, 'pending'),
   dirty: path.join(RUNTIME, 'dirty'),
   building: path.join(RUNTIME, 'building'),
+  progress: path.join(RUNTIME, 'progress.json'),
+  progressLog: path.join(RUNTIME, 'progress.log'),
+  lastFailure: path.join(RUNTIME, 'last-failure.json'),
   nonces: path.join(RUNTIME, 'nonces.json'),
   state: path.join(RUNTIME, 'api-state.json'),
   spool: path.join(RUNTIME, 'spool'),
 };
+
+const SECRET_LINE = /(password|secret|private[ _-]?key|begin openssh|token=|authorization:)/i;
 
 /** Serialize nonce/flag mutations within one process (unique tmp names across concurrent awaits). */
 let writeChain = Promise.resolve();
@@ -118,6 +123,124 @@ async function exists(file) {
   }
 }
 
+async function readJsonFile(file, fallback = null) {
+  try {
+    return JSON.parse(await fsp.readFile(file, 'utf8'));
+  } catch {
+    return fallback;
+  }
+}
+
+export function statusCanonical(timestamp) {
+  return `GET\n/status\n${timestamp}`;
+}
+
+export function verifyStatusRequest(headers) {
+  const secret = readSecret();
+  const timestamp = String(headers['x-timestamp'] || '');
+  const signature = headers['x-signature'];
+  if (!/^[0-9]{10}$/.test(timestamp) || !signature) {
+    const err = new Error('bad status auth');
+    err.status = 401;
+    throw err;
+  }
+  const skew = Math.abs(Math.floor(Date.now() / 1000) - Number(timestamp));
+  if (skew > SKEW_SECONDS) {
+    const err = new Error('timestamp skew');
+    err.status = 401;
+    throw err;
+  }
+  const expected = `sha256=${crypto.createHmac('sha256', secret).update(statusCanonical(timestamp)).digest('hex')}`;
+  if (!timingSafeEqualHex(signature, expected)) {
+    const err = new Error('bad signature');
+    err.status = 401;
+    throw err;
+  }
+}
+
+export function sanitizeLine(line) {
+  const text = String(line ?? '').replace(/\s+$/u, '').slice(0, 500);
+  if (!text) return '';
+  if (SECRET_LINE.test(text)) return '[redacted]';
+  return text;
+}
+
+async function readLogTail(file, limit = 80) {
+  try {
+    const text = await fsp.readFile(file, 'utf8');
+    return text
+      .split(/\r?\n/)
+      .map(sanitizeLine)
+      .filter(Boolean)
+      .slice(-limit);
+  } catch {
+    return [];
+  }
+}
+
+const STEP_STATES = new Set(['pending', 'running', 'done', 'failed']);
+
+function publicSteps(steps) {
+  if (!Array.isArray(steps)) return [];
+  return steps.slice(0, 16).map((step) => ({
+    id: String(step?.id || '').slice(0, 40),
+    label: String(step?.label || '').slice(0, 80),
+    state: STEP_STATES.has(step?.state) ? step.state : 'pending',
+  }));
+}
+
+export async function readStatus() {
+  const [pending, dirty, building] = await Promise.all([
+    exists(PATHS.pending),
+    exists(PATHS.dirty),
+    exists(PATHS.building),
+  ]);
+  const progress = (await readJsonFile(PATHS.progress, {})) || {};
+  const failure = await readJsonFile(PATHS.lastFailure, null);
+  const tail = await readLogTail(PATHS.progressLog, 80);
+  let status = ['idle', 'queued', 'running', 'success', 'failed'].includes(progress.status)
+    ? progress.status
+    : 'idle';
+  if (building) status = 'running';
+  else if (pending || dirty) status = status === 'failed' ? 'queued' : (status === 'running' ? 'running' : 'queued');
+  return {
+    status,
+    phase: String(progress.phase || (status === 'queued' ? 'queued' : 'idle')).slice(0, 40),
+    builder: progress.builder == null ? null : String(progress.builder).slice(0, 32),
+    releaseId: progress.releaseId == null ? null : String(progress.releaseId).slice(0, 40),
+    current: progress.current == null ? null : String(progress.current).slice(0, 40),
+    previous: progress.previous == null ? null : String(progress.previous).slice(0, 40),
+    startedAt: progress.startedAt == null ? null : String(progress.startedAt).slice(0, 40),
+    updatedAt: progress.updatedAt == null ? null : String(progress.updatedAt).slice(0, 40),
+    error: progress.error == null ? null : sanitizeLine(progress.error),
+    steps: publicSteps(progress.steps),
+    dirty,
+    queued: pending || dirty,
+    building,
+    lastFailure: failure && typeof failure === 'object'
+      ? {
+          failedAt: failure.failedAt == null ? null : String(failure.failedAt).slice(0, 40),
+          rc: Number.isFinite(Number(failure.rc)) ? Number(failure.rc) : null,
+          phase: failure.phase == null ? null : String(failure.phase).slice(0, 40),
+        }
+      : null,
+    tail,
+  };
+}
+
+async function markQueuedProgress(mode) {
+  const prev = (await readJsonFile(PATHS.progress, {})) || {};
+  const now = new Date().toISOString();
+  await writeFlag(PATHS.progress, {
+    ...prev,
+    status: mode === 'dirty' ? (prev.status === 'running' ? 'running' : 'queued') : 'queued',
+    phase: mode === 'dirty' ? prev.phase || 'queued' : 'queued',
+    updatedAt: now,
+    startedAt: prev.status === 'queued' || prev.status === 'running' ? prev.startedAt || now : now,
+    error: null,
+  });
+}
+
 /**
  * Enqueue a rebuild request.
  * - Always durable: write pending (or dirty if a build is in flight).
@@ -175,10 +298,12 @@ export async function enqueue(rawBody, signatureHeader) {
 
   if (await exists(PATHS.building)) {
     await writeFlag(PATHS.dirty, event);
+    await markQueuedProgress('dirty');
     return { status: 202, body: { accepted: true, mode: 'dirty' } };
   }
 
   await writeFlag(PATHS.pending, event);
+  await markQueuedProgress('pending');
   // Touch a spool marker the host path unit can watch.
   const spoolName = `job-${ts}-${nonce.slice(0, 8)}.json`;
   await writeFlag(path.join(PATHS.spool, spoolName), {
@@ -209,6 +334,13 @@ export function createServer() {
       if (req.method === 'GET' && req.url === '/healthz') {
         res.writeHead(200, { 'content-type': 'application/json' });
         res.end(JSON.stringify({ ok: true }));
+        return;
+      }
+      if (req.method === 'GET' && req.url === '/status') {
+        verifyStatusRequest(req.headers);
+        const body = await readStatus();
+        res.writeHead(200, { 'content-type': 'application/json', 'cache-control': 'no-store' });
+        res.end(JSON.stringify(body));
         return;
       }
       if (req.method === 'POST' && req.url === '/hooks/rebuild') {
@@ -242,4 +374,4 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
   });
 }
 
-export const _internal = { PATHS, verifySignature, ensureRuntime };
+export const _internal = { PATHS, verifySignature, verifyStatusRequest, ensureRuntime, sanitizeLine };

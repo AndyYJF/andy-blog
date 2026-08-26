@@ -114,7 +114,7 @@ export function initLightbox(root: HTMLElement): Dispose {
     const target = event.target;
     if (!(target instanceof HTMLImageElement)) return;
     if (target.closest("a")) return;
-    if (target.classList.contains("beoe-light") || target.classList.contains("beoe-dark")) return;
+    // Theme twin is display:none via html[data-theme] .beoe-*; only the visible one is clickable.
     open(target);
   };
 

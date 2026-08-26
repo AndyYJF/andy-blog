@@ -4,16 +4,17 @@ import Comments from "../../components/Comments.astro";
 import { getCollection, render } from "astro:content";
 import { categoryTone } from "../../lib/category-tone";
 import { loadMetaRouteMap } from "../../lib/meta-routes";
+import { adjacentPosts, relatedPosts, sortPosts } from "../../lib/posts";
 
 export async function getStaticPaths() {
-  const posts = await getCollection("posts");
+  const posts = sortPosts(await getCollection("posts"));
   return posts.map((post) => ({
     params: { id: post.id },
-    props: { post },
+    props: { post, posts },
   }));
 }
 
-const { post } = Astro.props;
+const { post, posts } = Astro.props;
 const { Content, remarkPluginFrontmatter } = await render(post);
 const katex = remarkPluginFrontmatter.hasKatex === true;
 const description = post.data.description;
@@ -28,6 +29,8 @@ const displayCategories = post.data.categories
       href: route && route.state === "active" ? route.canonicalPath : undefined,
     };
   });
+const { prev, next } = adjacentPosts(posts, post.id);
+const related = relatedPosts(posts, post, 3);
 ---
 <BaseLayout
   title={`${post.data.title} · AndyYan`}
@@ -72,5 +75,46 @@ const displayCategories = post.data.categories
     </header>
     <Content />
   </article>
+
+  {(prev || next || related.length > 0) && (
+    <nav class="post-footer-nav" aria-label="文章导航">
+      {(prev || next) && (
+        <div class="post-adjacent" aria-label="相邻文章">
+          {prev ? (
+            <a class="post-adjacent-link is-prev" href={prev.data.canonicalPath}>
+              <span class="post-adjacent-label">上一篇</span>
+              <span class="post-adjacent-title">{prev.data.title}</span>
+            </a>
+          ) : (
+            <span class="post-adjacent-link is-prev is-empty" aria-hidden="true"></span>
+          )}
+          {next ? (
+            <a class="post-adjacent-link is-next" href={next.data.canonicalPath}>
+              <span class="post-adjacent-label">下一篇</span>
+              <span class="post-adjacent-title">{next.data.title}</span>
+            </a>
+          ) : (
+            <span class="post-adjacent-link is-next is-empty" aria-hidden="true"></span>
+          )}
+        </div>
+      )}
+      {related.length > 0 && (
+        <div class="post-related">
+          <p class="post-related-label">相关文章</p>
+          <ul class="post-related-list">
+            {related.map((item) => (
+              <li>
+                <a href={item.data.canonicalPath}>{item.data.title}</a>
+                <time datetime={item.data.pubDate.toISOString()}>
+                  {item.data.pubDate.toISOString().slice(0, 10)}
+                </time>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </nav>
+  )}
+
   <Comments commentKey={post.data.commentKey} entryWritable={post.data.allowComment} />
 </BaseLayout>

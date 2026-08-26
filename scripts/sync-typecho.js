@@ -20,6 +20,7 @@ import {
   normalizeMetaName,
   repairKnownContent,
 } from './lib/content-presentation.js';
+import { ensureMetaRouteMap } from './lib/meta-route-allocate.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..');
@@ -367,15 +368,9 @@ async function main() {
 
   await atomicWriteJson(ROUTE_MAP_PATH, routeMap);
 
-  // Refresh mutable display names / sourceSlug on taxonomy routes from snapshot metas
+  // Refresh names/sourceSlug, and allocate routes for metas that are new in the snapshot.
   const metaMap = await readJson(META_ROUTE_MAP_PATH, {});
-  for (const meta of snapshot.metas || []) {
-    const key = String(meta.mid);
-    const entry = metaMap[key];
-    if (!entry || entry.state !== 'active') continue;
-    entry.name = normalizeMetaName(meta.name, meta.mid);
-    entry.sourceSlug = meta.slug;
-  }
+  ensureMetaRouteMap(metaMap, snapshot.metas || []);
 
   for (const [midStr, meta] of Object.entries(metaMap)) {
     if (meta.state !== 'active') continue;

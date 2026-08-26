@@ -2,10 +2,21 @@
 import { ClientRouter } from "astro:transitions";
 ---
 <ClientRouter />
+<script
+  is:inline
+  defer
+  src="https://umami.andy-y.cn/script.js"
+  data-website-id="9ffba271-c1ce-43ee-9d02-277ddb778deb"
+></script>
 <script is:inline>
   (() => {
     if (window.__andyNavDirInstalled) return;
     window.__andyNavDirInstalled = true;
+    // ClientRouter 换页不会重新执行 tracker；after-swap 补一次 pageview，首屏仍由 script 自动上报
+    document.addEventListener("astro:after-swap", () => {
+      const tracker = window.umami;
+      if (tracker && typeof tracker.track === "function") tracker.track();
+    });
     // 顶栏导航的线性权重：目标序号更大 = 前进（新页从右滑入），反之 = 后退
     // 不在表里的路由（tag/category 等）不设置方向，回退为淡入淡出
     const NAV_ORDER = { "": 0, posts: 1, page: 1, archive: 2, friends: 3, dn42: 4, about: 5 };

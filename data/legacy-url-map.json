@@ -416,6 +416,34 @@
     "lastVerifiedAt": "2026-08-02T00:00:00Z"
   },
   {
+    "oldPath": "/archives",
+    "queryKey": null,
+    "action": "redirect",
+    "targetPath": "/archive/",
+    "expectedTerminalStatus": 200,
+    "kind": "page",
+    "cid": null,
+    "source": [
+      "audit-fix"
+    ],
+    "firstSeenAt": "2026-08-26T00:00:00Z",
+    "lastVerifiedAt": "2026-08-26T00:00:00Z"
+  },
+  {
+    "oldPath": "/archives/",
+    "queryKey": null,
+    "action": "redirect",
+    "targetPath": "/archive/",
+    "expectedTerminalStatus": 200,
+    "kind": "page",
+    "cid": null,
+    "source": [
+      "audit-fix"
+    ],
+    "firstSeenAt": "2026-08-26T00:00:00Z",
+    "lastVerifiedAt": "2026-08-26T00:00:00Z"
+  },
+  {
     "oldPath": "/blog",
     "queryKey": null,
     "action": "redirect",

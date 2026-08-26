@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>构建历史</title>
+    <link rel="stylesheet" href="/app.css" />
+  </head>
+  <body>
+    <main id="app">
+      <header class="ledger-head">
+        <h1>构建历史</h1>
+        <nav class="ledger-nav" aria-label="页面">
+          <a href="/">当前</a>
+          <a href="/history" aria-current="page">历史</a>
+        </nav>
+        <p id="banner" class="banner" hidden></p>
+        <a class="logout" href="/logout">退出</a>
+      </header>
+      <ol id="history" class="history"></ol>
+    </main>
+    <script src="/history.js"></script>
+  </body>
+</html>

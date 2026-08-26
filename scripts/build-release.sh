@@ -40,13 +40,19 @@ trap cleanup_building EXIT
 
 cd "$APP_ROOT"
 
+progress() { printf 'PROGRESS %s\n' "$1" >&2; }
+
 # Monorepo layout: /app is the repo root (not just astro/).
+progress tests
 node --test scripts/cleanup-old-releases.test.js
 node --test scripts/joe-task-markers.test.js
 node --test scripts/compare-nginx-policy.test.js
+node --test scripts/rebuild-progress.test.js
 node --test scripts/copy-beoe-to-dist.test.js
+progress sync-typecho
 node scripts/sync-typecho.js
 node scripts/build-legacy-url-map.js
+progress maps
 node scripts/generate-nginx.js --status "$REDIRECT_STATUS"
 node scripts/generate-comment-policy.js --mode "$COMMENT_WRITE_MODE" --out .cache/comment-policy.json
 node scripts/generate-comment-policy.js --mode enabled --out .cache/comment-policy.staging.json
@@ -58,19 +64,19 @@ node scripts/finalize-manifest.js \
 # Comment migration is a one-time cutover operation. Ordinary article rebuilds
 # must never replay it against production Waline.
 
+progress astro
 npm --prefix astro run build
 node scripts/generate-cdn-preheat-plan.js \
   --release-id "$RELEASE_ID" \
   --site-dir astro/dist \
   --out .cache/cdn-preheat-plan.json
+progress gates
 node scripts/render-gate.js
 node scripts/rss-gate.js
-# Observation gate asserts 302; skip when flipping to permanent 301.
-if [[ "$REDIRECT_STATUS" == "302" ]]; then
-  node scripts/stage4-gate.js
-fi
+node scripts/stage4-gate.js --expected-redirect "$REDIRECT_STATUS"
 
 mkdir -p "$STAGE/site" "$STAGE/nginx" .cache/release-nginx
+progress package
 cp -a nginx/release-http.conf "$STAGE/nginx/"
 cp -a nginx/00-release-loader.conf "$STAGE/nginx/" 2>/dev/null || true
 # Candidate full nginx.conf for isolated nginx -t -c

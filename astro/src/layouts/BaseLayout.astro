@@ -44,6 +44,9 @@ const articleNavActive =
   currentPath === "/posts/" ||
   currentPath.startsWith("/posts/") ||
   /^\/page\/\d+\/?$/.test(currentPath);
+const isPostList =
+  currentPath === "/posts/" ||
+  /^\/page\/\d+\/?$/.test(currentPath);
 const navItems = [
   { href: "/posts/", label: "文章" },
   { href: "/archive/", label: "归档" },
@@ -53,14 +56,14 @@ const navItems = [
 const isNavActive = (href: string) =>
   href === "/posts/" ? articleNavActive : currentPath === href;
 
-// 二级分类导航条的显示范围：文章列表/详情/分页 + 分类页
-const catBarVisible = articleNavActive || currentPath.startsWith("/category/");
+// 二级分类导航条：仅文章列表/分页 + 分类页（详情页不显示，避免 sticky 顶栏占高）
+const catBarVisible = isPostList || currentPath.startsWith("/category/");
 
 // 顶栏下方的二级分类导航条；「所有文章」指向文章列表主页
 const catBarItems = activeMetaOfType("category").map(({ mid, meta }) => ({
   href: mid === 1 ? "/posts/" : meta.canonicalPath,
   label: meta.name?.trim() || meta.sourceSlug,
-  active: mid === 1 ? articleNavActive : currentPath === meta.canonicalPath,
+  active: mid === 1 ? isPostList : currentPath === meta.canonicalPath,
 }));
 
 // 独立页的左侧页边动态徽章（文章页不渲染，保持清爽）
@@ -98,6 +101,11 @@ const defaultLd =
       };
 
 const ldPayload = jsonLd ?? defaultLd;
+// Escape <>& so a title/description cannot break out of the JSON-LD <script>.
+const ldJson = JSON.stringify(ldPayload)
+  .replace(/</g, "\\u003c")
+  .replace(/>/g, "\\u003e")
+  .replace(/&/g, "\\u0026");
 ---
 <!doctype html>
 <html lang="zh-CN" data-theme="light">
@@ -130,7 +138,7 @@ const ldPayload = jsonLd ?? defaultLd;
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImage} />
 
-    <script type="application/ld+json" set:html={JSON.stringify(ldPayload)} />
+    <script type="application/ld+json" set:html={ldJson} />
 
     <ThemeInit />
     {katex && <link rel="stylesheet" href="/vendor/katex/katex.min.css" />}
@@ -220,7 +228,7 @@ const ldPayload = jsonLd ?? defaultLd;
     <footer class="site-footer">
       <p class="net-status">
         <span>AS4242422921 · FULL-MESH IBGP</span>
-        <span><span class="net-ok">●</span> 4/4 节点在线 · BUILD {buildDate}</span>
+        <span>4 节点 · FULL-MESH · BUILD {buildDate}</span>
       </p>
       <div class="site-footer-row">
         <div class="site-footer-legal">

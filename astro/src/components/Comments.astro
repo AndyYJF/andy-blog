@@ -49,8 +49,7 @@ const {
         if (!entry.isIntersecting) return;
         observer?.disconnect();
         const hostWriteEnabled =
-          root.dataset.productionWriteEnabled === "true" ||
-          window.location.hostname === "new.andy-y.cn";
+          root.dataset.productionWriteEnabled === "true";
         const effectiveWritable =
           root.dataset.entryWritable === "true" && hostWriteEnabled;
 

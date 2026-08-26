@@ -8,6 +8,14 @@ import { normalizeNginxUriKey } from './nginx-uri.js';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const DIST = path.join(ROOT, 'astro', 'dist');
+const expectedRedirectArg = process.argv.includes('--expected-redirect')
+  ? process.argv[process.argv.indexOf('--expected-redirect') + 1]
+  : '302';
+if (expectedRedirectArg !== '302' && expectedRedirectArg !== '301') {
+  console.error(`--expected-redirect must be 302 or 301, got ${expectedRedirectArg}`);
+  process.exit(64);
+}
+const expectedRedirect = Number(expectedRedirectArg);
 
 const read = (rel) => fs.readFileSync(path.join(ROOT, rel), 'utf8');
 const readJson = (rel) => JSON.parse(read(rel));
@@ -26,10 +34,15 @@ const nginx = read('nginx/release-http.conf');
 const manifest = readJson('nginx/release-manifest.json');
 
 check(Array.isArray(legacy) && legacy.length > 0, 'legacy-url-map empty');
-check(manifest.redirectStatus === 302, `expected observation 302, got ${manifest.redirectStatus}`);
-check(nginx.includes('return 302 https://www.andy-y.cn$legacy_target'), 'nginx missing path 302');
-check(nginx.includes('return 302 https://www.andy-y.cn$legacy_query_target'), 'nginx missing query 302');
-check(!nginx.includes('return 301 https://www.andy-y.cn$legacy_target'), 'observation nginx must not use 301 for legacy');
+check(manifest.redirectStatus === expectedRedirect, `expected redirect ${expectedRedirect}, got ${manifest.redirectStatus}`);
+check(nginx.includes(`return ${expectedRedirect} https://www.andy-y.cn$legacy_target`), `nginx missing path ${expectedRedirect}`);
+check(nginx.includes(`return ${expectedRedirect} https://www.andy-y.cn$legacy_query_target`), `nginx missing query ${expectedRedirect}`);
+if (expectedRedirect === 302) {
+  check(!nginx.includes('return 301 https://www.andy-y.cn$legacy_target'), 'observation nginx must not use 301 for legacy');
+} else {
+  check(!nginx.includes('return 302 https://www.andy-y.cn$legacy_target'), '301 nginx must not keep path 302');
+  check(!nginx.includes('return 302 https://www.andy-y.cn$legacy_query_target'), '301 nginx must not keep query 302');
+}
 check(nginx.includes('error_page 404 /404.html;'), 'nginx must route misses to Astro 404');
 check(/location = \/404\.html \{[\s\S]*?internal;[\s\S]*?Cache-Control "no-store"[\s\S]*?X-Robots-Tag "noindex, follow"/u.test(nginx), 'nginx Astro 404 location must be internal, no-store, and noindex');
 

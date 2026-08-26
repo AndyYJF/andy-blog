@@ -1,7 +1,7 @@
 /**
  * Semantic two-tone category colors.
  *  - "accent" (amber, existing --accent): DN42 / 网络 / 运维类
- *  - "cyan": AI / 开源项目类
+ *  - "cyan": AI / 开源项目 / Astro 类
  * Unknown categories return null and keep the default muted style.
  */
 const NETWORK_SLUGS = new Set([
@@ -12,7 +12,7 @@ const NETWORK_SLUGS = new Set([
   "cyber-safety",
   "nas",
 ]);
-const PROJECT_SLUGS = new Set(["ai", "opensource"]);
+const PROJECT_SLUGS = new Set(["ai", "opensource", "astro"]);
 
 export type CategoryTone = "accent" | "cyan";
 

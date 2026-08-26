@@ -19,7 +19,7 @@ process.env.RUNTIME_DIR = runtime;
 process.env.WEBHOOK_SECRET_FILE = secretFile;
 process.env.DEBOUNCE_MS = '1000';
 
-const { enqueue, _internal } = await import(pathToFileURL(path.join(root, 'server.js')).href);
+const { enqueue, createServer, readStatus, statusCanonical, sanitizeLine, _internal } = await import(pathToFileURL(path.join(root, 'server.js')).href);
 await _internal.ensureRuntime();
 
 const secret = 'test-secret-value';
@@ -83,6 +83,50 @@ const bodyFor = (overrides = {}) =>
     `expected 40 ok, got ${fulfilled.length}; rejects=${rejected.map((r) => r.reason?.message)}`,
   );
   await assert.rejects(() => enqueue(bodies[0], sign(bodies[0])), /replay/);
+}
+
+assert.equal(sanitizeLine('DB_PASSWORD=hunter2'), '[redacted]');
+assert.equal(sanitizeLine('PROGRESS astro'), 'PROGRESS astro');
+
+{
+  await fsp.writeFile(_internal.PATHS.progress, JSON.stringify({
+    status: 'running',
+    phase: 'astro',
+    builder: 'offbox',
+    steps: [{ id: 'astro', label: 'Astro / mermaid', state: 'running' }],
+  }), 'utf8');
+  await fsp.writeFile(_internal.PATHS.progressLog, 'ok line\nDB_PASSWORD=nope\nPROGRESS astro\n', 'utf8');
+  await fsp.writeFile(_internal.PATHS.building, JSON.stringify({ startedAt: new Date().toISOString() }), 'utf8');
+  const status = await readStatus();
+  assert.equal(status.status, 'running');
+  assert.equal(status.phase, 'astro');
+  assert.equal(status.building, true);
+  assert.ok(status.tail.includes('[redacted]'));
+  assert.ok(status.tail.includes('PROGRESS astro'));
+  await fsp.rm(_internal.PATHS.building, { force: true });
+}
+
+{
+  const { default: http } = await import('node:http');
+  const server = createServer();
+  await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
+  const { port } = server.address();
+  const get = (headers) => new Promise((resolve, reject) => {
+    http.get({ hostname: '127.0.0.1', port, path: '/status', headers }, (res) => {
+      const chunks = [];
+      res.on('data', (chunk) => chunks.push(chunk));
+      res.on('end', () => resolve({ status: res.statusCode, body: Buffer.concat(chunks).toString('utf8') }));
+    }).on('error', reject);
+  });
+  const unsigned = await get({});
+  assert.equal(unsigned.status, 401);
+  const ts = String(Math.floor(Date.now() / 1000));
+  const sig = 'sha256=' + crypto.createHmac('sha256', secret).update(statusCanonical(ts)).digest('hex');
+  const ok = await get({ 'x-timestamp': ts, 'x-signature': sig });
+  assert.equal(ok.status, 200);
+  const parsed = JSON.parse(ok.body);
+  assert.equal(parsed.phase, 'astro');
+  await new Promise((resolve) => server.close(resolve));
 }
 
 await fsp.rm(runtime, { recursive: true, force: true });

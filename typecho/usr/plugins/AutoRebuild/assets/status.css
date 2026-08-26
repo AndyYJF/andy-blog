@@ -1,0 +1,74 @@
+#andy-rebuild-status {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  z-index: 10050;
+  width: min(360px, calc(100vw - 24px));
+  font: 13px/1.4 sans-serif;
+  color: #1a1a1a;
+  background: #fff;
+  border: 1px solid #d0d0d0;
+  border-radius: 2px;
+}
+
+#andy-rebuild-status[data-state="running"],
+#andy-rebuild-status[data-state="queued"] {
+  border-color: #c47b16;
+}
+
+#andy-rebuild-status[data-state="failed"] {
+  border-color: #b42318;
+}
+
+.andy-rebuild-toggle {
+  display: flex;
+  width: 100%;
+  margin: 0;
+  padding: 8px 10px;
+  border: 0;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+  font: inherit;
+}
+
+.andy-rebuild-panel {
+  border-top: 1px solid #e5e5e5;
+  padding: 8px 10px 10px;
+  max-height: 50vh;
+  overflow: auto;
+}
+
+.andy-rebuild-meta {
+  margin: 0 0 8px;
+  color: #555;
+}
+
+.andy-rebuild-steps {
+  margin: 0 0 8px;
+  padding-left: 1.2em;
+}
+
+.andy-rebuild-steps [data-state="running"] {
+  font-weight: 600;
+}
+
+.andy-rebuild-steps [data-state="done"] {
+  color: #667;
+}
+
+.andy-rebuild-steps [data-state="failed"] {
+  color: #b42318;
+}
+
+.andy-rebuild-log {
+  margin: 0;
+  max-height: 12rem;
+  overflow: auto;
+  padding: 8px;
+  background: #f6f6f6;
+  border: 1px solid #ececec;
+  font: 11px/1.4 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
