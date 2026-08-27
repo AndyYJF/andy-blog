@@ -21,6 +21,7 @@ import { remarkImageSize } from './src/plugins/remark-image-size.js';
 import { rehypeDiagramImages } from './src/plugins/rehype-diagram-images.js';
 import { rehypeDemoteH1 } from './src/plugins/rehype-demote-h1.js';
 import { rehypeFlagKatex } from './src/plugins/rehype-flag-katex.js';
+import { rehypeWrapTables } from './src/plugins/rehype-wrap-tables.js';
 
 pluginFramesTexts.addLocale('zh-CN', {
   copyButtonTooltip: '复制',
@@ -171,6 +172,7 @@ export default defineConfig({
         ],
         rehypeDiagramImages,
         rehypeDemoteH1,
+        rehypeWrapTables,
         rehypeSlug,
         [
           rehypeAutolinkHeadings,

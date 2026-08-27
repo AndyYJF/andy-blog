@@ -49,6 +49,7 @@ html {
 
 body {
   margin: 0;
+  min-width: 0;
   min-height: 100dvh;
   display: flex;
   flex-direction: column;
@@ -451,14 +452,17 @@ html[data-theme="light"] .theme-toggle .icon-moon {
 }
 
 .wrap {
+  width: 100%;
   max-width: var(--measure);
+  min-width: 0;
   margin: 0 auto;
   padding: 2rem 1rem 4rem;
 }
 main.wrap,
 #main.wrap,
 .wrap#main {
-  flex: 1 0 auto;
+  flex: 1 1 auto;
+  min-width: 0;
 }
 
 .muted {
@@ -471,6 +475,7 @@ h3 {
   line-height: 1.3;
   letter-spacing: -0.01em;
   text-wrap: balance;
+  overflow-wrap: anywhere;
 }
 
 h1 {
@@ -1136,6 +1141,7 @@ html[data-theme="dark"] .card-cover img {
 }
 
 .prose {
+  min-width: 0;
   overflow-wrap: break-word;
 }
 .prose h2 {
@@ -1197,6 +1203,8 @@ html[data-theme="dark"] .card-cover img {
   background: color-mix(in srgb, var(--muted) 12%, transparent);
   /* blockquotes dim text to --muted, which fails 4.5:1 on the tinted chip */
   color: var(--text);
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 .prose img {
   max-width: 100%;
@@ -1218,15 +1226,34 @@ html[data-theme="dark"] .card-cover img {
 .prose blockquote > :last-child {
   margin-bottom: 0;
 }
+.prose .table-scroll {
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+}
+.prose > table {
+  display: block;
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+}
 .prose table {
   width: 100%;
   border-collapse: collapse;
   font-size: 0.92rem;
 }
+.prose .table-scroll table {
+  display: table;
+  width: max-content;
+  min-width: 100%;
+}
 .prose th,
 .prose td {
   border: 1px solid var(--border);
   padding: 0.45rem 0.65rem;
+  overflow-wrap: break-word;
 }
 .prose th {
   background: color-mix(in srgb, var(--muted) 8%, transparent);
@@ -1438,6 +1465,11 @@ a.anchor:focus-visible {
 }
 
 /* mermaid via BEOE */
+.beoe {
+  max-width: 100%;
+  min-width: 0;
+  overflow-x: auto;
+}
 .beoe img {
   display: block;
   max-width: 100%;
@@ -1452,7 +1484,7 @@ html[data-theme="dark"] .beoe-light {
 /* directives */
 .alert {
   display: grid;
-  grid-template-columns: auto 1fr;
+  grid-template-columns: auto minmax(0, 1fr);
   gap: 0.5rem 0.7rem;
   align-items: start;
   margin: 1.25rem 0;
@@ -1562,7 +1594,9 @@ html[data-theme="dark"] .beoe-light {
 
 .site-footer {
   flex-shrink: 0;
+  width: 100%;
   max-width: var(--measure);
+  min-width: 0;
   margin: 0 auto;
   padding: 1.5rem 1rem 2.5rem;
   border-top: 1px solid var(--border);
