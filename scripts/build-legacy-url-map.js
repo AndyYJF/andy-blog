@@ -103,17 +103,38 @@ async function main() {
 
   // Content legacy paths from the immutable route table.
   for (const [cid, route] of Object.entries(routeMap)) {
-    if (route.state !== 'active') continue;
-    for (const legacy of route.legacyPaths || []) {
-      for (const variant of withSlashVariants(legacy)) {
-        // Keep .html paths exact; only slash-normalize directory-style URLs.
-        if (legacy.endsWith('.html') && variant !== legacy) continue;
-        redirect(variant, route.canonicalPath, route.kind, ['route-map', 'live-crawl', 'database'], Number(cid));
+    if (route.state === 'active') {
+      for (const legacy of route.legacyPaths || []) {
+        for (const variant of withSlashVariants(legacy)) {
+          // Keep .html paths exact; only slash-normalize directory-style URLs.
+          if (legacy.endsWith('.html') && variant !== legacy) continue;
+          redirect(variant, route.canonicalPath, route.kind, ['route-map', 'live-crawl', 'database'], Number(cid));
+        }
       }
+      // Query-style ?p={cid} on documented Typecho entrypoints only.
+      queryRedirect(`/:${cid}`, route.canonicalPath, route.kind, ['routing-table', 'database'], Number(cid));
+      queryRedirect(`/index.php:${cid}`, route.canonicalPath, route.kind, ['routing-table', 'database'], Number(cid));
+      continue;
     }
-    // Query-style ?p={cid} on documented Typecho entrypoints only.
-    queryRedirect(`/:${cid}`, route.canonicalPath, route.kind, ['routing-table', 'database'], Number(cid));
-    queryRedirect(`/index.php:${cid}`, route.canonicalPath, route.kind, ['routing-table', 'database'], Number(cid));
+
+    // Tombstoned moments must keep ?p=cid redirects so unattended switch never
+    // shrinks $legacy_query_target (compare-nginx-policy refuses removals).
+    if (route.kind === 'moment' && route.canonicalPath) {
+      queryRedirect(
+        `/:${cid}`,
+        route.canonicalPath,
+        route.kind,
+        ['routing-table', 'database', 'tombstone'],
+        Number(cid),
+      );
+      queryRedirect(
+        `/index.php:${cid}`,
+        route.canonicalPath,
+        route.kind,
+        ['routing-table', 'database', 'tombstone'],
+        Number(cid),
+      );
+    }
   }
 
   // Category / tag (Stage 6 pages; redirects still recorded now).
@@ -167,6 +188,10 @@ async function main() {
   );
   activeTargets.add('/');
   activeTargets.add('/rss.xml');
+  // Moment tombstones may still be redirect targets (static 404) while maps stay stable.
+  for (const route of Object.values(routeMap)) {
+    if (route.kind === 'moment' && route.canonicalPath) activeTargets.add(route.canonicalPath);
+  }
   for (const meta of Object.values(metaMap)) {
     if (meta.state === 'active') activeTargets.add(meta.canonicalPath);
   }

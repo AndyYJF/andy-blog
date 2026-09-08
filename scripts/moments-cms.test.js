@@ -84,6 +84,13 @@ test('empty moments feed still reserves /moments/ lastmod in sync source', () =>
   assert.match(astro, /\/moments\/rss\.xml/);
 });
 
+test('tombstoned moments keep ?p=cid legacy redirects for unattended switch', () => {
+  const legacy = read('scripts/build-legacy-url-map.js');
+  assert.match(legacy, /tombstone/);
+  assert.match(legacy, /route\.kind === 'moment'/);
+  assert.match(legacy, /\$\{cid\}/);
+});
+
 test('CDN purge plan includes moments list, rss, detail extras, and previous pages helper', () => {
   const core = read('scripts/cdn-purge-core.js');
   const generator = read('scripts/generate-cdn-purge-plan.js');
