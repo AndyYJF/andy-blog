@@ -76,6 +76,14 @@ test('render-gate expects moments under dist/moments/<id>/', () => {
   assert.match(gate, /path\.join\(DIST, 'moments', slug\)/);
 });
 
+test('empty moments feed still reserves /moments/ lastmod in sync source', () => {
+  const sync = read('scripts/sync-typecho.js');
+  assert.match(sync, /Astro always emits \/moments\//);
+  assert.match(sync, /sitemapLastmod\['\/moments\/'\] = isoFromUnix\(epoch\)/);
+  const astro = read('astro/astro.config.mjs');
+  assert.match(astro, /\/moments\/rss\.xml/);
+});
+
 test('CDN purge plan includes moments list, rss, detail extras, and previous pages helper', () => {
   const core = read('scripts/cdn-purge-core.js');
   const generator = read('scripts/generate-cdn-purge-plan.js');

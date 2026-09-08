@@ -520,6 +520,8 @@ async function main() {
       const bp = pubByCid.get(b.cid) ?? 0;
       return bp - ap || b.cid - a.cid;
     });
+  // Astro always emits /moments/; keep lastmod even when the feed is empty
+  // (withdraw/delete-all) so stage4 sitemap checks stay green.
   if (momentsSorted.length > 0) {
     const momentPages = Math.max(1, Math.ceil(momentsSorted.length / MOMENT_PAGE_SIZE));
     for (let n = 1; n <= momentPages; n += 1) {
@@ -529,6 +531,8 @@ async function main() {
       if (n === 1) sitemapLastmod['/moments/'] = maxUpdated;
       else sitemapLastmod[`/moments/page/${n}/`] = maxUpdated;
     }
+  } else {
+    sitemapLastmod['/moments/'] = isoFromUnix(epoch);
   }
 
   // Category / tag list pages

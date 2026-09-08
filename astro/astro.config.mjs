@@ -136,6 +136,7 @@ export default defineConfig({
       filter: (page) => {
         const pathname = new URL(page).pathname;
         if (pathname === '/rss.xml') return false;
+        if (pathname === '/moments/rss.xml') return false;
         if (pathname === '/404.html' || pathname === '/404/') return false;
         if (sitemapExclude.has(pathname)) return false;
         return true;
