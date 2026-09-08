@@ -89,6 +89,11 @@ test('tombstoned moments keep ?p=cid legacy redirects for unattended switch', ()
   assert.match(legacy, /tombstone/);
   assert.match(legacy, /route\.kind === 'moment'/);
   assert.match(legacy, /\$\{cid\}/);
+  const preserve = read('scripts/preserve-live-moment-routes.js');
+  assert.match(preserve, /legacy_query_target/);
+  assert.match(preserve, /seededTombstones/);
+  const rebuild = read('host/blog-rebuild-1panel.sh');
+  assert.match(rebuild, /preserve-live-moment-routes\.js/);
 });
 
 test('CDN purge plan includes moments list, rss, detail extras, and previous pages helper', () => {

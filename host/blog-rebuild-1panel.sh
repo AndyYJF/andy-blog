@@ -261,6 +261,12 @@ build_via_offbox() {
     exit 69
   fi
 
+  # Seed tombstones from live nginx so deleted moments do not shrink query maps.
+  if [[ -f "$COMPOSE_DIR/scripts/preserve-live-moment-routes.js" ]]; then
+    node "$COMPOSE_DIR/scripts/preserve-live-moment-routes.js" \
+      || { echo "preserve-live-moment-routes failed" >&2; exit 65; }
+  fi
+
   SNAPSHOT_JSON="$RUNTIME/snapshot-export.json"
   EXPORT_OVERRIDE="$RUNTIME/compose.export-mem.yml"
   progress_phase snapshot
