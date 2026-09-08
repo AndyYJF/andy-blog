@@ -52,6 +52,7 @@ const navItems = [
   { href: "/archive/", label: "归档" },
   { href: "/friends/", label: "友链" },
   { href: "/dn42/", label: "DN42" },
+  { href: "/about/", label: "关于" },
 ];
 const isNavActive = (href: string) =>
   href === "/posts/" ? articleNavActive : currentPath === href;
@@ -186,7 +187,6 @@ const ldJson = JSON.stringify(ldPayload)
               {navItems.map(({ href, label }) => (
                 <a href={href} aria-current={isNavActive(href) ? "page" : undefined}>{label}</a>
               ))}
-              <a href="/about/" aria-current={currentPath === "/about/" ? "page" : undefined}>关于</a>
             </div>
           </details>
           <SearchDialog />
