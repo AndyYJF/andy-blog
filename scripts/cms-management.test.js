@@ -153,6 +153,15 @@ test('Typecho webhook target and secret fallback are fail-closed', () => {
   assert.match(plugin, /metas-tag-edit/);
   assert.match(plugin, /metas-category-edit/);
   assert.match(plugin, /register_shutdown_function/);
+  assert.match(plugin, /admin\/write-post\.php/);
+  assert.match(plugin, /writeOption/);
+  assert.match(plugin, /fields\[astroPath\]/);
+  assert.match(plugin, /writePostHint/);
+  assert.match(plugin, /path-hint\.js/);
+  const pathHint = read('typecho/usr/plugins/AutoRebuild/assets/path-hint.js');
+  assert.match(pathHint, /fields\[astroPath\]/);
+  assert.match(pathHint, /\/posts\//);
+  assert.match(pathHint, /ensureField/);
   const action = read('typecho/usr/plugins/AutoRebuild/Action.php');
   assert.match(action, /AUTO_REBUILD_STATUS_ENDPOINT/);
   assert.match(action, /endpoint !== 'http:\/\/rebuild-api:9000\/status'/);
@@ -167,6 +176,7 @@ test('Typecho webhook target and secret fallback are fail-closed', () => {
   assert.match(installer, /Plugin::deactivate\(\$pluginName\)/);
   assert.match(installer, /where\('name = \?', 'plugins'\)/);
   assert.match(installer, /watchMetaWrites/);
+  assert.match(installer, /writeOption/);
   assert.match(installer, /Options::alloc\(\)/);
 });
 

@@ -61,6 +61,38 @@
   color: #b42318;
 }
 
+.andy-astro-path-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin: 6px 0;
+}
+
+.andy-astro-path-prefix,
+.andy-astro-path-suffix {
+  font: 12px/1.4 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  color: #555;
+  white-space: nowrap;
+}
+
+#andy-astro-path {
+  flex: 1 1 auto;
+  min-width: 0;
+  width: 100%;
+}
+
+.andy-public-path {
+  margin: 6px 0 0;
+  color: #555;
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.andy-public-path code,
+#andy-astro-path-help code {
+  font: 12px/1.4 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
 .andy-rebuild-log {
   margin: 0;
   max-height: 12rem;

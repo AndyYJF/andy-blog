@@ -38,7 +38,7 @@
     "cms:preview:build": "node scripts/cms-preview/build.mjs",
     "cms:preview:dev": "node scripts/cms-preview/dev.mjs",
     "release:cleanup:test": "node --test scripts/cleanup-old-releases.test.js",
-    "content:presentation:test": "node --test scripts/content-presentation.test.js scripts/meta-route-allocate.test.js",
+    "content:presentation:test": "node --test scripts/content-presentation.test.js scripts/meta-route-allocate.test.js scripts/route-allocate.test.js",
     "content:joe-task:test": "node --test scripts/joe-task-markers.test.js",
     "content:katex:test": "node --test scripts/katex-css.test.js",
     "playwright:path:test": "node --test scripts/ensure-playwright-browsers-path.test.js",

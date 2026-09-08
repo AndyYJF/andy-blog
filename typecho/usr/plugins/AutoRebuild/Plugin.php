@@ -17,7 +17,7 @@ require_once __DIR__ . '/Action.php';
  * Typecho Plugin
  * @package AutoRebuild
  * @author AndyYan
- * @version 1.2.0
+ * @version 1.3.1
  * @link https://www.andy-y.cn
  */
 class AutoRebuild_Plugin implements PluginInterface
@@ -35,6 +35,9 @@ class AutoRebuild_Plugin implements PluginInterface
         // at begin and enqueue after the DB write via shutdown.
         Plugin::factory('index.php')->begin = ['AutoRebuild_Plugin', 'watchMetaWrites'];
         Helper::addAction('rebuild-status', 'AutoRebuild_Action');
+        Plugin::factory('admin/write-post.php')->option = ['AutoRebuild_Plugin', 'writeOption'];
+        Plugin::factory('admin/write-post.php')->bottom = ['AutoRebuild_Plugin', 'writePostHint'];
+        Plugin::factory('Widget_Base_Contents')->isFieldReadOnly = ['AutoRebuild_Plugin', 'isAstroPathReadOnly'];
         Plugin::factory('admin/footer.php')->end = ['AutoRebuild_Plugin', 'adminFooter'];
         return _t('AutoRebuild 已启用：发布、标签和分类变更将入队重建');
     }
@@ -135,6 +138,38 @@ class AutoRebuild_Plugin implements PluginInterface
         }
     }
 
+    public static function isAstroPathReadOnly($name)
+    {
+        return $name === 'astroPath';
+    }
+
+    public static function writeOption($post = null)
+    {
+        $value = '';
+        if (is_object($post) && isset($post->fields) && isset($post->fields->astroPath)) {
+            $value = (string) $post->fields->astroPath;
+        }
+        $valueAttr = htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
+        echo <<<HTML
+<section class="typecho-post-option" id="andy-astro-path-option">
+  <label for="andy-astro-path" class="typecho-label">公开路径（仅首次发布）</label>
+  <p class="andy-astro-path-row">
+    <span class="andy-astro-path-prefix">/posts/</span>
+    <input type="text" id="andy-astro-path" name="fields[astroPath]" value="{$valueAttr}" placeholder="pi-notes" spellcheck="false" autocomplete="off" />
+    <span class="andy-astro-path-suffix">/</span>
+  </p>
+  <p class="description" id="andy-astro-path-help">小写英文和连字符。留空则按标题生成；中文标题会变成 item-文章ID。发布后改这里不会改线上地址。</p>
+</section>
+HTML;
+    }
+
+    public static function writePostHint()
+    {
+        $root = rtrim((string) Options::alloc()->pluginUrl, '/');
+        $js = htmlspecialchars($root . '/AutoRebuild/assets/path-hint.js', ENT_QUOTES, 'UTF-8');
+        echo "<script src=\"{$js}\"></script>\n";
+    }
+
     public static function adminFooter()
     {
         $user = User::alloc();
@@ -150,6 +185,7 @@ class AutoRebuild_Plugin implements PluginInterface
         $root = rtrim((string) $options->pluginUrl, '/');
         $css = htmlspecialchars($root . '/AutoRebuild/assets/status.css', ENT_QUOTES, 'UTF-8');
         $js = htmlspecialchars($root . '/AutoRebuild/assets/status.js', ENT_QUOTES, 'UTF-8');
+        $pathHint = htmlspecialchars($root . '/AutoRebuild/assets/path-hint.js', ENT_QUOTES, 'UTF-8');
         $actionAttr = htmlspecialchars($action, ENT_QUOTES, 'UTF-8');
         $tokenAttr = htmlspecialchars($token, ENT_QUOTES, 'UTF-8');
         echo <<<HTML
@@ -163,6 +199,7 @@ class AutoRebuild_Plugin implements PluginInterface
   </div>
 </div>
 <script src="{$js}"></script>
+<script src="{$pathHint}"></script>
 HTML;
     }
 }

@@ -2,13 +2,13 @@
 /**
  * Stage 1 sync: fixed SNAPSHOT_EPOCH → Content Collections markdown.
  * Sources: FIXTURE_PATH (JSON) or MySQL (DB_*). Never invent routeIds for known CIDs.
+ * New posts may pin a path via Typecho slug or the astroPath custom field.
  */
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import crypto from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import yaml from 'js-yaml';
-import slugify from 'slugify';
 import { convertShortcodes } from './lib/shortcodes.js';
 import { normalizeHeadings } from './lib/headings.js';
 import { remapFenceLangs } from './lib/fence-langs.js';
@@ -21,6 +21,7 @@ import {
   repairKnownContent,
 } from './lib/content-presentation.js';
 import { ensureMetaRouteMap } from './lib/meta-route-allocate.js';
+import { FIELD_ASTRO_PATH, ensureRouteMap } from './lib/route-allocate.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..');
@@ -29,7 +30,7 @@ const ROUTE_MAP_PATH = path.join(ROOT, 'data', 'route-map.json');
 const META_ROUTE_MAP_PATH = path.join(ROOT, 'data', 'meta-route-map.json');
 const CACHE_DIR = path.join(ASTRO, '.cache');
 const FIELD_COVER = process.env.FIELD_COVER || 'thumb';
-const ROUTE_ID_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+const FIELD_PATH = process.env.FIELD_ASTRO_PATH || FIELD_ASTRO_PATH;
 
 function requireEpoch() {
   const raw = process.env.SNAPSHOT_EPOCH;
@@ -154,59 +155,9 @@ function publicContents(snapshot, epoch) {
   );
 }
 
-function allocateRouteId(title, cid, used) {
-  let base = slugify(String(title), { lower: true, strict: true, trim: true });
-  if (!base || !ROUTE_ID_RE.test(base) || /^\d+$/.test(base)) {
-    base = `item-${cid}`;
-  }
-  let id = base;
-  if (used.has(id)) id = `${base}-${cid}`;
-  if (!ROUTE_ID_RE.test(id)) throw new Error(`invalid routeId ${id} for cid=${cid}`);
-  if (used.has(id)) throw new Error(`routeId collision unresolved for cid=${cid}`);
-  used.add(id);
-  return id;
-}
-
-function ensureRouteMap(routeMap, item, usedIds) {
-  const key = String(item.cid);
-  const existing = routeMap[key];
-  if (existing) {
-    if (existing.state === 'active') {
-      if (!ROUTE_ID_RE.test(existing.routeId)) {
-        throw new Error(`invalid stored routeId for cid=${key}`);
-      }
-      if (item.type === 'page' && !existing.canonicalPath) {
-        throw new Error(`page cid=${key} missing canonicalPath in route-map`);
-      }
-      usedIds.add(existing.routeId);
-      // refresh mutable sourceSlug only
-      existing.sourceSlug = item.slug;
-      return existing;
-    }
-    // tombstone stays
-    return existing;
-  }
-
-  if (item.type === 'page') {
-    throw new Error(`page cid=${key} has no route-map entry; refuse defaulting to post`);
-  }
-
-  const routeId = allocateRouteId(item.title, item.cid, usedIds);
-  const entry = {
-    kind: 'post',
-    routeId,
-    canonicalPath: `/posts/${routeId}/`,
-    sourceSlug: item.slug,
-    feedGuid: `urn:andy-y:post:${item.cid}`,
-    commentKey: `/posts/${routeId}/`,
-    legacyPaths: [
-      `/index.php/archives/${item.cid}/`,
-      `/archives/${item.cid}/`,
-    ],
-    state: 'active',
-  };
-  routeMap[key] = entry;
-  return entry;
+function fieldStr(cid, fields, name) {
+  const hit = (fields || []).find((f) => Number(f.cid) === Number(cid) && f.name === name);
+  return hit?.str_value?.trim() || '';
 }
 
 function relationsFor(cid, relations) {
@@ -329,7 +280,9 @@ async function main() {
   };
 
   for (const item of pubs.sort((a, b) => a.cid - b.cid)) {
-    const route = ensureRouteMap(routeMap, item, usedIds);
+    const route = ensureRouteMap(routeMap, item, usedIds, {
+      astroPath: fieldStr(item.cid, snapshot.fields, FIELD_PATH),
+    });
     if (route.state !== 'active') continue;
     if (item.type === 'page' && (!route.canonicalPath || !route.canonicalPath.endsWith('/'))) {
       throw new Error(`page cid=${item.cid} canonicalPath must be explicit and trailing-slash`);

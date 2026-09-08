@@ -1,6 +1,6 @@
 <?php
 /**
- * Install or refresh AutoRebuild handles (posts, pages, tags, categories, action, footer).
+ * Install or refresh AutoRebuild handles (posts, pages, tags, categories, action, footer, write-post path hint).
  * Run inside the Typecho 1.2.1 container after copying plugin files.
  */
 declare(strict_types=1);
@@ -23,7 +23,7 @@ if (!class_exists($className) || !method_exists($className, 'activate')) {
     file_put_contents('php://stderr', "invalid-plugin\n");
     exit(65);
 }
-if (!method_exists($className, 'watchMetaWrites')) {
+if (!method_exists($className, 'watchMetaWrites') || !method_exists($className, 'writeOption')) {
     file_put_contents('php://stderr', "plugin-missing-meta-hooks\n");
     exit(65);
 }
