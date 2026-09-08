@@ -193,5 +193,35 @@
       "/archives/76/"
     ],
     "state": "active"
+  },
+  "9001": {
+    "kind": "moment",
+    "routeId": "9001",
+    "canonicalPath": "/moments/9001/",
+    "sourceSlug": "9001",
+    "feedGuid": "urn:andy-y:moment:9001",
+    "commentKey": "/moments/9001/",
+    "legacyPaths": [],
+    "state": "active"
+  },
+  "9002": {
+    "kind": "moment",
+    "routeId": "9002",
+    "canonicalPath": "/moments/9002/",
+    "sourceSlug": "9002",
+    "feedGuid": "urn:andy-y:moment:9002",
+    "commentKey": "/moments/9002/",
+    "legacyPaths": [],
+    "state": "active"
+  },
+  "9003": {
+    "kind": "moment",
+    "routeId": "9003",
+    "canonicalPath": "/moments/9003/",
+    "sourceSlug": "9003",
+    "feedGuid": "urn:andy-y:moment:9003",
+    "commentKey": "/moments/9003/",
+    "legacyPaths": [],
+    "state": "active"
   }
 }

@@ -1,0 +1,87 @@
+---
+import { profile } from "../data/profile";
+import { formatMomentTime } from "../lib/moments";
+import type { CollectionEntry } from "astro:content";
+
+interface Props {
+  moment: CollectionEntry<"moments">;
+  mode?: "list" | "detail";
+}
+
+const { moment, mode = "list" } = Astro.props;
+const timeLabel = formatMomentTime(moment.data.pubDate);
+const images = moment.data.images ?? [];
+const topics = moment.data.topics ?? [];
+const gridClass =
+  images.length <= 1
+    ? "moment-grid moment-grid-1"
+    : images.length === 2
+      ? "moment-grid moment-grid-2"
+      : images.length === 4
+        ? "moment-grid moment-grid-4"
+        : "moment-grid moment-grid-3";
+---
+<article class="moment-card" data-moment-id={moment.data.legacyCid}>
+  <header class="moment-identity">
+    <span class="moment-avatar" aria-hidden="true">{profile.name.slice(0, 1)}</span>
+    <div class="moment-identity-text">
+      <span class="moment-author">{profile.name}</span>
+      <time datetime={moment.data.pubDate.toISOString()}>{timeLabel}</time>
+      {moment.data.edited && <span class="moment-edited">已编辑</span>}
+    </div>
+  </header>
+
+  <div
+    class:list={["moment-body", "prose", mode === "list" && "moment-body-clamp"]}
+    data-moment-body
+    data-pagefind-body={mode === "detail" ? true : undefined}
+  >
+    <slot />
+  </div>
+  {mode === "list" && (
+    <button type="button" class="moment-expand" data-moment-expand hidden>展开全文</button>
+  )}
+
+  {images.length > 0 && (
+    <div class={gridClass} data-moment-gallery>
+      {images.map((image, index) => (
+        <button
+          type="button"
+          class="moment-thumb"
+          data-gallery-index={String(index)}
+          aria-label={`查看图片 ${index + 1}`}
+        >
+          <img
+            src={image.src}
+            alt={image.alt || ""}
+            width={image.width}
+            height={image.height}
+            loading={index === 0 ? "eager" : "lazy"}
+            decoding="async"
+          />
+        </button>
+      ))}
+    </div>
+  )}
+
+  <footer class="moment-meta">
+    {topics.length > 0 && (
+      <ul class="moment-topics">
+        {topics.map((topic) => (
+          <li>#{topic}</li>
+        ))}
+      </ul>
+    )}
+    <div class="moment-actions">
+      {mode === "list" ? (
+        <>
+          <a href={moment.data.canonicalPath}>评论</a>
+          <a href={moment.data.canonicalPath}>详情</a>
+          <button type="button" data-copy-link data-copy-url={moment.data.canonicalPath}>复制链接</button>
+        </>
+      ) : (
+        <button type="button" data-copy-link data-copy-url={moment.data.canonicalPath}>复制链接</button>
+      )}
+    </div>
+  </footer>
+</article>

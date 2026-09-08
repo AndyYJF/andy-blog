@@ -1,0 +1,48 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import MomentCard from "../../components/MomentCard.astro";
+import Pagination from "../../components/Pagination.astro";
+import { getCollection, render } from "astro:content";
+import { momentPageSlice } from "../../lib/moments";
+
+const all = await getCollection("moments");
+const { moments, current, totalPages } = momentPageSlice(all, 1);
+const rendered = await Promise.all(
+  moments.map(async (moment) => {
+    const { Content } = await render(moment);
+    return { moment, Content };
+  }),
+);
+---
+<BaseLayout
+  title="闲话 · AndyYan"
+  description="一些近况、随手拍，以及还没写成文章的想法。"
+  canonicalPath="/moments/"
+>
+  <div class="moments-index" data-moments-index>
+    <header class="page-heading">
+      <p class="profile-kicker">MOMENTS / {all.length}</p>
+      <h1 transition:name="page-title" transition:animate="none">闲话</h1>
+      <p class="muted">一些近况、随手拍，以及还没写成文章的想法。</p>
+    </header>
+
+    {rendered.length === 0 ? (
+      <p class="muted">还没有闲话。发布第一条后会出现在这里。</p>
+    ) : (
+      <div class="moments-feed">
+        {rendered.map(({ moment, Content }) => (
+          <MomentCard moment={moment} mode="list">
+            <Content />
+          </MomentCard>
+        ))}
+      </div>
+    )}
+
+    <Pagination
+      current={current}
+      totalPages={totalPages}
+      basePath="/moments/"
+      pagedPrefix="/moments/page/"
+    />
+  </div>
+</BaseLayout>

@@ -90,18 +90,19 @@ class AutoRebuild_Plugin implements PluginInterface
 
     /**
      * Hook signatures differ; full SSG does not need cid, so accept variadic args.
+     * @return bool true only when rebuild-api accepted the job (HTTP 202)
      */
     public static function trigger(...$args)
     {
         $secretFile = getenv('WEBHOOK_SECRET_FILE') ?: __TYPECHO_ROOT_DIR__ . '/usr/.secrets/webhook_secret';
         if (!is_readable($secretFile)) {
             error_log('AutoRebuild: webhook secret is not readable');
-            return;
+            return false;
         }
         $secret = trim((string) file_get_contents($secretFile));
         if ($secret === '') {
             error_log('AutoRebuild: webhook secret is empty');
-            return;
+            return false;
         }
 
         $body = json_encode([
@@ -115,7 +116,7 @@ class AutoRebuild_Plugin implements PluginInterface
         $endpoint = getenv('AUTO_REBUILD_ENDPOINT') ?: 'http://rebuild-api:9000/hooks/rebuild';
         if ($endpoint !== 'http://rebuild-api:9000/hooks/rebuild') {
             error_log('AutoRebuild: rejected non-allowlisted endpoint');
-            return;
+            return false;
         }
         $ch = curl_init($endpoint);
         curl_setopt_array($ch, [
@@ -135,7 +136,9 @@ class AutoRebuild_Plugin implements PluginInterface
         curl_close($ch);
         if ($result === false || $status !== 202) {
             error_log(sprintf('AutoRebuild: enqueue failed status=%d error=%s', $status, $error));
+            return false;
         }
+        return true;
     }
 
     public static function isAstroPathReadOnly($name)

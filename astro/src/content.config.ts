@@ -8,8 +8,16 @@ const meta = z.object({
   slug: z.string(),
 });
 
+const momentImage = z.object({
+  src: z.string().min(1),
+  width: z.number().positive().optional(),
+  height: z.number().positive().optional(),
+  alt: z.string().optional(),
+  aid: z.number().int().positive().optional(),
+});
+
 const commonSchema = z.object({
-  kind: z.enum(['post', 'page']),
+  kind: z.enum(['post', 'page', 'moment']),
   title: z.string(),
   legacyCid: z.number().int().positive(),
   canonicalPath: z.string().startsWith('/').endsWith('/'),
@@ -38,5 +46,17 @@ export const collections = {
   pages: defineCollection({
     loader: glob({ base: './src/content/pages', pattern: '**/*.md' }),
     schema: commonSchema.extend({ kind: z.literal('page') }),
+  }),
+  moments: defineCollection({
+    loader: glob({ base: './src/content/moments', pattern: '**/*.md' }),
+    schema: commonSchema.extend({
+      kind: z.literal('moment'),
+      description: z.string().min(8).max(180),
+      edited: z.boolean().default(false),
+      images: z.array(momentImage).default([]),
+      topics: z.array(z.string()).default([]),
+      categories: z.array(meta).default([]),
+      tags: z.array(meta).default([]),
+    }),
   }),
 };

@@ -1,0 +1,40 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import MomentCard from "../../components/MomentCard.astro";
+import Comments from "../../components/Comments.astro";
+import { getCollection, render } from "astro:content";
+import { sortMoments } from "../../lib/moments";
+
+export async function getStaticPaths() {
+  const moments = sortMoments(await getCollection("moments"));
+  return moments.map((moment) => ({
+    params: { id: moment.id },
+    props: { moment },
+  }));
+}
+
+const { moment } = Astro.props;
+const { Content } = await render(moment);
+const shareImage = moment.data.images[0]?.src;
+---
+<BaseLayout
+  title={`${moment.data.title} · 闲话 · AndyYan`}
+  description={moment.data.description}
+  canonicalPath={moment.data.canonicalPath}
+  article
+  type="article"
+  image={shareImage}
+  pubDate={moment.data.pubDate}
+  updatedDate={moment.data.updatedDate}
+>
+  <div class="moments-detail" data-pagefind-meta="type:闲话">
+    <p class="profile-kicker"><a href="/moments/">← 闲话</a></p>
+    <MomentCard moment={moment} mode="detail">
+      <Content />
+    </MomentCard>
+    <Comments
+      commentKey={moment.data.commentKey}
+      entryWritable={moment.data.allowComment}
+    />
+  </div>
+</BaseLayout>

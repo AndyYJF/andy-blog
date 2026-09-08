@@ -51,7 +51,12 @@ const main = async () => {
     const source = readFileSync(file, 'utf8');
     const body = stripFrontmatter(source).replace(/\s+/g, ' ').trim();
 
-    const outDir = collection === 'posts' ? path.join(DIST, 'posts', slug) : path.join(DIST, slug);
+    const outDir =
+      collection === 'posts'
+        ? path.join(DIST, 'posts', slug)
+        : collection === 'moments'
+          ? path.join(DIST, 'moments', slug)
+          : path.join(DIST, slug);
     const outFile = path.join(outDir, 'index.html');
     if (!existsSync(outFile)) {
       failures.push(`${collection}/${slug}: 未生成 ${path.relative(ROOT, outFile)}`);

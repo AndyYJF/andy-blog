@@ -9,7 +9,7 @@ feedGuid: https://www.andy-y.cn/index.php/archives/34/
 allowComment: true
 allowFeed: true
 pubDate: '2026-03-13T15:09:00.000Z'
-updatedDate: '2026-08-13T11:12:30.000Z'
+updatedDate: '2026-07-02T07:34:15.000Z'
 categories:
   - mid: 1
     name: 所有文章
@@ -50,6 +50,7 @@ Silly Tavern Chat（云酒馆） 是一个强大的AI Role Play网站，依赖�
 ![](https://tc.andy-y.cn/i/2026/03/13/69b40eb6ec83e.png)
 ( `Lable` 就是你给vps起的名字)
 #### 0.3点击 `Connect` 连接
+![](https://www.andy-y.cn/usr/uploads/2026/03/1901601289.png)
 ### 1.安装1panel面板
 为了方便萌新进行后续反代等等的搭建，建议先安装1p。
 输入下方这串命令，按提示操作（提示是否安装docker时直接按enter键）

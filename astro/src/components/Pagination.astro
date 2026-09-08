@@ -3,12 +3,18 @@ interface Props {
   current: number;
   totalPages: number;
   basePath?: string;
+  /** When set, page 2+ uses `${pagedPrefix}${n}/` instead of `/page/${n}/`. */
+  pagedPrefix?: string;
 }
 
-const { current, totalPages, basePath = "/" } = Astro.props;
+const { current, totalPages, basePath = "/", pagedPrefix } = Astro.props;
 if (totalPages <= 1) return;
 
-const hrefFor = (n: number) => (n <= 1 ? basePath : `/page/${n}/`);
+const hrefFor = (n: number) => {
+  if (n <= 1) return basePath;
+  if (pagedPrefix) return `${pagedPrefix}${n}/`;
+  return `/page/${n}/`;
+};
 ---
 <nav class="pagination" aria-label="分页">
   {current > 1 ? (

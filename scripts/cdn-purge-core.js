@@ -9,6 +9,8 @@ const FIXED_PATHS = [
   '/__release',
   '/robots.txt',
   '/rss.xml',
+  '/moments/',
+  '/moments/rss.xml',
   '/sitemap-0.xml',
   '/sitemap-index.xml',
 ];
@@ -37,7 +39,7 @@ function exactSiteUrl(input, site = CDN_PURGE_SITE) {
   return url.href;
 }
 
-export function buildPurgeUrls(legacy, site = CDN_PURGE_SITE) {
+export function buildPurgeUrls(legacy, site = CDN_PURGE_SITE, extraPaths = []) {
   if (!Array.isArray(legacy) || legacy.length === 0) throw new Error('legacy map is empty');
   const urls = new Set(FIXED_PATHS.map((path) => exactSiteUrl(path, site)));
 
@@ -51,6 +53,13 @@ export function buildPurgeUrls(legacy, site = CDN_PURGE_SITE) {
       if (!entry.targetPath) throw new Error(`redirect missing target: ${JSON.stringify(entry)}`);
       urls.add(exactSiteUrl(entry.targetPath, site));
     }
+  }
+
+  for (const path of extraPaths) {
+    if (typeof path !== 'string' || !path.startsWith('/')) {
+      throw new Error(`invalid extra purge path: ${JSON.stringify(path)}`);
+    }
+    urls.add(exactSiteUrl(path, site));
   }
 
   return [...urls].sort();
@@ -74,7 +83,7 @@ function preheatPlanDigestPayload(plan) {
   });
 }
 
-export function createPurgePlan({ releaseId, legacy, site = CDN_PURGE_SITE }) {
+export function createPurgePlan({ releaseId, legacy, site = CDN_PURGE_SITE, extraPaths = [] }) {
   if (!/^[0-9]{8}T[0-9]{6}Z-[0-9a-f]{8}$/.test(releaseId ?? '')) {
     throw new Error(`invalid release id: ${releaseId}`);
   }
@@ -82,7 +91,7 @@ export function createPurgePlan({ releaseId, legacy, site = CDN_PURGE_SITE }) {
     schemaVersion: CDN_PURGE_SCHEMA_VERSION,
     releaseId,
     site,
-    urls: buildPurgeUrls(legacy, site),
+    urls: buildPurgeUrls(legacy, site, extraPaths),
   };
   plan.sha256 = sha256Hex(planDigestPayload(plan));
   return plan;

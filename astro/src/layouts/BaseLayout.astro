@@ -44,18 +44,25 @@ const articleNavActive =
   currentPath === "/posts/" ||
   currentPath.startsWith("/posts/") ||
   /^\/page\/\d+\/?$/.test(currentPath);
+const momentsNavActive =
+  currentPath === "/moments/" ||
+  currentPath.startsWith("/moments/");
 const isPostList =
   currentPath === "/posts/" ||
   /^\/page\/\d+\/?$/.test(currentPath);
 const navItems = [
   { href: "/posts/", label: "文章" },
+  { href: "/moments/", label: "闲话" },
   { href: "/archive/", label: "归档" },
   { href: "/friends/", label: "友链" },
   { href: "/dn42/", label: "DN42" },
   { href: "/about/", label: "关于" },
 ];
-const isNavActive = (href: string) =>
-  href === "/posts/" ? articleNavActive : currentPath === href;
+const isNavActive = (href: string) => {
+  if (href === "/posts/") return articleNavActive;
+  if (href === "/moments/") return momentsNavActive;
+  return currentPath === href;
+};
 
 // 二级分类导航条：仅文章列表/分页 + 分类页（详情页不显示，避免 sticky 顶栏占高）
 const catBarVisible = isPostList || currentPath.startsWith("/category/");
@@ -565,17 +572,31 @@ const ldJson = JSON.stringify(ldPayload)
         disposers.push(initUptime());
 
         const article = document.querySelector<HTMLElement>("[data-article]");
-        if (!article) return;
+        if (article) {
+          const { initArticle } = await import("../scripts/article");
+          if (current !== generation) return;
+          disposers.push(
+            initArticle(
+              article,
+              document.querySelector("[data-reading-progress]"),
+              document.querySelector("[data-article-toc]"),
+            ),
+          );
+        }
 
-        const { initArticle } = await import("../scripts/article");
-        if (current !== generation) return;
-        disposers.push(
-          initArticle(
-            article,
-            document.querySelector("[data-reading-progress]"),
-            document.querySelector("[data-article-toc]"),
-          ),
-        );
+        const momentsRoot =
+          document.querySelector<HTMLElement>("[data-moments-index]") ||
+          document.querySelector<HTMLElement>(".moments-detail");
+        if (momentsRoot) {
+          const [{ initLightbox }, { initMomentExpand, initCopyLinks }] = await Promise.all([
+            import("../scripts/lightbox"),
+            import("../scripts/moments"),
+          ]);
+          if (current !== generation) return;
+          disposers.push(initLightbox(momentsRoot));
+          disposers.push(initMomentExpand(momentsRoot));
+          disposers.push(initCopyLinks(momentsRoot));
+        }
       }
 
       function cleanup() {

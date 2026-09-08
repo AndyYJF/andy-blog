@@ -21,7 +21,14 @@ import {
   repairKnownContent,
 } from './lib/content-presentation.js';
 import { ensureMetaRouteMap } from './lib/meta-route-allocate.js';
-import { FIELD_ASTRO_PATH, ensureRouteMap } from './lib/route-allocate.js';
+import {
+  FIELD_ASTRO_PATH,
+  FIELD_CONTENT_KIND,
+  FIELD_MOMENT_IMAGES,
+  FIELD_MOMENT_TOPICS,
+  ensureMomentRouteMap,
+  ensureRouteMap,
+} from './lib/route-allocate.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..');
@@ -182,9 +189,90 @@ function relationsFor(cid, relations) {
 }
 
 function coverFor(cid, fields) {
-  const hit = fields.find((f) => Number(f.cid) === Number(cid) && f.name === FIELD_COVER);
+  const hit = (fields || []).find((f) => Number(f.cid) === Number(cid) && f.name === FIELD_COVER);
   const v = hit?.str_value?.trim();
   return v || undefined;
+}
+
+function parseJsonField(raw, label, cid) {
+  const text = String(raw || '').trim();
+  if (!text) return null;
+  try {
+    return JSON.parse(text);
+  } catch {
+    throw new Error(`invalid ${label} JSON for cid=${cid}`);
+  }
+}
+
+function momentImagesFor(cid, fields) {
+  const parsed = parseJsonField(fieldStr(cid, fields, FIELD_MOMENT_IMAGES), FIELD_MOMENT_IMAGES, cid);
+  if (!parsed) return [];
+  if (!Array.isArray(parsed)) throw new Error(`${FIELD_MOMENT_IMAGES} must be an array for cid=${cid}`);
+  return parsed.map((item, index) => {
+    if (!item || typeof item !== 'object') {
+      throw new Error(`${FIELD_MOMENT_IMAGES}[${index}] invalid for cid=${cid}`);
+    }
+    const src = String(item.src || item.url || '').trim();
+    if (!src) throw new Error(`${FIELD_MOMENT_IMAGES}[${index}] missing src for cid=${cid}`);
+    const out = { src };
+    if (item.width != null) out.width = Number(item.width);
+    if (item.height != null) out.height = Number(item.height);
+    if (item.alt != null) out.alt = String(item.alt);
+    if (item.aid != null) out.aid = Number(item.aid);
+    return out;
+  });
+}
+
+function momentTopicsFor(cid, fields) {
+  const parsed = parseJsonField(fieldStr(cid, fields, FIELD_MOMENT_TOPICS), FIELD_MOMENT_TOPICS, cid);
+  if (!parsed) return [];
+  if (!Array.isArray(parsed)) throw new Error(`${FIELD_MOMENT_TOPICS} must be an array for cid=${cid}`);
+  return parsed.map((topic) => String(topic).trim()).filter(Boolean);
+}
+
+function adminMomentTitle(item, body) {
+  const existing = String(item.title || '').trim();
+  if (existing && !/^闲话/.test(existing) && existing !== String(item.cid)) return existing;
+  const firstLine = body.split('\n').map((line) => line.trim()).find(Boolean) || '';
+  const plain = firstLine.replace(/[#>*_`\[\]()]/g, '').trim();
+  if (plain) return plain.slice(0, 40);
+  return `闲话 · ${isoFromUnix(item.created).slice(0, 10)}`;
+}
+
+function buildMomentMarkdown(item, route, images, topics) {
+  let body = stripMarkdownMarker(item.text).replace(/\r\n/g, '\n');
+  const sourceFormat = detectFormat(item.text);
+  if (sourceFormat === 'markdown') body = normalizeIncidentalTrailingWhitespace(body);
+  const title = adminMomentTitle(item, body);
+  const description = deriveDescription(body) || '一条来自 AndyYan 的闲话动态。';
+  const edited = Number(item.modified) > Number(item.created) + 60;
+  const fm = {
+    slug: route.routeId,
+    kind: 'moment',
+    title,
+    legacyCid: Number(item.cid),
+    canonicalPath: route.canonicalPath,
+    commentKey: route.commentKey,
+    feedGuid: route.feedGuid,
+    allowComment: toBool(item.allowComment),
+    allowFeed: toBool(item.allowFeed),
+    pubDate: isoFromUnix(item.created),
+    updatedDate: isoFromUnix(item.modified),
+    edited,
+    images,
+    topics,
+    description: description.slice(0, 180),
+    sourceFormat,
+  };
+
+  const dumped = yaml.dump(fm, {
+    lineWidth: -1,
+    noRefs: true,
+    sortKeys: false,
+  });
+  return {
+    markdown: `---\n${dumped}---\n\n${body}\n`,
+  };
 }
 
 function buildMarkdown(item, route, rels, cover) {
@@ -253,20 +341,33 @@ async function main() {
     Object.values(routeMap).filter((e) => e.state === 'active').map((e) => e.routeId),
   );
 
-  // Mark missing publics as needing entries; tombstone actives not in public set
+  // Mark missing publics as needing entries; tombstone actives not in public set.
+  // Moments: draft/withdrawn rows still exist in the snapshot → disposition=withdrawn
+  // (may republish under the same cid). Fully deleted rows → disposition=gone.
   const publicCids = new Set(pubs.map((p) => String(p.cid)));
+  const snapshotByCid = new Map((snapshot.contents || []).map((c) => [String(c.cid), c]));
   for (const [cid, entry] of Object.entries(routeMap)) {
     if (entry.state === 'active' && !publicCids.has(cid)) {
       entry.state = 'tombstone';
-      entry.disposition = entry.disposition || 'not_found';
+      if (entry.kind === 'moment') {
+        const row = snapshotByCid.get(cid);
+        const stillMoment = row
+          && (row.type === 'post' || row.type === 'post_draft')
+          && fieldStr(cid, snapshot.fields, FIELD_CONTENT_KIND) === 'moment';
+        entry.disposition = stillMoment ? 'withdrawn' : 'gone';
+      } else {
+        entry.disposition = entry.disposition || 'not_found';
+      }
     }
   }
 
   const staging = path.join(CACHE_DIR, `sync-staging-${process.pid}`);
   const postsDir = path.join(staging, 'posts');
   const pagesDir = path.join(staging, 'pages');
+  const momentsDir = path.join(staging, 'moments');
   await fs.mkdir(postsDir, { recursive: true });
   await fs.mkdir(pagesDir, { recursive: true });
+  await fs.mkdir(momentsDir, { recursive: true });
 
   const entries = [];
   const reports = {
@@ -280,6 +381,41 @@ async function main() {
   };
 
   for (const item of pubs.sort((a, b) => a.cid - b.cid)) {
+    const contentKind = fieldStr(item.cid, snapshot.fields, FIELD_CONTENT_KIND);
+    const isMoment = contentKind === 'moment';
+
+    if (isMoment) {
+      if (item.type !== 'post') {
+        throw new Error(`moment cid=${item.cid} must be stored as a Typecho post`);
+      }
+      const route = ensureMomentRouteMap(routeMap, item, usedIds);
+      if (route.state !== 'active') continue;
+      const images = momentImagesFor(item.cid, snapshot.fields);
+      const topics = momentTopicsFor(item.cid, snapshot.fields);
+      const bodyText = stripMarkdownMarker(item.text).replace(/\r\n/g, '\n').trim();
+      if (!bodyText && images.length === 0) {
+        throw new Error(`moment cid=${item.cid} is empty (no text and no images)`);
+      }
+      const { markdown: md } = buildMomentMarkdown(item, route, images, topics);
+      await atomicWriteText(path.join(momentsDir, `${route.routeId}.md`), md);
+      if (/\/usr\/uploads\//.test(item.text)) reports.localUploadRefs.push(item.cid);
+      entries.push({
+        cid: Number(item.cid),
+        kind: 'moment',
+        entryId: route.routeId,
+        canonicalPath: route.canonicalPath,
+        commentKey: route.commentKey,
+        feedGuid: route.feedGuid,
+        legacyPaths: route.legacyPaths,
+        updatedDate: isoFromUnix(item.modified),
+        allowComment: toBool(item.allowComment),
+        categoryMids: [],
+        tagMids: [],
+        contentSha256: sha256(md),
+      });
+      continue;
+    }
+
     const route = ensureRouteMap(routeMap, item, usedIds, {
       astroPath: fieldStr(item.cid, snapshot.fields, FIELD_PATH),
     });
@@ -375,6 +511,25 @@ async function main() {
     else sitemapLastmod[`/page/${n}/`] = maxUpdated;
   }
 
+  const MOMENT_PAGE_SIZE = 15;
+  const momentsSorted = [...entries]
+    .filter((e) => e.kind === 'moment')
+    .sort((a, b) => {
+      const ap = pubByCid.get(a.cid) ?? 0;
+      const bp = pubByCid.get(b.cid) ?? 0;
+      return bp - ap || b.cid - a.cid;
+    });
+  if (momentsSorted.length > 0) {
+    const momentPages = Math.max(1, Math.ceil(momentsSorted.length / MOMENT_PAGE_SIZE));
+    for (let n = 1; n <= momentPages; n += 1) {
+      const slice = momentsSorted.slice((n - 1) * MOMENT_PAGE_SIZE, n * MOMENT_PAGE_SIZE);
+      const maxUpdated = slice.map((e) => e.updatedDate).sort().at(-1);
+      if (!maxUpdated) continue;
+      if (n === 1) sitemapLastmod['/moments/'] = maxUpdated;
+      else sitemapLastmod[`/moments/page/${n}/`] = maxUpdated;
+    }
+  }
+
   // Category / tag list pages
   for (const [midStr, meta] of Object.entries(metaMap)) {
     if (meta.state !== 'active') continue;
@@ -431,14 +586,19 @@ async function main() {
   // Replace content dirs atomically via staging swap
   const finalPosts = path.join(ASTRO, 'src', 'content', 'posts');
   const finalPages = path.join(ASTRO, 'src', 'content', 'pages');
+  const finalMoments = path.join(ASTRO, 'src', 'content', 'moments');
   await fs.mkdir(path.join(ASTRO, 'src', 'content'), { recursive: true });
   await clearGenerated(finalPosts);
   await clearGenerated(finalPages);
+  await clearGenerated(finalMoments);
   for (const name of await fs.readdir(postsDir)) {
     await fs.rename(path.join(postsDir, name), path.join(finalPosts, name));
   }
   for (const name of await fs.readdir(pagesDir)) {
     await fs.rename(path.join(pagesDir, name), path.join(finalPages, name));
+  }
+  for (const name of await fs.readdir(momentsDir)) {
+    await fs.rename(path.join(momentsDir, name), path.join(finalMoments, name));
   }
   await fs.rm(staging, { recursive: true, force: true });
 
