@@ -167,32 +167,45 @@ class Moments_Action extends Widget implements ActionInterface
             $this->fail(400, 'too-many-images');
         }
 
-        // Idempotent retry only when a previous save fully completed.
-        if ($cid <= 0 && $clientToken !== '') {
-            $existing = $this->findCompletedByClientToken($clientToken);
-            if ($existing) {
-                $this->response->throwJson([
-                    'ok' => true,
-                    'cid' => $existing,
-                    'deduped' => true,
-                    'status' => $status,
-                    'rebuildQueued' => false,
-                    'message' => $status === 'draft' ? '草稿已保存' : '已提交，等待更新',
-                ]);
-            }
-        }
-
         $now = time();
         $title = $this->adminTitle($text, $now);
         $body = '<!--markdown-->' . $text;
         $type = $status === 'draft' ? 'post_draft' : 'post';
         $contentStatus = 'publish';
         $wasPublic = false;
+        $deduped = false;
+        $tokenLock = ($cid <= 0 && $clientToken !== '')
+            ? 'moments_ct_' . substr(hash('sha256', $clientToken), 0, 48)
+            : '';
 
         try {
+            if ($tokenLock !== '') {
+                $this->acquireMysqlLock($tokenLock);
+            }
+
+            // Idempotent retry only when a previous save fully completed (under lock).
+            if ($cid <= 0 && $clientToken !== '') {
+                $existing = $this->findCompletedByClientToken($clientToken);
+                if ($existing) {
+                    $cid = $existing;
+                    $deduped = true;
+                    if ($tokenLock !== '') {
+                        $this->releaseMysqlLock($tokenLock);
+                    }
+                    $this->response->throwJson([
+                        'ok' => true,
+                        'cid' => $existing,
+                        'deduped' => true,
+                        'status' => $status,
+                        'rebuildQueued' => false,
+                        'message' => $status === 'draft' ? '草稿已保存' : '已提交，等待更新',
+                    ]);
+                }
+            }
+
             $db->query('START TRANSACTION');
 
-            if ($cid > 0) {
+            if ($cid > 0 && !$deduped) {
                 $row = $db->fetchRow($db->select()->from('table.contents')->where('cid = ?', $cid)->limit(1));
                 if (!$row || !$this->isMomentCid($cid)) {
                     $db->query('ROLLBACK');
@@ -208,7 +221,7 @@ class Moments_Action extends Widget implements ActionInterface
                     'allowComment' => $allowComment,
                     'allowFeed' => 1,
                 ])->where('cid = ?', $cid));
-            } else {
+            } elseif ($cid <= 0) {
                 $cid = (int) $db->query($db->insert('table.contents')->rows([
                     'title' => $title,
                     'slug' => (string) $now,
@@ -250,10 +263,20 @@ class Moments_Action extends Widget implements ActionInterface
             }
 
             $db->query('COMMIT');
+            if ($tokenLock !== '') {
+                $this->releaseMysqlLock($tokenLock);
+                $tokenLock = '';
+            }
         } catch (Throwable $e) {
             try {
                 $db->query('ROLLBACK');
             } catch (Throwable $ignored) {
+            }
+            if ($tokenLock !== '') {
+                try {
+                    $this->releaseMysqlLock($tokenLock);
+                } catch (Throwable $ignored) {
+                }
             }
             error_log('Moments save failed: ' . $e->getMessage());
             $this->fail(500, 'save-failed');
@@ -285,14 +308,13 @@ class Moments_Action extends Widget implements ActionInterface
 
     private function retryRebuild()
     {
+        // Site-wide rebuild retry for admins. cid is optional context and may
+        // refer to a moment that was already deleted (delete succeeded, enqueue failed).
         $cid = (int) $this->request->get('cid');
-        if ($cid > 0 && !$this->isMomentCid($cid)) {
-            $this->fail(404, 'not-found');
-        }
         $queued = $this->enqueueRebuild();
         $this->response->throwJson([
             'ok' => true,
-            'cid' => $cid ?: null,
+            'cid' => $cid > 0 ? $cid : null,
             'rebuildQueued' => $queued,
             'message' => $queued ? '已重新入队，等待更新' : '重建入队失败，请稍后重试',
         ]);
@@ -347,7 +369,8 @@ class Moments_Action extends Widget implements ActionInterface
         }
 
         $scrub = $this->normalizePublicImage($absPath, $mime);
-        if ($scrub['hadGps'] && !$scrub['cleaned']) {
+        // JPEG public copies must be re-encoded; never claim privacy without cleaned=true.
+        if ($mime === 'image/jpeg' && !$scrub['cleaned']) {
             @unlink($absPath);
             $this->fail(500, 'exif-scrub-failed');
         }
@@ -598,26 +621,29 @@ class Moments_Action extends Widget implements ActionInterface
 
     /**
      * Orient JPEG using EXIF when possible, then rewrite to drop GPS/metadata.
+     * cleaned=true only after a successful re-encode. Passthrough formats stay cleaned=false.
      * @return array{cleaned:bool,oriented:bool,hadGps:bool,reason:?string}
      */
     private function normalizePublicImage(string $path, string $mime): array
     {
         $result = ['cleaned' => false, 'oriented' => false, 'hadGps' => false, 'reason' => null];
         if ($mime === 'image/jpeg') {
-            $orientation = 1;
-            $hadGps = false;
-            if (function_exists('exif_read_data')) {
-                $exif = @exif_read_data($path, null, true);
-                if (is_array($exif)) {
-                    $hadGps = !empty($exif['GPS']);
-                    $orientation = (int) ($exif['IFD0']['Orientation'] ?? $exif['Orientation'] ?? 1);
-                }
+            if (!function_exists('exif_read_data')) {
+                $result['reason'] = 'exif-missing';
+                return $result;
             }
-            $result['hadGps'] = $hadGps;
             if (!function_exists('imagecreatefromjpeg') || !function_exists('imagejpeg')) {
                 $result['reason'] = 'gd-missing';
                 return $result;
             }
+            $orientation = 1;
+            $hadGps = false;
+            $exif = @exif_read_data($path, null, true);
+            if (is_array($exif)) {
+                $hadGps = !empty($exif['GPS']);
+                $orientation = (int) ($exif['IFD0']['Orientation'] ?? $exif['Orientation'] ?? 1);
+            }
+            $result['hadGps'] = $hadGps;
             $img = @imagecreatefromjpeg($path);
             if (!$img) {
                 $result['reason'] = 'jpeg-decode-failed';
@@ -638,10 +664,26 @@ class Moments_Action extends Widget implements ActionInterface
             return $result;
         }
 
-        // PNG/WebP/GIF: no EXIF GPS path in v1; mark cleaned when re-encode is unnecessary.
-        $result['cleaned'] = true;
+        // PNG/WebP/GIF: no EXIF scrub pipeline in v1 — do not claim cleaned.
         $result['reason'] = 'format-passthrough';
         return $result;
+    }
+
+    private function acquireMysqlLock(string $name): void
+    {
+        $db = Db::get();
+        $quoted = "'" . str_replace(["\\", "\0", "'"], ["\\\\", '', "\\'"], $name) . "'";
+        $row = $db->fetchRow($db->query('SELECT GET_LOCK(' . $quoted . ', 5) AS g'));
+        if (!(int) ($row['g'] ?? 0)) {
+            $this->fail(409, 'token-busy');
+        }
+    }
+
+    private function releaseMysqlLock(string $name): void
+    {
+        $db = Db::get();
+        $quoted = "'" . str_replace(["\\", "\0", "'"], ["\\\\", '', "\\'"], $name) . "'";
+        $db->query('SELECT RELEASE_LOCK(' . $quoted . ')');
     }
 
     /** @param \GdImage|resource $img */

@@ -27,6 +27,13 @@ test('Moments plugin exposes mobile panel, fields, and rebuild hook', () => {
   assert.match(action, /已撤回，网站更新中/);
   assert.match(action, /case 'rebuild'/);
   assert.match(action, /AutoRebuild_Plugin::trigger\(\) === true/);
+  const retryFn = action.match(/private function retryRebuild\(\)\s*\{[\s\S]*?\n    \}/);
+  assert.ok(retryFn, 'retryRebuild present');
+  assert.doesNotMatch(retryFn[0], /isMomentCid/);
+  assert.match(action, /GET_LOCK/);
+  assert.match(action, /exif-missing|gd-missing/);
+  assert.match(action, /format-passthrough/);
+  assert.match(action, /jpeg' && !\$scrub\['cleaned'\]/);
   assert.match(action, /normalizePublicImage/);
   assert.match(action, /LIST_LIMIT/);
   assert.match(action, /beforeCreated/);
@@ -39,7 +46,11 @@ test('Moments plugin exposes mobile panel, fields, and rebuild hook', () => {
   assert.match(js, /重试更新|rebuild/);
   assert.match(js, /加载更多|load-more/);
   assert.match(installer, /Plugin::activate\(\$pluginName\)/);
+  assert.doesNotMatch(installer, /call_user_func\(\$className, 'activate'\)/);
+  assert.match(installer, /removePanel\(3, 'Moments\/panel\.php'\)/);
+  assert.match(installer, /panelTable/);
   assert.match(installer, /Moments_Plugin/);
+  assert.match(read('scripts/repair-typecho-moments-panel.php'), /PANEL_OK|child_hits/);
   assert.match(rebuild, /return true;/);
   assert.match(rebuild, /return false;/);
 });
@@ -65,13 +76,15 @@ test('render-gate expects moments under dist/moments/<id>/', () => {
   assert.match(gate, /path\.join\(DIST, 'moments', slug\)/);
 });
 
-test('CDN purge plan includes moments list, rss, and detail extras', () => {
+test('CDN purge plan includes moments list, rss, detail extras, and previous pages helper', () => {
   const core = read('scripts/cdn-purge-core.js');
   const generator = read('scripts/generate-cdn-purge-plan.js');
   assert.match(core, /\/moments\//);
   assert.match(core, /\/moments\/rss\.xml/);
   assert.match(core, /extraPaths/);
   assert.match(generator, /collectMomentPaths/);
+  assert.match(generator, /listMomentPagePathsFromSite/);
+  assert.match(generator, /WWW_ROOT/);
   assert.match(generator, /route-map\.json/);
 
   const plan = createPurgePlan({

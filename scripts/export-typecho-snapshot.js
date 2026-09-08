@@ -57,7 +57,7 @@ try {
     `SELECT cid, type, title, slug, text, created, modified,
             allowComment, allowFeed, \`order\`, template, password, status
      FROM typecho_contents
-     WHERE type IN ('post','page')
+     WHERE type IN ('post','page','post_draft')
      ORDER BY cid`,
   );
   const [relations] = await db.query(

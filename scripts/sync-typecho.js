@@ -29,6 +29,7 @@ import {
   ensureMomentRouteMap,
   ensureRouteMap,
 } from './lib/route-allocate.js';
+import { momentDispositionForMissingPublic } from './lib/moment-sync-state.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..');
@@ -117,7 +118,7 @@ async function loadSnapshot(epoch) {
         `SELECT cid, type, title, slug, text, created, modified,
                 allowComment, allowFeed, \`order\`, template, password, status
          FROM typecho_contents
-         WHERE type IN ('post','page')
+         WHERE type IN ('post','page','post_draft')
          ORDER BY cid`,
       );
       const [relations] = await db.query(
@@ -351,10 +352,10 @@ async function main() {
       entry.state = 'tombstone';
       if (entry.kind === 'moment') {
         const row = snapshotByCid.get(cid);
-        const stillMoment = row
-          && (row.type === 'post' || row.type === 'post_draft')
-          && fieldStr(cid, snapshot.fields, FIELD_CONTENT_KIND) === 'moment';
-        entry.disposition = stillMoment ? 'withdrawn' : 'gone';
+        entry.disposition = momentDispositionForMissingPublic({
+          row,
+          contentKind: fieldStr(cid, snapshot.fields, FIELD_CONTENT_KIND),
+        });
       } else {
         entry.disposition = entry.disposition || 'not_found';
       }
