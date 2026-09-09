@@ -5,7 +5,8 @@
   const actionUrl = root.dataset.actionUrl;
   const token = root.dataset.token;
   const textEl = document.getElementById("moment-text");
-  const filesEl = document.getElementById("moment-files");
+  const imageUrlEl = document.getElementById("moment-image-url");
+  const addImageUrlBtn = document.getElementById("moment-add-image-url");
   const previewsEl = document.getElementById("moment-previews");
   const hintEl = document.getElementById("moment-upload-hint");
   const topicsEl = document.getElementById("moment-topics");
@@ -24,7 +25,6 @@
   /** @type {{aid?: number, src: string, width?: number, height?: number, alt?: string}[]} */
   let images = [];
   let editingCid = 0;
-  let uploading = 0;
   let saving = false;
   let clientToken = "";
   let listNext = null;
@@ -119,24 +119,86 @@
       .map((t) => t.trim())
       .filter(Boolean);
 
+  const isAllowedImageSrc = (src) => {
+    if (!src) return false;
+    if (src.startsWith("/")) return !src.startsWith("//");
+    try {
+      const url = new URL(src);
+      return url.protocol === "http:" || url.protocol === "https:";
+    } catch {
+      return false;
+    }
+  };
+
+  const probeImage = (src) =>
+    new Promise((resolve) => {
+      const img = new Image();
+      img.onload = () =>
+        resolve({
+          src,
+          width: img.naturalWidth || undefined,
+          height: img.naturalHeight || undefined,
+        });
+      img.onerror = () => resolve({ src });
+      img.src = src;
+    });
+
+  const addImageUrl = async ({ silentEmpty = false } = {}) => {
+    const src = (imageUrlEl.value || "").trim();
+    if (!src) {
+      if (!silentEmpty) {
+        setStatus("请粘贴图片链接", "error");
+        imageUrlEl.focus();
+      }
+      return false;
+    }
+    if (!isAllowedImageSrc(src)) {
+      setStatus("仅支持 http(s) 或站内路径", "error");
+      return false;
+    }
+    if (images.some((image) => image.src === src)) {
+      imageUrlEl.value = "";
+      return true;
+    }
+    if (images.length >= 9) {
+      setStatus("每条最多 9 张图片", "error");
+      return false;
+    }
+    hintEl.hidden = false;
+    hintEl.textContent = "正在检查图片链接…";
+    const image = await probeImage(src);
+    images.push(image);
+    renderPreviews();
+    imageUrlEl.value = "";
+    hintEl.hidden = true;
+    setStatus("图片链接已添加", "ok");
+    return true;
+  };
+
   const resetComposer = () => {
     editingCid = 0;
     clientToken = "";
     textEl.value = "";
     topicsEl.value = "";
     allowEl.checked = true;
+    imageUrlEl.value = "";
     images = [];
     renderPreviews();
   };
 
   const save = async (status) => {
-    if (saving || uploading > 0) {
-      setStatus(uploading > 0 ? "还有图片正在上传，请稍候" : "正在保存…", "error");
+    if (saving) {
+      setStatus("正在保存…", "error");
       return;
+    }
+    // If the URL box still has text, treat it as an added image (avoid publish-without-click).
+    if ((imageUrlEl.value || "").trim()) {
+      const ok = await addImageUrl();
+      if (!ok) return;
     }
     const text = textEl.value.trim();
     if (!text && images.length === 0) {
-      setStatus("请输入文字或添加图片", "error");
+      setStatus("请输入文字或添加图片链接", "error");
       return;
     }
     if (!clientToken) {
@@ -178,52 +240,6 @@
     }
   };
 
-  const uploadFiles = async (fileList) => {
-    const files = [...fileList];
-    for (const file of files) {
-      const ext = (file.name.split(".").pop() || "").toLowerCase();
-      if (ext === "heic" || ext === "heif") {
-        setStatus("暂不支持 HEIC，请先转为 JPEG/PNG/WebP", "error");
-        hintEl.hidden = false;
-        hintEl.textContent = "HEIC 未上传。";
-        continue;
-      }
-      if (images.length >= 9) {
-        setStatus("每条最多 9 张图片", "error");
-        break;
-      }
-      uploading += 1;
-      hintEl.hidden = false;
-      hintEl.textContent = `上传中（${uploading}）…`;
-      try {
-        const body = formBody({ do: "upload" });
-        body.set("file", file, file.name);
-        const res = await fetch(actionUrl, {
-          method: "POST",
-          body,
-          credentials: "same-origin",
-        });
-        const data = await res.json().catch(() => ({ ok: false, error: "json" }));
-        if (!res.ok || !data.ok) {
-          throw new Error(data.error || `http-${res.status}`);
-        }
-        images.push(data.image);
-        renderPreviews();
-        if (data.scrub && data.scrub.hadGps && !data.scrub.cleaned) {
-          setStatus("图片含 GPS 且清理失败，未采用", "error");
-        } else {
-          setStatus("图片已添加", "ok");
-        }
-      } catch (error) {
-        setStatus(`上传失败：${error.message}，可重试`, "error");
-      } finally {
-        uploading -= 1;
-        hintEl.hidden = uploading === 0;
-        if (uploading > 0) hintEl.textContent = `上传中（${uploading}）…`;
-      }
-    }
-  };
-
   const loadIntoComposer = (item) => {
     editingCid = item.cid;
     clientToken = "";
@@ -233,6 +249,7 @@
     images = Array.isArray(item.images) ? [...item.images] : [];
     renderPreviews();
     moreEl.hidden = false;
+    toggleMore.setAttribute("aria-expanded", "true");
     showRebuild(0, false);
     setStatus(`正在编辑 #${item.cid}`, "");
     textEl.focus();
@@ -328,12 +345,17 @@
   };
 
   toggleMore.addEventListener("click", () => {
-    moreEl.hidden = !moreEl.hidden;
+    const open = moreEl.hasAttribute("hidden");
+    moreEl.hidden = !open;
+    toggleMore.setAttribute("aria-expanded", open ? "true" : "false");
   });
-  filesEl.addEventListener("change", () => {
-    if (filesEl.files && filesEl.files.length) {
-      uploadFiles(filesEl.files);
-      filesEl.value = "";
+  addImageUrlBtn.addEventListener("click", () => {
+    addImageUrl();
+  });
+  imageUrlEl.addEventListener("keydown", (event) => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      addImageUrl();
     }
   });
   draftBtn.addEventListener("click", () => save("draft"));

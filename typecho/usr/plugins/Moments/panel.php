@@ -36,11 +36,20 @@ include 'menu.php';
             <textarea id="moment-text" rows="5" placeholder="说点什么……" maxlength="8000"></textarea>
 
             <div class="moments-toolbar">
-              <label class="moments-add">
-                ＋ 添加图片
-                <input id="moment-files" type="file" accept="image/jpeg,image/png,image/gif,image/webp" multiple hidden>
-              </label>
-              <button type="button" id="moment-toggle-more" class="btn">更多选项</button>
+              <div class="moments-add-link">
+                <label class="sr-only" for="moment-image-url">图片链接</label>
+                <input
+                  id="moment-image-url"
+                  type="url"
+                  inputmode="url"
+                  placeholder="图片链接 https://…"
+                  autocomplete="off"
+                >
+                <button type="button" id="moment-add-image-url" class="btn">添加图片链接</button>
+              </div>
+              <button type="button" id="moment-toggle-more" class="btn" aria-expanded="false" aria-controls="moment-more">
+                更多选项
+              </button>
             </div>
 
             <ul id="moment-previews" class="moments-previews" hidden></ul>
@@ -80,8 +89,9 @@ include 'menu.php';
     </div>
   </div>
 </div>
-<link rel="stylesheet" href="<?php echo htmlspecialchars($assetBase . '/panel.css', ENT_QUOTES, 'UTF-8'); ?>">
-<script src="<?php echo htmlspecialchars($assetBase . '/panel.js', ENT_QUOTES, 'UTF-8'); ?>" defer></script>
+<?php $assetVer = '20260908v'; ?>
+<link rel="stylesheet" href="<?php echo htmlspecialchars($assetBase . '/panel.css?v=' . $assetVer, ENT_QUOTES, 'UTF-8'); ?>">
+<script src="<?php echo htmlspecialchars($assetBase . '/panel.js?v=' . $assetVer, ENT_QUOTES, 'UTF-8'); ?>" defer></script>
 <?php
 include 'copyright.php';
 include 'common-js.php';

@@ -31,7 +31,7 @@ const metaRoutes = loadMetaRouteMap();
       return (
         <li class="post-card">
           {post.cover && (
-            <a class="card-cover" href={post.canonicalPath} tabindex="-1" aria-hidden="true" style={`--card-cover: url(${JSON.stringify(post.cover)})`}>
+            <a class="card-cover" href={post.canonicalPath} tabindex="-1" aria-hidden="true">
               <img
                 src={post.cover}
                 alt=""
@@ -73,3 +73,20 @@ const metaRoutes = loadMetaRouteMap();
     })}
   </ul>
 )}
+
+<script>
+  const observed = new WeakSet<HTMLImageElement>();
+  function initCoverFallbacks() {
+    document.querySelectorAll<HTMLImageElement>(".card-cover img").forEach((image) => {
+      const removeFailedCover = () => image.closest(".card-cover")?.remove();
+      if (image.complete && image.naturalWidth === 0) {
+        removeFailedCover();
+      } else if (!observed.has(image)) {
+        observed.add(image);
+        image.addEventListener("error", removeFailedCover, { once: true });
+      }
+    });
+  }
+  initCoverFallbacks();
+  document.addEventListener("astro:page-load", initCoverFallbacks);
+</script>

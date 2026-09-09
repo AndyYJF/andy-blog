@@ -20,13 +20,13 @@
   </svg>
 </button>
 
-<dialog id="site-search" class="search-dialog" data-search-dialog>
+<dialog id="site-search" class="search-dialog" data-search-dialog aria-labelledby="site-search-title">
   <div class="search-dialog-chrome">
-    <strong>搜索</strong>
+    <strong id="site-search-title">搜索</strong>
     <button type="button" class="search-close" data-search-close aria-label="关闭搜索">关闭</button>
   </div>
   <div id="pagefind-container" data-pagefind-root></div>
-  <p class="search-hint muted" data-search-status hidden></p>
+  <p class="search-hint muted" data-search-status role="status" hidden></p>
 </dialog>
 
 <script>
@@ -91,12 +91,17 @@
     const root = document.querySelector('[data-pagefind-root]');
     if (!root || !window.PagefindUI) return;
     root.replaceChildren();
-    // No top-level PagefindUI `language`; html lang + translations.language set zh locale.
+    // Index is built with `--force-language zh` (see package.json). Remaining
+    // unknown PagefindUI keys are forwarded as pagefindOptions, so pass
+    // `language` at the top level. Keep showSubResults off: nested hits inflate
+    // height on mobile and make "N 条结果" look like only the first row rendered.
     state.ui = new window.PagefindUI({
       element: '[data-pagefind-root]',
       showImages: false,
-      showSubResults: true,
+      showSubResults: false,
       excerptLength: 20,
+      pageSize: 8,
+      language: 'zh',
       translations: {
         language: 'zh',
         placeholder: '搜索文章…',

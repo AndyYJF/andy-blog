@@ -177,6 +177,9 @@ write_failure() {
     progress_emit --status failed --phase "$PROGRESS_PHASE" --error "rebuild exited $rc"
   fi
   progress_push
+  # Drop frozen job so the next attempt reads a fresh DB epoch (otherwise posts
+  # published after the first failed attempt stay invisible forever).
+  rm -f "$JOB_FILE"
 }
 
 rearm() {
@@ -321,6 +324,21 @@ build_via_offbox() {
   [[ $RC -eq 0 ]] || exit "$RC"
   RELEASE_ID="$(printf '%s' "$RELEASE_ID" | tr -d '\r' | grep -E '^[0-9]{8}T[0-9]{6}Z-[0-9a-f]{8}$' | tail -n1)"
   [[ "$RELEASE_ID" =~ ^[0-9]{8}T[0-9]{6}Z-[0-9a-f]{8}$ ]] || exit 66
+  # Persist route maps written during offbox sync back to the VPS control tree.
+  # Releases do not ship data/route-map.json; without this, the next rebuild
+  # re-seeds stale nginx moment redirects and can refuse revive.
+  if offbox_ssh "test -f '$OFFBOX_WORK/data/route-map.json'"; then
+    offbox_scp "offbox-builder:$OFFBOX_WORK/data/route-map.json" "$COMPOSE_DIR/data/route-map.json.next"
+    node -e 'JSON.parse(require("fs").readFileSync(process.argv[1],"utf8"))' \
+      "$COMPOSE_DIR/data/route-map.json.next"
+    mv -f "$COMPOSE_DIR/data/route-map.json.next" "$COMPOSE_DIR/data/route-map.json"
+  fi
+  if offbox_ssh "test -f '$OFFBOX_WORK/data/meta-route-map.json'"; then
+    offbox_scp "offbox-builder:$OFFBOX_WORK/data/meta-route-map.json" "$COMPOSE_DIR/data/meta-route-map.json.next"
+    node -e 'JSON.parse(require("fs").readFileSync(process.argv[1],"utf8"))' \
+      "$COMPOSE_DIR/data/meta-route-map.json.next"
+    mv -f "$COMPOSE_DIR/data/meta-route-map.json.next" "$COMPOSE_DIR/data/meta-route-map.json"
+  fi
   progress_emit --status running --phase package --release-id "$RELEASE_ID"
   progress_push
 

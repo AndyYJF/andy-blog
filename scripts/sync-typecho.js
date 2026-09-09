@@ -158,7 +158,7 @@ function publicContents(snapshot, epoch) {
     (c) =>
       (c.type === 'post' || c.type === 'page')
       && c.status === 'publish'
-      && Number(c.created) < epoch
+      && Number(c.created) <= epoch
       && !(c.password || ''),
   );
 }

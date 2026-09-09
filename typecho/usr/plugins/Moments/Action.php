@@ -241,9 +241,6 @@ class Moments_Action extends Widget implements ActionInterface
                     'parent' => 0,
                 ]));
                 $db->query($db->update('table.contents')->rows(['slug' => (string) $cid])->where('cid = ?', $cid));
-                if ($clientToken !== '') {
-                    $this->upsertField($cid, self::FIELD_TOKEN, $clientToken);
-                }
             }
 
             $this->upsertField($cid, self::FIELD_KIND, 'moment');
@@ -277,6 +274,10 @@ class Moments_Action extends Widget implements ActionInterface
                     $this->releaseMysqlLock($tokenLock);
                 } catch (Throwable $ignored) {
                 }
+            }
+            // Typecho throwJson/fail exits via exception — do not mask as save-failed.
+            if ($e instanceof \Typecho\Widget\Exception || $e instanceof \Typecho\Exception) {
+                throw $e;
             }
             error_log('Moments save failed: ' . $e->getMessage());
             $this->fail(500, 'save-failed');
@@ -476,7 +477,7 @@ class Moments_Action extends Widget implements ActionInterface
                 continue;
             }
             $src = trim((string) ($item['src'] ?? $item['url'] ?? ''));
-            if ($src === '') {
+            if ($src === '' || !$this->isAllowedImageSrc($src)) {
                 continue;
             }
             $row = ['src' => $src];
@@ -487,7 +488,7 @@ class Moments_Action extends Widget implements ActionInterface
                 $row['height'] = (int) $item['height'];
             }
             if (isset($item['alt'])) {
-                $row['alt'] = (string) $item['alt'];
+                $row['alt'] = mb_substr((string) $item['alt'], 0, 120);
             }
             if (isset($item['aid'])) {
                 $row['aid'] = (int) $item['aid'];
@@ -495,6 +496,19 @@ class Moments_Action extends Widget implements ActionInterface
             $out[] = $row;
         }
         return $out;
+    }
+
+    /** Allow absolute http(s) image hosts and site-relative paths (legacy uploads). */
+    private function isAllowedImageSrc(string $src): bool
+    {
+        if (isset($src[0]) && $src[0] === '/' && !(isset($src[1]) && $src[1] === '/')) {
+            return true;
+        }
+        if (!preg_match('#^https?://#i', $src)) {
+            return false;
+        }
+        $parts = parse_url($src);
+        return is_array($parts) && !empty($parts['host']);
     }
 
     private function normalizeTopics(array $topics): array
@@ -570,11 +584,19 @@ class Moments_Action extends Widget implements ActionInterface
         ];
         if ($existing) {
             $db->query($db->update('table.fields')->rows($rows)->where('cid = ? AND name = ?', $cid, $name));
-        } else {
+            return;
+        }
+        try {
             $db->query($db->insert('table.fields')->rows(array_merge([
                 'cid' => $cid,
                 'name' => $name,
             ], $rows)));
+        } catch (Throwable $e) {
+            // Concurrent insert on (cid,name) primary key — fall back to update.
+            if (strpos($e->getMessage(), '1062') === false && stripos($e->getMessage(), 'Duplicate') === false) {
+                throw $e;
+            }
+            $db->query($db->update('table.fields')->rows($rows)->where('cid = ? AND name = ?', $cid, $name));
         }
     }
 

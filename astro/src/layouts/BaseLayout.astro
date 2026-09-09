@@ -152,7 +152,7 @@ const ldJson = JSON.stringify(ldPayload)
     {katex && <link rel="stylesheet" href="/vendor/katex/katex.min.css" />}
     <CommonHead />
   </head>
-  <body>
+  <body class:list={[article && "reading-page"]}>
     <div data-top-sentinel aria-hidden="true"></div>
     <div class="bg-fx" aria-hidden="true"></div>
     {!article && (
@@ -385,6 +385,8 @@ const ldJson = JSON.stringify(ldPayload)
               `SEC 0${i + 1}`;
             if (i === 0 && label.length > 14) label = "INTRO";
             const a = document.createElement("a");
+            if (!sec.id) sec.id = `section-${i + 1}`;
+            a.href = `#${sec.id}`;
             const text = document.createElement("span");
             text.textContent = label;
             const tick = document.createElement("i");
@@ -397,6 +399,8 @@ const ldJson = JSON.stringify(ldPayload)
               sec.scrollIntoView({ behavior: reduce ? "auto" : "smooth" });
             });
             a.addEventListener("mouseenter", () => showPreview(i, a));
+            a.addEventListener("focus", () => showPreview(i, a));
+            a.addEventListener("blur", hidePreview);
             spine.appendChild(a);
             return a;
           });

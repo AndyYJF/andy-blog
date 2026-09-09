@@ -45,6 +45,10 @@ function main() {
       throw new Error(`cid=${cid} exists as kind=${existing.kind}; refuse moment tombstone seed`);
     }
     if (!existing) {
+      // Seed as withdrawn (not gone): live nginx still has ?p=cid maps for both
+      // deleted and active moments. Control route-map is not always persisted
+      // after offbox builds, so a missing entry must not block revive when the
+      // Typecho row still exists. True deletes are reclassified to gone by sync.
       map[cid] = {
         kind: 'moment',
         routeId: cid,
@@ -53,7 +57,7 @@ function main() {
         feedGuid: `urn:andy-y:moment:${cid}`,
         legacyPaths: [],
         state: 'tombstone',
-        disposition: 'gone',
+        disposition: 'withdrawn',
         sourceSlug: cid,
       };
       added += 1;

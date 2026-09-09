@@ -40,11 +40,15 @@ test('Moments plugin exposes mobile panel, fields, and rebuild hook', () => {
   assert.match(panel, /说点什么/);
   assert.match(panel, /getToken\(/);
   assert.match(panel, /moments-app/);
+  assert.match(panel, /添加图片链接/);
+  assert.match(panel, /moment-image-url/);
+  assert.doesNotMatch(panel, /moment-files/);
   assert.match(js, /clientToken/);
-  assert.match(js, /HEIC/);
+  assert.match(js, /添加图片链接|image-url|isAllowedImageSrc/);
   assert.match(js, /confirm\(/);
   assert.match(js, /重试更新|rebuild/);
   assert.match(js, /加载更多|load-more/);
+  assert.match(action, /isAllowedImageSrc/);
   assert.match(installer, /Plugin::activate\(\$pluginName\)/);
   assert.doesNotMatch(installer, /call_user_func\(\$className, 'activate'\)/);
   assert.match(installer, /removePanel\(3, 'Moments\/panel\.php'\)/);
@@ -92,8 +96,12 @@ test('tombstoned moments keep ?p=cid legacy redirects for unattended switch', ()
   const preserve = read('scripts/preserve-live-moment-routes.js');
   assert.match(preserve, /legacy_query_target/);
   assert.match(preserve, /seededTombstones/);
+  assert.match(preserve, /disposition: 'withdrawn'/);
+  assert.doesNotMatch(preserve, /disposition: 'gone'/);
   const rebuild = read('host/blog-rebuild-1panel.sh');
   assert.match(rebuild, /preserve-live-moment-routes\.js/);
+  assert.match(rebuild, /data\/route-map\.json/);
+  assert.match(rebuild, /route-map\.json\.next/);
 });
 
 test('CDN purge plan includes moments list, rss, detail extras, and previous pages helper', () => {

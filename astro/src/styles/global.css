@@ -622,33 +622,32 @@ h1 + .muted {
   -webkit-line-clamp: 2;
 }
 
-/* cover-driven cards: 有封面时左侧封面栏 + 右侧正文；无封面保持纯文字样式。
-   用 :has(> .card-cover) 而非额外类名——stage6 gate 要求 li 精确为 class="post-card"
-   桌面端封面栏拉满卡片高度；图片 contain 保持 3:2 整图，
-   留白画在 img 自己的背景上（父级背景透不过 object-fit 信箱）。 */
+/* 正文优先，右侧放置 3:2 缩略图；没有封面时自然回到纯文字列表。
+   保留 post-card 标记，用 :has() 判断封面是否存在。 */
 .post-card:has(> .card-cover) {
   display: grid;
-  grid-template-columns: 15rem minmax(0, 1fr);
-  align-items: stretch;
-  padding: 0;
+  grid-template-columns: minmax(0, 1fr) 9rem;
+  align-items: start;
+  gap: 1.25rem;
 }
 .card-cover {
+  grid-column: 2;
+  grid-row: 1;
   display: block;
   overflow: hidden;
-  align-self: stretch;
+  align-self: start;
+  margin-top: 0.3rem;
+  aspect-ratio: 3 / 2;
   min-height: 0;
-  border-inline-end: 1px solid var(--border);
+  border: 1px solid var(--border);
 }
 .card-cover img {
   display: block;
   width: 100%;
   height: 100%;
   object-fit: contain;
-  object-position: top center;
+  object-position: center;
   background-color: var(--surface);
-  background-image: var(--card-cover);
-  background-size: cover;
-  background-position: top center;
   transition: transform var(--t-move) var(--ease);
 }
 html[data-theme="dark"] .card-cover img {
@@ -661,21 +660,16 @@ html[data-theme="dark"] .card-cover img {
 }
 .card-body {
   min-width: 0;
+  grid-column: 1;
+  grid-row: 1;
 }
 .post-card:has(> .card-cover) .card-body {
-  padding: 1.05rem 1.2rem;
+  padding: 0;
 }
 @media (max-width: 640px) {
   .post-card:has(> .card-cover) {
-    grid-template-columns: minmax(0, 1fr);
-  }
-  .card-cover {
-    aspect-ratio: 3 / 2;
-    border-inline-end: none;
-    border-bottom: 1px solid var(--border);
-  }
-  .card-cover img {
-    object-fit: cover;
+    grid-template-columns: minmax(0, 1fr) 5rem;
+    gap: 0.85rem;
   }
 }
 
@@ -699,10 +693,10 @@ html[data-theme="dark"] .card-cover img {
 /* Personal homepage: editorial profile ledger, not a rounded card dashboard. */
 .profile-home {
   display: grid;
-  gap: 4rem;
+  gap: 3rem;
 }
 .profile-hero {
-  padding: clamp(1.25rem, 4vw, 2.5rem) 0 3rem;
+  padding: clamp(1rem, 3vw, 2rem) 0 2rem;
   border-bottom: 1px solid var(--border);
 }
 /* 首屏关键内容不做从 0 透明度的长渐入，避免加载瞬间不可见；
@@ -921,7 +915,7 @@ html[data-theme="dark"] .card-cover img {
 .profile-links {
   list-style: none;
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 0.65rem;
   margin: 2rem 0 0;
   padding: 0;
@@ -938,7 +932,7 @@ html[data-theme="dark"] .card-cover img {
 .profile-links a {
   display: grid;
   gap: 0.2rem;
-  min-height: 5rem;
+  min-height: 4.25rem;
   padding: 0.9rem;
   border: 1px solid var(--border);
   border-radius: var(--radius-panel);
@@ -968,6 +962,10 @@ html[data-theme="dark"] .card-cover img {
 }
 .profile-links small {
   color: var(--muted);
+}
+.profile-links li:first-child a {
+  border-color: color-mix(in srgb, var(--accent) 40%, var(--border));
+  background: color-mix(in srgb, var(--accent) 5%, var(--surface));
 }
 .profile-section {
   display: grid;
@@ -1070,6 +1068,19 @@ html[data-theme="dark"] .card-cover img {
 }
 .home-latest .post-list {
   margin-top: 0;
+  gap: 0;
+}
+.home-latest .post-card {
+  border: 0;
+  border-bottom: 1px solid var(--border);
+  border-radius: 0;
+  padding: 1.2rem 0;
+  background: transparent;
+  box-shadow: none;
+  transform: none;
+}
+.home-latest .post-card::before {
+  display: none;
 }
 .profile-contact {
   display: flex;
@@ -1121,6 +1132,45 @@ html[data-theme="dark"] .card-cover img {
 .prose {
   min-width: 0;
   overflow-wrap: break-word;
+}
+.reading-page .bg-fx {
+  display: none;
+}
+.mobile-toc {
+  display: none;
+  margin: 0 0 2rem;
+  border-block: 1px solid var(--border);
+}
+.mobile-toc summary {
+  padding: 0.8rem 0;
+  cursor: pointer;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+.mobile-toc nav {
+  display: grid;
+  max-height: 45vh;
+  overflow-y: auto;
+  padding-bottom: 0.8rem;
+}
+.mobile-toc a {
+  padding: 0.45rem 0.65rem;
+  font-size: 0.9rem;
+  text-decoration: none;
+  border-left: 2px solid transparent;
+}
+.mobile-toc a.is-h3 {
+  padding-left: 1.4rem;
+}
+.mobile-toc a[aria-current="true"] {
+  border-color: var(--accent);
+  color: var(--accent-text);
+  background: color-mix(in srgb, var(--accent) 5%, transparent);
+}
+@media (max-width: 1179px) {
+  .mobile-toc {
+    display: block;
+  }
 }
 .prose h2 {
   font-size: 1.35rem;
@@ -1247,7 +1297,7 @@ html[data-theme="dark"] .card-cover img {
 .lightbox-backdrop {
   position: fixed;
   inset: 0;
-  z-index: 60;
+  z-index: 80;
   background: color-mix(in srgb, #000 82%, transparent);
   opacity: 0;
   transition: opacity var(--t-move) var(--ease);
@@ -1257,19 +1307,22 @@ html[data-theme="dark"] .card-cover img {
 }
 .lightbox-image {
   position: fixed;
-  z-index: 61;
+  z-index: 81;
   margin: 0;
   object-fit: contain;
-  cursor: zoom-out;
+  cursor: zoom-in;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-drag: none;
   transform-origin: top left;
   will-change: transform;
   border-radius: 6px;
 }
 .lightbox-counter {
   position: fixed;
-  z-index: 62;
+  z-index: 82;
   left: 50%;
-  bottom: 1.25rem;
+  bottom: 6rem;
   transform: translateX(-50%);
   padding: 0.25rem 0.7rem;
   font-size: 0.85rem;
@@ -1278,9 +1331,52 @@ html[data-theme="dark"] .card-cover img {
   border-radius: var(--radius-control);
   pointer-events: none;
 }
+.lightbox-tools {
+  position: fixed;
+  z-index: 83;
+  bottom: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: grid;
+  gap: 0.5rem;
+  justify-items: center;
+  width: max-content;
+  max-width: calc(100vw - 2rem);
+  padding: 0.55rem 0.75rem;
+  color: #f5f5f5;
+  background: rgb(10 10 10 / 90%);
+  border: 1px solid rgb(255 255 255 / 25%);
+  border-radius: var(--radius-control);
+  font-size: 0.75rem;
+}
+.lightbox-tools > div {
+  display: flex;
+  gap: 0.5rem;
+}
+.lightbox-tools button {
+  min-width: 2.75rem;
+  min-height: 2.75rem;
+  padding: 0 0.6rem;
+  border: 1px solid rgb(255 255 255 / 30%);
+  border-radius: var(--radius-control);
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+.lightbox-tools button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+.image-view-hint {
+  display: block;
+  margin: 0.4rem 0 1rem;
+  color: var(--muted);
+  font-size: 0.8rem;
+}
 .lightbox-close {
   position: fixed;
-  z-index: 63;
+  z-index: 83;
   top: 0.85rem;
   right: 0.85rem;
   width: 2.5rem;
@@ -1301,7 +1397,7 @@ html[data-theme="dark"] .card-cover img {
 }
 .lightbox-nav {
   position: fixed;
-  z-index: 62;
+  z-index: 82;
   top: 50%;
   transform: translateY(-50%);
   width: 2.5rem;
@@ -1750,9 +1846,18 @@ html[data-theme="dark"] .beoe-light {
   height: 1rem;
 }
 
+@media (max-width: 380px) {
+  .post-card:has(.card-cover) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .post-card .card-cover {
+    display: none;
+  }
+}
+
 .search-dialog {
   width: min(36rem, calc(100vw - 2rem));
-  max-height: min(80vh, 36rem);
+  max-height: min(80dvh, 80vh, 36rem);
   margin: auto;
   padding: 0;
   border: 1px solid var(--border);
@@ -1760,6 +1865,9 @@ html[data-theme="dark"] .beoe-light {
   background: var(--surface);
   color: var(--text);
   box-shadow: var(--shadow-card-hover);
+  display: none;
+  flex-direction: column;
+  overflow: hidden;
   opacity: 0;
   transform: translateY(10px) scale(0.98);
   transition:
@@ -1769,6 +1877,7 @@ html[data-theme="dark"] .beoe-light {
     display var(--t-move) var(--ease) allow-discrete;
 }
 .search-dialog[open] {
+  display: flex;
   opacity: 1;
   transform: none;
 }
@@ -1796,6 +1905,7 @@ html[data-theme="dark"] .beoe-light {
 }
 .search-dialog-chrome {
   display: flex;
+  flex: none;
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
@@ -1814,11 +1924,15 @@ html[data-theme="dark"] .beoe-light {
   color: var(--accent-text);
 }
 #pagefind-container {
+  flex: 1 1 auto;
+  min-height: 0;
   padding: 0.5rem 0.75rem 1rem;
   overflow: auto;
-  max-height: calc(min(80vh, 36rem) - 3.5rem);
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
 }
 .search-hint {
+  flex: none;
   margin: 0;
   padding: 0 1rem 1rem;
   font-size: 0.88rem;
@@ -2529,7 +2643,7 @@ html[data-theme="dark"] .beoe-light {
     padding: 1.5rem 1rem 3rem;
   }
   body {
-    font-size: 0.97rem;
+    font-size: 1rem;
   }
   h1 {
     font-size: 1.5rem;
@@ -2558,18 +2672,31 @@ html[data-theme="dark"] .beoe-light {
     padding: 0.95rem 1rem;
   }
   .profile-home {
-    gap: 3rem;
+    gap: 2rem;
   }
   .profile-hero {
     padding-top: 0.75rem;
     padding-bottom: 2.25rem;
   }
-  .profile-links,
   .project-grid {
     grid-template-columns: 1fr;
   }
   .profile-links a {
-    min-height: 4.4rem;
+    min-height: 3.8rem;
+    padding: 0.65rem;
+    font-size: 0.9rem;
+  }
+  .hero-topology {
+    margin-top: 1.25rem;
+  }
+  .hero-topology svg {
+    max-height: 8rem;
+  }
+  .profile-intro {
+    margin-top: 1rem;
+  }
+  .profile-links {
+    margin-top: 1.25rem;
   }
   .project-card {
     min-height: 11rem;
@@ -2643,6 +2770,7 @@ html[data-theme="dark"] .beoe-light {
   inset: 0;
   z-index: -1;
   pointer-events: none;
+  mask-image: linear-gradient(#000, transparent 38rem);
   /* 网格用 SVG 瓦片而不是 repeating-linear-gradient：
      移动端 WebKit 会把 fixed 背景上 1px 的渐变线按瓦片取整丢掉 */
   background-image:
@@ -2653,7 +2781,7 @@ html[data-theme="dark"] .beoe-light {
 }
 /* 扫描线：只铺在背景层（z-index -1），不压正文以保证阅读 */
 .bg-fx::after {
-  content: "";
+  content: none;
   position: absolute;
   inset: 0;
   background: repeating-linear-gradient(0deg, rgb(120 140 170 / 0.10) 0 1px, transparent 1px 3px);
@@ -3136,6 +3264,7 @@ html[data-theme="dark"] .spot {
 
 .moment-grid-1 {
   grid-template-columns: minmax(0, 1fr);
+  justify-items: start;
 }
 
 .moment-grid-2 {
@@ -3164,7 +3293,10 @@ html[data-theme="dark"] .spot {
 
 .moment-grid-1 .moment-thumb {
   aspect-ratio: auto;
-  max-height: min(28rem, 70vh);
+  width: fit-content;
+  max-width: 100%;
+  background: transparent;
+  border-color: color-mix(in srgb, var(--border) 70%, transparent);
 }
 
 .moment-thumb img {
@@ -3175,10 +3307,12 @@ html[data-theme="dark"] .spot {
 }
 
 .moment-grid-1 .moment-thumb img {
+  width: auto;
   height: auto;
+  max-width: 100%;
   max-height: min(28rem, 70vh);
   object-fit: contain;
-  background: color-mix(in srgb, var(--muted) 6%, transparent);
+  background: transparent;
 }
 
 .moment-meta {

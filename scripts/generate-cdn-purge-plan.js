@@ -25,6 +25,23 @@ export function listMomentPagePathsFromSite(siteDir) {
   return paths;
 }
 
+/** Walk release site/pagefind into URL paths (index + fragments included). */
+export function listPagefindPathsFromSite(siteDir) {
+  const root = path.join(siteDir, 'pagefind');
+  if (!fs.existsSync(root)) return [];
+  const paths = [];
+  const walk = (dir, urlBase) => {
+    for (const name of fs.readdirSync(dir, { withFileTypes: true })) {
+      const next = path.join(dir, name.name);
+      const url = `${urlBase}/${name.name}`;
+      if (name.isDirectory()) walk(next, url);
+      else paths.push(url);
+    }
+  };
+  walk(root, '/pagefind');
+  return paths.sort();
+}
+
 /**
  * Union current lastmod/route-map moment URLs with previous live list pages
  * so a shrinking feed still purges stale /moments/page/N/ CDN entries.
@@ -64,12 +81,33 @@ export function collectMomentPaths({
   return [...paths].sort();
 }
 
+export function collectPagefindPaths({
+  root = ROOT,
+  wwwRoot = process.env.WWW_ROOT || '',
+  siteDir = '',
+} = {}) {
+  const paths = new Set();
+  const dirs = [];
+  if (siteDir) dirs.push(siteDir);
+  dirs.push(path.join(root, 'astro', 'dist'));
+  if (wwwRoot) {
+    dirs.push(path.join(wwwRoot, 'current', 'site'));
+    dirs.push(path.join(wwwRoot, 'previous', 'site'));
+  }
+  for (const dir of dirs) {
+    if (!dir || !fs.existsSync(dir)) continue;
+    for (const p of listPagefindPathsFromSite(dir)) paths.add(p);
+  }
+  return [...paths].sort();
+}
+
 const isMain = process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url);
 if (isMain) {
   const releaseId = valueFor('--release-id');
   const out = path.resolve(ROOT, valueFor('--out'));
   const legacy = JSON.parse(fs.readFileSync(path.join(ROOT, 'data/legacy-url-map.json'), 'utf8'));
-  const plan = createPurgePlan({ releaseId, legacy, extraPaths: collectMomentPaths() });
+  const extraPaths = [...new Set([...collectMomentPaths(), ...collectPagefindPaths()])].sort();
+  const plan = createPurgePlan({ releaseId, legacy, extraPaths });
   fs.mkdirSync(path.dirname(out), { recursive: true });
   fs.writeFileSync(out, `${JSON.stringify(plan, null, 2)}\n`, { mode: 0o644 });
   process.stdout.write(`${JSON.stringify({ out: path.relative(ROOT, out), releaseId, urls: plan.urls.length, sha256: plan.sha256 })}\n`);

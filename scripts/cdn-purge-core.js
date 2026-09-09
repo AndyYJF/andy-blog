@@ -13,6 +13,15 @@ const FIXED_PATHS = [
   '/moments/rss.xml',
   '/sitemap-0.xml',
   '/sitemap-index.xml',
+  // Pagefind entry + WASM/UI must be purged with CSP/MIME changes; otherwise
+  // desktop browsers can keep a broken search bundle while phone edges refresh.
+  '/pagefind/pagefind-entry.json',
+  '/pagefind/pagefind.js',
+  '/pagefind/pagefind-ui.js',
+  '/pagefind/pagefind-ui.css',
+  '/pagefind/pagefind-worker.js',
+  '/pagefind/pagefind-highlight.js',
+  '/pagefind/wasm.unknown.pagefind',
 ];
 
 export function sha256Hex(value) {

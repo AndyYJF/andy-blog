@@ -1,7 +1,7 @@
 export const profile = {
   name: "AndyYan",
   eyebrow: "PERSONAL LEDGER / 2026",
-  role: "一个爱折腾网络和服务器的大一学生",
+  role: "人工智能专业学生，喜欢折腾网络与自托管服务",
   intro:
     "从 VPS、BGP 到各种自托管服务，踩过的坑和解决问题的过程，都会慢慢记在这里。",
   email: "070127andy@gmail.com",
@@ -35,7 +35,7 @@ export const profile = {
       marker: "SITE",
       title: "AndyYan Blog",
       description:
-        "以 Astro 生成静态页面，保留 Typecho 内容来源，并使用 Pagefind 提供按需加载的站内搜索。",
+        "保留熟悉的写作方式，把内容发布成静态页面。记录这个博客从搭建、迁移到日常维护的过程。",
       href: "/category/astro/",
       linkLabel: "浏览相关文章",
     },

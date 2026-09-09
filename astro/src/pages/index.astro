@@ -32,7 +32,7 @@ const jsonLd = {
   jsonLd={jsonLd}
 >
   <div class="profile-home" data-profile-home>
-    <section class="profile-hero" aria-labelledby="profile-title">
+    <section id="intro" class="profile-hero" aria-labelledby="profile-title">
       <div class="hero-text">
         <p class="profile-kicker">{profile.eyebrow}</p>
         <h1 id="profile-title" transition:name="page-title" transition:animate="none">{profile.name}</h1>
@@ -95,36 +95,28 @@ const jsonLd = {
             <small>ASN 4242422921</small>
           </a>
         </li>
-        <li>
-          <a href={`mailto:${profile.email}`}>
-            <span>联系我</span>
-            <small>Email</small>
-          </a>
-        </li>
       </ul>
     </section>
 
-    <section class="profile-section" aria-labelledby="focus-title">
-      <header class="section-heading">
+    <section id="latest" class="profile-section home-latest" aria-labelledby="latest-title">
+      <header class="section-heading section-heading-split">
         <div>
-          <p>FOCUS</p>
-          <h2 id="focus-title">正在关注</h2>
+          <p>LATEST WRITING</p>
+          <h2 id="latest-title">最近文章</h2>
         </div>
+        <a class="section-more" href="/posts/">全部文章<span aria-hidden="true"> →</span></a>
       </header>
-      <ol class="focus-list">
-        {profile.focus.map((item) => (
-          <li>
-            <span class="ledger-index" aria-hidden="true">{item.index}</span>
-            <div>
-              <h3>{item.title}</h3>
-              <p>{item.description}</p>
-            </div>
-          </li>
-        ))}
-      </ol>
+      <PostList posts={latestPosts.map((post) => ({
+        title: post.data.title,
+        canonicalPath: post.data.canonicalPath,
+        pubDate: post.data.pubDate,
+        description: post.data.description,
+        cover: post.data.cover,
+        categories: post.data.categories,
+      }))} />
     </section>
 
-    <section class="profile-section" aria-labelledby="projects-title">
+    <section id="projects" class="profile-section" aria-labelledby="projects-title">
       <header class="section-heading">
         <div>
           <p>SELECTED WORK</p>
@@ -143,25 +135,7 @@ const jsonLd = {
       </div>
     </section>
 
-    <section class="profile-section home-latest" aria-labelledby="latest-title">
-      <header class="section-heading section-heading-split">
-        <div>
-          <p>LATEST WRITING</p>
-          <h2 id="latest-title">最近文章</h2>
-        </div>
-        <a class="section-more" href="/posts/">全部文章<span aria-hidden="true"> →</span></a>
-      </header>
-      <PostList posts={latestPosts.map((post) => ({
-        title: post.data.title,
-        canonicalPath: post.data.canonicalPath,
-        pubDate: post.data.pubDate,
-        description: post.data.description,
-        cover: post.data.cover,
-        categories: post.data.categories,
-      }))} />
-    </section>
-
-    <section class="profile-contact" aria-labelledby="contact-title">
+    <section id="contact" class="profile-contact" aria-labelledby="contact-title">
       <div>
         <p class="profile-kicker">CONTACT</p>
         <h2 id="contact-title">保持联系</h2>
@@ -357,7 +331,7 @@ const jsonLd = {
         }
         if (status) {
           status.textContent = key
-            ? `${NODES[key].label} · ${NODES[key].city} · 在线`
+            ? `${NODES[key].label} · ${NODES[key].city} · 实验节点`
             : defaultStatus;
         }
       };

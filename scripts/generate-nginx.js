@@ -37,8 +37,10 @@ const parseStatus = () => {
 };
 
 /** WWW security response headers (nginx clears inherited add_header per location). */
+// Pagefind compiles WASM in-page; Chrome requires 'wasm-unsafe-eval' when 'unsafe-eval' is absent.
+// worker-src covers pagefind-worker.js (falls back to script-src otherwise, but be explicit).
 const WWW_CSP =
-  "default-src 'self'; script-src 'self' 'unsafe-inline' https://umami.andy-y.cn; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https://umami.andy-y.cn https://ipwho.is; frame-src https://player.bilibili.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'; upgrade-insecure-requests";
+  "default-src 'self'; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' https://umami.andy-y.cn; worker-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https://umami.andy-y.cn https://ipwho.is; frame-src https://player.bilibili.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'; upgrade-insecure-requests";
 
 const wwwSecurityHeaders = (indent = '  ') =>
   [
@@ -231,6 +233,19 @@ ${legacyActionSnippet(status)}
     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
     proxy_set_header X-Forwarded-Proto $scheme;
     add_header Cache-Control "no-store" always;
+  }
+
+  # Pagefind WASM ships as *.pagefind; browsers need application/wasm for instantiateStreaming.
+  location ^~ /pagefind/ {
+    location ~* \\.pagefind$ {
+      default_type application/wasm;
+      try_files $uri =404;
+      add_header Cache-Control "public, max-age=0, s-maxage=600, must-revalidate" always;
+${wwwSecurityHeaders('      ')}
+    }
+    try_files $uri =404;
+    add_header Cache-Control "public, max-age=0, s-maxage=600, must-revalidate" always;
+${wwwSecurityHeaders('    ')}
   }
 
   location ^~ /_astro/ {

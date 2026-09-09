@@ -33,6 +33,26 @@ export function initReadingProgress(
 
   const tocHeadings = Array.from(article.querySelectorAll<HTMLElement>("h2[id], h3[id]"));
 
+  // Same heading source as the desktop TOC, with a native disclosure on narrow screens.
+  const mobileToc = document.createElement("details");
+  mobileToc.className = "mobile-toc";
+  const summary = document.createElement("summary");
+  summary.textContent = `本文目录 · ${tocHeadings.length} 节`;
+  const mobileNav = document.createElement("nav");
+  mobileNav.setAttribute("aria-label", "本文目录");
+  const mobileLinks = tocHeadings.map((heading) => {
+    const link = document.createElement("a");
+    link.href = `#${heading.id}`;
+    link.textContent = headingLabel(heading);
+    if (heading.tagName === "H3") link.classList.add("is-h3");
+    return link;
+  });
+  mobileNav.append(...mobileLinks);
+  mobileToc.append(summary, mobileNav);
+  const header = article.querySelector(".entry-header");
+  if (header) header.after(mobileToc);
+  else article.prepend(mobileToc);
+
   const railLinks = h2s.map((heading) => {
     const link = document.createElement("a");
     link.href = `#${heading.id}`;
@@ -111,6 +131,8 @@ export function initReadingProgress(
     if (tocIndex === activeToc) return;
     tocLinks[activeToc]?.removeAttribute("aria-current");
     tocLinks[tocIndex]?.setAttribute("aria-current", "true");
+    mobileLinks[activeToc]?.removeAttribute("aria-current");
+    mobileLinks[tocIndex]?.setAttribute("aria-current", "true");
     activeToc = tocIndex;
 
     const railIndex = h2IndexByToc[tocIndex] ?? 0;
@@ -152,6 +174,7 @@ export function initReadingProgress(
   recompute();
 
   return () => {
+    mobileToc.remove();
     observer.disconnect();
     removeEventListener("scroll", scheduleRecompute);
     removeEventListener("scrollend", scheduleRecompute);

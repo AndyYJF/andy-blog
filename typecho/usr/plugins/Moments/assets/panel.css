@@ -31,14 +31,26 @@
   align-items: center;
 }
 
-.moments-add {
-  display: inline-flex;
+.moments-add-link {
+  display: flex;
+  flex: 1 1 16rem;
+  flex-wrap: wrap;
+  gap: 0.45rem;
   align-items: center;
-  padding: 0.45rem 0.75rem;
+  min-width: 0;
+}
+
+.moments-add-link input {
+  flex: 1 1 12rem;
+  min-width: 0;
+  padding: 0.45rem 0.65rem;
   border: 1px dashed #9ca3af;
   border-radius: 4px;
-  color: #374151;
-  cursor: pointer;
+  font: inherit;
+}
+
+.moments-more[hidden] {
+  display: none !important;
 }
 
 .moments-previews {
