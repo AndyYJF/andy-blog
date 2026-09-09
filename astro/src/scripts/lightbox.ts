@@ -13,12 +13,13 @@ function prefersReducedMotion(): boolean {
 
 function fitRect(naturalWidth: number, naturalHeight: number): DOMRect {
   const maxWidth = innerWidth - VIEWPORT_PADDING * 2;
-  const maxHeight = innerHeight - VIEWPORT_PADDING * 2;
+  const bottomSpace = 128; // Keep the fitted image above the zoom toolbar.
+  const maxHeight = Math.max(1, innerHeight - VIEWPORT_PADDING - bottomSpace);
   // Allow upscaling so small mermaid/images actually enlarge in the lightbox.
   const scale = Math.min(maxWidth / naturalWidth, maxHeight / naturalHeight);
   const width = Math.max(1, naturalWidth * scale);
   const height = Math.max(1, naturalHeight * scale);
-  return new DOMRect((innerWidth - width) / 2, (innerHeight - height) / 2, width, height);
+  return new DOMRect((innerWidth - width) / 2, VIEWPORT_PADDING + (maxHeight - height) / 2, width, height);
 }
 
 function targetRect(source: HTMLImageElement): DOMRect {
@@ -41,6 +42,8 @@ export function initLightbox(root: HTMLElement): Dispose {
 
   const openGallery = (sources: HTMLImageElement[], startIndex: number) => {
     closeActive?.();
+    const opener = document.activeElement instanceof HTMLElement && document.activeElement !== document.body
+      ? document.activeElement : sources[startIndex];
     let index = Math.max(0, Math.min(startIndex, sources.length - 1));
     const reduce = prefersReducedMotion();
     let zoom = MIN_ZOOM;
@@ -61,6 +64,11 @@ export function initLightbox(root: HTMLElement): Dispose {
 
     const backdrop = document.createElement("div");
     backdrop.className = "lightbox-backdrop";
+    const dialog = document.createElement("div");
+    dialog.className = "lightbox-dialog";
+    dialog.setAttribute("role", "dialog");
+    dialog.setAttribute("aria-modal", "true");
+    dialog.setAttribute("aria-label", "图片查看器");
     const clone = document.createElement("img");
     clone.className = "lightbox-image";
     clone.decoding = "sync";
@@ -115,7 +123,7 @@ export function initLightbox(root: HTMLElement): Dispose {
       const width = fit.width * zoom;
       const height = fit.height * zoom;
       const left = (innerWidth - width) / 2 + panX;
-      const top = (innerHeight - height) / 2 + panY;
+      const top = fit.top + (fit.height - height) / 2 + panY;
       if (!animate) clone.style.transition = "none";
       clone.style.left = `${left}px`;
       clone.style.top = `${top}px`;
@@ -160,6 +168,7 @@ export function initLightbox(root: HTMLElement): Dispose {
         clone.style.transform = flipTransform(animateFrom.getBoundingClientRect(), to);
         clone.style.cursor = "zoom-in";
         requestAnimationFrame(() => {
+          if (closed) return;
           clone.style.transition = `transform ${DURATION}ms ${EASE}`;
           clone.style.transform = "none";
         });
@@ -172,9 +181,16 @@ export function initLightbox(root: HTMLElement): Dispose {
       syncControls();
     };
 
-    document.body.append(backdrop, clone, closeBtn, tools);
-    if (sources.length > 1) document.body.append(counter, prevBtn, nextBtn);
+    const background = Array.from(document.body.children)
+      .filter((element): element is HTMLElement => element instanceof HTMLElement && !element.inert);
+    const previousOverflow = document.documentElement.style.overflow;
+    document.documentElement.style.overflow = "hidden";
+    background.forEach((element) => { element.inert = true; });
+    dialog.append(backdrop, clone, closeBtn, tools);
+    if (sources.length > 1) dialog.append(counter, prevBtn, nextBtn);
+    document.body.append(dialog);
     requestAnimationFrame(() => {
+      if (closed) return;
       backdrop.setAttribute("data-open", "");
       closeBtn.focus();
     });
@@ -182,9 +198,17 @@ export function initLightbox(root: HTMLElement): Dispose {
 
     let closed = false;
     const onKeydown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") close();
-      if (event.key === "ArrowLeft" && sources.length > 1) show(index - 1);
-      if (event.key === "ArrowRight" && sources.length > 1) show(index + 1);
+      if (event.key === "Tab") {
+        const buttons = [closeBtn, zoomOut, zoomIn, reset, prevBtn, nextBtn]
+          .filter((button) => button.isConnected && !button.disabled && !button.hidden);
+        const current = buttons.indexOf(document.activeElement as HTMLButtonElement);
+        const next = (current + (event.shiftKey ? -1 : 1) + buttons.length) % buttons.length;
+        event.preventDefault();
+        buttons[next].focus();
+      }
+      if (event.key === "Escape") { event.preventDefault(); close(); }
+      if (event.key === "ArrowLeft" && sources.length > 1) { event.preventDefault(); show(index - 1); }
+      if (event.key === "ArrowRight" && sources.length > 1) { event.preventDefault(); show(index + 1); }
     };
     const onWheel = (event: WheelEvent) => {
       event.preventDefault();
@@ -259,8 +283,14 @@ export function initLightbox(root: HTMLElement): Dispose {
       clampPan();
       applyView({ animate: true });
     };
+    const closeEvent = () => close();
+    const onResize = () => {
+      fit = targetRect(sources[index]);
+      clampPan();
+      applyView();
+    };
     const removeListeners = () => {
-      backdrop.removeEventListener("click", close);
+      backdrop.removeEventListener("click", closeEvent);
       clone.removeEventListener("click", onCloneClick);
       clone.removeEventListener("wheel", onWheel);
       clone.removeEventListener("pointerdown", onPointerDown);
@@ -268,8 +298,7 @@ export function initLightbox(root: HTMLElement): Dispose {
       clone.removeEventListener("pointerup", endDrag);
       clone.removeEventListener("pointercancel", endDrag);
       document.removeEventListener("keydown", onKeydown);
-      removeEventListener("scroll", close);
-      removeEventListener("resize", close);
+      removeEventListener("resize", onResize);
       closeBtn.onclick = null;
       prevBtn.onclick = null;
       nextBtn.onclick = null;
@@ -277,7 +306,7 @@ export function initLightbox(root: HTMLElement): Dispose {
       zoomIn.onclick = null;
       reset.onclick = null;
     };
-    const close = () => {
+    const close = (immediate = false) => {
       if (closed) return;
       closed = true;
       closeActive = null;
@@ -292,9 +321,13 @@ export function initLightbox(root: HTMLElement): Dispose {
         prevBtn.remove();
         nextBtn.remove();
         tools.remove();
+        dialog.remove();
         sources.forEach((img) => img.style.removeProperty("visibility"));
+        background.forEach((element) => { element.inert = false; });
+        document.documentElement.style.overflow = previousOverflow;
+        if (opener?.isConnected) opener.focus({ preventScroll: true });
       };
-      if (reduce) {
+      if (reduce || immediate) {
         finish();
         return;
       }
@@ -308,7 +341,7 @@ export function initLightbox(root: HTMLElement): Dispose {
       setTimeout(finish, DURATION);
     };
 
-    backdrop.addEventListener("click", close);
+    backdrop.addEventListener("click", closeEvent);
     clone.addEventListener("click", onCloneClick);
     clone.addEventListener("wheel", onWheel, { passive: false });
     clone.addEventListener("pointerdown", onPointerDown);
@@ -340,9 +373,8 @@ export function initLightbox(root: HTMLElement): Dispose {
       changeZoom(MIN_ZOOM);
     };
     document.addEventListener("keydown", onKeydown);
-    addEventListener("scroll", close, { passive: true });
-    addEventListener("resize", close);
-    closeActive = close;
+    addEventListener("resize", onResize);
+    closeActive = () => close(true);
   };
 
   const onClick = (event: MouseEvent) => {
@@ -371,6 +403,18 @@ export function initLightbox(root: HTMLElement): Dispose {
 
   root.addEventListener("click", onClick);
 
+  const keyboardImages = Array.from(root.querySelectorAll<HTMLImageElement>("img"))
+    .filter((image) => !image.closest("a, button, [data-moment-gallery]") && !image.hasAttribute("tabindex"));
+  keyboardImages.forEach((image) => { image.tabIndex = 0; });
+  const onImageKeydown = (event: KeyboardEvent) => {
+    if (event.target instanceof HTMLImageElement && keyboardImages.includes(event.target)
+      && (event.key === "Enter" || event.key === " ")) {
+      event.preventDefault();
+      openGallery([event.target], 0);
+    }
+  };
+  root.addEventListener("keydown", onImageKeydown);
+
   const hints = Array.from(root.querySelectorAll<HTMLElement>(".beoe")).map((figure) => {
     const hint = document.createElement("span");
     hint.className = "image-view-hint";
@@ -382,6 +426,8 @@ export function initLightbox(root: HTMLElement): Dispose {
   return () => {
     hints.forEach((hint) => hint.remove());
     root.removeEventListener("click", onClick);
+    root.removeEventListener("keydown", onImageKeydown);
+    keyboardImages.forEach((image) => image.removeAttribute("tabindex"));
     closeActive?.();
   };
 }
