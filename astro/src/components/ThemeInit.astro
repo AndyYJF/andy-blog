@@ -3,6 +3,9 @@
 ---
 <script is:inline>
   (() => {
+    const RIPPLE_MS = 520;
+    const root = document.documentElement;
+
     const readTheme = () => {
       try {
         const saved = localStorage.getItem('theme');
@@ -23,97 +26,104 @@
 
     applyTheme(document, readTheme());
 
-    if (window.__andyThemeControllerInstalled) return;
+    // Inline head scripts may run again after a ClientRouter swap; keep one controller.
+    const prev = window.__andyThemeController;
+    if (prev?.abort) {
+      try { prev.abort.abort(); } catch {}
+    }
+    const abort = new AbortController();
+    const { signal } = abort;
+    window.__andyThemeController = { abort };
     window.__andyThemeControllerInstalled = true;
 
+    let current = null;
+
+    const endRipple = () => {
+      if (current) window.clearTimeout(current.watchdog);
+      current = null;
+      root.classList.remove('theme-ripple');
+      root.style.removeProperty('--theme-ripple-x');
+      root.style.removeProperty('--theme-ripple-y');
+      root.style.removeProperty('--theme-ripple-r');
+      if (!root.getAttribute('style')) root.removeAttribute('style');
+    };
+
+    const skipRipple = () => {
+      try { current?.transition.skipTransition(); } catch {}
+      endRipple();
+    };
+
+    // 圆形扩散：旧画面停在原地，新主题从按钮中心扩开（见 global.css 的 theme-ripple-reveal）。
+    // 圆心/半径一律用百分比传给 clip-path：Chromium 在非整数 DPR 下会把 px 裁剪坐标
+    // 按设备像素解释，导致圆心偏向左上；百分比相对伪元素自身盒子解析，不受影响。
+    const runRipple = (button, apply) => {
+      const rect = button.getBoundingClientRect();
+      const x = rect.left + rect.width / 2;
+      const y = rect.top + rect.height / 2;
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      const radius = Math.hypot(Math.max(x, w - x), Math.max(y, h - y));
+      // circle() 的百分比半径以 sqrt(w²+h²)/√2 为基准
+      const radiusPct = (radius / (Math.hypot(w, h) / Math.SQRT2)) * 100 + 1;
+
+      root.style.setProperty('--theme-ripple-x', `${(x / w) * 100}%`);
+      root.style.setProperty('--theme-ripple-y', `${(y / h) * 100}%`);
+      root.style.setProperty('--theme-ripple-r', `${radiusPct}%`);
+      root.classList.add('theme-ripple');
+
+      let transition;
+      try {
+        transition = document.startViewTransition(apply);
+      } catch {
+        endRipple();
+        apply();
+        return;
+      }
+
+      current = {
+        transition,
+        watchdog: window.setTimeout(skipRipple, RIPPLE_MS + 400),
+      };
+      transition.finished
+        .catch(() => {})
+        .finally(() => {
+          if (current?.transition === transition) endRipple();
+        });
+    };
+
     document.addEventListener('astro:before-swap', (event) => {
-      applyTheme(
-        event.newDocument,
-        document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light',
-      );
-    });
+      applyTheme(event.newDocument, root.dataset.theme === 'dark' ? 'dark' : 'light');
+    }, { signal });
 
     document.addEventListener('astro:page-load', () => {
-      syncButtons(document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light');
-    });
+      skipRipple();
+      syncButtons(root.dataset.theme === 'dark' ? 'dark' : 'light');
+    }, { signal });
 
     document.addEventListener('click', (event) => {
       const button = event.target instanceof Element
         ? event.target.closest('[data-theme-toggle]')
         : null;
       if (!button) return;
-      const next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+
+      if (current) skipRipple();
+
+      const next = root.dataset.theme === 'dark' ? 'light' : 'dark';
       const apply = () => {
         applyTheme(document, next);
         syncButtons(next);
         try { localStorage.setItem('theme', next); } catch {}
       };
 
-      const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-      if (reduce) {
+      if (
+        typeof document.startViewTransition !== 'function' ||
+        matchMedia('(prefers-reduced-motion: reduce)').matches
+      ) {
         apply();
         return;
       }
 
-      // 以按钮中心为圆心的圆形扩散
-      const rect = button.getBoundingClientRect();
-      const x = rect.left + rect.width / 2;
-      const y = rect.top + rect.height / 2;
-      const radius = Math.hypot(
-        Math.max(x, window.innerWidth - x),
-        Math.max(y, window.innerHeight - y),
-      );
-      const root = document.documentElement;
-
-      if (typeof document.startViewTransition !== 'function') {
-        // 兜底（iOS 17- 的 WebKit 等无 View Transitions 环境）：
-        // 新主题背景色圆形遮罩展开，到位后在遮罩下瞬时切换再淡出
-        try {
-          const cover = document.createElement('div');
-          cover.className = 'theme-ripple-cover';
-          cover.dataset.theme = next;
-          document.body.appendChild(cover);
-          const expand = cover.animate(
-            {
-              clipPath: [
-                `circle(0px at ${x}px ${y}px)`,
-                `circle(${radius}px at ${x}px ${y}px)`,
-              ],
-            },
-            { duration: 340, easing: 'cubic-bezier(0.4, 0, 0.2, 1)', fill: 'forwards' },
-          );
-          expand.finished
-            .catch(() => {})
-            .then(() => {
-              apply();
-              return cover.animate(
-                { opacity: [1, 0] },
-                { duration: 140, fill: 'forwards' },
-              ).finished.catch(() => {});
-            })
-            .then(() => cover.remove());
-        } catch {
-          apply();
-        }
-        return;
-      }
-
-      // 圆心/半径通过 CSS 变量传给 keyframes（见 global.css 的
-      // theme-ripple-reveal），Safari 不支持 WAAPI 的 pseudoElement
-      // 动画，必须走 CSS 动画
-      root.style.setProperty('--ripple-x', `${x}px`);
-      root.style.setProperty('--ripple-y', `${y}px`);
-      root.style.setProperty('--ripple-r', `${radius}px`);
-      root.classList.add('theme-ripple');
-      const transition = document.startViewTransition(apply);
-      transition.finished
-        .catch(() => {})
-        .then(() => {
-          root.classList.remove('theme-ripple');
-          root.style.removeProperty('--ripple-x');
-          root.style.removeProperty('--ripple-y');
-          root.style.removeProperty('--ripple-r');
-        });
-    });
+      runRipple(button, apply);
+    }, { signal });
   })();
 </script>

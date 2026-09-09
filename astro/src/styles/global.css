@@ -45,6 +45,7 @@ html[data-theme="dark"] {
 html {
   scroll-behavior: smooth;
   -webkit-text-size-adjust: 100%;
+  background-color: var(--bg);
 }
 
 body {
@@ -193,12 +194,6 @@ html[data-nav-dir="back"]::view-transition-new(page-title) {
   animation: title-enter-left 340ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
-/* 主题圆形扩散期间摘掉具名组，让正文/标题留在 root 快照内跟随圆形裁剪，
-   否则会盖在扩散圆之外（具名组不受 root 的 clip-path 约束） */
-html.theme-ripple :is(main, h1) {
-  view-transition-name: none !important;
-}
-
 /* 正文进入动画：ClientRouter 每次 swap 会重建 main，动画随之重放；
    硬导航/首绘同样生效，与 root 淡入叠加出微上浮的进入感 */
 @keyframes page-load-fade {
@@ -215,55 +210,38 @@ html.theme-ripple :is(main, h1) {
   animation: page-load-fade 220ms ease-out both;
 }
 
-/* 主题切换圆形扩散：旧快照静置垫底，新快照用 clip-path 圆从按钮处展开 */
-html.theme-ripple::view-transition-old(root),
-html.theme-ripple::view-transition-new(root) {
-  animation: none;
-  mix-blend-mode: normal;
+/* 主题圆形扩散：旧画面停在原地，新主题从按钮扩开。
+   圆心/半径由 ThemeInit 以百分比写入 --theme-ripple-*（px 坐标在
+   Chromium 非整数 DPR 下会被按设备像素解释，圆心偏向左上）。
+   具名组必须摘掉，否则会盖在圆外并在 ~220ms 造成中途停顿。 */
+html.theme-ripple,
+html.theme-ripple body,
+html.theme-ripple * {
+  transition: none !important;
+}
+html.theme-ripple :is(main, h1, [data-astro-transition-scope]) {
+  view-transition-name: none !important;
+}
+html.theme-ripple::view-transition-group(*),
+html.theme-ripple::view-transition-old(*),
+html.theme-ripple::view-transition-new(*) {
+  animation: none !important;
+  mix-blend-mode: normal !important;
 }
 html.theme-ripple::view-transition-old(root) {
   z-index: 1;
 }
-/* 用 CSS keyframes 做扩散动画（而不是 WAAPI 的 pseudoElement 选项），
-   Safari/WebKit 只认 CSS 形式的 view-transition 伪元素动画 */
 html.theme-ripple::view-transition-new(root) {
-  z-index: 2147483646;
-  animation: theme-ripple-reveal 520ms cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 2;
+  animation: theme-ripple-reveal 520ms cubic-bezier(0.4, 0, 0.2, 1) both !important;
 }
 @keyframes theme-ripple-reveal {
   from {
-    clip-path: circle(0px at var(--ripple-x, 50%) var(--ripple-y, 50%));
+    clip-path: circle(0% at var(--theme-ripple-x, 50%) var(--theme-ripple-y, 50%));
   }
   to {
-    clip-path: circle(var(--ripple-r, 150vmax) at var(--ripple-x, 50%) var(--ripple-y, 50%));
+    clip-path: circle(var(--theme-ripple-r, 150%) at var(--theme-ripple-x, 50%) var(--theme-ripple-y, 50%));
   }
-}
-
-/* 兜底圆形扩散（无 View Transitions 的环境，如 iOS 17-）：
-   新主题背景色遮罩，JS 用 clip-path 圆展开后在其下方切换主题再淡出。
-   背景色与网格/溢光取值跟 :root、html[data-theme="dark"] 的 --bg 及
-   .bg-fx 保持一致，让遮罩看起来像新主题的背景而不是纯色空块 */
-.theme-ripple-cover {
-  position: fixed;
-  inset: 0;
-  z-index: 70;
-  pointer-events: none;
-}
-.theme-ripple-cover[data-theme="light"] {
-  background-color: #fafafa;
-  background-image:
-    radial-gradient(900px 500px at 12% -10%, rgb(217 119 6 / 0.10), transparent 60%),
-    radial-gradient(700px 500px at 95% 110%, rgb(40 110 190 / 0.06), transparent 60%),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48'%3E%3Cpath d='M48 .5H.5V48' fill='none' stroke='%236b7280' stroke-opacity='0.07'/%3E%3C/svg%3E");
-  background-size: auto, auto, 48px 48px;
-}
-.theme-ripple-cover[data-theme="dark"] {
-  background-color: #0a0a0a;
-  background-image:
-    radial-gradient(900px 500px at 12% -10%, rgb(251 191 36 / 0.07), transparent 60%),
-    radial-gradient(700px 500px at 95% 110%, rgb(108 182 255 / 0.05), transparent 60%),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48'%3E%3Cpath d='M48 .5H.5V48' fill='none' stroke='%239ca3af' stroke-opacity='0.05'/%3E%3C/svg%3E");
-  background-size: auto, auto, 48px 48px;
 }
 
 /* 4. sticky nav */
