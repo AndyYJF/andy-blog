@@ -1,0 +1,74 @@
+---
+// Original single-line pen lettering. Each path follows the writing direction.
+const strokes = [
+  { d: "M12 99 C28 76 47 38 67 25 C74 20 79 20 76 31 C71 52 63 80 67 94 C70 102 80 98 91 86", duration: 330 },
+  { d: "M24 77 C42 72 65 67 85 65", duration: 100 },
+  { d: "M89 88 L99 60 C102 53 107 55 104 64 L99 80 C109 63 120 54 126 58 C133 63 116 89 126 94 C132 96 142 85 147 77", duration: 220 },
+  { d: "M179 63 C166 50 146 67 145 83 C144 97 157 98 169 80 C181 62 192 31 192 22 C191 9 181 29 176 46 C170 69 166 90 175 94 C182 97 193 86 200 76", duration: 300 },
+  { d: "M201 60 C193 78 190 91 198 93 C210 94 222 65 225 58 C218 82 208 113 195 125 C180 138 171 127 181 119 C193 109 216 108 238 85", duration: 250 },
+  { d: "M251 32 C245 49 249 65 259 66 C276 66 289 39 298 22 C287 50 273 87 257 112 C248 126 238 130 235 123 C231 113 257 100 281 96", duration: 300 },
+  { d: "M317 65 C304 53 287 70 288 85 C290 102 307 87 316 65 C310 83 311 95 320 92 C326 90 332 82 336 76", duration: 210 },
+  { d: "M332 89 L342 61 C345 53 350 55 346 65 L342 80 C354 63 364 54 370 59 C377 66 359 89 369 94 C380 99 397 83 407 76", duration: 250 },
+];
+---
+<span class="signature-label">AndyYan</span>
+<svg class="andy-signature" viewBox="0 0 425 145" aria-hidden="true" focusable="false">
+  <g fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round">
+    {strokes.map(({ d, duration }) => <path d={d} pathLength="1" data-duration={duration} />)}
+  </g>
+</svg>
+
+<style>
+  .signature-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  .andy-signature {
+    display: block;
+    width: 100%;
+    max-width: 27rem;
+    height: auto;
+    overflow: visible;
+  }
+  :global(.profile-hero[data-signature-writing] [data-topo-packets]) { opacity: 0; }
+  :global(.profile-hero[data-signature-writing] .topo-node-ring) { animation-play-state: paused; }
+</style>
+
+<script>
+  // A module runs once per document: client-side returns show the finished mark.
+  // A full refresh creates a new document and replays the handwriting.
+  const svg = document.querySelector<SVGSVGElement>(".andy-signature");
+  const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
+  if (svg && !reducedMotion.matches) {
+    const hero = svg.closest<HTMLElement>(".profile-hero");
+    hero?.setAttribute("data-signature-writing", "");
+    let delay = 80;
+    const animations = Array.from(svg.querySelectorAll<SVGPathElement>("path")).map((path) => {
+      const duration = Number(path.dataset.duration);
+      const animation = path.animate(
+        [
+          { strokeDasharray: "1 1", strokeDashoffset: 1, opacity: 0, offset: 0 },
+          { strokeDasharray: "1 1", strokeDashoffset: 1, opacity: 1, offset: 0.001 },
+          { strokeDasharray: "1 1", strokeDashoffset: 0, opacity: 1, offset: 1 },
+        ],
+        { duration, delay, easing: "cubic-bezier(.35,0,.25,1)", fill: "both" },
+      );
+      delay += duration + 12;
+      return animation;
+    });
+    const finish = () => {
+      animations.forEach((animation) => animation.cancel());
+      hero?.removeAttribute("data-signature-writing");
+      reducedMotion.removeEventListener("change", finish);
+      document.removeEventListener("astro:before-swap", finish);
+    };
+    reducedMotion.addEventListener("change", finish, { once: true });
+    document.addEventListener("astro:before-swap", finish, { once: true });
+    Promise.all(animations.map((animation) => animation.finished)).then(finish, finish);
+  }
+</script>

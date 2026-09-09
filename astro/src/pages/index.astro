@@ -1,6 +1,7 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import PostList from "../components/PostList.astro";
+import AndySignature from "../components/AndySignature.astro";
 import { getCollection } from "astro:content";
 import { sortPosts } from "../lib/posts";
 import { profile } from "../data/profile";
@@ -35,7 +36,7 @@ const jsonLd = {
     <section id="intro" class="profile-hero" aria-labelledby="profile-title">
       <div class="hero-text">
         <p class="profile-kicker">{profile.eyebrow}</p>
-        <h1 id="profile-title" transition:name="page-title" transition:animate="none">{profile.name}</h1>
+        <h1 id="profile-title" transition:name="page-title" transition:animate="none"><AndySignature /></h1>
         <p class="profile-role">{profile.role}</p>
         <p class="profile-intro">{profile.intro}</p>
       </div>
