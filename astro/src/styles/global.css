@@ -963,10 +963,6 @@ html[data-theme="dark"] .card-cover img {
 .profile-links small {
   color: var(--muted);
 }
-.profile-links li:first-child a {
-  border-color: color-mix(in srgb, var(--accent) 40%, var(--border));
-  background: color-mix(in srgb, var(--accent) 5%, var(--surface));
-}
 .profile-section {
   display: grid;
   gap: 1.25rem;
