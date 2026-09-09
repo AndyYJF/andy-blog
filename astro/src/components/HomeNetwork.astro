@@ -17,8 +17,7 @@ const edges = [
       {edges.map((d) => <path d={d} />)}
     </g>
     <g class="network-signals" fill="none" data-topo-packets>
-      <path d={edges[4]} pathLength="100" />
-      <path d={edges[5]} pathLength="100" />
+      {edges.map((d, index) => <path d={d} pathLength="100" style={`animation-delay: -${index * 1.3}s`} />)}
     </g>
     {nodes.map(({ code, city, x, y }) => (
       <g class="network-node" transform={`translate(${x} ${y})`}>
@@ -67,7 +66,6 @@ const edges = [
   .network-ports { fill: var(--accent-text); }
   .network-signals { stroke: var(--accent-text); stroke-width: 1.5; stroke-dasharray: 5 95; }
   .network-signals path { animation: network-trace 8s linear infinite; animation-play-state: paused; }
-  .network-signals path:nth-child(2) { animation-delay: -4s; }
   [data-running] .network-signals path { animation-play-state: running; }
   :global([data-signature-writing]) .network-signals { opacity: 0; }
   .network-footer { display: flex; align-items: center; justify-content: space-between; padding-top: .85rem; border-top: 1px solid var(--border); }
