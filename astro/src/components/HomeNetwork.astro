@@ -1,0 +1,103 @@
+---
+const nodes = [
+  { code: "LAX", city: "洛杉矶", x: 20, y: 24 },
+  { code: "FRA", city: "法兰克福", x: 236, y: 24 },
+  { code: "HKG", city: "香港", x: 20, y: 164 },
+  { code: "TYO", city: "东京", x: 236, y: 164 },
+];
+const edges = [
+  "M124 52 H236", "M72 80 V164", "M288 80 V164",
+  "M124 192 H236", "M108 80 L252 164", "M252 80 L108 164",
+];
+---
+<a class="home-network" href="/dn42/" aria-label="查看 AndyYan 的 DN42 四节点全互联网络" data-home-network>
+  <span class="network-heading"><span>DN42</span><span>NETWORK NOTES</span></span>
+  <svg viewBox="0 0 360 244" aria-hidden="true" focusable="false">
+    <g class="network-wires" fill="none">
+      {edges.map((d) => <path d={d} />)}
+    </g>
+    <g class="network-signals" fill="none" data-topo-packets>
+      <path d={edges[4]} pathLength="100" />
+      <path d={edges[5]} pathLength="100" />
+    </g>
+    {nodes.map(({ code, city, x, y }) => (
+      <g class="network-node" transform={`translate(${x} ${y})`}>
+        <rect width="104" height="56" rx="3" />
+        <path class="network-node-accent" d="M0 12 V0 H12" fill="none" />
+        <text class="network-code" x="14" y="24">{code}</text>
+        <text class="network-city" x="14" y="43">{city}</text>
+      </g>
+    ))}
+    <g class="network-ports">
+      <circle cx="124" cy="52" r="2" /><circle cx="236" cy="52" r="2" />
+      <circle cx="72" cy="80" r="2" /><circle cx="72" cy="164" r="2" />
+      <circle cx="288" cy="80" r="2" /><circle cx="288" cy="164" r="2" />
+      <circle cx="124" cy="192" r="2" /><circle cx="236" cy="192" r="2" />
+    </g>
+  </svg>
+  <span class="network-footer">
+    <span><strong>AS4242422921</strong><small>4 节点 · Full-mesh iBGP</small></span>
+    <span class="network-arrow" aria-hidden="true">↗</span>
+  </span>
+</a>
+
+<style>
+  .home-network {
+    display: block;
+    min-width: 0;
+    padding: 1.15rem 1.1rem 1rem;
+    color: var(--text);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-panel);
+    text-decoration: none;
+    transition: border-color 180ms ease;
+  }
+  .home-network:hover, .home-network:focus-visible { border-color: var(--accent-text); }
+  .network-heading { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+  .network-heading > :first-child { font: 600 .85rem var(--font-mono); letter-spacing: .04em; }
+  .network-heading > :last-child { font: .6rem var(--font-mono); letter-spacing: .1em; color: var(--muted); }
+  svg { display: block; width: 100%; height: auto; margin-block: .5rem; }
+  .network-wires { stroke: color-mix(in srgb, var(--muted) 42%, var(--surface)); stroke-width: 1; }
+  .network-wires path:nth-last-child(-n+2) { stroke-dasharray: 3 4; }
+  .network-node rect { fill: var(--bg); stroke: var(--border); stroke-width: 1; }
+  .network-node-accent { stroke: var(--accent-text); stroke-width: 1.5; }
+  .network-code { fill: var(--text); font: 600 18px var(--font-mono); letter-spacing: 1px; }
+  .network-city { fill: var(--muted); font: 14px var(--font-sans); }
+  .network-ports { fill: var(--accent-text); }
+  .network-signals { stroke: var(--accent-text); stroke-width: 1.5; stroke-dasharray: 5 95; }
+  .network-signals path { animation: network-trace 8s linear infinite; animation-play-state: paused; }
+  .network-signals path:nth-child(2) { animation-delay: -4s; }
+  [data-running] .network-signals path { animation-play-state: running; }
+  :global([data-signature-writing]) .network-signals { opacity: 0; }
+  .network-footer { display: flex; align-items: center; justify-content: space-between; padding-top: .85rem; border-top: 1px solid var(--border); }
+  .network-footer strong { display: block; font: 500 .72rem var(--font-mono); letter-spacing: .02em; }
+  .network-footer small { display: block; margin-top: .3rem; font-size: .7rem; color: var(--muted); }
+  .network-arrow { color: var(--accent-text); font-size: 1.25rem; }
+  @keyframes network-trace { to { stroke-dashoffset: -100; } }
+  @media (max-width: 640px) { .home-network { margin-top: 1.5rem; } }
+  @media (prefers-reduced-motion: reduce) { .network-signals { display: none; } }
+</style>
+
+<script>
+  let dispose: (() => void) | undefined;
+  function initNetwork() {
+    dispose?.();
+    const card = document.querySelector<HTMLElement>("[data-home-network]");
+    if (!card) return;
+    let inView = false;
+    const sync = () => card.toggleAttribute("data-running", inView && !document.hidden);
+    const observer = new IntersectionObserver(([entry]) => { inView = entry.isIntersecting; sync(); });
+    observer.observe(card);
+    document.addEventListener("visibilitychange", sync);
+    dispose = () => {
+      observer.disconnect();
+      document.removeEventListener("visibilitychange", sync);
+      card.removeAttribute("data-running");
+      dispose = undefined;
+    };
+  }
+  initNetwork();
+  document.addEventListener("astro:page-load", initNetwork);
+  document.addEventListener("astro:before-swap", () => dispose?.());
+</script>

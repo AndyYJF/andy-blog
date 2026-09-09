@@ -721,171 +721,6 @@ html[data-theme="dark"] .card-cover img {
 .hero-text {
   min-width: 0;
 }
-.hero-topology {
-  margin: 0;
-  padding: 0.85rem 0.85rem 0.6rem;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-panel);
-  background: var(--surface);
-  box-shadow: var(--shadow-card);
-  animation: topo-enter 0.4s var(--ease) 0.1s both;
-}
-@keyframes topo-enter {
-  from {
-    opacity: 0;
-  }
-}
-.hero-topology svg {
-  display: block;
-  width: 100%;
-  height: auto;
-}
-.topo-caption {
-  display: flex;
-  justify-content: space-between;
-  gap: 0.5rem;
-  flex-wrap: nowrap;
-  margin-top: 0.6rem;
-  padding-top: 0.5rem;
-  border-top: 1px solid var(--border);
-  font-family: var(--font-mono);
-  font-size: 0.68rem;
-  letter-spacing: 0.05em;
-}
-.topo-caption > span {
-  white-space: nowrap;
-}
-.topo-caption > span:first-child {
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.topo-status {
-  flex: none;
-}
-.topo-caption {
-  color: var(--muted);
-}
-.topo-dots {
-  fill: color-mix(in srgb, var(--text) 14%, transparent);
-}
-.topo-arc {
-  fill: none;
-  stroke: color-mix(in srgb, var(--accent) 48%, transparent);
-  stroke-width: 1;
-  stroke-dasharray: 3 3;
-}
-.topo-arc-faint {
-  stroke: color-mix(in srgb, var(--accent) 26%, transparent);
-}
-.topo-node {
-  fill: var(--accent);
-}
-.topo-pulse {
-  animation: topo-breathe 3.2s ease-in-out infinite;
-}
-@keyframes topo-breathe {
-  0%,
-  100% {
-    opacity: 0.55;
-  }
-  50% {
-    opacity: 1;
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  .topo-pulse,
-  .hero-topology {
-    animation: none;
-  }
-}
-.topo-label {
-  fill: var(--muted);
-  font-family: var(--font-mono);
-  font-size: 8px;
-  letter-spacing: 0.06em;
-}
-
-/* 拓扑卡交互：倾斜高光、数据包、节点探针 */
-.topo-card {
-  display: block;
-  position: relative;
-  overflow: hidden;
-  color: inherit;
-  text-decoration: none;
-  transition:
-    border-color var(--t-state) var(--ease),
-    transform 160ms var(--ease);
-}
-.topo-card::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background: radial-gradient(
-    170px circle at var(--gx, 70%) var(--gy, 30%),
-    color-mix(in srgb, var(--accent) 9%, transparent),
-    transparent 70%
-  );
-  opacity: 0;
-  transition: opacity var(--t-state) var(--ease);
-}
-.topo-card:hover,
-.topo-card:focus-visible {
-  border-color: color-mix(in srgb, var(--accent) 45%, var(--border));
-}
-.topo-card:hover::after,
-.topo-card:focus-visible::after {
-  opacity: 1;
-}
-.topo-packet {
-  fill: var(--accent);
-  opacity: 0.9;
-}
-.topo-hit {
-  fill: transparent;
-}
-.topo-node-g {
-  cursor: pointer;
-}
-.topo-node-g .topo-node {
-  transform-box: fill-box;
-  transform-origin: center;
-  transition: transform var(--t-fast) var(--ease);
-}
-.topo-node-g .topo-label {
-  transition: fill var(--t-fast) var(--ease);
-}
-.topo-arc {
-  transition:
-    stroke var(--t-fast) var(--ease),
-    stroke-width var(--t-fast) var(--ease),
-    opacity var(--t-fast) var(--ease);
-}
-.topo-card[data-probe] .topo-arc.is-dim {
-  opacity: 0.18;
-}
-.topo-card[data-probe] .topo-arc.is-hot {
-  stroke: var(--accent);
-  stroke-width: 1.5;
-}
-.topo-card[data-probe] .topo-node-g:not(.is-hot) {
-  opacity: 0.4;
-}
-.topo-node-g.is-hot .topo-node {
-  transform: scale(1.55);
-}
-.topo-node-g.is-hot .topo-label {
-  fill: var(--accent-text);
-}
-.topo-node-g {
-  transition: opacity var(--t-fast) var(--ease);
-}
-@media (max-width: 640px) {
-  .hero-topology {
-    margin-top: 1.75rem;
-  }
-}
 .profile-kicker,
 .section-heading > div > p,
 .project-marker {
@@ -1131,6 +966,29 @@ html[data-theme="dark"] .card-cover img {
 }
 .reading-page .bg-fx {
   display: none;
+}
+.reading-prose {
+  font-size: 1.0625rem;
+  line-height: 1.85;
+}
+.reading-prose :is(h2, h3, h4) {
+  line-height: 1.45;
+  text-wrap: pretty;
+}
+.reading-prose :is(ul, ol) {
+  padding-inline-start: 1.5em;
+}
+.reading-prose :is(pre, table) {
+  line-height: 1.65;
+}
+.reading-prose td {
+  vertical-align: top;
+}
+@media (max-width: 640px) {
+  .reading-prose {
+    font-size: 1rem;
+    line-height: 1.85;
+  }
 }
 .mobile-toc {
   display: none;
@@ -2682,12 +2540,6 @@ html[data-theme="dark"] .beoe-light {
     padding: 0.65rem;
     font-size: 0.9rem;
   }
-  .hero-topology {
-    margin-top: 1.25rem;
-  }
-  .hero-topology svg {
-    max-height: 8rem;
-  }
   .profile-intro {
     margin-top: 1rem;
   }
@@ -3004,32 +2856,10 @@ html[data-theme="dark"] .bg-fx::after {
   writing-mode: vertical-rl;
 }
 
-/* 光标探照灯（位置由 JS 写入 --sx/--sy） */
-.spot {
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  background: radial-gradient(
-    16rem 16rem at var(--sx, 50vw) var(--sy, 30vh),
-    color-mix(in srgb, var(--accent) 6%, transparent),
-    transparent 70%
-  );
-}
-
-html[data-theme="dark"] .spot {
-  background: radial-gradient(
-    16rem 16rem at var(--sx, 50vw) var(--sy, 30vh),
-    color-mix(in srgb, var(--accent) 9%, transparent),
-    transparent 70%
-  );
-}
-
 /* 页边模块需要较宽的页边，比内容断点更早收起 */
 @media (width <= 1299px) {
   .spine,
-  .prog,
-  .spot {
+  .prog {
     display: none;
   }
 }
