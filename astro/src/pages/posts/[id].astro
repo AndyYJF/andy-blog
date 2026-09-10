@@ -30,7 +30,16 @@ const displayCategories = post.data.categories
     };
   });
 const { prev, next } = adjacentPosts(posts, post.id);
-const related = relatedPosts(posts, post, 3);
+const neighborIds = new Set([prev?.id, next?.id]);
+const related = relatedPosts(posts.filter((item) => !neighborIds.has(item.id)), post, 3);
+const currentTopics = new Set([
+  ...post.data.categories.filter((category) => category.mid !== 1),
+  ...post.data.tags,
+].map((topic) => topic.mid));
+const sharedTopics = (item) => [...new Set([
+  ...item.data.categories.filter((category) => category.mid !== 1),
+  ...item.data.tags,
+].filter((topic) => currentTopics.has(topic.mid)).map((topic) => topic.name))].slice(0, 2).join(' · ');
 ---
 <BaseLayout
   title={`${post.data.title} · AndyYan`}
@@ -76,22 +85,27 @@ const related = relatedPosts(posts, post, 3);
     <Content />
   </article>
 
-  {(prev || next || related.length > 0) && (
-    <nav class="post-footer-nav" aria-label="文章导航">
+    <nav class="post-footer-nav" aria-labelledby="continue-reading-title">
+      <div class="post-footer-heading">
+        <h2 id="continue-reading-title">继续阅读</h2>
+        <a href="/posts/">全部文章 <span aria-hidden="true">→</span></a>
+      </div>
       {(prev || next) && (
-        <div class="post-adjacent" aria-label="相邻文章">
+        <div class:list={["post-adjacent", (!prev || !next) && "is-single"]} aria-label="相邻文章">
           {prev ? (
             <a class="post-adjacent-link is-prev" href={prev.data.canonicalPath}>
-              <span class="post-adjacent-label">上一篇</span>
+              <span class="post-adjacent-label">← 上一篇 · 更早</span>
               <span class="post-adjacent-title">{prev.data.title}</span>
+              <time class="post-adjacent-date" datetime={prev.data.pubDate.toISOString()}>{prev.data.pubDate.toISOString().slice(0, 10)}</time>
             </a>
           ) : (
             <span class="post-adjacent-link is-prev is-empty" aria-hidden="true"></span>
           )}
           {next ? (
             <a class="post-adjacent-link is-next" href={next.data.canonicalPath}>
-              <span class="post-adjacent-label">下一篇</span>
+              <span class="post-adjacent-label">下一篇 · 较新 →</span>
               <span class="post-adjacent-title">{next.data.title}</span>
+              <time class="post-adjacent-date" datetime={next.data.pubDate.toISOString()}>{next.data.pubDate.toISOString().slice(0, 10)}</time>
             </a>
           ) : (
             <span class="post-adjacent-link is-next is-empty" aria-hidden="true"></span>
@@ -100,11 +114,14 @@ const related = relatedPosts(posts, post, 3);
       )}
       {related.length > 0 && (
         <div class="post-related">
-          <p class="post-related-label">相关文章</p>
+          <h3 class="post-related-label">相近主题</h3>
           <ul class="post-related-list">
             {related.map((item) => (
               <li>
-                <a href={item.data.canonicalPath}>{item.data.title}</a>
+                <div class="post-related-entry">
+                  <a href={item.data.canonicalPath}>{item.data.title}</a>
+                  <small class="post-related-topics">共同主题：{sharedTopics(item)}</small>
+                </div>
                 <time datetime={item.data.pubDate.toISOString()}>
                   {item.data.pubDate.toISOString().slice(0, 10)}
                 </time>
@@ -114,7 +131,6 @@ const related = relatedPosts(posts, post, 3);
         </div>
       )}
     </nav>
-  )}
 
   <Comments commentKey={post.data.commentKey} entryWritable={post.data.allowComment} />
 </BaseLayout>

@@ -1995,6 +1995,25 @@ html[data-theme="dark"] .beoe-light {
   grid-template-columns: 1fr 1fr;
   gap: 0.75rem;
 }
+.post-footer-heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.post-footer-heading h2 { margin: 0; font-size: 1.15rem; }
+.post-footer-heading > a { color: var(--muted); font-size: .85rem; text-underline-offset: .2em; }
+.post-footer-heading > a:hover { color: var(--accent-text); }
+.post-adjacent.is-single { grid-template-columns: minmax(0, 1fr); }
+.post-adjacent.is-single .is-empty { display: none; }
+.post-adjacent-date {
+  margin-top: auto;
+  padding-top: .45rem;
+  font: .75rem var(--font-mono);
+  color: var(--muted);
+}
+.post-related-entry { min-width: 0; }
+.post-related-topics { display: block; margin-top: .4rem; font-size: .75rem; color: var(--muted); }
 .post-adjacent-link {
   display: flex;
   flex-direction: column;
