@@ -22,11 +22,18 @@
 
 <dialog id="site-search" class="search-dialog" data-search-dialog aria-labelledby="site-search-title">
   <div class="search-dialog-chrome">
-    <strong id="site-search-title">搜索</strong>
+    <div class="search-dialog-heading">
+      <strong id="site-search-title">站内搜索</strong>
+      <p>按标题或正文关键词查找</p>
+    </div>
     <button type="button" class="search-close" data-search-close aria-label="关闭搜索">关闭</button>
   </div>
   <div id="pagefind-container" data-pagefind-root></div>
   <p class="search-hint muted" data-search-status role="status" hidden></p>
+  <div class="search-dialog-footer" aria-hidden="true">
+    <span><kbd>Esc</kbd> 关闭</span>
+    <span><kbd>Ctrl / ⌘ K</kbd> 打开搜索</span>
+  </div>
 </dialog>
 
 <script>

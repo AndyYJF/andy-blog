@@ -1710,12 +1710,13 @@ html[data-theme="dark"] .beoe-light {
 }
 
 .search-dialog {
-  width: min(36rem, calc(100vw - 2rem));
-  max-height: min(80dvh, 80vh, 36rem);
-  margin: auto;
+  --search-top: clamp(1rem, 8dvh, 5rem);
+  width: min(42rem, calc(100vw - 2rem));
+  max-height: calc(100dvh - var(--search-top) - 1rem);
+  margin: var(--search-top) auto auto;
   padding: 0;
   border: 1px solid var(--border);
-  border-radius: 8px;
+  border-radius: 2px;
   background: var(--surface);
   color: var(--text);
   box-shadow: var(--shadow-card-hover);
@@ -1766,12 +1767,38 @@ html[data-theme="dark"] .beoe-light {
   padding: 0.75rem 1rem;
   border-bottom: 1px solid var(--border);
 }
+.search-dialog-heading strong {
+  font-size: 1rem;
+}
+.search-dialog-heading p {
+  margin: .25rem 0 0;
+  font-size: .78rem;
+  color: var(--muted);
+}
+.search-dialog-footer {
+  display: flex;
+  flex: none;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: .5rem 1rem;
+  padding: .65rem 1rem;
+  border-top: 1px solid var(--border);
+  color: var(--muted);
+  font-size: .72rem;
+}
+.search-dialog-footer kbd {
+  font: inherit;
+  font-family: var(--font-mono);
+}
 .search-close {
   border: none;
   background: transparent;
   color: var(--muted);
   cursor: pointer;
   font: inherit;
+  min-height: 2.5rem;
+  padding: .25rem .5rem;
+  flex: none;
 }
 .search-close:hover,
 .search-close:focus-visible {
@@ -1780,7 +1807,7 @@ html[data-theme="dark"] .beoe-light {
 #pagefind-container {
   flex: 1 1 auto;
   min-height: 0;
-  padding: 0.5rem 0.75rem 1rem;
+  padding: 1rem;
   overflow: auto;
   -webkit-overflow-scrolling: touch;
   overscroll-behavior: contain;
@@ -1801,15 +1828,19 @@ html[data-theme="dark"] .beoe-light {
   --pagefind-ui-border: var(--border);
   --pagefind-ui-tag: color-mix(in srgb, var(--muted) 18%, var(--surface));
   --pagefind-ui-border-width: 1px;
-  --pagefind-ui-border-radius: 6px;
+  --pagefind-ui-border-radius: 2px;
   --pagefind-ui-font: var(--font-sans);
 }
 #pagefind-container .pagefind-ui__search-input {
-  font-weight: 600;
+  font-weight: 400;
   color: var(--text);
 }
+#pagefind-container .pagefind-ui__search-input:focus-visible {
+  outline: 2px solid var(--accent-text);
+  outline-offset: 2px;
+}
 #pagefind-container .pagefind-ui__search-input::placeholder {
-  opacity: 0.55;
+  opacity: 1;
   color: var(--muted);
 }
 #pagefind-container .pagefind-ui__search-clear,
@@ -1818,6 +1849,12 @@ html[data-theme="dark"] .beoe-light {
 }
 #pagefind-container .pagefind-ui__result-link {
   color: var(--text);
+}
+#pagefind-container .pagefind-ui__result-inner {
+  min-width: 0;
+}
+#pagefind-container :is(.pagefind-ui__result-title, .pagefind-ui__result-excerpt) {
+  overflow-wrap: anywhere;
 }
 /* 搜索弹窗嵌在 .site-nav 里，结果链接会误中导航链接的背景下划线和内边距，
    多行标题时盒底整条背景线会与 Pagefind 悬停下划线叠成双横线，这里剥离 */
