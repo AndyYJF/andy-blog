@@ -28,16 +28,18 @@ Personal tech ledger: VPS, BGP/DN42, self-hosted ops. Content is authored in Typ
 ```
 Typecho admin ──HMAC──► rebuild-api ──► blog-rebuild-1panel.sh
                                             │
-                     off-box builder (Astro + Playwright / mermaid)
+              SSH (+ optional jump) ──► off-box builder (Astro + Playwright)
                                             │
-                     release.tar.gz + checksums ──► VPS releases/
+              rsync release.tar.gz + checksums ──► VPS releases/
                                             │
                      mv -T atomic switch current ←→ previous (rollback)
                                             │
                      OpenResty www + Aliyun / Cloudflare CDN purge
 ```
 
-Separate status plane: `build.fei.cx` → Caddy → loopback off-box status UI (password session, fail-closed).
+Separate status plane: `build2.fei.cx` → Caddy → loopback off-box status UI (password session, fail-closed).
+
+Off-box SSH is configured only on the VPS (`/etc/andy-blog/offbox-builder.env`, mode `0600`) from [`host/offbox-builder.env.example`](./host/offbox-builder.env.example): target host, optional non-default `OFFBOX_SSH_PORT`, and optional jump/relay when the direct path is slow. Do not commit real hosts, ports used in production, or private keys.
 
 ### Layout
 
@@ -93,12 +95,12 @@ npm run lighthouse:local    # against astro/dist
 ### Release & ops
 
 - Trigger: Typecho AutoRebuild (admin + CSRF) → signed request → rebuild-api queue
-- Build: off-box pulls snapshot, Astro build, returns tar; path-traversal / special-file checks before unpack
+- Build: VPS exports Typecho snapshot → rsync control tree to off-box → Astro / Playwright build → pull `release.tar.gz` back with rsync (scp progress mirror is best-effort + timed out so it cannot stall publish)
 - Switch: full `checksums.sha256` verify → blue-green `current` / `previous`
 - Rollback / roll-forward: `host/rollback-release.sh` · `host/roll-forward-release.sh`
 - Nginx redirect mode: `npm run nginx:302` / `nginx:301` (regenerate after editing `data/legacy-url-map.json`)
 
-Production credentials stay in host env / secret files — **never** commit them here. SSH scripts need `SSH_HOST` / `SSH_USER` / `SSH_PASS`; host keys use `RejectPolicy` + known_hosts.
+Production credentials stay in host env / secret files — **never** commit them here. Do not commit `secrets/`, `.env`, private keys, or `.planning/` (local ops packets; gitignored).
 
 ### Security
 
@@ -124,7 +126,7 @@ Remaining Medium / Low findings and remediations follow the audit reports.
 
 ### 架构
 
-与上方 English 小节中的 ASCII 图相同：Typecho → HMAC 签名 → rebuild-api → off-box Astro 构建 → `release.tar.gz` + checksums → VPS 蓝绿 `current`/`previous` → OpenResty + CDN 刷新。状态面独立：`build.fei.cx` → Caddy → 环回 off-box status UI（密码会话，fail-closed）。
+与上方 English 小节中的 ASCII 图相同：Typecho → HMAC 签名 → rebuild-api →（可选跳板）off-box Astro 构建 → rsync 拉回 `release.tar.gz` + checksums → VPS 蓝绿 `current`/`previous` → OpenResty + CDN 刷新。状态面独立：`build2.fei.cx` → Caddy → 环回 off-box status UI（密码会话，fail-closed）。离机构建 SSH 只写在 VPS 的 `/etc/andy-blog/offbox-builder.env`（见 `host/offbox-builder.env.example`），勿把真实主机、生产端口或私钥写进仓库。
 
 ### 目录
 
@@ -158,12 +160,12 @@ npm --prefix astro run preview -- --host 127.0.0.1 --port 4321
 ### 发布与运维
 
 - 触发：Typecho AutoRebuild（管理员 + CSRF）→ 签名 → rebuild-api 入队
-- 构建：off-box 拉快照、Astro build、回传 tar；解包前校验路径穿越与特殊文件
+- 构建：VPS 导出 Typecho 快照 → rsync 控制树到 off-box → Astro / Playwright → rsync 拉回 `release.tar.gz`（进度镜像推送为 best-effort，带超时，避免拖死发布）
 - 切换：`checksums.sha256` 全量校验 → `current` / `previous` 蓝绿
 - 回滚 / 前进：`host/rollback-release.sh` · `host/roll-forward-release.sh`
 - Nginx 重定向状态：`npm run nginx:302` / `nginx:301`（改 `data/legacy-url-map.json` 后再生）
 
-生产凭据只放主机 env / secret 文件，**不要**写入本仓库。
+生产凭据只放主机 env / secret 文件，**不要**写入本仓库；亦不提交 `secrets/`、`.env`、私钥、`.planning/`。
 
 ### 安全
 

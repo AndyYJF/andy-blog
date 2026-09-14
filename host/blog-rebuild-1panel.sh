@@ -65,13 +65,18 @@ offbox_prepare_ssh() {
     printf 'Host offbox-builder\n'
     printf '  HostName %s\n' "$dest_host"
     printf '  User %s\n' "$dest_user"
+    if [[ -n "${OFFBOX_SSH_PORT:-}" ]]; then
+      printf '  Port %s\n' "$OFFBOX_SSH_PORT"
+    fi
     printf '  IdentityFile %s\n' "$OFFBOX_SSH_KEY"
     printf '  IdentitiesOnly yes\n'
     printf '  BatchMode yes\n'
     printf '  StrictHostKeyChecking yes\n'
     printf '  ConnectTimeout 60\n'
-    printf '  ServerAliveInterval 15\n'
-    printf '  ServerAliveCountMax 8\n'
+    printf '  ServerAliveInterval 30\n'
+    printf '  ServerAliveCountMax 20\n'
+    printf '  TCPKeepAlive yes\n'
+    printf '  IPQoS throughput\n'
     if [[ -n "${OFFBOX_SSH_JUMP:-}" ]]; then
       [[ -n "${OFFBOX_SSH_JUMP_KEY:-}" && -f "${OFFBOX_SSH_JUMP_KEY}" ]] || {
         echo "offbox jump ssh key missing" >&2
@@ -82,6 +87,9 @@ offbox_prepare_ssh() {
       printf '\nHost offbox-jump\n'
       printf '  HostName %s\n' "$jump_host"
       printf '  User %s\n' "$jump_user"
+      if [[ -n "${OFFBOX_SSH_JUMP_PORT:-}" ]]; then
+        printf '  Port %s\n' "$OFFBOX_SSH_JUMP_PORT"
+      fi
       printf '  IdentityFile %s\n' "$OFFBOX_SSH_JUMP_KEY"
       printf '  IdentitiesOnly yes\n'
       printf '  BatchMode yes\n'
@@ -99,6 +107,11 @@ offbox_ssh() {
 offbox_scp() {
   offbox_prepare_ssh
   scp -F "$OFFBOX_SSH_CFG" "$@"
+}
+
+offbox_rsync() {
+  offbox_prepare_ssh
+  rsync -az --partial --timeout=180 -e "ssh -F ${OFFBOX_SSH_CFG}" "$@"
 }
 
 assert_safe_tar_archive() {
@@ -119,25 +132,25 @@ assert_safe_extract_tree() {
 
 progress_push() {
   [[ "${OFFBOX_PROGRESS_LOCAL:-}" == "1" ]] && return 0
+  [[ "${OFFBOX_PROGRESS_PUSH:-1}" != "0" ]] || return 0
   [[ -n "${OFFBOX_SSH_TARGET:-}" && -n "${OFFBOX_SSH_KEY:-}" && -f "${OFFBOX_SSH_KEY}" ]] || return 0
   declare -F offbox_ssh >/dev/null || return 0
   local root="${OFFBOX_ROOT:-/opt/andy-blog-offbox}"
   [[ -f "$RUNTIME/progress.json" ]] || return 0
-  offbox_ssh "umask 027; mkdir -p '$root/runtime'" || {
+  offbox_prepare_ssh || return 0
+  # Best-effort status mirror only; never block the rebuild on a slow builder link.
+  if ! timeout 25 ssh -F "$OFFBOX_SSH_CFG" offbox-builder "umask 027; mkdir -p '$root/runtime'"; then
     echo "warning: offbox progress push failed" >&2
     return 0
-  }
+  fi
   local scp_files=("$RUNTIME/progress.json")
   if [[ -f "$RUNTIME/progress.log" ]]; then
     scp_files+=("$RUNTIME/progress.log")
   fi
-  if [[ -f "$RUNTIME/history.jsonl" ]]; then
-    scp_files+=("$RUNTIME/history.jsonl")
-  fi
   if [[ -f "$RUNTIME/last-failure.json" ]]; then
     scp_files+=("$RUNTIME/last-failure.json")
   fi
-  offbox_scp "${scp_files[@]}" "offbox-builder:$root/runtime/" \
+  timeout 25 scp -F "$OFFBOX_SSH_CFG" "${scp_files[@]}" "offbox-builder:$root/runtime/" \
     || echo "warning: offbox progress push failed" >&2
 }
 
@@ -342,7 +355,8 @@ build_via_offbox() {
   progress_emit --status running --phase package --release-id "$RELEASE_ID"
   progress_push
 
-  offbox_scp "offbox-builder:$OFFBOX_ROOT/out/release.tar.gz" "$LOCAL_TAR"
+  # Large release tarball: rsync survives flaky HK links better than scp.
+  offbox_rsync "offbox-builder:$OFFBOX_ROOT/out/release.tar.gz" "$LOCAL_TAR"
   test -s "$LOCAL_TAR"
   offbox_ssh "rm -f '$OFFBOX_ROOT/in/snapshot.json' '$OFFBOX_ROOT/out/release.tar.gz'"
 
