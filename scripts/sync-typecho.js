@@ -39,6 +39,10 @@ const META_ROUTE_MAP_PATH = path.join(ROOT, 'data', 'meta-route-map.json');
 const CACHE_DIR = path.join(ASTRO, '.cache');
 const FIELD_COVER = process.env.FIELD_COVER || 'thumb';
 const FIELD_PATH = process.env.FIELD_ASTRO_PATH || FIELD_ASTRO_PATH;
+/** When set, write published Markdown here only — do not mutate production route maps / Astro content. */
+const CONTENT_BACKUP_DIR = process.env.CONTENT_BACKUP_DIR
+  ? path.resolve(process.env.CONTENT_BACKUP_DIR)
+  : '';
 
 function requireEpoch() {
   const raw = process.env.SNAPSHOT_EPOCH;
@@ -92,6 +96,19 @@ async function atomicWriteText(file, body) {
   const tmp = path.join(dir, `.${path.basename(file)}.${process.pid}.tmp`);
   await fs.writeFile(tmp, body, 'utf8');
   await fs.rename(tmp, file);
+}
+
+async function moveFile(src, dest) {
+  try {
+    await fs.rename(src, dest);
+  } catch (e) {
+    if (e && e.code === 'EXDEV') {
+      await fs.copyFile(src, dest);
+      await fs.unlink(src);
+      return;
+    }
+    throw e;
+  }
 }
 
 async function loadSnapshot(epoch) {
@@ -456,7 +473,9 @@ async function main() {
     });
   }
 
-  await atomicWriteJson(ROUTE_MAP_PATH, routeMap);
+  if (!CONTENT_BACKUP_DIR) {
+    await atomicWriteJson(ROUTE_MAP_PATH, routeMap);
+  }
 
   // Refresh names/sourceSlug, and allocate routes for metas that are new in the snapshot.
   const metaMap = await readJson(META_ROUTE_MAP_PATH, {});
@@ -473,7 +492,9 @@ async function main() {
     meta.count = count;
     meta.discoverable = isDiscoverableMeta(meta, count, mid);
   }
-  await atomicWriteJson(META_ROUTE_MAP_PATH, metaMap);
+  if (!CONTENT_BACKUP_DIR) {
+    await atomicWriteJson(META_ROUTE_MAP_PATH, metaMap);
+  }
 
   const sitemapLastmod = {};
   for (const e of entries) {
@@ -582,30 +603,53 @@ async function main() {
   };
   const digest = sha256(JSON.stringify(normalized));
 
-  await fs.mkdir(CACHE_DIR, { recursive: true });
-  await atomicWriteJson(path.join(CACHE_DIR, 'manifest.json'), manifest);
-  await atomicWriteJson(path.join(CACHE_DIR, 'sync-digest.json'), { digest, snapshotEpoch: epoch });
-  await atomicWriteJson(path.join(CACHE_DIR, 'sync-report.json'), reports);
-  await atomicWriteJson(path.join(ROOT, 'data', 'lastmod.json'), Object.fromEntries(Object.entries(sitemapLastmod).sort()));
+  if (CONTENT_BACKUP_DIR) {
+    if (!CONTENT_BACKUP_DIR.startsWith('/') || CONTENT_BACKUP_DIR.includes('\0')) {
+      throw new Error('CONTENT_BACKUP_DIR must be an absolute path');
+    }
+    const finalPosts = path.join(CONTENT_BACKUP_DIR, 'posts');
+    const finalPages = path.join(CONTENT_BACKUP_DIR, 'pages');
+    const finalMoments = path.join(CONTENT_BACKUP_DIR, 'moments');
+    await fs.mkdir(CONTENT_BACKUP_DIR, { recursive: true });
+    await clearGenerated(finalPosts);
+    await clearGenerated(finalPages);
+    await clearGenerated(finalMoments);
+    for (const name of await fs.readdir(postsDir)) {
+      await moveFile(path.join(postsDir, name), path.join(finalPosts, name));
+    }
+    for (const name of await fs.readdir(pagesDir)) {
+      await moveFile(path.join(pagesDir, name), path.join(finalPages, name));
+    }
+    for (const name of await fs.readdir(momentsDir)) {
+      await moveFile(path.join(momentsDir, name), path.join(finalMoments, name));
+    }
+    await fs.rm(staging, { recursive: true, force: true });
+  } else {
+    await fs.mkdir(CACHE_DIR, { recursive: true });
+    await atomicWriteJson(path.join(CACHE_DIR, 'manifest.json'), manifest);
+    await atomicWriteJson(path.join(CACHE_DIR, 'sync-digest.json'), { digest, snapshotEpoch: epoch });
+    await atomicWriteJson(path.join(CACHE_DIR, 'sync-report.json'), reports);
+    await atomicWriteJson(path.join(ROOT, 'data', 'lastmod.json'), Object.fromEntries(Object.entries(sitemapLastmod).sort()));
 
-  // Replace content dirs atomically via staging swap
-  const finalPosts = path.join(ASTRO, 'src', 'content', 'posts');
-  const finalPages = path.join(ASTRO, 'src', 'content', 'pages');
-  const finalMoments = path.join(ASTRO, 'src', 'content', 'moments');
-  await fs.mkdir(path.join(ASTRO, 'src', 'content'), { recursive: true });
-  await clearGenerated(finalPosts);
-  await clearGenerated(finalPages);
-  await clearGenerated(finalMoments);
-  for (const name of await fs.readdir(postsDir)) {
-    await fs.rename(path.join(postsDir, name), path.join(finalPosts, name));
+    // Replace content dirs atomically via staging swap
+    const finalPosts = path.join(ASTRO, 'src', 'content', 'posts');
+    const finalPages = path.join(ASTRO, 'src', 'content', 'pages');
+    const finalMoments = path.join(ASTRO, 'src', 'content', 'moments');
+    await fs.mkdir(path.join(ASTRO, 'src', 'content'), { recursive: true });
+    await clearGenerated(finalPosts);
+    await clearGenerated(finalPages);
+    await clearGenerated(finalMoments);
+    for (const name of await fs.readdir(postsDir)) {
+      await moveFile(path.join(postsDir, name), path.join(finalPosts, name));
+    }
+    for (const name of await fs.readdir(pagesDir)) {
+      await moveFile(path.join(pagesDir, name), path.join(finalPages, name));
+    }
+    for (const name of await fs.readdir(momentsDir)) {
+      await moveFile(path.join(momentsDir, name), path.join(finalMoments, name));
+    }
+    await fs.rm(staging, { recursive: true, force: true });
   }
-  for (const name of await fs.readdir(pagesDir)) {
-    await fs.rename(path.join(pagesDir, name), path.join(finalPages, name));
-  }
-  for (const name of await fs.readdir(momentsDir)) {
-    await fs.rename(path.join(momentsDir, name), path.join(finalMoments, name));
-  }
-  await fs.rm(staging, { recursive: true, force: true });
 
   // Gate summary to stdout (stable)
   const sqlCids = pubs.map((p) => Number(p.cid)).sort((a, b) => a - b);

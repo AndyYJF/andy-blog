@@ -1,0 +1,20 @@
+[Unit]
+Description=Andy blog published-content backup to GitHub (andy-blog-content)
+After=network-online.target docker.service
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=root
+Group=root
+Environment=COMPOSE_DIR=/var/www/andy-blog
+Environment=CONTENT_MIRROR_DIR=/opt/andy-blog-content
+Environment=CONTENT_BACKUP_SSH_KEY=/root/.ssh/andy_blog_content_ed25519
+Environment=CONTENT_BACKUP_GIT_URL=git@github.com:AndyYJF/andy-blog-content.git
+WorkingDirectory=/var/www/andy-blog
+ExecStart=/var/www/andy-blog/host/backup-content-github.sh
+Nice=10
+TimeoutStartSec=900
+
+[Install]
+WantedBy=multi-user.target

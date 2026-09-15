@@ -1,0 +1,12 @@
+[Unit]
+Description=Daily Markdown content backup to GitHub
+After=network-online.target
+
+[Timer]
+OnCalendar=*-*-* 04:30:00
+Persistent=true
+RandomizedDelaySec=10min
+Unit=blog-content-backup.service
+
+[Install]
+WantedBy=timers.target
