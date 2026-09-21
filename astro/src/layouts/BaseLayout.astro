@@ -262,7 +262,12 @@ const ldJson = JSON.stringify(ldPayload)
       let generation = 0;
       let disposers: Dispose[] = [];
 
-      function initBackToTop(): Dispose {
+      type ScrollToTarget = (
+        target: number | string | HTMLElement,
+        options?: { immediate?: boolean; offset?: number },
+      ) => void;
+
+      function initBackToTop(scrollToTarget: ScrollToTarget): Dispose {
         const button = document.querySelector<HTMLButtonElement>("[data-to-top]");
         const sentinel = document.querySelector("[data-top-sentinel]");
         if (!button || !sentinel) return () => {};
@@ -272,10 +277,7 @@ const ldJson = JSON.stringify(ldPayload)
         });
         observer.observe(sentinel);
 
-        const onClick = () => {
-          const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
-          window.scrollTo({ top: 0, behavior: reduce ? "auto" : "smooth" });
-        };
+        const onClick = () => scrollToTarget(0);
         button.addEventListener("click", onClick);
 
         return () => {
@@ -301,7 +303,7 @@ const ldJson = JSON.stringify(ldPayload)
       }
 
       /* 桌面端页边导航：左侧章节索引脊 + 右侧阅读进度 */
-      function initEdgeNav(): Dispose {
+      function initEdgeNav(scrollToTarget: ScrollToTarget): Dispose {
         const spine = document.querySelector<HTMLElement>("[data-spine]");
         const prog = document.querySelector<HTMLElement>("[data-prog]");
         if (!spine || !prog) return () => {};
@@ -390,11 +392,12 @@ const ldJson = JSON.stringify(ldPayload)
             const tick = document.createElement("i");
             tick.className = "tick";
             a.append(text, tick);
-            a.addEventListener("click", () => {
+            a.addEventListener("click", (event) => {
+              event.preventDefault();
               // 立即反馈，避免等平滑滚动结束才高亮
               activeIdx = i;
               setActive?.(i);
-              sec.scrollIntoView({ behavior: reduce ? "auto" : "smooth" });
+              scrollToTarget(sec, { immediate: reduce });
             });
             a.addEventListener("mouseenter", () => showPreview(i, a));
             a.addEventListener("focus", () => showPreview(i, a));
@@ -558,9 +561,15 @@ const ldJson = JSON.stringify(ldPayload)
 
       async function mount() {
         const current = ++generation;
-        disposers.push(initBackToTop());
+        const { initSmoothScroll, scrollToTarget } = await import(
+          "../scripts/smooth-scroll"
+        );
+        if (current !== generation) return;
+
+        disposers.push(initSmoothScroll());
+        disposers.push(initBackToTop(scrollToTarget));
         disposers.push(initSiteMenu());
-        disposers.push(initEdgeNav());
+        disposers.push(initEdgeNav(scrollToTarget));
         disposers.push(initTimelineReveal());
         disposers.push(initGeoHide());
         disposers.push(initUptime());

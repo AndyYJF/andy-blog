@@ -48,6 +48,11 @@ html {
   background-color: var(--bg);
 }
 
+/* Lenis owns scroll animation; native smooth would double-ease */
+html.lenis {
+  scroll-behavior: auto;
+}
+
 body {
   margin: 0;
   min-width: 0;

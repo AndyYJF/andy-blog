@@ -93,6 +93,8 @@ export function initReadingProgress(
   let activeToc = -1;
   let activeRail = -1;
   let pointerY: number | null = null;
+  /** Ignore scroll-driven recompute while a TOC/rail click is settling. */
+  let lockUntil = 0;
 
   const updateRailProximity = () => {
     for (const link of railLinks) {
@@ -144,8 +146,38 @@ export function initReadingProgress(
     }
   };
 
+  const bindJump = (links: HTMLAnchorElement[], indexOf: (i: number) => number) => {
+    const cleanups: Dispose[] = [];
+    links.forEach((link, i) => {
+      const onClick = () => {
+        // Highlight the clicked section immediately; short sections would
+        // otherwise lose to the next heading under the scroll probe.
+        setActive(indexOf(i));
+        lockUntil = performance.now() + 900;
+      };
+      link.addEventListener("click", onClick);
+      cleanups.push(() => link.removeEventListener("click", onClick));
+    });
+    return () => {
+      for (const dispose of cleanups) dispose();
+    };
+  };
+
+  const unbindToc = bindJump(tocLinks, (i) => i);
+  const unbindMobile = bindJump(mobileLinks, (i) => i);
+  const unbindRail = bindJump(railLinks, (i) => {
+    // Rail is h2-only: activate the first toc heading owned by that h2.
+    const railIndex = i;
+    const tocIndex = h2IndexByToc.findIndex((owner) => owner === railIndex);
+    return tocIndex >= 0 ? tocIndex : 0;
+  });
+
   const recompute = () => {
-    const anchorLine = innerHeight * 0.25;
+    if (performance.now() < lockUntil) return;
+
+    // Just below sticky header / scroll-margin so short sections don't
+    // steal highlight from the heading you jumped to.
+    const anchorLine = Math.min(innerHeight * 0.12, 104);
     let next = 0;
     for (let i = 0; i < tocHeadings.length; i += 1) {
       if (tocHeadings[i].getBoundingClientRect().top <= anchorLine) next = i;
@@ -163,7 +195,7 @@ export function initReadingProgress(
   };
 
   const observer = new IntersectionObserver(scheduleRecompute, {
-    rootMargin: "-25% 0px -70% 0px",
+    rootMargin: "-12% 0px -80% 0px",
     threshold: [0, 1],
   });
   for (const heading of tocHeadings) observer.observe(heading);
@@ -174,6 +206,9 @@ export function initReadingProgress(
   recompute();
 
   return () => {
+    unbindToc();
+    unbindMobile();
+    unbindRail();
     mobileToc.remove();
     observer.disconnect();
     removeEventListener("scroll", scheduleRecompute);
