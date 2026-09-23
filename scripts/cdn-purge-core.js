@@ -8,6 +8,8 @@ const FIXED_PATHS = [
   '/',
   '/__release',
   '/robots.txt',
+  '/llms.txt',
+  '/llms-full.txt',
   '/rss.xml',
   '/moments/',
   '/moments/rss.xml',

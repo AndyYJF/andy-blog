@@ -56,7 +56,7 @@ test('preheat plan is canonical, query-free, and release-bound', () => {
 test('preheat plan generator accepts only objects present in Astro output', (t) => {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), 'andy-preheat-plan-'));
   t.after(() => fs.rmSync(root, { recursive: true, force: true }));
-  for (const relative of ['index.html', 'posts/example/index.html', 'robots.txt', 'rss.xml', 'sitemap-index.xml']) {
+  for (const relative of ['index.html', 'posts/example/index.html', 'robots.txt', 'llms.txt', 'llms-full.txt', 'rss.xml', 'sitemap-index.xml']) {
     const file = path.join(root, relative);
     fs.mkdirSync(path.dirname(file), { recursive: true });
     fs.writeFileSync(file, relative === 'sitemap-index.xml' ? '<sitemapindex />' : 'ok');

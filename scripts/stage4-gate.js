@@ -179,13 +179,26 @@ const rss = fs.readFileSync(path.join(DIST, 'rss.xml'), 'utf8');
 check(rss.includes('<guid isPermaLink="false">'), 'rss missing custom guid');
 check((rss.match(/<item>[\s\S]*?<description>/gu) || []).length === 10, 'RSS items must contain real descriptions');
 check(fs.existsSync(path.join(DIST, 'robots.txt')), 'robots.txt missing');
+const robots = fs.readFileSync(path.join(DIST, 'robots.txt'), 'utf8');
 check(
-  fs.readFileSync(path.join(DIST, 'robots.txt'), 'utf8').includes('Sitemap: https://www.andy-y.cn/sitemap-index.xml'),
+  robots.includes('Sitemap: https://www.andy-y.cn/sitemap-index.xml'),
   'robots.txt missing sitemap line',
 );
+check(robots.includes('https://www.andy-y.cn/llms.txt'), 'robots.txt missing llms.txt');
+check(robots.includes('https://www.andy-y.cn/llms-full.txt'), 'robots.txt missing llms-full.txt');
+const llms = fs.readFileSync(path.join(DIST, 'llms.txt'), 'utf8');
+check(llms.startsWith('# AndyYan Blog\n'), 'llms.txt missing heading');
+check(llms.includes('https://www.andy-y.cn/llms-full.txt'), 'llms.txt missing full-text link');
+check(llms.includes('https://www.andy-y.cn/posts/'), 'llms.txt missing a post URL');
+check(!llms.includes('/moments/9001/'), 'llms.txt must not list moment bodies');
+const llmsFull = fs.readFileSync(path.join(DIST, 'llms-full.txt'), 'utf8');
+check(llmsFull.startsWith('# AndyYan Blog\n'), 'llms-full.txt missing heading');
+check(llmsFull.includes('https://www.andy-y.cn/posts/'), 'llms-full.txt missing a post URL');
 const sitemapFiles = fs.readdirSync(DIST).filter((n) => /^sitemap-\d+\.xml$/.test(n));
 const sitemapXml = sitemapFiles.map((n) => fs.readFileSync(path.join(DIST, n), 'utf8')).join('\n');
 check(sitemapXml.includes('<lastmod>'), 'sitemap has no lastmod');
+check(!sitemapXml.includes('/llms.txt'), 'sitemap must not list llms.txt');
+check(!sitemapXml.includes('/llms-full.txt'), 'sitemap must not list llms-full.txt');
 check(fs.existsSync(path.join(DIST, 'sitemap-index.xml')), 'sitemap-index.xml missing');
 check(fs.existsSync(path.join(DIST, 'og-default.png')), 'og-default.png missing');
 check(fs.existsSync(path.join(DIST, 'favicon.svg')), 'favicon.svg missing');

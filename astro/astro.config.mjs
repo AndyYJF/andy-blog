@@ -137,6 +137,7 @@ export default defineConfig({
         const pathname = new URL(page).pathname;
         if (pathname === '/rss.xml') return false;
         if (pathname === '/moments/rss.xml') return false;
+        if (pathname === '/llms.txt' || pathname === '/llms-full.txt') return false;
         if (pathname === '/404.html' || pathname === '/404/') return false;
         if (sitemapExclude.has(pathname)) return false;
         return true;

@@ -7,4 +7,7 @@ Disallow: /ui
 Disallow: /ui/
 Disallow: /api/
 
+# Machine-readable site index: https://www.andy-y.cn/llms.txt
+# Full article text: https://www.andy-y.cn/llms-full.txt
+
 Sitemap: https://www.andy-y.cn/sitemap-index.xml
