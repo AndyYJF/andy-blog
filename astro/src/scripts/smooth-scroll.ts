@@ -8,12 +8,19 @@ let lenis: Lenis | null = null;
 const prefersReducedMotion = () =>
   matchMedia("(prefers-reduced-motion: reduce)").matches;
 
+/** Touch / narrow viewports keep native scroll (pre-Lenis feel). */
+const prefersNativeScroll = () =>
+  matchMedia("(pointer: coarse), (hover: none), (max-width: 768px)").matches;
+
 /** Extra offset beyond CSS scroll-margin (Lenis already applies scroll-margin). */
 export const ANCHOR_OFFSET = 0;
 
+/** Desktop programmatic / anchor duration (seconds). Keep short so it stays subtle. */
+const SCROLL_DURATION = 0.45;
+
 /**
  * Smooth scroll helper used by back-to-top / spine / TOC.
- * Falls back to native scroll when Lenis is off (reduced motion / teardown).
+ * Falls back to native scroll when Lenis is off (mobile / reduced motion / teardown).
  */
 export function scrollToTarget(
   target: number | string | HTMLElement,
@@ -23,7 +30,11 @@ export function scrollToTarget(
   const offset = options.offset ?? (typeof target === "number" ? 0 : ANCHOR_OFFSET);
 
   if (lenis) {
-    lenis.scrollTo(target, { immediate, offset, duration: immediate ? undefined : 0.7 });
+    lenis.scrollTo(target, {
+      immediate,
+      offset,
+      duration: immediate ? undefined : SCROLL_DURATION,
+    });
     return;
   }
 
@@ -59,29 +70,24 @@ function samePageHashLink(anchor: HTMLAnchorElement): string | null {
 }
 
 /**
- * Full-page inertia (Lenis) + anchor smoothing.
- * Custom hash clicks (not Lenis anchors) so we can preventDefault and avoid
- * native jump fighting the smooth scroll / progress probe.
+ * Desktop-only mild wheel inertia (Lenis).
+ * Mobile / touch / narrow screens: no Lenis, native CSS smooth + scroll-margin.
  */
 export function initSmoothScroll(): Dispose {
   lenis?.destroy();
   lenis = null;
 
-  if (prefersReducedMotion()) return () => {};
-
-  const coarse = matchMedia("(pointer: coarse)").matches;
+  if (prefersReducedMotion() || prefersNativeScroll()) return () => {};
 
   const instance = new Lenis({
     autoRaf: true,
-    // Mild inertia: higher lerp = quicker catch-up, less float.
     smoothWheel: true,
-    syncTouch: coarse,
-    syncTouchLerp: 0.12,
-    touchMultiplier: 1.1,
+    syncTouch: false,
     wheelMultiplier: 1,
-    lerp: 0.16,
-    duration: 0.7,
-    easing: (t) => 1 - Math.pow(1 - t, 3),
+    // Higher lerp = snappier follow, less floaty lag.
+    lerp: 0.22,
+    duration: SCROLL_DURATION,
+    easing: (t) => 1 - Math.pow(1 - t, 2.5),
     anchors: false,
     stopInertiaOnNavigate: true,
     respectReducedMotion: true,
@@ -107,7 +113,7 @@ export function initSmoothScroll(): Dispose {
     }
   };
 
-  // Capture so native hash jump never races Lenis / progress recompute.
+  // Capture so native hash jump never races Lenis / progress recompute (desktop only).
   document.addEventListener("click", onClick, true);
 
   return () => {
