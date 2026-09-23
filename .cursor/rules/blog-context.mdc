@@ -1,0 +1,16 @@
+---
+description: 改 andy-blog 前先读根目录 AGENTS.md，并遵守内容源与发布约束
+alwaysApply: true
+---
+
+# andy-blog
+
+动手前读仓库根目录 `AGENTS.md`。那是给模型的站点地图；`README.md` 只是简介。
+
+- 内容源是 Typecho。`astro/src/content/**/*.md` 是同步产物，正式改文去后台，不要手改 Markdown 当发布。
+- 生产写入、重建、切换 release、清 CDN 都要用户当次明确授权。
+- 文章 `og:image` 用 Typecho 字段 `thumb`。没填才用 `/og-default.png`。
+- `llms.txt` / `llms-full.txt` 只收 `allowFeed` 文章，不收闲话正文。
+- 新的固定公开 URL 要同时改 CDN purge、CDN preheat、stage4 门禁。
+- 保持 Astro 静态站。不要改去 SvelteKit、Workers-only 托管或 Giscus。
+- 不提交密钥、`.env`、`.planning/`、`comfy_diag.json`、`resume-work/`。

@@ -712,14 +712,42 @@ html[data-theme="dark"] .card-cover img {
     transform: translateY(6px);
   }
 }
+/* 拓扑卡在 DOM 里跟在最近文章后面，手机首屏才能先看到文章。
+   桌面用网格把它放回简介右侧；section 不生成盒子，子项才能和拓扑卡排进同一行。 */
 @media (min-width: 641px) {
-  .profile-hero {
-    display: grid;
+  .profile-home {
     grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
     column-gap: 2rem;
-    align-items: center;
+    row-gap: 0;
   }
-  .profile-hero .profile-links {
+  .profile-hero {
+    display: contents;
+  }
+  .hero-text {
+    grid-column: 1;
+    grid-row: 1;
+    align-self: center;
+    margin-top: clamp(1rem, 3vw, 2rem);
+  }
+  .profile-home > .home-network {
+    grid-column: 2;
+    grid-row: 1;
+    align-self: center;
+    margin-top: clamp(1rem, 3vw, 2rem);
+  }
+  .profile-home .profile-links {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 3rem;
+  }
+  .home-latest,
+  #projects {
+    grid-column: 1 / -1;
+    margin-bottom: 3rem;
+  }
+  #contact {
     grid-column: 1 / -1;
   }
 }

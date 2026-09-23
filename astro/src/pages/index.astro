@@ -42,8 +42,6 @@ const jsonLd = {
         <p class="profile-intro">{profile.intro}</p>
       </div>
 
-      <HomeNetwork />
-
       <ul class="profile-links" aria-label="快捷入口">
         <li>
           <a href="/posts/">
@@ -77,6 +75,8 @@ const jsonLd = {
         categories: post.data.categories,
       }))} />
     </section>
+
+    <HomeNetwork />
 
     <section id="projects" class="profile-section" aria-labelledby="projects-title">
       <header class="section-heading">

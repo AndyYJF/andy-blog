@@ -35,7 +35,7 @@ const strokes = [
     height: auto;
     overflow: visible;
   }
-  :global(.profile-hero[data-signature-writing] [data-topo-packets]) { opacity: 0; }
+  :global([data-profile-home][data-signature-writing] [data-topo-packets]) { opacity: 0; }
 </style>
 
 <script>
@@ -44,8 +44,8 @@ const strokes = [
   const svg = document.querySelector<SVGSVGElement>(".andy-signature");
   const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
   if (svg && !reducedMotion.matches) {
-    const hero = svg.closest<HTMLElement>(".profile-hero");
-    hero?.setAttribute("data-signature-writing", "");
+    const home = svg.closest<HTMLElement>("[data-profile-home]");
+    home?.setAttribute("data-signature-writing", "");
     let delay = 80;
     const animations = Array.from(svg.querySelectorAll<SVGPathElement>("path")).map((path) => {
       const duration = Number(path.dataset.duration);
@@ -62,7 +62,7 @@ const strokes = [
     });
     const finish = () => {
       animations.forEach((animation) => animation.cancel());
-      hero?.removeAttribute("data-signature-writing");
+      home?.removeAttribute("data-signature-writing");
       reducedMotion.removeEventListener("change", finish);
       document.removeEventListener("astro:before-swap", finish);
     };
