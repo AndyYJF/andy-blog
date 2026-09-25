@@ -12,8 +12,8 @@ const SAFE_BVID = /^BV[\w]+$/i;
 const SAFE_NETEASE_ID = /^\d{1,12}$/;
 const NETEASE_NOTE_MAX = 48;
 const NETEASE_COVER_HOST = /(^|\.)music\.(126|163)\.net$/i;
-/** @type {Map<string, Promise<string|null>>} */
-const neteaseCoverCache = new Map();
+/** @type {Map<string, Promise<{title:string,artist:string,cover:string|null}|null>>} */
+const neteaseSongCache = new Map();
 
 const sanitizeNeteaseNote = (value) => {
   const note = String(value ?? '')
@@ -22,6 +22,17 @@ const sanitizeNeteaseNote = (value) => {
   if (!note) return '';
   return note.slice(0, NETEASE_NOTE_MAX);
 };
+
+/** Accept a bare song id or a music.163.com song URL / hash link. */
+export function normalizeNeteaseId(raw) {
+  const s = String(raw ?? '').trim();
+  if (!s) return '';
+  if (SAFE_NETEASE_ID.test(s)) return s;
+  const fromQuery = /(?:[?&#]id=|\/song\/|song\?id=)(\d{1,12})/i.exec(s);
+  if (fromQuery) return fromQuery[1];
+  return '';
+}
+
 
 const iconSvg = (name) => {
   const i = icons.icons[name];
@@ -72,8 +83,8 @@ const safeNeteaseCoverUrl = (value) => {
   }
 };
 
-async function fetchNeteaseCover(id) {
-  if (neteaseCoverCache.has(id)) return neteaseCoverCache.get(id);
+async function fetchNeteaseSongMeta(id) {
+  if (neteaseSongCache.has(id)) return neteaseSongCache.get(id);
   const job = (async () => {
     try {
       const res = await fetch(`https://music.163.com/api/song/detail/?ids=[${id}]`, {
@@ -85,12 +96,24 @@ async function fetchNeteaseCover(id) {
       });
       if (!res.ok) return null;
       const data = await res.json();
-      return safeNeteaseCoverUrl(data?.songs?.[0]?.album?.picUrl);
+      const song = data?.songs?.[0];
+      if (!song) return null;
+      const title = String(song.name ?? '').trim();
+      const artists = Array.isArray(song.artists)
+        ? song.artists.map((a) => String(a?.name ?? '').trim()).filter(Boolean)
+        : [];
+      const artist = artists.join(' / ');
+      if (!title || !artist) return null;
+      return {
+        title,
+        artist,
+        cover: safeNeteaseCoverUrl(song.album?.picUrl),
+      };
     } catch {
       return null;
     }
   })();
-  neteaseCoverCache.set(id, job);
+  neteaseSongCache.set(id, job);
   return job;
 }
 
@@ -207,11 +230,12 @@ export function remarkCustomDirectives() {
     await Promise.all(
       neteaseNodes.map(async (node) => {
         const attrs = node.attributes ?? {};
-        const id = String(attrs.id ?? '').trim();
-        const title = String(attrs.title ?? '').trim();
-        const artist = String(attrs.artist ?? '').trim();
+        const id = normalizeNeteaseId(attrs.id);
         const note = sanitizeNeteaseNote(attrs.note);
-        if (!SAFE_NETEASE_ID.test(id) || !title || !artist) {
+        let title = String(attrs.title ?? '').trim();
+        let artist = String(attrs.artist ?? '').trim();
+        let cover = safeHttpUrl(attrs.cover);
+        if (!SAFE_NETEASE_ID.test(id)) {
           node.data = {
             hName: 'p',
             hProperties: { className: ['netease-card-fallback'] },
@@ -219,7 +243,23 @@ export function remarkCustomDirectives() {
           node.children = [{ type: 'text', value: '无效的网易云歌曲' }];
           return;
         }
-        const cover = safeHttpUrl(attrs.cover) || (await fetchNeteaseCover(id));
+        // Build-time fill: Typecho only needs id (+ optional note); title/artist/cover are optional overrides.
+        if (!title || !artist || !cover) {
+          const meta = await fetchNeteaseSongMeta(id);
+          if (meta) {
+            if (!title) title = meta.title;
+            if (!artist) artist = meta.artist;
+            if (!cover) cover = meta.cover;
+          }
+        }
+        if (!title || !artist) {
+          node.data = {
+            hName: 'p',
+            hProperties: { className: ['netease-card-fallback'] },
+          };
+          node.children = [{ type: 'text', value: '无效的网易云歌曲' }];
+          return;
+        }
         const classes = ['netease-card'];
         if (note) classes.push('netease-card--noted');
         node.data = {

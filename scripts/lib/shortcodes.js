@@ -73,8 +73,26 @@ export function convertShortcodes(text, cid, { strict = true } = {}) {
 
   out = out.replace(/\{netease([^}]*)\/?\}/g, (_, attrs) => {
     const a = parseAttrs(attrs);
-    hits.push({ kind: 'netease', detail: a.id || a.title || '' });
-    return `\n:::netease{id="${escapeAttr(a.id ?? '')}" title="${escapeAttr(a.title ?? '')}" artist="${escapeAttr(a.artist ?? '')}" cover="${escapeAttr(a.cover ?? '')}" note="${escapeAttr(a.note ?? '')}"}\n:::\n`;
+    // Prefer id="…"; also accept a bare numeric id: {netease 3434220196/}
+    let id = String(a.id ?? '').trim();
+    if (!id) {
+      const bare = String(attrs).match(/(?:^|\s)(\d{1,12})(?:\s|$)/);
+      if (bare) id = bare[1];
+    }
+    // Allow pasting a music.163.com song URL into id="…"
+    const fromUrl = /(?:[?&#]id=|\/song\/|song\?id=)(\d{1,12})/i.exec(id);
+    if (fromUrl) id = fromUrl[1];
+    const note = String(a.note ?? '').trim();
+    const title = String(a.title ?? '').trim();
+    const artist = String(a.artist ?? '').trim();
+    const cover = String(a.cover ?? '').trim();
+    hits.push({ kind: 'netease', detail: id || title || '' });
+    const parts = [`id="${escapeAttr(id)}"`];
+    if (title) parts.push(`title="${escapeAttr(title)}"`);
+    if (artist) parts.push(`artist="${escapeAttr(artist)}"`);
+    if (cover) parts.push(`cover="${escapeAttr(cover)}"`);
+    if (note) parts.push(`note="${escapeAttr(note)}"`);
+    return `\n:::netease{${parts.join(' ')}}\n:::\n`;
   });
 
   // Joe collapse: {collapse}{collapse-item label="…" close}…{/collapse-item}{/collapse}

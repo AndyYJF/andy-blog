@@ -153,15 +153,18 @@ function renderBilibili(attrs) {
 }
 
 function renderNetease(attrs) {
-  const id = String(attrs.id || '').trim();
-  const title = attrs.title || '';
-  const artist = attrs.artist || '';
+  const rawId = String(attrs.id || '').trim();
+  const fromUrl = /(?:[?&#]id=|\/song\/|song\?id=)(\d{1,12})/i.exec(rawId);
+  const id = fromUrl ? fromUrl[1] : rawId;
+  // Preview is sync: title/artist are optional; build will fill from NetEase when publishing.
+  const title = String(attrs.title || '').trim() || (id ? `歌曲 ${id}` : '');
+  const artist = String(attrs.artist || '').trim() || (id ? '网易云' : '');
   const cover = attrs.cover || '';
   const note = String(attrs.note || '')
     .replace(/\s+/g, ' ')
     .trim()
     .slice(0, 48);
-  if (!/^\d{1,12}$/.test(id) || !title || !artist) {
+  if (!/^\d{1,12}$/.test(id)) {
     return `<p class="netease-card-fallback">无效的网易云歌曲</p>\n`;
   }
   const songUrl = `https://music.163.com/#/song?id=${id}`;

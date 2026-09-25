@@ -30,6 +30,7 @@ test('renders cloud, collapse, bilibili, netease, and task markers', () => {
       '{collapse}{collapse-item label="展开我" close}里面的字{/collapse-item}{/collapse}',
       '{bilibili bvid="BV1xx411c7mD"/}',
       '{netease id="1932349" title="示例歌" artist="示例歌手" cover="https://p1.music.126.net/cover.jpg" note="加班夜循环"/}',
+      '{netease id="3434220196"/}',
       '{x} 已完成',
       '{ } 未完成',
     ].join('\n\n'),
@@ -42,6 +43,7 @@ test('renders cloud, collapse, bilibili, netease, and task markers', () => {
   assert.match(html, /netease-note/);
   assert.match(html, /加班夜循环/);
   assert.match(html, /示例歌/);
+  assert.match(html, /歌曲 3434220196/);
   assert.match(html, /网易云收听/);
   assert.match(html, /站内播放/);
   assert.doesNotMatch(html, /netease-eq|去网易云播放|展开官方播放器/);

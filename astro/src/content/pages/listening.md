@@ -15,8 +15,8 @@ tags: []
 sourceFormat: markdown
 ---
 
-:::netease{id="347230" title="海阔天空" artist="Beyond" cover="" note="粤语摇滚入门曲目，想起来就点开。"}
+:::netease{id="3434220196"}
 :::
 
-:::netease{id="1330348068" title="起风了" artist="买辣椒也用券" cover=""}
+:::netease{id="3412665724"}
 :::
