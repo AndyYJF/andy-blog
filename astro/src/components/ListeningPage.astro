@@ -5,7 +5,7 @@ interface Props {
 const { title } = Astro.props;
 ---
 
-<div class="listening-page" data-listening-page>
+<article class="listening-page" data-listening-page data-article>
   <header class="listening-intro">
     <p class="listening-eyebrow">LISTENING / 在听</p>
     <h1 transition:name="page-title" transition:animate="none">{title}</h1>
@@ -24,7 +24,7 @@ const { title } = Astro.props;
     <div class="listening-tracks prose" data-listening-tracks data-pagefind-body><slot /></div>
     <footer class="listening-footnote"><span>按收录顺序排列</span><span>音乐由网易云音乐提供 ↗</span></footer>
   </section>
-</div>
+</article>
 
 <script>
   let dispose: (() => void) | undefined;
