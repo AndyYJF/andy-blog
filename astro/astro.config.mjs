@@ -22,6 +22,11 @@ import { rehypeDiagramImages } from './src/plugins/rehype-diagram-images.js';
 import { rehypeDemoteH1 } from './src/plugins/rehype-demote-h1.js';
 import { rehypeFlagKatex } from './src/plugins/rehype-flag-katex.js';
 import { rehypeWrapTables } from './src/plugins/rehype-wrap-tables.js';
+import { createBeoeCache } from './src/lib/beoe-cache.js';
+
+const beoeMermaidPkg = JSON.parse(
+  readFileSync(new URL('./node_modules/@beoe/rehype-mermaid/package.json', import.meta.url), 'utf8'),
+);
 
 pluginFramesTexts.addLocale('zh-CN', {
   copyButtonTooltip: '复制',
@@ -170,6 +175,9 @@ export default defineConfig({
             fsPath: 'public/beoe',
             webPath: '/beoe',
             darkScheme: 'class',
+            cache: createBeoeCache(),
+            // Lands in Beoe salt via defaults; bust cache on plugin upgrades.
+            _cacheVersion: beoeMermaidPkg.version,
           },
         ],
         rehypeDiagramImages,

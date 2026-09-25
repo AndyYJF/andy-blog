@@ -40,19 +40,37 @@ trap cleanup_building EXIT
 
 cd "$APP_ROOT"
 
+PHASE_T0=0
+PHASE_NAME=""
 progress() { printf 'PROGRESS %s\n' "$1" >&2; }
+begin_phase() {
+  if [[ -n "$PHASE_NAME" ]]; then
+    local elapsed=$(( $(date +%s) - PHASE_T0 ))
+    printf 'PROGRESS_TIMING %s %ss\n' "$PHASE_NAME" "$elapsed" >&2
+  fi
+  PHASE_NAME="$1"
+  PHASE_T0=$(date +%s)
+  progress "$1"
+}
+end_phases() {
+  if [[ -n "$PHASE_NAME" ]]; then
+    local elapsed=$(( $(date +%s) - PHASE_T0 ))
+    printf 'PROGRESS_TIMING %s %ss\n' "$PHASE_NAME" "$elapsed" >&2
+    PHASE_NAME=""
+  fi
+}
 
 # Monorepo layout: /app is the repo root (not just astro/).
-progress tests
+begin_phase tests
 node --test scripts/cleanup-old-releases.test.js
 node --test scripts/joe-task-markers.test.js
 node --test scripts/compare-nginx-policy.test.js
 node --test scripts/rebuild-progress.test.js
 node --test scripts/copy-beoe-to-dist.test.js
-progress sync-typecho
+begin_phase sync-typecho
 node scripts/sync-typecho.js
 node scripts/build-legacy-url-map.js
-progress maps
+begin_phase maps
 node scripts/generate-nginx.js --status "$REDIRECT_STATUS"
 node scripts/generate-comment-policy.js --mode "$COMMENT_WRITE_MODE" --out .cache/comment-policy.json
 node scripts/generate-comment-policy.js --mode enabled --out .cache/comment-policy.staging.json
@@ -64,19 +82,30 @@ node scripts/finalize-manifest.js \
 # Comment migration is a one-time cutover operation. Ordinary article rebuilds
 # must never replay it against production Waline.
 
-progress astro
+begin_phase astro
 npm --prefix astro run build
 node scripts/generate-cdn-preheat-plan.js \
   --release-id "$RELEASE_ID" \
   --site-dir astro/dist \
   --out .cache/cdn-preheat-plan.json
-progress gates
-node scripts/render-gate.js
-node scripts/rss-gate.js
-node scripts/stage4-gate.js --expected-redirect "$REDIRECT_STATUS"
+begin_phase gates
+gate_fail=0
+node scripts/render-gate.js &
+gate_render_pid=$!
+node scripts/rss-gate.js &
+gate_rss_pid=$!
+node scripts/stage4-gate.js --expected-redirect "$REDIRECT_STATUS" &
+gate_stage4_pid=$!
+wait "$gate_render_pid" || gate_fail=1
+wait "$gate_rss_pid" || gate_fail=1
+wait "$gate_stage4_pid" || gate_fail=1
+if [[ "$gate_fail" -ne 0 ]]; then
+  echo "one or more gates failed" >&2
+  exit 1
+fi
 
 mkdir -p "$STAGE/site" "$STAGE/nginx" .cache/release-nginx
-progress package
+begin_phase package
 cp -a nginx/release-http.conf "$STAGE/nginx/"
 cp -a nginx/00-release-loader.conf "$STAGE/nginx/" 2>/dev/null || true
 # Candidate full nginx.conf for isolated nginx -t -c
@@ -99,6 +128,7 @@ find "$STAGE" -type f -exec chmod 0644 {} +
 (cd "$STAGE" && find . -type f ! -name checksums.sha256 -print0 | sort -z | xargs -0 sha256sum > checksums.sha256)
 chmod 0644 "$STAGE/checksums.sha256"
 mv -T "$STAGE" "$FINAL"
+end_phases
 
 # Clear pending; if dirty was set mid-build, leave it for the host to re-queue.
 rm -f "$BUILD_LOCK_DIR/pending"

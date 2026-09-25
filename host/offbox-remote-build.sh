@@ -29,9 +29,10 @@ test -f "$OFFBOX_WORK/scripts/build-release.sh"
 mkdir -p "$BUILD_LOCK_DIR" "$WWW_ROOT/releases" "$OFFBOX_ROOT/in" "$OFFBOX_ROOT/out" "$OFFBOX_ROOT/state"
 
 cd "$OFFBOX_WORK"
-# rsync --delete wipes generated mermaid SVGs; leftover Astro cache then
-# skips Playwright and finishes in ~2s with no astro/public/beoe.
-rm -rf astro/.cache astro/node_modules/.astro
+# Keep astro/.cache (img-dims.json, beoe-cache.json) across builds. Only wipe
+# Astro's internal compile cache — a stale one skips Playwright and ships
+# empty mermaid bodies when public/beoe was also missing.
+rm -rf astro/node_modules/.astro
 progress_local() {
   local phase="$1"
   shift || true
@@ -40,11 +41,29 @@ progress_local() {
     node "$js" --runtime "$BUILD_LOCK_DIR" --status running --phase "$phase" --builder offbox "$@" >/dev/null || true
   fi
 }
+PHASE_T0=0
+PHASE_NAME=""
 progress() {
   printf 'PROGRESS %s\n' "$1" >&2
   progress_local "$@"
 }
-progress deps
+begin_phase() {
+  if [[ -n "$PHASE_NAME" ]]; then
+    local elapsed=$(( $(date +%s) - PHASE_T0 ))
+    printf 'PROGRESS_TIMING %s %ss\n' "$PHASE_NAME" "$elapsed" >&2
+  fi
+  PHASE_NAME="$1"
+  PHASE_T0=$(date +%s)
+  progress "$@"
+}
+end_phases() {
+  if [[ -n "$PHASE_NAME" ]]; then
+    local elapsed=$(( $(date +%s) - PHASE_T0 ))
+    printf 'PROGRESS_TIMING %s %ss\n' "$PHASE_NAME" "$elapsed" >&2
+    PHASE_NAME=""
+  fi
+}
+begin_phase deps
 STAMP_FILE="$OFFBOX_ROOT/state/deps.sha256"
 NEW_STAMP="$(sha256sum package-lock.json astro/package.json astro/package-lock.json | sha256sum | awk '{print $1}')"
 OLD_STAMP=""
@@ -56,6 +75,10 @@ if [[ "$NEW_STAMP" != "$OLD_STAMP" ]] || [[ ! -d node_modules ]] || [[ ! -d astr
   npm --prefix astro ci --no-audit --no-fund
   printf '%s\n' "$NEW_STAMP" >"$STAMP_FILE"
 fi
+# npm ci restores pristine beoe; re-apply cache-forward patch every deps pass
+# and when node_modules already existed from a prior stamp hit.
+node "$OFFBOX_WORK/scripts/patch-beoe-cache-forward.js"
+end_phases
 
 if [[ ! -d "$PLAYWRIGHT_BROWSERS_PATH" ]]; then
   echo "PLAYWRIGHT_BROWSERS_PATH missing: $PLAYWRIGHT_BROWSERS_PATH" >&2
@@ -68,6 +91,8 @@ RELEASE_ID="$(
       printf '%s\n' "$line" >&2
       if [[ "$line" == PROGRESS\ * ]]; then
         progress_local "${line#PROGRESS }"
+      elif [[ "$line" == PROGRESS_TIMING\ * ]]; then
+        :
       else
         printf '%s\n' "$line" >>"$BUILD_LOCK_DIR/progress.log" || true
       fi
@@ -83,11 +108,12 @@ RELEASE_ID="$(printf '%s' "$RELEASE_ID" | tr -d '\r' | grep -E '^[0-9]{8}T[0-9]{
 FINAL="$WWW_ROOT/releases/$RELEASE_ID"
 test -d "$FINAL"
 test -f "$FINAL/checksums.sha256"
+begin_phase package --release-id "$RELEASE_ID"
 TAR="$OFFBOX_ROOT/out/release.tar.gz"
 rm -f "$TAR"
 tar -C "$WWW_ROOT/releases" -czf "$TAR" "$RELEASE_ID"
 printf '%s\n' "$RELEASE_ID" >"$OFFBOX_ROOT/out/release-id.txt"
 chmod 0644 "$OFFBOX_ROOT/out/release-id.txt"
 chmod 0644 "$TAR"
-progress package --release-id "$RELEASE_ID"
+end_phases
 printf '%s\n' "$RELEASE_ID" >&3
