@@ -41,18 +41,16 @@ const { title } = Astro.props;
     total.hidden = false;
     cards.forEach((card, index) => {
       card.dataset.trackNumber = String(index + 1).padStart(2, "0");
-      // Presentation-only slot: the backend can continue providing .netease-note.
+      // Only show the comment slot when the card actually has a note.
       if (!card.querySelector("[data-listening-comment]")) {
-        const comment = document.createElement("div");
-        comment.className = "listening-comment";
-        comment.dataset.listeningComment = "";
-        const note = card.querySelector<HTMLElement>(".netease-note") ?? document.createElement("p");
-        if (!note.textContent?.trim()) {
-          note.className = "listening-comment-placeholder";
-          note.textContent = "暂未填写";
+        const note = card.querySelector<HTMLElement>(".netease-note");
+        if (note?.textContent?.trim()) {
+          const comment = document.createElement("div");
+          comment.className = "listening-comment";
+          comment.dataset.listeningComment = "";
+          comment.append(note);
+          card.append(comment);
         }
-        comment.append(note);
-        card.append(comment);
       }
       const panel = panels[index];
       if (!panel) return;
@@ -98,8 +96,8 @@ const { title } = Astro.props;
   .listening-library-heading .listening-eyebrow { margin-bottom: .55rem; }
   h2 { margin: 0; font-size: 1rem; font-weight: 600; }
   .listening-count { color: var(--muted); font: .75rem/2 var(--font-mono); }
-  .listening-tracks :global(.listening-comment) { grid-column: 1 / -1; padding: .15rem 0 .15rem .8rem; margin-top: .6rem; border-left: 2px solid var(--border); min-height: 3.5rem; }
-  .listening-tracks :global(.listening-comment-placeholder) { margin: .3rem 0 0; font-size: .8rem; color: var(--muted); }
+  .listening-tracks :global(.listening-comment) { grid-column: 1 / -1; padding: .15rem 0 .15rem .8rem; margin-top: .6rem; border-left: 2px solid var(--border); }
+  .listening-tracks :global(.listening-comment .netease-note) { margin: .3rem 0; font-size: .8rem; line-height: 1.7; }
   .listening-footnote { display: flex; flex-wrap: wrap; justify-content: space-between; gap: .5rem 1rem; margin-top: 1.2rem; color: var(--muted); font-size: .66rem; }
   .listening-page [hidden], .listening-page :global([hidden]) { display: none !important; }
   .listening-tracks { max-width: none; counter-reset: listening-track; }

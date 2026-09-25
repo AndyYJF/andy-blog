@@ -21,7 +21,7 @@ Node 要求 `>= 22.12`。根目录 `package.json` 管同步、门禁、nginx、C
 - 已知 CID 的路由以 `data/route-map.json` 为准。同步脚本禁止给已有 CID 另造 `routeId`。新文章的路径来自 Typecho slug 或自定义字段 `astroPath`。
 - 页面 `trailingSlash: 'always'`。例外是无尾斜杠的端点：`/rss.xml`、`/moments/rss.xml`、`/llms.txt`、`/llms-full.txt`。这四个和 `/404` 不进 sitemap。
 - 正文里的 `#` 标题在构建期降成 `h2`。目录和阅读进度只认 `h2`。不要改回允许多个 `h1`。
-- Markdown 经 `rehype-raw` 之后必须过 `rehype-sanitize`。`:::cloud` 只允许 `http(s)` 或同源路径。`{netease}` / `:::netease` 最少只要歌曲 id（可写 `id="数字"`，或把网易云歌曲链接贴进 `id`）；`title` / `artist` / `cover` 可选，未填时构建期按 id 请求网易云补全（封面仅 `music.126.net` / `music.163.net`，失败用 SVG 唱片占位）。可选 `note` 听后感（最多 48 字，渲染为卡片级 `.netease-note`，ListeningPage 再收进听后感槽；无 note 时前端显示「暂未填写」）。外链文案为「网易云收听」，站内 iframe 收在「站内播放」。网易云 iframe 依赖 nginx CSP `frame-src` 含 `https://music.163.com`（与 bilibili 并列）。
+- Markdown 经 `rehype-raw` 之后必须过 `rehype-sanitize`。`:::cloud` 只允许 `http(s)` 或同源路径。`{netease}` / `:::netease` 最少只要歌曲 id（可写 `id="数字"`，或把网易云歌曲链接贴进 `id`）；`title` / `artist` / `cover` 可选，未填时构建期按 id 请求网易云补全（封面仅 `music.126.net` / `music.163.net`，失败用 SVG 唱片占位）。可选 `note` 听后感（最多 48 字，渲染为卡片级 `.netease-note`，ListeningPage 再收进听后感槽；无 note 时不显示听后感槽）。外链文案为「网易云收听」，站内 iframe 收在「站内播放」。网易云 iframe 依赖 nginx CSP `frame-src` 含 `https://music.163.com`（与 bilibili 并列）。
 - 文章分享图用 Typecho 自定义字段 `thumb`（环境变量 `FIELD_COVER`，默认 `thumb`）。同步写成 frontmatter `cover`，文章页把它交给 `og:image`。没填缩略图才落到 `/og-default.png`。不要另做一套按篇生成的分享卡，除非用户明确改口。
 - `llms.txt` 和 `llms-full.txt` 只收录 `allowFeed === true` 的文章。闲话只在索引里留一个入口链接，不输出闲话正文。
 - 新增固定公开 URL 时，同时改三处：`scripts/cdn-purge-core.js` 的 `FIXED_PATHS`、`scripts/generate-cdn-preheat-plan.js` 的固定预热列表、`scripts/stage4-gate.js`。sitemap 过滤在 `astro/astro.config.mjs`。
