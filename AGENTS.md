@@ -68,7 +68,7 @@ Node 要求 `>= 22.12`。根目录 `package.json` 管同步、门禁、nginx、C
 ## 访客能看到的页面
 
 - `/` 首页：简介、两张入口卡、最近 3 篇文章、项目卡。DN42 拓扑卡在桌面和简介并排；手机上跟在最近文章后面，首屏先看到文章。
-- `/posts/`、`/page/[n]/` 文章列表。`/posts/[id]/` 文章。文末已有上一篇 / 下一篇和按标签挑的相关文章。
+- `/posts/`、`/page/[n]/` 文章列表。`/posts/[id]/` 文章。文头有发布日期、预计阅读时间（400 字/分钟，至少 1 分钟）和字数；`updatedDate` 与发布日不是同一天时再显示「更新于」。文末已有上一篇 / 下一篇和按标签挑的相关文章。
 - `/moments/`、`/moments/[id]/`、`/moments/page/[n]/` 闲话。
 - `/archive/` 归档。`/archives` 与 `/archives/` 重定向到 `/archive/`。
 - `/category/[id]/`、`/tag/[id]/`。不可发现的分类不进 sitemap。
@@ -118,7 +118,9 @@ systemd：
 - 切换成功后 `ENQUEUE_CDN=1` 会把清缓存任务放进 `/var/www/andy-blog/runtime/cdn`。阿里云任务由 `blog-aliyun-cdn.service` 消费。
 - 源修订记在 `/var/www/andy-blog/.deploy-source-revision`，内容是 40 位 hex SHA。
 
-发布顺序：VPS 导出 Typecho 快照 → rsync 控制树到 off-box（排除 `.git`、`node_modules`、`dist`、密钥）→ `host/offbox-remote-build.sh` 在 lockfile 变化时 `npm ci`，再 `scripts/build-release.sh` → 拉回 `release.tar.gz` → 校验 checksum → `host/switch-release-1panel.sh` 原子切换。回滚和前进是 `host/rollback-release.sh`、`host/roll-forward-release.sh`。
+发布顺序：VPS 导出 Typecho 快照 → rsync 控制树到 off-box（排除 `.git`、`node_modules`、`dist`、密钥，并 exclude `astro/.cache` 与 `astro/public/beoe` 以便构建机保留缓存）→ `host/offbox-remote-build.sh` 在 lockfile 变化时 `npm ci`，只清 `astro/node_modules/.astro`（保留 `astro/.cache/img-dims.json` 与 `beoe-cache.json`），再 `scripts/build-release.sh` → 拉回 `release.tar.gz` → 校验 checksum → `host/switch-release-1panel.sh` 原子切换。回滚和前进是 `host/rollback-release.sh`、`host/roll-forward-release.sh`。
+
+Off-box 加速：Mermaid 经持久 Beoe Map 缓存（`astro/.cache/beoe-cache.json`）；`@beoe/rehype-code-hook-img` 上游不转发 `cache`，构建前由 `scripts/patch-beoe-cache-forward.js` 打补丁。`render-gate` / `rss-gate` / `stage4-gate` 并行。阶段耗时打 `PROGRESS_TIMING <phase> <Ns>`。不要整目录删 `astro/.cache`，否则图片尺寸与 Mermaid 缓存会冷启动。
 
 旧的 `host/blog-rebuild.sh` 和 `WWW_ROOT=/var/www/andy-y.cn` 是另一套单元，当前生产走的是 1Panel 这套。不要对着旧路径改。
 

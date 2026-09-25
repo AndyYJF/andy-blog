@@ -985,11 +985,16 @@ html[data-theme="dark"] .card-cover img {
   margin-bottom: 0.5rem;
 }
 .entry-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.2rem 0.45rem;
   margin: 0;
   font-size: 0.88rem;
   color: var(--muted);
 }
-.entry-meta time {
+.entry-meta time,
+.entry-meta-sep {
   font-variant-numeric: tabular-nums;
 }
 

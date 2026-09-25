@@ -5,6 +5,13 @@ import { getCollection, render } from "astro:content";
 import { categoryTone } from "../../lib/category-tone";
 import { loadMetaRouteMap } from "../../lib/meta-routes";
 import { adjacentPosts, relatedPosts, sortPosts } from "../../lib/posts";
+import {
+  countCharacters,
+  dayKey,
+  formatCount,
+  readingMinutes,
+  showUpdatedDate,
+} from "../../lib/reading-meta";
 
 export async function getStaticPaths() {
   const posts = sortPosts(await getCollection("posts"));
@@ -36,6 +43,10 @@ const currentTopics = new Set([
   ...post.data.categories.filter((category) => category.mid !== 1),
   ...post.data.tags,
 ].map((topic) => topic.mid));
+const characters = countCharacters(post.body ?? "");
+const minutes = readingMinutes(characters);
+const publishedDay = dayKey(post.data.pubDate);
+const updated = showUpdatedDate(post.data.pubDate, post.data.updatedDate);
 const sharedTopics = (item) => [...new Set([
   ...item.data.categories.filter((category) => category.mid !== 1),
   ...item.data.tags,
@@ -77,9 +88,17 @@ const sharedTopics = (item) => [...new Set([
         <h1>{post.data.title}</h1>
       </div>
       <p class="entry-meta">
-        <time datetime={post.data.pubDate.toISOString()}>
-          {post.data.pubDate.toISOString().slice(0, 10)}
-        </time>
+        <time datetime={post.data.pubDate.toISOString()}>{publishedDay}</time>
+        <span class="entry-meta-sep" aria-hidden="true">·</span>
+        <span>预计 {minutes} 分钟</span>
+        <span class="entry-meta-sep" aria-hidden="true">·</span>
+        <span>{formatCount(characters)} 字</span>
+        {updated && (
+          <>
+            <span class="entry-meta-sep" aria-hidden="true">·</span>
+            <time datetime={post.data.updatedDate.toISOString()}>更新于 {dayKey(post.data.updatedDate)}</time>
+          </>
+        )}
       </p>
     </header>
     <Content />

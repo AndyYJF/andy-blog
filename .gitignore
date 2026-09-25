@@ -40,6 +40,11 @@ astro/public/beoe/
 # Local tool noise
 *.log
 
+# Unrelated local work (not part of the blog)
+comfy_diag.json
+resume-work/
+term/
+
 # OS / IDE
 .DS_Store
 Thumbs.db

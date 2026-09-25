@@ -88,6 +88,7 @@ npm run lighthouse:local    # against astro/dist
 - Markdown / HTML via `rehype-raw` → **`rehype-sanitize`**; `:::cloud` allows only `http(s)` or same-origin paths
 - Body `#` headings demoted to `h2` at build time (TOC / reading progress depend on `h2`)
 - Mermaid: build-time BEOE dual-theme SVG; visitors can open lightbox
+- Post header: publish date, estimated reading time (400 Chinese characters / minute, at least 1 minute), character count; shows「更新于」when `updatedDate` is a different UTC day
 - Search: Pagefind with `--force-language zh`
 - Theme: light / dark + View Transitions; `prefers-reduced-motion` globally respected
 - Lazy load: KaTeX / Pagefind UI / Waline
@@ -96,6 +97,7 @@ npm run lighthouse:local    # against astro/dist
 
 - Trigger: Typecho AutoRebuild (admin + CSRF) → signed request → rebuild-api queue
 - Build: VPS exports Typecho snapshot → rsync control tree to off-box → Astro / Playwright build → pull `release.tar.gz` back with rsync (scp progress mirror is best-effort + timed out so it cannot stall publish)
+- Off-box speed: keep `astro/.cache/img-dims.json` and `beoe-cache.json` across builds (only wipe `astro/node_modules/.astro`); Mermaid uses a durable Beoe Map cache so unchanged fences skip Playwright; `render-gate` / `rss-gate` / `stage4-gate` run in parallel; phase logs include `PROGRESS_TIMING <phase> <Ns>`
 - Switch: full `checksums.sha256` verify → blue-green `current` / `previous`
 - Rollback / roll-forward: `host/rollback-release.sh` · `host/roll-forward-release.sh`
 - Nginx redirect mode: `npm run nginx:302` / `nginx:301` (regenerate after editing `data/legacy-url-map.json`)
@@ -153,6 +155,7 @@ npm --prefix astro run preview -- --host 127.0.0.1 --port 4321
 - Markdown / HTML 经 `rehype-raw` → **`rehype-sanitize`**；`:::cloud` 仅 `http(s)` 或同源路径
 - 正文 `#` 标题构建期降为 `h2`（目录 / 阅读进度依赖 `h2`）
 - Mermaid：构建期 BEOE 双主题 SVG，访客可点 lightbox
+- 文头：发布日期、预计阅读时间（约 400 字/分钟，至少 1 分钟）、字数；`updatedDate` 与发布日不是同一 UTC 日时再显示「更新于」
 - 搜索：Pagefind，`--force-language zh`
 - 主题：亮 / 暗 + View Transitions；`prefers-reduced-motion` 全局降级
 - 按需加载：KaTeX / Pagefind UI / Waline
@@ -161,6 +164,7 @@ npm --prefix astro run preview -- --host 127.0.0.1 --port 4321
 
 - 触发：Typecho AutoRebuild（管理员 + CSRF）→ 签名 → rebuild-api 入队
 - 构建：VPS 导出 Typecho 快照 → rsync 控制树到 off-box → Astro / Playwright → rsync 拉回 `release.tar.gz`（进度镜像推送为 best-effort，带超时，避免拖死发布）
+- Off-box 加速：跨构建保留 `astro/.cache/img-dims.json` 与 `beoe-cache.json`（只清 `astro/node_modules/.astro`）；Mermaid 用持久 Beoe Map 缓存，未改 fence 跳过 Playwright；`render-gate` / `rss-gate` / `stage4-gate` 并行；阶段日志带 `PROGRESS_TIMING <phase> <Ns>`
 - 切换：`checksums.sha256` 全量校验 → `current` / `previous` 蓝绿
 - 回滚 / 前进：`host/rollback-release.sh` · `host/roll-forward-release.sh`
 - Nginx 重定向状态：`npm run nginx:302` / `nginx:301`（改 `data/legacy-url-map.json` 后再生）
