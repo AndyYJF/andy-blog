@@ -71,6 +71,12 @@ export function convertShortcodes(text, cid, { strict = true } = {}) {
     return `\n:::bilibili{bvid="${escapeAttr(a.bvid ?? '')}"}\n:::\n`;
   });
 
+  out = out.replace(/\{netease([^}]*)\/?\}/g, (_, attrs) => {
+    const a = parseAttrs(attrs);
+    hits.push({ kind: 'netease', detail: a.id || a.title || '' });
+    return `\n:::netease{id="${escapeAttr(a.id ?? '')}" title="${escapeAttr(a.title ?? '')}" artist="${escapeAttr(a.artist ?? '')}" cover="${escapeAttr(a.cover ?? '')}" note="${escapeAttr(a.note ?? '')}"}\n:::\n`;
+  });
+
   // Joe collapse: {collapse}{collapse-item label="…" close}…{/collapse-item}{/collapse}
   out = out.replace(
     /\{collapse-item([^}]*)\}([\s\S]*?)\{\/collapse-item\}/g,
@@ -84,7 +90,7 @@ export function convertShortcodes(text, cid, { strict = true } = {}) {
   // the outer {collapse} wrapper carries no data of its own
   out = out.replace(/\{\/?collapse\}[ \t]*\n?/g, '\n');
 
-  const leftover = out.match(/\{(alert|message|cloud|bilibili|collapse|\/collapse)[^}]*\}/g) || [];
+  const leftover = out.match(/\{(alert|message|cloud|bilibili|netease|collapse|\/collapse)[^}]*\}/g) || [];
   if (strict && leftover.length) {
     throw new Error(`cid=${cid} 短代码残留: ${leftover.join(', ')}`);
   }

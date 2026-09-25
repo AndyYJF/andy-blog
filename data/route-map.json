@@ -64,6 +64,19 @@
     ],
     "state": "active"
   },
+  "112": {
+    "kind": "page",
+    "routeId": "listening",
+    "canonicalPath": "/listening/",
+    "sourceSlug": "listening",
+    "feedGuid": "https://www.andy-y.cn/index.php/listening.html",
+    "commentKey": "/listening/",
+    "legacyPaths": [
+      "/index.php/listening.html",
+      "/listening.html"
+    ],
+    "state": "active"
+  },
   "30": {
     "kind": "post",
     "routeId": "grafana-bird-status",

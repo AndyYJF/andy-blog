@@ -2,6 +2,7 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import Comments from "../components/Comments.astro";
 import AboutProfile from "../components/AboutProfile.astro";
+import ListeningPage from "../components/ListeningPage.astro";
 import { getCollection, render } from "astro:content";
 
 export async function getStaticPaths() {
@@ -22,26 +23,29 @@ const { Content, remarkPluginFrontmatter } = await render(page);
 const katex = remarkPluginFrontmatter.hasKatex === true;
 
 const isAbout = page.data.canonicalPath === "/about/";
+const isListening = page.data.canonicalPath === "/listening/";
 const description = isAbout
   ? "关于 AndyYan：网络实践、自托管项目与技术记录。"
-  : `${page.data.title} · AndyYan 的技术博客`;
+  : isListening
+    ? "AndyYan 最近在听的网易云歌曲：封面、外链与内嵌播放。"
+    : `${page.data.title} · AndyYan 的技术博客`;
 ---
 <BaseLayout
   title={`${page.data.title} · AndyYan`}
   description={description}
   canonicalPath={page.data.canonicalPath}
-  article={!isAbout}
+  article={!isAbout && !isListening}
   type="website"
   pubDate={page.data.pubDate}
   updatedDate={page.data.updatedDate}
   katex={katex}
 >
-  <article class="prose" data-article data-pagefind-body>
+  {isListening ? <ListeningPage title={page.data.title}><Content /></ListeningPage> : <article class="prose" data-article data-pagefind-body>
     <header class="entry-header">
       {isAbout && <p class="profile-kicker">ABOUT / WHO</p>}
       <h1 transition:name="page-title" transition:animate="none">{page.data.title}</h1>
     </header>
     {isAbout ? <AboutProfile /> : <Content />}
-  </article>
-  <Comments commentKey={page.data.commentKey} entryWritable={page.data.allowComment} />
+  </article>}
+  {(!isListening || page.data.allowComment) && <Comments commentKey={page.data.commentKey} entryWritable={page.data.allowComment} />}
 </BaseLayout>

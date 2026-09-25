@@ -23,12 +23,13 @@ test('renders Joe alert/message shortcodes as Astro alert boxes', () => {
   assert.doesNotMatch(html, /joe-alert|joe-message/);
 });
 
-test('renders cloud, collapse, bilibili, and task markers', () => {
+test('renders cloud, collapse, bilibili, netease, and task markers', () => {
   const html = renderAstroPreview(
     [
       '{cloud title="备份" url="https://example.com/a.zip"/}',
       '{collapse}{collapse-item label="展开我" close}里面的字{/collapse-item}{/collapse}',
       '{bilibili bvid="BV1xx411c7mD"/}',
+      '{netease id="1932349" title="示例歌" artist="示例歌手" cover="https://p1.music.126.net/cover.jpg" note="加班夜循环"/}',
       '{x} 已完成',
       '{ } 未完成',
     ].join('\n\n'),
@@ -37,6 +38,15 @@ test('renders cloud, collapse, bilibili, and task markers', () => {
   assert.match(html, /备份/);
   assert.match(html, /<details class="collapse"/);
   assert.match(html, /bili-embed/);
+  assert.match(html, /class="netease-card/);
+  assert.match(html, /netease-note/);
+  assert.match(html, /加班夜循环/);
+  assert.match(html, /示例歌/);
+  assert.match(html, /网易云收听/);
+  assert.match(html, /站内播放/);
+  assert.doesNotMatch(html, /netease-eq|去网易云播放|展开官方播放器/);
+  assert.match(html, /netease-embed-panel/);
+  assert.match(html, /music\.163\.com\/outchain\/player/);
   assert.match(html, /type="checkbox"/);
   assert.match(html, /checked/);
 });

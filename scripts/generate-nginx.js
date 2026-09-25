@@ -40,7 +40,7 @@ const parseStatus = () => {
 // Pagefind compiles WASM in-page; Chrome requires 'wasm-unsafe-eval' when 'unsafe-eval' is absent.
 // worker-src covers pagefind-worker.js (falls back to script-src otherwise, but be explicit).
 const WWW_CSP =
-  "default-src 'self'; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' https://umami.andy-y.cn; worker-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https://umami.andy-y.cn https://ipwho.is; frame-src https://player.bilibili.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'; upgrade-insecure-requests";
+  "default-src 'self'; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' https://umami.andy-y.cn; worker-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https://umami.andy-y.cn https://ipwho.is; frame-src https://player.bilibili.com https://music.163.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'; upgrade-insecure-requests";
 
 const wwwSecurityHeaders = (indent = '  ') =>
   [

@@ -252,6 +252,24 @@ check(postHtml.includes('rel="manifest" href="/site.webmanifest"'), 'webmanifest
 // Ensure JSON-LD is real JSON (set:html), not literal {title}
 check(!postHtml.includes('"{title}"'), 'json-ld not interpolated');
 
+// Soft gate: when the listening page is in the content tree, the release must ship it.
+const listeningMd = path.join(ROOT, 'astro', 'src', 'content', 'pages', 'listening.md');
+const listeningHtmlPath = path.join(DIST, 'listening', 'index.html');
+if (fs.existsSync(listeningMd)) {
+  check(fs.existsSync(listeningHtmlPath), 'listening page missing from dist');
+  if (fs.existsSync(listeningHtmlPath)) {
+    const listeningHtml = fs.readFileSync(listeningHtmlPath, 'utf8');
+    check(
+      listeningHtml.includes('rel="canonical" href="https://www.andy-y.cn/listening/"'),
+      'listening canonical mismatch',
+    );
+    check(
+      listeningHtml.includes('netease-card') || listeningHtml.includes('netease-card-fallback') || listeningHtml.includes('LISTENING'),
+      'listening page missing netease markup or kicker',
+    );
+  }
+}
+
 if (failures.length) {
   console.error('Stage 4 gates failed:');
   for (const f of failures) console.error(' -', f);

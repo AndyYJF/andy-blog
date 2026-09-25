@@ -88,6 +88,7 @@ npm run lighthouse:local    # against astro/dist
 - Markdown / HTML via `rehype-raw` → **`rehype-sanitize`**; `:::cloud` allows only `http(s)` or same-origin paths
 - Body `#` headings demoted to `h2` at build time (TOC / reading progress depend on `h2`)
 - Mermaid: build-time BEOE dual-theme SVG; visitors can open lightbox
+- Listening: `/listening/` curated NetEase Cloud songs via Typecho `{netease id title artist cover note}` shortcodes (page route must be seeded in `data/route-map.json`); homepage has a short entry; CSP `frame-src` allows `music.163.com`
 - Post header: publish date, estimated reading time (400 Chinese characters / minute, at least 1 minute), character count; shows「更新于」when `updatedDate` is a different UTC day
 - Search: Pagefind with `--force-language zh`
 - Theme: light / dark + View Transitions; `prefers-reduced-motion` globally respected
@@ -155,6 +156,7 @@ npm --prefix astro run preview -- --host 127.0.0.1 --port 4321
 - Markdown / HTML 经 `rehype-raw` → **`rehype-sanitize`**；`:::cloud` 仅 `http(s)` 或同源路径
 - 正文 `#` 标题构建期降为 `h2`（目录 / 阅读进度依赖 `h2`）
 - Mermaid：构建期 BEOE 双主题 SVG，访客可点 lightbox
+- 最近在听：`/listening/`，Typecho `{netease id title artist cover note}` 短代码维护（`data/route-map.json` 须预置该页 cid）；首页有短入口；CSP `frame-src` 含 `music.163.com`
 - 文头：发布日期、预计阅读时间（约 400 字/分钟，至少 1 分钟）、字数；`updatedDate` 与发布日不是同一 UTC 日时再显示「更新于」
 - 搜索：Pagefind，`--force-language zh`
 - 主题：亮 / 暗 + View Transitions；`prefers-reduced-motion` 全局降级

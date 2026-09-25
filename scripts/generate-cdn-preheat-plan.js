@@ -33,7 +33,7 @@ export function collectPreheatUrls(siteDir) {
   if (!fs.existsSync(sitemap) || !fs.statSync(sitemap).isFile()) throw new Error(`missing sitemap: ${sitemap}`);
   const xml = fs.readFileSync(sitemap, 'utf8');
   const discovered = [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => decodeXml(match[1].trim()));
-  const fixed = ['/robots.txt', '/llms.txt', '/llms-full.txt', '/rss.xml', '/sitemap-0.xml', '/sitemap-index.xml'].map((item) => new URL(item, CDN_PURGE_SITE).href);
+  const fixed = ['/robots.txt', '/llms.txt', '/llms-full.txt', '/rss.xml', '/listening/', '/sitemap-0.xml', '/sitemap-index.xml'].map((item) => new URL(item, CDN_PURGE_SITE).href);
   const urls = [...new Set([...discovered, ...fixed])].sort();
   for (const value of urls) {
     const url = new URL(value);

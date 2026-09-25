@@ -13,6 +13,7 @@ const FIXED_PATHS = [
   '/rss.xml',
   '/moments/',
   '/moments/rss.xml',
+  '/listening/',
   '/sitemap-0.xml',
   '/sitemap-index.xml',
   // Pagefind entry + WASM/UI must be purged with CSP/MIME changes; otherwise

@@ -44,7 +44,7 @@ for (const entry of [...manifest.entries].sort((a, b) => a.cid - b.cid)) {
     // refresh hash on write; treat as soft unless content broken
   }
   if (!review.blockers || review.blockers.length) failures.push('blockers-present');
-  if (/\{(?:message|alert|cloud|bilibili|collapse)\b/.test(html)) failures.push('shortcode-in-html');
+  if (/\{(?:message|alert|cloud|bilibili|netease|collapse)\b/.test(html)) failures.push('shortcode-in-html');
   if (/\/index\.php\/archives\//.test(html)) failures.push('legacy-archives-in-html');
   if (!html.includes('rel="canonical"') && !html.includes("rel='canonical'")) failures.push('canonical-missing');
   if (entry.kind === 'post' && !/data-pagefind-body|data-article/.test(html)) failures.push('article-marker-missing');

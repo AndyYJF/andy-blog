@@ -19,7 +19,7 @@ import { ClientRouter } from "astro:transitions";
     });
     // 顶栏导航的线性权重：目标序号更大 = 前进（新页从右滑入），反之 = 后退
     // 不在表里的路由（tag/category 等）不设置方向，回退为淡入淡出
-    const NAV_ORDER = { "": 0, posts: 1, page: 1, archive: 2, friends: 3, dn42: 4, about: 5 };
+    const NAV_ORDER = { "": 0, posts: 1, page: 1, archive: 2, friends: 3, dn42: 4, listening: 5, about: 6 };
     const segmentFor = (url) => url.pathname.split("/").filter(Boolean)[0] || "";
     let pendingDir;
     document.addEventListener("astro:before-preparation", (event) => {

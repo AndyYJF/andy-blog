@@ -1,0 +1,146 @@
+---
+interface Props {
+  title: string;
+}
+const { title } = Astro.props;
+---
+
+<div class="listening-page" data-listening-page>
+  <header class="listening-intro">
+    <p class="listening-eyebrow">LISTENING / 在听</p>
+    <h1 transition:name="page-title" transition:animate="none">{title}</h1>
+    <p class="listening-lead">愿与你共鸣~</p>
+    <div class="listening-record" aria-hidden="true">
+      <div class="record-sleeve"><span>SIDE A</span><i></i><span>声音的切片</span></div>
+      <div class="record-disc"><div class="record-label"><span>AY</span><i></i><span>33⅓ RPM</span></div></div>
+    </div>
+  </header>
+
+  <section class="listening-library" id="listening-library" aria-labelledby="listening-library-title">
+    <div class="listening-library-heading">
+      <h2 id="listening-library-title">曲目目录</h2>
+      <span class="listening-count" data-listening-total hidden></span>
+    </div>
+    <div class="listening-tracks prose" data-listening-tracks data-pagefind-body><slot /></div>
+    <footer class="listening-footnote"><span>按收录顺序排列</span><span>音乐由网易云音乐提供 ↗</span></footer>
+  </section>
+</div>
+
+<script>
+  let dispose: (() => void) | undefined;
+  function mountListening() {
+    dispose?.();
+    const root = document.querySelector<HTMLElement>("[data-listening-page]");
+    if (!root) return;
+    const cards = Array.from(root.querySelectorAll<HTMLElement>(".netease-card"));
+    const panels = cards.map(card => card.querySelector<HTMLDetailsElement>("details"));
+    const total = root.querySelector<HTMLElement>("[data-listening-total]")!;
+    const controller = new AbortController();
+    const options = { signal: controller.signal };
+    total.textContent = `${String(cards.length).padStart(2, "0")} 首`;
+    total.hidden = false;
+    cards.forEach((card, index) => {
+      card.dataset.trackNumber = String(index + 1).padStart(2, "0");
+      // Presentation-only slot: the backend can continue providing .netease-note.
+      if (!card.querySelector("[data-listening-comment]")) {
+        const comment = document.createElement("div");
+        comment.className = "listening-comment";
+        comment.dataset.listeningComment = "";
+        const note = card.querySelector<HTMLElement>(".netease-note") ?? document.createElement("p");
+        if (!note.textContent?.trim()) {
+          note.className = "listening-comment-placeholder";
+          note.textContent = "暂未填写";
+        }
+        comment.append(note);
+        card.append(comment);
+      }
+      const panel = panels[index];
+      if (!panel) return;
+      panel.addEventListener("toggle", () => {
+        if (panel.open) panels.forEach(other => { if (other && other !== panel) other.open = false; });
+        // Removing the frame stops playback when its panel is closed.
+        const frame = panel.querySelector<HTMLIFrameElement>("iframe");
+        if (!panel.open && frame) frame.replaceWith(frame.cloneNode(true));
+      }, options);
+    });
+    dispose = () => controller.abort();
+  }
+  document.addEventListener("astro:page-load", mountListening);
+  document.addEventListener("astro:before-swap", () => { dispose?.(); dispose = undefined; });
+</script>
+
+<style>
+  :global(body:has(.listening-page) .prog), :global(body:has(.listening-page) .spine) { display: none; }
+  .listening-page { padding: 1rem 0 2rem; }
+  .listening-intro { position: relative; min-width: 0; padding: 0 130px 2rem 0; margin-bottom: 1rem; }
+  .listening-eyebrow { margin: 0 0 1rem; color: var(--accent-text); font: .67rem/1.5 var(--font-mono); letter-spacing: .13em; }
+  h1 { margin: 0; font-size: 2rem; line-height: 1.3; font-weight: 650; letter-spacing: -.025em; overflow-wrap: anywhere; }
+  .listening-lead { margin: 1.3rem 0 0; color: var(--muted); font-size: .95rem; }
+  .listening-record { position: absolute; width: 110px; height: 110px; top: .5rem; right: 0; isolation: isolate; }
+  .record-sleeve { position: absolute; inset: 12px auto 12px 0; width: 64%; z-index: 2; display: flex; flex-direction: column; justify-content: space-between; padding: 1rem; background: var(--surface); border: 1px solid var(--border); box-shadow: 4px 0 12px #0000000a; }
+  .record-sleeve span { font: .63rem/1.5 var(--font-mono); letter-spacing: .1em; }
+  .record-sleeve span:last-child { color: var(--muted); }
+  .record-sleeve > i { display: block; height: 65px; background: repeating-linear-gradient(90deg, var(--accent-text) 0 2px, transparent 2px 8px); clip-path: polygon(0 40%, 8% 30%, 16% 45%, 24% 15%, 32% 30%, 40% 0, 48% 20%, 56% 35%, 64% 15%, 72% 40%, 80% 25%, 88% 35%, 100% 40%, 100% 60%, 88% 65%, 80% 75%, 72% 60%, 64% 85%, 56% 65%, 48% 80%, 40% 100%, 32% 70%, 24% 85%, 16% 55%, 8% 70%, 0 60%); }
+  .record-disc { position: absolute; width: 104px; height: 104px; top: 4px; right: 0; border-radius: 50%; background: repeating-radial-gradient(circle, #262626 0 1px, #161616 2px 4px); border: 1px solid #404040; display: grid; place-items: center; transform: rotate(18deg); }
+  .record-label { width: 84px; height: 84px; border-radius: 50%; background: var(--accent); color: #171717; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 7px; font: .55rem/1 var(--font-mono); }
+  .record-label span:first-child { font-size: 1.1rem; font-weight: 700; }
+  .record-label i { width: 7px; height: 7px; border-radius: 50%; background: #171717; }
+  .record-sleeve { padding: .5rem; }
+  .record-sleeve span { font-size: .4rem; }
+  .record-sleeve span:last-child { display: none; }
+  .record-sleeve > i { height: 30px; margin-bottom: .8rem; }
+  .record-label { width: 40px; height: 40px; gap: 3px; }
+  .record-label span:first-child { font-size: .65rem; }
+  .record-label span:last-child { display: none; }
+  .record-label i { width: 4px; height: 4px; }
+  .listening-library { min-width: 0; scroll-margin-top: 6rem; }
+  .listening-library-heading { display: flex; align-items: end; justify-content: space-between; padding-bottom: .85rem; border-bottom: 1px solid var(--border); }
+  .listening-library-heading .listening-eyebrow { margin-bottom: .55rem; }
+  h2 { margin: 0; font-size: 1rem; font-weight: 600; }
+  .listening-count { color: var(--muted); font: .75rem/2 var(--font-mono); }
+  .listening-tracks :global(.listening-comment) { grid-column: 1 / -1; padding: .15rem 0 .15rem .8rem; margin-top: .6rem; border-left: 2px solid var(--border); min-height: 3.5rem; }
+  .listening-tracks :global(.listening-comment-placeholder) { margin: .3rem 0 0; font-size: .8rem; color: var(--muted); }
+  .listening-footnote { display: flex; flex-wrap: wrap; justify-content: space-between; gap: .5rem 1rem; margin-top: 1.2rem; color: var(--muted); font-size: .66rem; }
+  .listening-page [hidden], .listening-page :global([hidden]) { display: none !important; }
+  .listening-tracks { max-width: none; counter-reset: listening-track; }
+  .listening-tracks :global(> p) { color: var(--muted); font-size: .8rem; line-height: 1.8; }
+  .listening-tracks :global(.netease-card) { position: relative; grid-template-columns: 4.5rem minmax(0, 1fr); gap: .45rem 1.15rem; margin: 0; padding: 1.6rem 0 1.6rem 2rem; border: 0; border-bottom: 1px solid var(--border); border-radius: 0; background: transparent; counter-increment: listening-track; }
+  .listening-tracks :global(.netease-card::before) { content: counter(listening-track, decimal-leading-zero); position: absolute; top: 1.8rem; left: 0; color: var(--muted); font: .68rem/1 var(--font-mono); }
+  .listening-tracks :global(.netease-card[data-track-number]::before) { content: attr(data-track-number); }
+  .listening-tracks :global(.netease-art) { grid-row: 1 / span 2; width: 4.5rem; height: 4.5rem; align-self: start; }
+  .listening-tracks :global(.netease-cover), .listening-tracks :global(.netease-cover-placeholder) { width: 100%; height: 100%; border-radius: 1px; margin: 0; }
+  .listening-tracks :global(.netease-body) { grid-row: 1; gap: .3rem; }
+  .listening-tracks :global(.netease-title) { font-size: 1.15rem; line-height: 1.5; font-weight: 600; }
+  .listening-tracks :global(.netease-artist) { font-size: .8rem; }
+  .listening-tracks :global(.netease-note) { margin: .3rem 0 !important; font-size: .8rem; line-height: 1.7; }
+  .listening-tracks :global(.netease-side) { grid-column: 2; grid-row: 2; display: flex; align-items: start; flex-wrap: wrap; gap: .5rem 1.25rem; }
+  .listening-tracks :global(.netease-listen) { align-self: auto; font-size: .73rem; line-height: 2; color: var(--accent-text) !important; }
+  .listening-tracks :global(.netease-embed-panel) { display: block; }
+  .listening-tracks :global(.netease-embed-panel > summary) { font-size: .73rem; line-height: 2; min-height: 28px; }
+  .listening-tracks :global(.netease-side:has(details[open])) { grid-column: 1 / -1; }
+  .listening-tracks :global(.netease-embed-panel[open]) { flex-basis: 100%; }
+  .listening-tracks :global(.netease-embed) { margin-top: .75rem; max-width: 100%; }
+  @media (max-width: 700px) {
+    .listening-page { display: block; padding-top: 1.5rem; padding-bottom: 2rem; }
+    .listening-intro { position: relative; padding-right: 105px; margin-bottom: 1rem; }
+    h1 { font-size: 1.8rem; }
+    .listening-intro .listening-eyebrow { font-size: .56rem; max-width: 22em; }
+    .listening-lead { margin-top: 1rem; font-size: .82rem; }
+    .listening-record { position: absolute; top: 1.5rem; right: 0; width: 95px; height: 110px; margin: 0; }
+    .record-disc { width: 94px; height: 94px; top: 6px; }
+    .record-sleeve { inset: 12px auto 12px -6px; width: 55px; padding: .4rem; }
+    .record-sleeve span { font-size: .34rem; }
+    .record-sleeve span:last-child { display: none; }
+    .record-sleeve > i { height: 28px; margin-bottom: 1rem; }
+    .record-label { width: 38px; height: 38px; gap: 3px; }
+    .record-label span:first-child { font-size: .65rem; }
+    .record-label span:last-child { display: none; }
+    .record-label i { width: 4px; height: 4px; }
+    .listening-library-heading { padding-bottom: 1rem; }
+    .listening-tracks :global(.netease-card) { padding-block: 1.4rem; padding-left: 1.5rem; column-gap: .85rem; grid-template-columns: 3.5rem minmax(0, 1fr); }
+    .listening-tracks :global(.netease-art) { width: 3.5rem; height: 3.5rem; }
+    .listening-tracks :global(.netease-title) { font-size: 1rem; }
+    .listening-tracks :global(.netease-side) { column-gap: .85rem; }
+    .listening-tracks :global(.netease-listen), .listening-tracks :global(.netease-embed-panel > summary) { padding-block: .25rem; min-height: 36px; }
+  }
+</style>

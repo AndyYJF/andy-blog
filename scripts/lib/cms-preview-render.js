@@ -152,6 +152,31 @@ function renderBilibili(attrs) {
   return `<iframe class="bili-embed" loading="lazy" allowfullscreen title="Bilibili 视频 ${escapeHtml(bvid)}" src="https://player.bilibili.com/player.html?bvid=${encodeURIComponent(bvid)}&autoplay=0"></iframe>\n`;
 }
 
+function renderNetease(attrs) {
+  const id = String(attrs.id || '').trim();
+  const title = attrs.title || '';
+  const artist = attrs.artist || '';
+  const cover = attrs.cover || '';
+  const note = String(attrs.note || '')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .slice(0, 48);
+  if (!/^\d{1,12}$/.test(id) || !title || !artist) {
+    return `<p class="netease-card-fallback">无效的网易云歌曲</p>\n`;
+  }
+  const songUrl = `https://music.163.com/#/song?id=${id}`;
+  const embedUrl = `https://music.163.com/outchain/player?type=2&id=${encodeURIComponent(id)}&auto=0&height=66`;
+  const placeholder =
+    '<svg class="netease-cover-placeholder" viewBox="0 0 96 96" width="96" height="96" aria-hidden="true"><rect width="96" height="96" rx="4" fill="currentColor"/><circle cx="48" cy="48" r="28" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="48" cy="48" r="8" fill="currentColor"/><circle cx="48" cy="48" r="2.5" fill="currentColor"/></svg>';
+  const artHtml = cover
+    ? `<div class="netease-art"><img class="netease-cover" src="${escapeHtml(cover)}" alt="" width="72" height="72" loading="lazy" decoding="async" /></div>`
+    : `<div class="netease-art" aria-hidden="true">${placeholder}</div>`;
+  const noteHtml = note ? `<p class="netease-note">${escapeHtml(note)}</p>` : '';
+  const classes = ['netease-card'];
+  if (note) classes.push('netease-card--noted');
+  return `<div class="${classes.join(' ')}">${artHtml}<div class="netease-body"><span class="netease-title">${escapeHtml(title)}</span><span class="netease-artist">${escapeHtml(artist)}</span></div><div class="netease-side"><a class="netease-listen" href="${escapeHtml(songUrl)}" rel="noopener noreferrer" target="_blank">网易云收听 <span aria-hidden="true">↗</span></a><details class="netease-embed-panel"><summary>站内播放</summary><iframe class="netease-embed" loading="lazy" title="网易云 ${escapeHtml(title)}" src="${escapeHtml(embedUrl)}"></iframe></details></div>${noteHtml}</div>\n`;
+}
+
 function replaceDirectives(text) {
   let out = text.replace(/:::alert\{([^}]*)\}\n([\s\S]*?)\n:::/g, (_, attrs, body) =>
     renderAlert(parseAttrs(attrs), renderMarkdown(body.trim())),
@@ -161,6 +186,7 @@ function replaceDirectives(text) {
   );
   out = out.replace(/:::cloud\{([^}]*)\}\n:::/g, (_, attrs) => renderCloud(parseAttrs(attrs)));
   out = out.replace(/:::bilibili\{([^}]*)\}\n:::/g, (_, attrs) => renderBilibili(parseAttrs(attrs)));
+  out = out.replace(/:::netease\{([^}]*)\}\n:::/g, (_, attrs) => renderNetease(parseAttrs(attrs)));
   return out;
 }
 
