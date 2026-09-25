@@ -1724,7 +1724,7 @@ html[data-theme="dark"] .beoe-light {
 .prose .netease-note {
   margin: 0;
 }
-/* Side actions sit under the meta row (ListeningPage may restyle the track list). */
+/* Side actions stay in column 2 so an open embed never overlaps the cover. */
 .netease-side {
   grid-column: 2;
   grid-row: 2;
@@ -1733,9 +1733,6 @@ html[data-theme="dark"] .beoe-light {
   align-items: flex-start;
   gap: 0.5rem 1.25rem;
   min-width: 0;
-}
-.netease-side:has(details[open]) {
-  grid-column: 1 / -1;
 }
 .netease-listen {
   font-size: 0.73rem;
@@ -1797,10 +1794,7 @@ html[data-theme="dark"] .beoe-light {
 .netease-embed-panel[open] > .netease-embed {
   display: block;
 }
-html[data-theme="dark"] .netease-embed {
-  filter: invert(0.92) hue-rotate(180deg);
-  opacity: 0.92;
-}
+/* Do not invert the iframe in dark mode — it also flips the NetEase cover art. */
 .netease-card-fallback {
   color: var(--muted);
 }
