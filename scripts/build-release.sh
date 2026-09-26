@@ -70,6 +70,9 @@ node --test scripts/copy-beoe-to-dist.test.js
 begin_phase sync-typecho
 node scripts/sync-typecho.js
 node scripts/build-legacy-url-map.js
+# Prerender every renderExpected English entry through the shared pipeline;
+# content-level failures are isolated as render-rejected before the full build.
+node scripts/prerender-en.js
 begin_phase maps
 node scripts/generate-nginx.js --status "$REDIRECT_STATUS"
 node scripts/generate-comment-policy.js --mode "$COMMENT_WRITE_MODE" --out .cache/comment-policy.json
@@ -83,7 +86,23 @@ node scripts/finalize-manifest.js \
 # must never replay it against production Waline.
 
 begin_phase astro
-npm --prefix astro run build
+# Bounded fallback: if the full build fails and the error pins exactly one
+# English entry, isolate it and retry once. Anything else fails the candidate.
+if ! npm --prefix astro run build > .cache/astro-build.log 2>&1; then
+  if node scripts/i18n-attribute-build-error.js .cache/astro-build.log; then
+    echo "retrying astro build after isolating one en entry"
+    if ! npm --prefix astro run build > .cache/astro-build-retry.log 2>&1; then
+      cat .cache/astro-build-retry.log >&2
+      echo "astro build failed on retry after isolation" >&2
+      exit 1
+    fi
+  else
+    cat .cache/astro-build.log >&2
+    exit 1
+  fi
+else
+  cat .cache/astro-build.log
+fi
 node scripts/generate-cdn-preheat-plan.js \
   --release-id "$RELEASE_ID" \
   --site-dir astro/dist \
