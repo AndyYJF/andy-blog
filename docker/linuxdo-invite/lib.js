@@ -1,3 +1,4 @@
+import crypto from 'node:crypto';
 import fs from 'node:fs';
 
 const INVITE_URL_RE = /^https:\/\/linux\.do\/invites\/[A-Za-z0-9_-]+$/;
@@ -24,16 +25,19 @@ export function readInviteConfig(env = process.env) {
         fileEnv[key] = value;
       }
     } catch (err) {
-      // Bind-mounted env owned by root:600 is a common misconfig with USER node.
       console.error(`linuxdo-invite: cannot read ${fromFile}: ${err?.code || err}`);
       fileEnv = {};
     }
   }
 
-  const secret = (env.TURNSTILE_SECRET_KEY || fileEnv.TURNSTILE_SECRET_KEY || '').trim();
   const inviteUrl = (env.LINUXDO_INVITE_URL || fileEnv.LINUXDO_INVITE_URL || '').trim();
   const note = (env.LINUXDO_INVITE_NOTE || fileEnv.LINUXDO_INVITE_NOTE || '').trim();
-  return { secret, inviteUrl, note };
+  const difficulty = Number(env.LINUXDO_POW_DIFFICULTY || fileEnv.LINUXDO_POW_DIFFICULTY || 4);
+  return {
+    inviteUrl,
+    note,
+    difficulty: Number.isFinite(difficulty) ? Math.min(6, Math.max(3, Math.floor(difficulty))) : 4,
+  };
 }
 
 export function claimInvite(config) {
@@ -47,20 +51,56 @@ export function claimInvite(config) {
   return body;
 }
 
-export async function verifyTurnstile({ secret, token, ip, fetchImpl = fetch }) {
-  if (process.env.LINUXDO_CLAIM_DEV === '1' && token === 'dev-ok') return true;
+export function hashPow(salt, nonce) {
+  return crypto.createHash('sha256').update(`${salt}:${nonce}`).digest('hex');
+}
 
-  const body = new URLSearchParams();
-  body.set('secret', secret);
-  body.set('response', token);
-  if (ip) body.set('remoteip', ip);
+export function meetsDifficulty(hex, difficulty) {
+  return hex.startsWith('0'.repeat(difficulty));
+}
 
-  const res = await fetchImpl('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body,
-  });
-  if (!res.ok) return false;
-  const data = await res.json();
-  return data?.success === true;
+export function verifyPow({ salt, nonce, difficulty }) {
+  const n = String(nonce ?? '');
+  if (!/^[0-9]{1,16}$/.test(n)) return false;
+  return meetsDifficulty(hashPow(salt, n), difficulty);
+}
+
+/** In-memory one-time PoW challenges (single container). */
+export function createChallengeStore({ ttlMs = 5 * 60_000, now = () => Date.now() } = {}) {
+  const map = new Map();
+
+  const prune = () => {
+    const t = now();
+    for (const [id, row] of map) {
+      if (row.expiresAt <= t) map.delete(id);
+    }
+  };
+
+  return {
+    issue(difficulty) {
+      prune();
+      const id = crypto.randomBytes(16).toString('hex');
+      const salt = crypto.randomBytes(16).toString('hex');
+      const expiresAt = now() + ttlMs;
+      map.set(id, { salt, difficulty, expiresAt, used: false });
+      return { id, salt, difficulty, expiresIn: Math.floor(ttlMs / 1000) };
+    },
+    consume(id, nonce) {
+      prune();
+      const row = map.get(id);
+      if (!row) return { ok: false, error: 'challenge_missing' };
+      if (row.used) return { ok: false, error: 'challenge_used' };
+      if (row.expiresAt <= now()) {
+        map.delete(id);
+        return { ok: false, error: 'challenge_expired' };
+      }
+      if (!verifyPow({ salt: row.salt, nonce, difficulty: row.difficulty })) {
+        return { ok: false, error: 'pow_failed' };
+      }
+      row.used = true;
+      map.delete(id);
+      return { ok: true };
+    },
+    size: () => map.size,
+  };
 }

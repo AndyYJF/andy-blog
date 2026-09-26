@@ -202,6 +202,20 @@ ${legacyAction}
     add_header Cache-Control "no-store" always;
   }
 
+  location = /linuxdo/challenge {
+    limit_req zone=linuxdo_claim burst=3 nodelay;
+    limit_req_status 429;
+    proxy_pass http://${linuxdoUpstream};
+    proxy_http_version 1.1;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_set_header Connection "";
+    proxy_read_timeout 15s;
+    add_header Cache-Control "no-store" always;
+  }
+
   location = /linuxdo/claim {
     limit_req zone=linuxdo_claim burst=3 nodelay;
     limit_req_status 429;

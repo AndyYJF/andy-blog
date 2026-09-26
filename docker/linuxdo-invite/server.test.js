@@ -1,7 +1,13 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import http from 'node:http';
-import { claimInvite, readInviteConfig, verifyTurnstile } from './lib.js';
+import {
+  claimInvite,
+  createChallengeStore,
+  hashPow,
+  meetsDifficulty,
+  readInviteConfig,
+  verifyPow,
+} from './lib.js';
 import { createServer } from './server.js';
 
 test('claimInvite accepts linux.do invite URLs only', () => {
@@ -13,61 +19,56 @@ test('claimInvite accepts linux.do invite URLs only', () => {
   assert.throws(() => claimInvite({ inviteUrl: 'https://evil.example/invites/x' }), /invalid invite url/);
 });
 
-test('readInviteConfig merges env file', () => {
+test('readInviteConfig reads invite fields and clamps difficulty', () => {
   const cfg = readInviteConfig({
-    TURNSTILE_SECRET_KEY: 'from-env',
     LINUXDO_INVITE_URL: 'https://linux.do/invites/envOnly',
+    LINUXDO_POW_DIFFICULTY: '9',
   });
-  assert.equal(cfg.secret, 'from-env');
   assert.equal(cfg.inviteUrl, 'https://linux.do/invites/envOnly');
+  assert.equal(cfg.difficulty, 6);
 });
 
-test('verifyTurnstile posts to siteverify', async () => {
-  let saw = null;
-  const ok = await verifyTurnstile({
-    secret: 'sec',
-    token: 'tok',
-    ip: '1.2.3.4',
-    fetchImpl: async (url, init) => {
-      saw = { url, body: String(init.body) };
-      return {
-        ok: true,
-        async json() {
-          return { success: true };
-        },
-      };
-    },
-  });
-  assert.equal(ok, true);
-  assert.equal(saw.url, 'https://challenges.cloudflare.com/turnstile/v0/siteverify');
-  assert.match(saw.body, /secret=sec/);
-  assert.match(saw.body, /response=tok/);
-  assert.match(saw.body, /remoteip=1\.2\.3\.4/);
+test('verifyPow checks leading zero hex difficulty', () => {
+  const salt = 'abc';
+  let nonce = 0;
+  while (!meetsDifficulty(hashPow(salt, String(nonce)), 2)) nonce += 1;
+  assert.equal(verifyPow({ salt, nonce, difficulty: 2 }), true);
+  assert.equal(verifyPow({ salt, nonce: nonce + 1, difficulty: 2 }), false);
 });
 
-test('claim endpoint requires turnstile then returns invite', async () => {
+test('challenge + claim flow', async () => {
+  const store = createChallengeStore({ ttlMs: 60_000 });
   const server = createServer({
+    challengeStore: store,
     readInviteConfig: () => ({
-      secret: 'sec',
       inviteUrl: 'https://linux.do/invites/unitTest',
       note: 'n',
+      difficulty: 2,
     }),
-    verifyTurnstile: async () => true,
   });
   await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
   const { port } = server.address();
   try {
-    const missing = await fetch(`http://127.0.0.1:${port}/linuxdo/claim`, {
+    const chRes = await fetch(`http://127.0.0.1:${port}/linuxdo/challenge`);
+    assert.equal(chRes.status, 200);
+    const ch = await chRes.json();
+    assert.equal(ch.ok, true);
+    assert.equal(ch.difficulty, 2);
+
+    let nonce = 0;
+    while (!meetsDifficulty(hashPow(ch.salt, String(nonce)), ch.difficulty)) nonce += 1;
+
+    const bad = await fetch(`http://127.0.0.1:${port}/linuxdo/claim`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: '{}',
+      body: JSON.stringify({ id: ch.id, nonce: String(nonce + 1) }),
     });
-    assert.equal(missing.status, 400);
+    assert.equal(bad.status, 403);
 
     const ok = await fetch(`http://127.0.0.1:${port}/linuxdo/claim`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ turnstileToken: 'tok' }),
+      body: JSON.stringify({ id: ch.id, nonce: String(nonce) }),
     });
     assert.equal(ok.status, 200);
     assert.deepEqual(await ok.json(), {
@@ -75,6 +76,13 @@ test('claim endpoint requires turnstile then returns invite', async () => {
       inviteUrl: 'https://linux.do/invites/unitTest',
       note: 'n',
     });
+
+    const reuse = await fetch(`http://127.0.0.1:${port}/linuxdo/claim`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: ch.id, nonce: String(nonce) }),
+    });
+    assert.equal(reuse.status, 400);
   } finally {
     await new Promise((resolve) => server.close(resolve));
   }
