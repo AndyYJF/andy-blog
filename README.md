@@ -89,7 +89,7 @@ npm run lighthouse:local    # against astro/dist
 - Body `#` headings demoted to `h2` at build time (TOC / reading progress depend on `h2`)
 - Mermaid: build-time BEOE dual-theme SVG; visitors can open lightbox
 - Listening: `/listening/` curated NetEase Cloud songs via Typecho `{netease id="…" note="…"}` (id required; title/artist/cover optional — filled at build); homepage has a short entry; CSP `frame-src` allows `music.163.com`
-- LinuxDo invite: `/linuxdo/` self-hosted PoW claim page (invite URL is not in static HTML); keep `/posts/linuxdo/` as the notes post if you want
+- LinuxDo invite: `/linuxdo/` page on the site; PoW challenge/claim API on off-box `build2.fei.cx` (invite URL is not in static HTML)
 - Post header: publish date, estimated reading time (400 Chinese characters / minute, at least 1 minute), character count; shows「更新于」when `updatedDate` is a different UTC day
 - Search: Pagefind with `--force-language zh`
 - Theme: light / dark + View Transitions; `prefers-reduced-motion` globally respected
@@ -158,7 +158,7 @@ npm --prefix astro run preview -- --host 127.0.0.1 --port 4321
 - 正文 `#` 标题构建期降为 `h2`（目录 / 阅读进度依赖 `h2`）
 - Mermaid：构建期 BEOE 双主题 SVG，访客可点 lightbox
 - 最近在听：`/listening/`，Typecho 写 `{netease id="歌曲id"/}`（可选 `note`；歌名/歌手/封面构建期补全；`data/route-map.json` 须预置该页 cid）；首页有短入口；CSP `frame-src` 含 `music.163.com`
-- LinuxDo 邀请：`/linuxdo/`，浏览器本地 PoW（「正在计算…」）通过后才向 `/linuxdo/claim` 取链接（不写进静态 HTML）；旧文 `/posts/linuxdo/` 可保留作说明并跳转
+- LinuxDo 邀请：站点 `/linuxdo/` 静态页；验证/发码在构建机 `https://build2.fei.cx/linuxdo/*`（自建 PoW，不写进静态 HTML）
 - 文头：发布日期、预计阅读时间（约 400 字/分钟，至少 1 分钟）、字数；`updatedDate` 与发布日不是同一 UTC 日时再显示「更新于」
 - 搜索：Pagefind，`--force-language zh`
 - 主题：亮 / 暗 + View Transitions；`prefers-reduced-motion` 全局降级

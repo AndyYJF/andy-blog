@@ -1,0 +1,37 @@
+# Off-box (build2) LinuxDo invite API. Browser calls https://build2.fei.cx/linuxdo/*.
+name: andy-blog-linuxdo-offbox
+
+services:
+  linuxdo-invite:
+    build:
+      context: ./docker/linuxdo-invite
+    restart: unless-stopped
+    ports:
+      - '127.0.0.1:${LINUXDO_INVITE_HOST_PORT:-8370}:8370'
+    environment:
+      TZ: Asia/Shanghai
+      HOST: 0.0.0.0
+      PORT: 8370
+      LINUXDO_INVITE_ENV_FILE: /run/linuxdo-invite.env
+      LINUXDO_CORS_ORIGINS: ${LINUXDO_CORS_ORIGINS:-https://www.andy-y.cn}
+      LINUXDO_RATE_MAX: ${LINUXDO_RATE_MAX:-20}
+      LINUXDO_RATE_WINDOW_MS: ${LINUXDO_RATE_WINDOW_MS:-60000}
+    volumes:
+      - '${LINUXDO_INVITE_ENV_FILE:?set path to host invite env file}:/run/linuxdo-invite.env:ro'
+    security_opt:
+      - no-new-privileges:true
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - "fetch('http://127.0.0.1:8370/healthz').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    logging:
+      driver: json-file
+      options:
+        max-size: 5m
+        max-file: '3'

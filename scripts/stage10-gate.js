@@ -295,10 +295,8 @@ check(wwwHttp.includes('return 302 https://www.andy-y.cn'), 'www-cutover must us
 check(wwwHttp.includes('proxy_pass http://waline:8360'), 'www-cutover must default to compose waline');
 check(wwwHttp.includes('limit_req_zone $waline_rl_key zone=waline_api'), 'www-cutover must rate-limit Waline API');
 check(wwwHttp.includes('limit_req zone=waline_api burst=20 nodelay'), 'www-cutover must apply waline_api zone on /api/');
-check(wwwHttp.includes('location = /linuxdo/challenge'), 'www-cutover must proxy linuxdo challenge API');
-check(wwwHttp.includes('location = /linuxdo/claim'), 'www-cutover must proxy linuxdo claim API');
-check(wwwHttp.includes('limit_req zone=linuxdo_claim'), 'www-cutover must rate-limit linuxdo claim');
-check(wwwHttp.includes('challenges.cloudflare.com'), 'www-cutover CSP must allow Turnstile');
+check(wwwHttp.includes('https://build2.fei.cx'), 'www-cutover CSP must allow offbox linuxdo API');
+check(!wwwHttp.includes('location = /linuxdo/claim'), 'www-cutover must not proxy linuxdo claim on site VPS');
 check(!/^  add_header X-Robots-Tag .*noindex/m.test(wwwHttp), 'www-cutover must not apply a server-wide production noindex');
 check(wwwHttp.includes('map $uri $legacy_target'), 'www-cutover missing legacy maps');
 check(wwwHttp.includes('分析fen-x'), 'www-cutover must use the decoded nginx $uri key for the encoded Chinese legacy path');
@@ -323,9 +321,8 @@ if (onePanelGen.status === 0) {
   check(adapted.includes('proxy_pass http://127.0.0.1:8360'), '1Panel www Waline upstream wrong');
   check(adapted.includes('limit_req_zone $waline_rl_key zone=waline_api'), '1Panel www must rate-limit Waline API');
   check(adapted.includes('limit_req zone=waline_api burst=20 nodelay'), '1Panel www must apply waline_api zone on /api/');
-  check(adapted.includes('location = /linuxdo/challenge'), '1Panel www must proxy linuxdo challenge');
-  check(adapted.includes('location = /linuxdo/claim'), '1Panel www must proxy linuxdo claim');
-  check(adapted.includes('proxy_pass http://127.0.0.1:8370'), '1Panel www linuxdo claim upstream wrong');
+  check(adapted.includes('https://build2.fei.cx'), '1Panel www CSP must allow offbox linuxdo API');
+  check(!adapted.includes('location = /linuxdo/claim'), '1Panel www must not proxy linuxdo claim on site VPS');
   check(adapted.includes('/www/sites/www.andy-y.cn/ssl/fullchain.pem'), '1Panel www cert path wrong');
   check(!adapted.includes('proxy_pass http://waline:8360'), '1Panel www retains Compose waline upstream');
   check(!/^  add_header X-Robots-Tag .*noindex/m.test(adapted), '1Panel www must not apply a server-wide noindex');

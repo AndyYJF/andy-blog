@@ -284,7 +284,8 @@ if (fs.existsSync(linuxdoHtmlPath)) {
     linuxdoHtml.includes('data-linuxdo-page') || linuxdoHtml.includes('LINUXDO'),
     'linuxdo page missing claim shell',
   );
-  check(linuxdoHtml.includes('/linuxdo/challenge'), 'linuxdo page must call challenge API');
+  check(linuxdoHtml.includes('https://build2.fei.cx/linuxdo/challenge'), 'linuxdo page must call offbox challenge API');
+  check(linuxdoHtml.includes('https://build2.fei.cx/linuxdo/claim'), 'linuxdo page must call offbox claim API');
   check(linuxdoHtml.includes('noindex'), 'linuxdo page should be noindex');
 }
 

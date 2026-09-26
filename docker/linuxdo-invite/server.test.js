@@ -49,8 +49,18 @@ test('challenge + claim flow', async () => {
   await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
   const { port } = server.address();
   try {
-    const chRes = await fetch(`http://127.0.0.1:${port}/linuxdo/challenge`);
+    const opt = await fetch(`http://127.0.0.1:${port}/linuxdo/challenge`, {
+      method: 'OPTIONS',
+      headers: { Origin: 'https://www.andy-y.cn' },
+    });
+    assert.equal(opt.status, 204);
+    assert.equal(opt.headers.get('access-control-allow-origin'), 'https://www.andy-y.cn');
+
+    const chRes = await fetch(`http://127.0.0.1:${port}/linuxdo/challenge`, {
+      headers: { Origin: 'https://www.andy-y.cn' },
+    });
     assert.equal(chRes.status, 200);
+    assert.equal(chRes.headers.get('access-control-allow-origin'), 'https://www.andy-y.cn');
     const ch = await chRes.json();
     assert.equal(ch.ok, true);
     assert.equal(ch.difficulty, 2);
@@ -67,7 +77,7 @@ test('challenge + claim flow', async () => {
 
     const ok = await fetch(`http://127.0.0.1:${port}/linuxdo/claim`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', Origin: 'https://www.andy-y.cn' },
       body: JSON.stringify({ id: ch.id, nonce: String(nonce) }),
     });
     assert.equal(ok.status, 200);

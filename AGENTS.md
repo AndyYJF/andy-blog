@@ -43,8 +43,8 @@ Node 要求 `>= 22.12`。根目录 `package.json` 管同步、门禁、nginx、C
 | `astro/src/content.config.ts` | 三个集合的 schema |
 | `astro/src/layouts/BaseLayout.astro` | head、OG、JSON-LD、导航、主题 |
 | `astro/src/components/ListeningPage.astro` | `/listening/` 曲目目录壳（编号、听后感槽、站内播放互斥） |
-| `astro/src/pages/linuxdo/index.astro` | `/linuxdo/` 邀请领取页（自建 PoW + `/linuxdo/challenge`/`/claim`，邀请不进静态 HTML） |
-| `docker/linuxdo-invite/` | 环回领取 API（8370），邀请 URL / PoW 难度放宿主机 env 文件 |
+| `astro/src/pages/linuxdo/index.astro` | `/linuxdo/` 邀请领取页（静态壳在站点；PoW/发码 API 在 off-box `build2.fei.cx`） |
+| `docker/linuxdo-invite/` + `compose.offbox-linuxdo.yml` | off-box 发码 API（8370 + Caddy），env 在构建机 `/etc/andy-blog/linuxdo-invite.env` |
 | `astro/src/data/profile.ts` | 首页人物与项目文案 |
 | `astro/src/lib/llms.ts` | `llms.txt` / `llms-full.txt` 的纯格式化 |
 | `scripts/sync-typecho.js` | 快照 → 内容集合。需要 10 位 `SNAPSHOT_EPOCH` |
@@ -75,7 +75,7 @@ Node 要求 `>= 22.12`。根目录 `package.json` 管同步、门禁、nginx、C
 - `/moments/`、`/moments/[id]/`、`/moments/page/[n]/` 闲话。
 - `/archive/` 归档。`/archives` 与 `/archives/` 重定向到 `/archive/`。
 - `/category/[id]/`、`/tag/[id]/`。不可发现的分类不进 sitemap。
-- `/friends/` 友链。`/listening/` 最近在听：Typecho 独立页正文只放 `{netease}` 短代码，页面壳是 `ListeningPage.astro`；`data/route-map.json` 须预置该页真实 cid（本地 fixture 可用临时 cid）。`/linuxdo/` 邀请领取：Astro 固定页 + 浏览器本地 PoW（「正在计算…」），通过后才向 `/linuxdo/claim` 取当前邀请链接；不进 sitemap，默认 noindex；旧说明文 `/posts/linuxdo/` 可保留并链过来。`/about/`、`/dn42/` 来自 pages 集合，走 `astro/src/pages/[...page].astro`。
+- `/friends/` 友链。`/listening/` 最近在听：Typecho 独立页正文只放 `{netease}` 短代码，页面壳是 `ListeningPage.astro`；`data/route-map.json` 须预置该页真实 cid（本地 fixture 可用临时 cid）。`/linuxdo/` 邀请领取：Astro 固定页在站点；验证与发码走 off-box `https://build2.fei.cx/linuxdo/{challenge,claim}`（自建 PoW）；不进 sitemap，默认 noindex；旧说明文 `/posts/linuxdo/` 可保留并链过来。`/about/`、`/dn42/` 来自 pages 集合，走 `astro/src/pages/[...page].astro`。
 - `/rss.xml`、`/moments/rss.xml`。
 - `/llms.txt` 链接目录，`/llms-full.txt` 文章全文。`robots.txt` 用注释指向这两个 URL。
 - `/og-default.png` 全站兜底分享图，由 `scripts/generate-og-default.mjs` 用 Playwright 画 1200×630。
