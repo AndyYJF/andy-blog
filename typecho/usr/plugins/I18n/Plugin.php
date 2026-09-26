@@ -133,13 +133,27 @@ class I18n_Plugin implements PluginInterface
                 && $status === 'publish'
                 && $password === '';
 
-            if ($isPublic) {
+            // Moments are stored as typecho posts but are out of translation
+            // scope (P3 decision): skip job enqueue for them.
+            $isMoment = false;
+            if ($isPublic && $type === 'post') {
+                $kindStmt = $db->query(
+                    "SELECT str_value FROM {$prefix}fields WHERE cid = {$cid} AND name = 'content_kind' LIMIT 1",
+                    Db::WRITE,
+                    Db::SELECT
+                );
+                $kindRow = $kindStmt instanceof \PDOStatement ? $kindStmt->fetch(\PDO::FETCH_ASSOC) : null;
+                $isMoment = $kindRow && trim((string) $kindRow['str_value']) === 'moment';
+            }
+
+            if ($isPublic && !$isMoment) {
                 $rows = $db->query(
                     "SELECT source_revision FROM {$prefix}i18n_source_state WHERE cid = {$cid}",
                     Db::WRITE,
                     Db::SELECT
                 );
-                $revision = (int) ($rows[0]['source_revision'] ?? 0);
+                $revRow = $rows instanceof \PDOStatement ? $rows->fetch(\PDO::FETCH_ASSOC) : null;
+                $revision = (int) ($revRow['source_revision'] ?? 0);
                 foreach (self::LOCALES as $locale) {
                     $idem = "translate:{$cid}:{$locale}:{$revision}";
                     $db->query(

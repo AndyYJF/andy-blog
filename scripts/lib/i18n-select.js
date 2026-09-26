@@ -33,10 +33,18 @@ export function selectI18nEntries(snapshot, pubs, epoch) {
   const versions = indexBy(i18n.versions, (v) => Number(v.version_id));
   const sourceState = indexBy(i18n.sourceState, (s) => Number(s.cid));
   const ledger = indexBy(i18n.ledger, (l) => `${l.cid}:${l.locale}`);
+  // Moments live in typecho_contents as type='post' but are out of translation
+  // scope (P3 decision): they have no /en/ route and would fail the render gate.
+  const momentCids = new Set(
+    (snapshot.fields || [])
+      .filter((f) => f.name === 'content_kind' && String(f.str_value || '').trim() === 'moment')
+      .map((f) => Number(f.cid)),
+  );
 
   const entries = [];
   for (const item of pubs) {
     if (item.type !== 'post' && item.type !== 'page') continue;
+    if (momentCids.has(Number(item.cid))) continue;
     const cid = Number(item.cid);
     const locale = 'en';
     const base = {
