@@ -23,7 +23,9 @@ export function readInviteConfig(env = process.env) {
         }
         fileEnv[key] = value;
       }
-    } catch {
+    } catch (err) {
+      // Bind-mounted env owned by root:600 is a common misconfig with USER node.
+      console.error(`linuxdo-invite: cannot read ${fromFile}: ${err?.code || err}`);
       fileEnv = {};
     }
   }
