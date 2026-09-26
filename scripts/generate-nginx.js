@@ -163,6 +163,31 @@ async function main() {
     buildMap('"$uri:$arg_p"', 'legacy_query_gone', queryGone, { boolean: true }),
   ].join('\n\n');
 
+  const walineRateLimitMaps = `map $http_ali_cdn_real_ip $waline_rl_ali {
+  default "";
+  "~*^([0-9a-fA-F.:]+)$" $1;
+}
+
+map $http_cf_connecting_ip $waline_rl_cf {
+  default "";
+  "~*^([0-9a-fA-F.:]+)$" $1;
+}
+
+map $http_x_forwarded_for $waline_rl_xff {
+  default "";
+  "~*^([0-9a-fA-F.:]+)" $1;
+}
+
+map "$waline_rl_ali:$waline_rl_cf:$waline_rl_xff" $waline_rl_key {
+  default $remote_addr;
+  "~*^([0-9a-fA-F.:]+):" $1;
+  "~*^:([0-9a-fA-F.:]+):" $1;
+  "~*^::([0-9a-fA-F.:]+)$" $1;
+}
+
+# Public Waline is no-store and always hits origin. ~1 req / 3s sustained.
+limit_req_zone $waline_rl_key zone=waline_api:10m rate=20r/m;`;
+
   const http80 = `server {
   listen 80;
   server_name www.andy-y.cn andy-y.cn;
@@ -215,6 +240,8 @@ ${legacyActionSnippet(status)}
   }
 
   location ^~ /api/ {
+    limit_req zone=waline_api burst=20 nodelay;
+    limit_req_status 429;
     proxy_pass http://waline:8360;
     proxy_http_version 1.1;
     proxy_set_header Host $host;
@@ -300,7 +327,7 @@ ${wwwSecurityHeaders('    ')}
   }
 }`;
 
-  const body = [header, maps, http80, apex443, www443, cms443].join('\n\n') + '\n';
+  const body = [header, maps, walineRateLimitMaps, http80, apex443, www443, cms443].join('\n\n') + '\n';
 
   const outDir = path.join(ROOT, 'nginx');
   await fs.mkdir(outDir, { recursive: true });
