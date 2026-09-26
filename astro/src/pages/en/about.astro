@@ -1,0 +1,22 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Comments from "../../components/Comments.astro";
+import AboutProfile from "../../components/AboutProfile.astro";
+---
+<BaseLayout
+  title="About · AndyYan"
+  description="About AndyYan: networking experiments, self-hosted projects and technical records."
+  canonicalPath="/en/about/"
+  lang="en"
+  noindex={true}
+  type="website"
+>
+  <article class="prose" data-article>
+    <header class="entry-header">
+      <p class="profile-kicker">ABOUT / WHO</p>
+      <h1>About</h1>
+    </header>
+    <AboutProfile lang="en" />
+  </article>
+  <Comments commentKey="/about/" entryWritable={true} />
+</BaseLayout>

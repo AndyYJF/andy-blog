@@ -4,7 +4,11 @@ import { getCollection, render } from "astro:content";
 
 export async function getStaticPaths() {
   const pages = await getCollection("enPages");
-  return pages.map((page) => {
+  return pages
+    // /en/about/ is a hardcoded static page (src/pages/en/about.astro),
+    // mirroring how zh /about/ renders AboutProfile instead of CMS content.
+    .filter((page) => page.data.canonicalPath !== "/en/about/")
+    .map((page) => {
     // canonicalPath is /en/<segments>/ — drop the leading "en" for the route.
     const segments = page.data.canonicalPath
       .replace(/^\/en\/?|\/$/g, "")
@@ -13,7 +17,7 @@ export async function getStaticPaths() {
       params: { page: segments.join("/") || undefined },
       props: { page },
     };
-  });
+    });
 }
 
 const { page } = Astro.props;

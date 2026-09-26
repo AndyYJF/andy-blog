@@ -1,42 +1,77 @@
 ---
 import { profile } from '../data/profile';
+
+interface Props {
+  lang?: 'zh' | 'en';
+}
+const { lang = 'zh' } = Astro.props;
+const en = lang === 'en';
+
+const copy = {
+  lead: en
+    ? 'An ordinary undergraduate studying Artificial Intelligence at [Sichuan University](https://www.scu.edu.cn/) (class of 2025).'
+    : '一个普通的[四川大学](https://www.scu.edu.cn/)人工智能专业在读生（2025 级）。',
+  intro: en
+    ? 'I\u2019m an ESFP who enjoys tinkering with AI, computer networks, VPSes and other little things \u2014 turning \u201cwill this even run?\u201d into \u201chuh, it actually runs.\u201d I don\u2019t know much, and even that only shallowly (just kidding).'
+    : '本人是ESFP，平时喜欢折腾AI、计算机网络、VPS等小东西，享受把「这玩意儿能跑吗」折腾成「居然真跑起来了」的过程。虽然会的不多，但是学的也很浅（雾',
+  blog: en
+    ? 'This blog is my technical ledger: network experiments, self-hosted services and postmortems, all written up as reproducible records. Hope to meet more friends~'
+    : '这个博客是我的技术账本，网络实验、自托管服务和故障复盘都会整理成可以复现的记录。希望交到更多朋友~',
+  elsewhere: en ? 'Elsewhere' : '在别处',
+  timeline: en ? 'Timeline' : '时间线',
+  setup: en ? 'Setup' : '装备清单',
+  thisSite: en ? 'This site' : '这个站点',
+  timelineItems: en
+    ? [
+        ['2025-06-13', 'Site launched, powered by Typecho'],
+        ['2026-01-23', 'First post published (an OMV troubleshooting log)'],
+        ['2026-02-19', 'Started documenting DN42 experiments'],
+        ['2026-08-17', 'Migrated the whole site to static Astro; Typecho now only serves as the CMS'],
+      ]
+    : [
+        ['2025-06-13', '建站，由 Typecho 驱动'],
+        ['2026-01-23', '发布第一篇文章（OMV 排障记录）'],
+        ['2026-02-19', '开始记录 DN42 实践'],
+        ['2026-08-17', '全站迁移到 Astro 静态化，Typecho 退居幕后做 CMS'],
+      ],
+  setupItems: en
+    ? [
+        ['Portal', 'Korami', 'korami.andy-y.cn', 'https://korami.andy-y.cn/', 'Service navigation and status page'],
+        ['Lab network', 'DN42 four nodes', 'AS4242422921', '/dn42/', 'LAX / FRA / HKG / TYO full-mesh iBGP'],
+        ['Servers', 'VPS cluster', '', '', '1Panel + OpenResty, everything containerized'],
+        ['Storage', 'OMV NAS', '', '', 'Backups and media library'],
+      ]
+    : [
+        ['门户', 'Korami', 'korami.andy-y.cn', 'https://korami.andy-y.cn/', '服务导航与状态页'],
+        ['实验网络', 'DN42 四节点', 'AS4242422921', '/dn42/', 'LAX / FRA / HKG / TYO full-mesh iBGP'],
+        ['服务器', 'VPS 集群', '', '', '1Panel + OpenResty，服务全容器化'],
+        ['存储', 'OMV NAS', '', '', '承担备份与媒体库'],
+      ],
+  siteP1: en
+    ? 'Pages are statically generated with Astro. Posts still come from Typecho as the content source, and Pagefind provides on-demand on-site search.'
+    : '页面由 Astro 静态生成，文章仍以 Typecho 为内容来源，并通过 Pagefind 提供按需加载的站内搜索。',
+  siteP2: en
+    ? 'This site uses Umami for analytics: it writes no cookies and collects no personally identifiable information. All data is anonymized aggregates, used only to understand page traffic.'
+    : '本站使用 Umami 进行访问统计：它不写入 Cookie、不收集任何可识别个人身份的信息，所有数据均为匿名聚合，仅用于了解页面的访问情况。',
+};
+
+// The lead paragraph carries an inline link; render it as HTML built from the copy string.
+const leadHtml = copy.lead.replace(
+  /\[(.+?)\]\((https?:\/\/.+?)\)/g,
+  '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>',
+);
 ---
 <div class="about-profile">
-  <p class="about-lead">
-    一个普通的<a href="https://www.scu.edu.cn/" target="_blank" rel="noopener noreferrer">四川大学</a>人工智能专业在读生（2025 级）。
-  </p>
-  <p>
-    本人是ESFP，平时喜欢折腾AI、计算机网络、VPS等小东西，享受把「这玩意儿能跑吗」折腾成「居然真跑起来了」的过程。虽然会的不多，但是学的也很浅（雾
-  </p>
-  <p>
-    这个博客是我的技术账本，网络实验、自托管服务和故障复盘都会整理成可以复现的记录。希望交到更多朋友~
-  </p>
+  <p class="about-lead" set:html={leadHtml} />
+  <p>{copy.intro}</p>
+  <p>{copy.blog}</p>
 
   <section class="about-section" aria-labelledby="about-elsewhere-title">
     <header class="about-section-heading">
       <p class="profile-kicker">ELSEWHERE</p>
-      <h2 id="about-elsewhere-title">在别处</h2>
+      <h2 id="about-elsewhere-title">{copy.elsewhere}</h2>
     </header>
     <ul class="about-social">
-      <li>
-        <a href="https://github.com/AndyYJF" target="_blank" rel="noopener noreferrer">
-          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-            <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12" />
-          </svg>
-          <span class="s-label">GitHub</span>
-          <span class="s-handle">@AndyYJF</span>
-        </a>
-      </li>
-      <li data-geo-hide="CN">
-        <a href="https://t.me/AndyYJF" target="_blank" rel="noopener noreferrer">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M22 2 11 13"></path>
-            <path d="M22 2 15 22l-4-9-9-4 20-7z"></path>
-          </svg>
-          <span class="s-label">Telegram</span>
-          <span class="s-handle">@AndyYJF</span>
-        </a>
-      </li>
       <li>
         <a class="s-wide" href={`mailto:${profile.email}`}>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -66,73 +101,45 @@ import { profile } from '../data/profile';
   <section class="about-section" aria-labelledby="about-timeline-title">
     <header class="about-section-heading">
       <p class="profile-kicker">TIMELINE</p>
-      <h2 id="about-timeline-title">时间线</h2>
+      <h2 id="about-timeline-title">{copy.timeline}</h2>
     </header>
     <ol class="about-timeline">
-      <li>
-        <time>2025-06-13</time>
-        <span>建站，由 Typecho 驱动</span>
-      </li>
-      <li>
-        <time>2026-01-23</time>
-        <span>发布第一篇文章（OMV 排障记录）</span>
-      </li>
-      <li>
-        <time>2026-02-19</time>
-        <span>开始记录 DN42 实践</span>
-      </li>
-      <li>
-        <time>2026-08-17</time>
-        <span>全站迁移到 Astro 静态化，Typecho 退居幕后做 CMS</span>
-      </li>
+      {copy.timelineItems.map(([date, text]) => (
+        <li>
+          <time>{date}</time>
+          <span>{text}</span>
+        </li>
+      ))}
     </ol>
   </section>
 
   <section class="about-section" aria-labelledby="about-setup-title">
     <header class="about-section-heading">
       <p class="profile-kicker">SETUP</p>
-      <h2 id="about-setup-title">装备清单</h2>
+      <h2 id="about-setup-title">{copy.setup}</h2>
     </header>
     <ul class="about-setup">
-      <li>
-        <span class="k">门户</span>
-        <strong>Korami</strong>
-        <small>
-          <a href="https://korami.andy-y.cn/" target="_blank" rel="noopener noreferrer">korami.andy-y.cn</a>
-           · 服务导航与状态页
-        </small>
-      </li>
-      <li>
-        <span class="k">实验网络</span>
-        <strong>DN42 四节点</strong>
-        <small>
-          <a href="/dn42/">AS4242422921</a>
-           · LAX / FRA / HKG / TYO full-mesh iBGP
-        </small>
-      </li>
-      <li>
-        <span class="k">服务器</span>
-        <strong>VPS 集群</strong>
-        <small>1Panel + OpenResty，服务全容器化</small>
-      </li>
-      <li>
-        <span class="k">存储</span>
-        <strong>OMV NAS</strong>
-        <small>承担备份与媒体库</small>
-      </li>
+      {copy.setupItems.map(([k, name, linkText, linkHref, desc]) => (
+        <li>
+          <span class="k">{k}</span>
+          <strong>{name}</strong>
+          <small>
+            {linkHref && (
+              <a href={linkHref} target={linkHref.startsWith('http') ? '_blank' : undefined} rel={linkHref.startsWith('http') ? 'noopener noreferrer' : undefined}>{linkText}</a>
+            )}
+            {linkHref && ' · '}{desc}
+          </small>
+        </li>
+      ))}
     </ul>
   </section>
 
   <section class="about-section" aria-labelledby="about-site-title">
     <header class="about-section-heading">
       <p class="profile-kicker">THIS SITE</p>
-      <h2 id="about-site-title">这个站点</h2>
+      <h2 id="about-site-title">{copy.thisSite}</h2>
     </header>
-    <p>
-      页面由 Astro 静态生成，文章仍以 Typecho 为内容来源，并通过 Pagefind 提供按需加载的站内搜索。
-    </p>
-    <p class="muted">
-      本站使用 Umami 进行访问统计：它不写入 Cookie、不收集任何可识别个人身份的信息，所有数据均为匿名聚合，仅用于了解页面的访问情况。
-    </p>
+    <p>{copy.siteP1}</p>
+    <p class="muted">{copy.siteP2}</p>
   </section>
 </div>
