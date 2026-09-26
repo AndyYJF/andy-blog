@@ -57,13 +57,18 @@ export const collections = {
     loader: glob({ base: './src/content/en-posts', pattern: '**/*.md' }),
     schema: commonSchema.extend({
       kind: z.literal('post'),
-      description: z.string().min(24).max(180),
+      // English summaries run longer than the zh 180-char convention.
+      description: z.string().min(24).max(480),
       ...i18nExtension,
     }),
   }),
   enPages: defineCollection({
     loader: glob({ base: './src/content/en-pages', pattern: '**/*.md' }),
-    schema: commonSchema.extend({ kind: z.literal('page'), ...i18nExtension }),
+    schema: commonSchema.extend({
+      kind: z.literal('page'),
+      description: z.string().min(24).max(480).optional(),
+      ...i18nExtension,
+    }),
   }),
   pages: defineCollection({
     loader: glob({ base: './src/content/pages', pattern: '**/*.md' }),

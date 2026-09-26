@@ -120,7 +120,11 @@ export function buildI18nMarkdown(entry, zhItem, route, rels, cover) {
   };
   if (zhItem.type === 'post') {
     const summary = String(version.summary || '').trim();
-    fm.description = summary.length >= 24 ? summary : deriveDescription(body);
+    let description = summary.length >= 24 ? summary : deriveDescription(body);
+    // enPosts schema caps description at 480 chars; clamp so one over-long
+    // summary can never fail the whole astro build again.
+    if (description.length > 470) description = `${description.slice(0, 470).trimEnd()}…`;
+    fm.description = description;
   }
   if (cover) fm.cover = cover;
   return { frontmatter: fm, body };
