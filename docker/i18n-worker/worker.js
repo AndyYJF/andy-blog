@@ -35,6 +35,9 @@ for (const key of required) {
 const PREFIX = env('DB_PREFIX', 'typecho_');
 const INSTANCE = env('WORKER_INSTANCE_ID', `worker-${process.pid}-${crypto.randomBytes(3).toString('hex')}`);
 const POLL_MS = Number(env('WORKER_POLL_MS', '15000'));
+// Bodies above this fail fast instead of burning tokens on truncated output.
+// kimi-k2 max output is ~8K tokens; 60K chars of Chinese is already ~2x that.
+const MAX_TRANSLATE_CHARS = Number(env('MAX_TRANSLATE_CHARS', '60000'));
 const COMPENSATE_EVERY = 40; // ~10min at 15s poll
 const REBUILD_ENDPOINT = env('REBUILD_ENDPOINT', 'http://rebuild-api:9000/hooks/rebuild');
 const GLOSSARY_FILE = env('GLOSSARY_FILE', path.join(REPO_ROOT, 'data', 'i18n-glossary.json'));
@@ -84,6 +87,9 @@ async function processJob(db, glossary, kimi) {
       return true;
     }
     const text = String(source.text).replace(/^<!--markdown-->\s*/i, '');
+    if (text.length > MAX_TRANSLATE_CHARS) {
+      throw new Error(`body too long to translate safely: ${text.length} > ${MAX_TRANSLATE_CHARS} chars; split or handle manually`);
+    }
     const draft = await translateWithKimi({
       baseUrl: kimi.baseUrl, apiKey: kimi.apiKey, model: kimi.model,
       glossaryText: glossary.text, title: String(source.title), body: text,

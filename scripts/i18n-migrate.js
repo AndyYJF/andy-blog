@@ -68,7 +68,7 @@ const MIGRATIONS = [
         lease_owner VARCHAR(64) NULL,
         lease_until INT UNSIGNED NULL,
         attempts INT UNSIGNED NOT NULL DEFAULT 0,
-        max_attempts INT UNSIGNED NOT NULL DEFAULT 5,
+        max_attempts INT UNSIGNED NOT NULL DEFAULT 50,
         next_run_at INT UNSIGNED NOT NULL,
         last_error VARCHAR(500) NULL,
         created_at INT UNSIGNED NOT NULL,
