@@ -101,12 +101,29 @@ export function collectPagefindPaths({
   return [...paths].sort();
 }
 
+/**
+ * /en/ URLs: static routes plus every render-expected translated entry from
+ * the i18n selection written by sync-typecho.js (astro/.cache). Missing
+ * selection file means a pre-i18n environment — return just the statics.
+ */
+export function collectEnPaths({ root = ROOT } = {}) {
+  const paths = new Set(['/en/', '/en/posts/', '/en/archive/', '/en/friends/', '/en/about/']);
+  const selectionPath = path.join(root, 'astro', '.cache', 'i18n-selection.json');
+  if (fs.existsSync(selectionPath)) {
+    const selection = JSON.parse(fs.readFileSync(selectionPath, 'utf8'));
+    for (const entry of selection.entries || []) {
+      if (entry?.renderExpected && entry.canonicalPath) paths.add(entry.canonicalPath);
+    }
+  }
+  return [...paths].sort();
+}
+
 const isMain = process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url);
 if (isMain) {
   const releaseId = valueFor('--release-id');
   const out = path.resolve(ROOT, valueFor('--out'));
   const legacy = JSON.parse(fs.readFileSync(path.join(ROOT, 'data/legacy-url-map.json'), 'utf8'));
-  const extraPaths = [...new Set([...collectMomentPaths(), ...collectPagefindPaths()])].sort();
+  const extraPaths = [...new Set([...collectMomentPaths(), ...collectPagefindPaths(), ...collectEnPaths()])].sort();
   const plan = createPurgePlan({ releaseId, legacy, extraPaths });
   fs.mkdirSync(path.dirname(out), { recursive: true });
   fs.writeFileSync(out, `${JSON.stringify(plan, null, 2)}\n`, { mode: 0o644 });
