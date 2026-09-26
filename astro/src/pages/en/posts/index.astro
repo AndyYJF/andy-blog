@@ -1,30 +1,28 @@
 ---
 import BaseLayout from "../../../layouts/BaseLayout.astro";
+import PostList from "../../../components/PostList.astro";
 import { getCollection } from "astro:content";
-import { dayKey } from "../../../lib/reading-meta";
+import { sortPosts } from "../../../lib/posts";
+import { ui } from "../../../i18n/ui";
 
-const posts = (await getCollection("enPosts")).sort(
-  (a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime(),
-);
+const t = ui("en");
+const posts = sortPosts(await getCollection("enPosts"));
 ---
 <BaseLayout
-  title="English posts · AndyYan"
-  description="All English translations of AndyYan's blog posts."
+  title="Posts · AndyYan"
+  description="AndyYan's technical posts, deployment logs and postmortems — English translations"
   canonicalPath="/en/posts/"
   lang="en"
-  noindex
+  noindex={true}
 >
-  <article class="prose" data-article>
-    <h1>English posts</h1>
-    <ul>
-      {posts.map((post) => (
-        <li>
-          <a href={post.data.canonicalPath}>{post.data.title}</a>
-          {" "}
-          <time datetime={post.data.pubDate.toISOString()}>{dayKey(post.data.pubDate)}</time>
-          {post.data.translationStatus === "outdated" && <span> (older revision)</span>}
-        </li>
-      ))}
-    </ul>
-  </article>
+  <h1 transition:name="page-title" transition:animate="none">Posts</h1>
+  <p class="muted">Technical notes, deployment walkthroughs and postmortems, translated from Chinese</p>
+  <PostList posts={posts.map((post) => ({
+    title: post.data.title,
+    canonicalPath: post.data.canonicalPath,
+    pubDate: post.data.pubDate,
+    description: post.data.description,
+    cover: post.data.cover,
+    categories: post.data.categories,
+  }))} emptyText={t.emptyPosts} />
 </BaseLayout>

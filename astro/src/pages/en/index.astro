@@ -1,42 +1,96 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import PostList from "../../components/PostList.astro";
+import AndySignature from "../../components/AndySignature.astro";
 import { getCollection } from "astro:content";
-import { dayKey } from "../../lib/reading-meta";
+import { sortPosts } from "../../lib/posts";
+import { profileEn } from "../../data/profile";
 
-const posts = (await getCollection("enPosts")).sort(
-  (a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime(),
-);
-const pages = await getCollection("enPages");
+const all = await getCollection("enPosts");
+const latestPosts = sortPosts(all).slice(0, 3);
+const description = "AndyYan's home page: networking experiments, self-hosted projects and technical writing.";
 ---
 <BaseLayout
-  title="English · AndyYan"
-  description="English translations of AndyYan's blog articles."
+  title="AndyYan · Networking & Self-hosting"
+  description={description}
   canonicalPath="/en/"
   lang="en"
-  noindex
+  noindex={true}
 >
-  <article class="prose" data-article>
-    <h1>English articles</h1>
-    <ul>
-      {posts.map((post) => (
+  <div class="profile-home" data-profile-home>
+    <section id="intro" class="profile-hero" aria-labelledby="profile-title">
+      <div class="hero-text">
+        <p class="profile-kicker">{profileEn.eyebrow}</p>
+        <h1 id="profile-title" transition:name="page-title" transition:animate="none"><AndySignature /></h1>
+        <p class="profile-role">{profileEn.role}</p>
+        <p class="profile-intro">{profileEn.intro}</p>
+      </div>
+
+      <ul class="profile-links" aria-label="Quick links">
         <li>
-          <a href={post.data.canonicalPath}>{post.data.title}</a>
-          {" "}
-          <time datetime={post.data.pubDate.toISOString()}>{dayKey(post.data.pubDate)}</time>
-          {post.data.translationStatus === "outdated" && <span> (older revision)</span>}
+          <a href="/en/posts/">
+            <span>Read posts</span>
+            <small>{all.length} translated records</small>
+          </a>
         </li>
-      ))}
-    </ul>
-    {pages.length > 0 && (
-      <>
-        <h2>Pages</h2>
-        <ul>
-          {pages.map((page) => (
-            <li><a href={page.data.canonicalPath}>{page.data.title}</a></li>
-          ))}
-        </ul>
-      </>
-    )}
-    <p><a href="/en/posts/">All English posts →</a></p>
-  </article>
+        <li>
+          <a href="/dn42/">
+            <span>DN42 network</span>
+            <small>ASN 4242422921</small>
+          </a>
+        </li>
+        <li>
+          <a href="/en/about/">
+            <span>About</span>
+            <small>Who I am and what runs here</small>
+          </a>
+        </li>
+      </ul>
+    </section>
+
+    <section id="latest" class="profile-section home-latest" aria-labelledby="latest-title">
+      <header class="section-heading section-heading-split">
+        <div>
+          <p>LATEST WRITING</p>
+          <h2 id="latest-title">Recent posts</h2>
+        </div>
+        <a class="section-more" href="/en/posts/">All posts<span aria-hidden="true"> →</span></a>
+      </header>
+      <PostList posts={latestPosts.map((post) => ({
+        title: post.data.title,
+        canonicalPath: post.data.canonicalPath,
+        pubDate: post.data.pubDate,
+        description: post.data.description,
+        cover: post.data.cover,
+        categories: post.data.categories,
+      }))} emptyText="No translated posts yet" />
+    </section>
+
+    <section id="projects" class="profile-section" aria-labelledby="projects-title">
+      <header class="section-heading">
+        <div>
+          <p>SELECTED WORK</p>
+          <h2 id="projects-title">Projects & practice</h2>
+        </div>
+      </header>
+      <div class="project-grid">
+        {profileEn.projects.map((project) => (
+          <article class="project-card">
+            <p class="project-marker">{project.marker}</p>
+            <h3>{project.title}</h3>
+            <p>{project.description}</p>
+            <a href={project.href}>{project.linkLabel}<span aria-hidden="true"> →</span></a>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <section id="contact" class="profile-contact" aria-labelledby="contact-title">
+      <div>
+        <p class="profile-kicker">CONTACT</p>
+        <h2 id="contact-title">Get in touch</h2>
+      </div>
+      <a href={`mailto:${profileEn.email}`}>{profileEn.email}</a>
+    </section>
+  </div>
 </BaseLayout>

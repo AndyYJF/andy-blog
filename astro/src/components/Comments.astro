@@ -1,25 +1,31 @@
 ---
 import { releaseState } from "../generated/release-state";
+import { ui, toUiLang } from "../i18n/ui";
 
 interface Props {
   commentKey: string;
   entryWritable: boolean;
   productionWriteEnabled?: boolean;
+  lang?: string;
 }
 
 const {
   commentKey,
   entryWritable,
   productionWriteEnabled = releaseState.productionWriteEnabled,
+  lang,
 } = Astro.props;
+const t = ui(lang);
+const walineLang = toUiLang(lang) === "en" ? "en-US" : "zh-CN";
 ---
-<section class="comments" aria-label="评论">
-  <h2>评论</h2>
+<section class="comments" aria-label={t.comments}>
+  <h2>{t.comments}</h2>
   <div
     id="waline"
     data-comment-key={commentKey}
     data-entry-writable={String(entryWritable)}
     data-production-write-enabled={String(productionWriteEnabled)}
+    data-waline-lang={walineLang}
   ></div>
 </section>
 
@@ -82,13 +88,13 @@ const {
           link.dataset.walineCss = "1";
           document.head.append(link);
         }
-        waline = init({
+          waline = init({
           el: root,
           // Client appends /api/; Nginx proxies same-origin /api/*.
           serverURL: window.location.origin,
           dark: 'html[data-theme="dark"]',
           path: commentKey,
-          lang: "zh-CN",
+          lang: root.dataset.walineLang === "en-US" ? "en-US" : "zh-CN",
         });
       },
       { rootMargin: "300px 0px" },

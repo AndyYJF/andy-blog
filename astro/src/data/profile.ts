@@ -41,3 +41,31 @@ export const profile = {
     },
   ],
 } as const;
+
+/** English copy for the /en/ home page (P3). Structure mirrors profile. */
+export const profileEn = {
+  name: "AndyYan",
+  eyebrow: "PERSONAL LEDGER / 2026",
+  role: "AI undergraduate tinkering with networks and self-hosting",
+  intro:
+    "From VPSes and BGP to all kinds of self-hosted services — the pits I've fallen into and how I climbed out, slowly written down here.",
+  email: "070127andy@gmail.com",
+  projects: [
+    {
+      marker: "NETWORK",
+      title: "AndyYan's DN42 Network",
+      description:
+        "ASN 4242422921 — four nodes across Los Angeles, Frankfurt, Hong Kong and Tokyo.",
+      href: "/dn42/",
+      linkLabel: "View network info",
+    },
+    {
+      marker: "SITE",
+      title: "AndyYan Blog",
+      description:
+        "Keeping a familiar writing workflow while publishing everything as static pages. This blog's setup, migration and maintenance get recorded here.",
+      href: "/category/astro/",
+      linkLabel: "Browse related posts",
+    },
+  ],
+} as const;

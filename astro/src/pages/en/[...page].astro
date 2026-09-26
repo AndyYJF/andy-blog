@@ -1,5 +1,6 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import Comments from "../../components/Comments.astro";
 import { getCollection, render } from "astro:content";
 
 export async function getStaticPaths() {
@@ -46,4 +47,5 @@ const katex = remarkPluginFrontmatter.hasKatex === true;
     </header>
     <Content />
   </article>
+  <Comments commentKey={page.data.commentKey} entryWritable={page.data.allowComment} lang="en" />
 </BaseLayout>

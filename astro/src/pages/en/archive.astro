@@ -1,0 +1,44 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getCollection } from "astro:content";
+import { sortPosts } from "../../lib/posts";
+
+const posts = sortPosts(await getCollection("enPosts"));
+
+const byYear = new Map<number, typeof posts>();
+for (const post of posts) {
+  const year = post.data.pubDate.getUTCFullYear();
+  const list = byYear.get(year) ?? [];
+  list.push(post);
+  byYear.set(year, list);
+}
+const years = [...byYear.keys()].sort((a, b) => b - a);
+---
+<BaseLayout
+  title="Archive · AndyYan"
+  description="All translated posts by year"
+  canonicalPath="/en/archive/"
+  lang="en"
+  noindex={true}
+>
+  <h1 transition:name="page-title" transition:animate="none">Archive</h1>
+  <p class="muted">{posts.length} translated posts</p>
+
+  {years.map((year) => (
+    <section class="archive-year">
+      <h2>{year}</h2>
+      <ul class="archive-list">
+        {(byYear.get(year) ?? []).map((post) => (
+          <li>
+            <time datetime={post.data.pubDate.toISOString()}>
+              {post.data.pubDate.toISOString().slice(5, 10)}
+            </time>
+            <span class="archive-title">
+              <a href={post.data.canonicalPath}>{post.data.title}</a>
+            </span>
+          </li>
+        ))}
+      </ul>
+    </section>
+  ))}
+</BaseLayout>

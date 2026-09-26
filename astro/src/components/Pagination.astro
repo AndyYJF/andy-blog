@@ -1,13 +1,17 @@
 ---
+import { ui } from "../i18n/ui";
+
 interface Props {
   current: number;
   totalPages: number;
   basePath?: string;
   /** When set, page 2+ uses `${pagedPrefix}${n}/` instead of `/page/${n}/`. */
   pagedPrefix?: string;
+  lang?: string;
 }
 
-const { current, totalPages, basePath = "/", pagedPrefix } = Astro.props;
+const { current, totalPages, basePath = "/", pagedPrefix, lang } = Astro.props;
+const t = ui(lang);
 if (totalPages <= 1) return;
 
 const hrefFor = (n: number) => {
@@ -16,18 +20,18 @@ const hrefFor = (n: number) => {
   return `/page/${n}/`;
 };
 ---
-<nav class="pagination" aria-label="分页">
+<nav class="pagination" aria-label={t.paginationAria}>
   {current > 1 ? (
-    <a href={hrefFor(current - 1)} rel="prev">上一页</a>
+    <a href={hrefFor(current - 1)} rel="prev">{t.prevPage}</a>
   ) : (
-    <span class="muted" aria-disabled="true">上一页</span>
+    <span class="muted" aria-disabled="true">{t.prevPage}</span>
   )}
   <span class="pagination-status">
     {current} / {totalPages}
   </span>
   {current < totalPages ? (
-    <a href={hrefFor(current + 1)} rel="next">下一页</a>
+    <a href={hrefFor(current + 1)} rel="next">{t.nextPage}</a>
   ) : (
-    <span class="muted" aria-disabled="true">下一页</span>
+    <span class="muted" aria-disabled="true">{t.nextPage}</span>
   )}
 </nav>

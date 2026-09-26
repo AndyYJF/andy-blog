@@ -1,53 +1,145 @@
 ---
 import BaseLayout from "../../../layouts/BaseLayout.astro";
+import Comments from "../../../components/Comments.astro";
 import { getCollection, render } from "astro:content";
-import { dayKey } from "../../../lib/reading-meta";
+import { adjacentPosts, relatedPosts, sortPosts } from "../../../lib/posts";
+import {
+  countCharacters,
+  dayKey,
+  formatCount,
+  readingMinutes,
+  showUpdatedDate,
+} from "../../../lib/reading-meta";
+import { ui } from "../../../i18n/ui";
 
 export async function getStaticPaths() {
-  const posts = await getCollection("enPosts");
+  const posts = sortPosts(await getCollection("enPosts"));
   return posts.map((post) => ({
     params: { id: post.id },
-    props: { post },
+    props: { post, posts },
   }));
 }
 
-const { post } = Astro.props;
+const t = ui("en");
+const { post, posts } = Astro.props;
 const { Content, remarkPluginFrontmatter } = await render(post);
 const katex = remarkPluginFrontmatter.hasKatex === true;
+// en entries have no en category pages (P3 decision): zh names, no links.
+const displayCategories = post.data.categories.filter((category) => category.mid !== 1);
+const { prev, next } = adjacentPosts(posts, post.id);
+const neighborIds = new Set([prev?.id, next?.id]);
+const related = relatedPosts(posts.filter((item) => !neighborIds.has(item.id)), post, 3);
+const currentTopics = new Set([
+  ...displayCategories,
+  ...post.data.tags,
+].map((topic) => topic.mid));
+const characters = countCharacters(post.body ?? "");
+const minutes = readingMinutes(characters);
+const sourceDay = dayKey(post.data.sourcePublishedAt);
+const translatedDay = dayKey(post.data.pubDate);
+const updated = showUpdatedDate(post.data.pubDate, post.data.updatedDate);
+const sharedTopics = (item) => [...new Set([
+  ...item.data.categories.filter((category) => category.mid !== 1),
+  ...item.data.tags,
+].filter((topic) => currentTopics.has(topic.mid)).map((topic) => topic.name))].slice(0, 2).join(' · ');
 const outdated = post.data.translationStatus === "outdated";
 ---
 <BaseLayout
   title={`${post.data.title} · AndyYan`}
   description={post.data.description}
   canonicalPath={post.data.canonicalPath}
+  lang="en"
+  noindex={true}
   article
   type="article"
   image={post.data.cover}
   pubDate={post.data.pubDate}
   updatedDate={post.data.updatedDate}
   katex={katex}
-  lang="en"
-  noindex
 >
   <article class="prose reading-prose" data-article>
     <header class="entry-header">
-      <h1>{post.data.title}</h1>
+      <div transition:name="page-title" transition:animate="none">
+        {displayCategories.length > 0 && (
+          <p class="entry-kicker" aria-label={t.categoryAria}>
+            {displayCategories.map((category, index) => (
+              <>
+                {index > 0 && <span class="cat-sep"> / </span>}
+                <span class="cat">{category.name}</span>
+              </>
+            ))}
+          </p>
+        )}
+        <h1>{post.data.title}</h1>
+      </div>
       <p class="entry-meta">
-        <time datetime={post.data.translationAvailableAt.toISOString()}>
-          Translated {dayKey(post.data.translationAvailableAt)}
-        </time>
+        <time datetime={post.data.pubDate.toISOString()}>Translated {translatedDay}</time>
         <span class="entry-meta-sep" aria-hidden="true">·</span>
-        <time datetime={post.data.sourcePublishedAt.toISOString()}>
-          Original published {dayKey(post.data.sourcePublishedAt)}
-        </time>
+        <time datetime={post.data.sourcePublishedAt.toISOString()}>Original {sourceDay}</time>
+        <span class="entry-meta-sep" aria-hidden="true">·</span>
+        <span>{t.minutes(minutes)}</span>
+        <span class="entry-meta-sep" aria-hidden="true">·</span>
+        <span>{t.chars(formatCount(characters))}</span>
+        {updated && (
+          <>
+            <span class="entry-meta-sep" aria-hidden="true">·</span>
+            <time datetime={post.data.updatedDate.toISOString()}>{t.updatedOn(dayKey(post.data.updatedDate))}</time>
+          </>
+        )}
       </p>
       {outdated && (
-        <p class="entry-meta">
-          This translation is based on an older revision of the original
-          article and may be out of date.
-        </p>
+        <p class="muted">This translation is behind the Chinese original; a newer translation is on the way.</p>
       )}
     </header>
     <Content />
   </article>
+
+    <nav class="post-footer-nav" aria-labelledby="continue-reading-title">
+      <div class="post-footer-heading">
+        <h2 id="continue-reading-title">{t.continueReading}</h2>
+        <a href={t.allPostsHref}>{t.allPosts} <span aria-hidden="true">→</span></a>
+      </div>
+      {(prev || next) && (
+        <div class:list={["post-adjacent", (!prev || !next) && "is-single"]} aria-label={t.adjacentAria}>
+          {prev ? (
+            <a class="post-adjacent-link is-prev" href={prev.data.canonicalPath}>
+              <span class="post-adjacent-label">{t.prevOlder}</span>
+              <span class="post-adjacent-title">{prev.data.title}</span>
+              <time class="post-adjacent-date" datetime={prev.data.pubDate.toISOString()}>{prev.data.pubDate.toISOString().slice(0, 10)}</time>
+            </a>
+          ) : (
+            <span class="post-adjacent-link is-prev is-empty" aria-hidden="true"></span>
+          )}
+          {next ? (
+            <a class="post-adjacent-link is-next" href={next.data.canonicalPath}>
+              <span class="post-adjacent-label">{t.nextNewer}</span>
+              <span class="post-adjacent-title">{next.data.title}</span>
+              <time class="post-adjacent-date" datetime={next.data.pubDate.toISOString()}>{next.data.pubDate.toISOString().slice(0, 10)}</time>
+            </a>
+          ) : (
+            <span class="post-adjacent-link is-next is-empty" aria-hidden="true"></span>
+          )}
+        </div>
+      )}
+      {related.length > 0 && (
+        <div class="post-related">
+          <h3 class="post-related-label">{t.related}</h3>
+          <ul class="post-related-list">
+            {related.map((item) => (
+              <li>
+                <div class="post-related-entry">
+                  <a href={item.data.canonicalPath}>{item.data.title}</a>
+                  <small class="post-related-topics">{t.sharedTopics(sharedTopics(item))}</small>
+                </div>
+                <time datetime={item.data.pubDate.toISOString()}>
+                  {item.data.pubDate.toISOString().slice(0, 10)}
+                </time>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </nav>
+
+  <Comments commentKey={post.data.commentKey} entryWritable={post.data.allowComment} lang="en" />
 </BaseLayout>

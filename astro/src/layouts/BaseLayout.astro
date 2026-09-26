@@ -4,6 +4,7 @@ import ThemeInit from "../components/ThemeInit.astro";
 import SearchDialog from "../components/SearchDialog.astro";
 import PageEmblem from "../components/PageEmblem.astro";
 import { activeMetaOfType } from "../lib/meta-routes";
+import { ui, toUiLang } from "../i18n/ui";
 import "../styles/global.css";
 
 interface Props {
@@ -23,7 +24,7 @@ interface Props {
 
 const {
   title = "AndyYan Blog",
-  description = "AndyYan 的技术博客",
+  description,
   canonicalPath = "/",
   article = false,
   type = article ? "article" : "website",
@@ -35,6 +36,10 @@ const {
   jsonLd,
   katex = false,
 } = Astro.props;
+
+const uiLang = toUiLang(lang);
+const t = ui(lang);
+const metaDescription = description ?? t.description;
 
 const site = Astro.site ?? new URL("https://www.andy-y.cn");
 const canonical = new URL(canonicalPath, site).href;
@@ -52,16 +57,9 @@ const momentsNavActive =
 const isPostList =
   currentPath === "/posts/" ||
   /^\/page\/\d+\/?$/.test(currentPath);
-const navItems = [
-  { href: "/posts/", label: "文章" },
-  { href: "/moments/", label: "闲话" },
-  { href: "/archive/", label: "归档" },
-  { href: "/friends/", label: "友链" },
-  { href: "/dn42/", label: "DN42" },
-  { href: "/listening/", label: "在听" },
-  { href: "/about/", label: "关于" },
-];
+const navItems = t.nav;
 const isNavActive = (href: string) => {
+  if (uiLang === "en") return currentPath === href || (href !== "/dn42/" && currentPath.startsWith(href));
   if (href === "/posts/") return articleNavActive;
   if (href === "/moments/") return momentsNavActive;
   return currentPath === href;
@@ -78,13 +76,13 @@ const catBarItems = activeMetaOfType("category").map(({ mid, meta }) => ({
 }));
 
 // 独立页的左侧页边动态徽章（文章页不渲染，保持清爽）
-const emblemPage = currentPath.startsWith("/posts/") || /^\/page\/\d+\/?$/.test(currentPath)
+const emblemPage = currentPath.startsWith("/posts/") || currentPath.startsWith("/en/posts/") || /^\/page\/\d+\/?$/.test(currentPath)
   ? "posts"
-  : currentPath === "/archive/"
+  : currentPath === "/archive/" || currentPath === "/en/archive/"
     ? "archive"
-    : currentPath === "/friends/"
+    : currentPath === "/friends/" || currentPath === "/en/friends/"
       ? "friends"
-      : currentPath === "/about/"
+      : currentPath === "/about/" || currentPath === "/en/about/"
         ? "about"
         : undefined;
 
@@ -94,7 +92,7 @@ const defaultLd =
         "@context": "https://schema.org",
         "@type": "BlogPosting",
         headline: title.replace(/\s·\sAndyYan$/, ""),
-        description,
+        description: metaDescription,
         url: canonical,
         mainEntityOfPage: canonical,
         datePublished: pubDate?.toISOString(),
@@ -107,7 +105,7 @@ const defaultLd =
         "@type": "WebSite",
         name: "AndyYan Blog",
         url: site.href,
-        description,
+        description: metaDescription,
         author: { "@type": "Person", name: "AndyYan" },
       };
 
@@ -124,7 +122,7 @@ const ldJson = JSON.stringify(ldPayload)
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
-    <meta name="description" content={description} />
+    <meta name="description" content={metaDescription} />
     {noindex && <meta name="robots" content="noindex, follow" />}
     <link rel="canonical" href={canonical} />
     <link rel="alternate" type="application/rss+xml" title="AndyYan Blog RSS" href={new URL("/rss.xml", site).href} />
@@ -137,7 +135,7 @@ const ldJson = JSON.stringify(ldPayload)
     <meta property="og:type" content={type} />
     <meta property="og:site_name" content="AndyYan Blog" />
     <meta property="og:title" content={title} />
-    <meta property="og:description" content={description} />
+    <meta property="og:description" content={metaDescription} />
     <meta property="og:url" content={canonical} />
     <meta property="og:image" content={ogImage} />
     <meta property="og:locale" content="zh_CN" />
@@ -146,7 +144,7 @@ const ldJson = JSON.stringify(ldPayload)
 
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
-    <meta name="twitter:description" content={description} />
+    <meta name="twitter:description" content={metaDescription} />
     <meta name="twitter:image" content={ogImage} />
 
     <script type="application/ld+json" set:html={ldJson} />
@@ -160,7 +158,7 @@ const ldJson = JSON.stringify(ldPayload)
     <div class="bg-fx" aria-hidden="true"></div>
     {!article && (
       <>
-        <nav class="spine" data-spine aria-label="页面章节"></nav>
+        <nav class="spine" data-spine aria-label={t.spineAria}></nav>
         <div class="prog" data-prog aria-hidden="true">
           <span class="prog-label">00%</span>
           <div class="prog-track"><div class="prog-fill"></div></div>
@@ -168,11 +166,11 @@ const ldJson = JSON.stringify(ldPayload)
         {emblemPage && <PageEmblem page={emblemPage} />}
       </>
     )}
-    <a class="skip-link" href="#main">跳到正文</a>
+    <a class="skip-link" href="#main">{t.skipLink}</a>
     <header class="site-header">
       <div class="site-header-inner">
-        <a class="brand" href="/" aria-current={currentPath === "/" ? "page" : undefined} aria-label="个人主页">主页</a>
-        <nav class="site-nav" aria-label="主要导航">
+        <a class="brand" href={t.homeHref} aria-current={currentPath === t.homeHref ? "page" : undefined} aria-label={t.homeAria}>{t.home}</a>
+        <nav class="site-nav" aria-label={t.navAria}>
           <div class="site-nav-links">
             {navItems.map(({ href, label }) => (
               <a href={href} aria-current={isNavActive(href) ? "page" : undefined}>{label}</a>
@@ -184,13 +182,15 @@ const ldJson = JSON.stringify(ldPayload)
               role="button"
               aria-controls="site-menu-panel"
               aria-expanded="false"
-              aria-label="打开导航菜单"
+              aria-label={t.menuOpen}
+              data-label-open={t.menuOpen}
+              data-label-close={t.menuClose}
               data-site-menu-toggle
             >
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
                 <path d="M4 7h16M4 12h16M4 17h16"></path>
               </svg>
-              <span>菜单</span>
+              <span>{t.menu}</span>
             </summary>
             <div class="site-menu-panel" id="site-menu-panel">
               {navItems.map(({ href, label }) => (
@@ -198,8 +198,8 @@ const ldJson = JSON.stringify(ldPayload)
               ))}
             </div>
           </details>
-          <SearchDialog />
-          <button class="theme-toggle" type="button" data-theme-toggle aria-pressed="false" aria-label="切换主题">
+          {uiLang === "zh" && <SearchDialog />}
+          <button class="theme-toggle" type="button" data-theme-toggle aria-pressed="false" aria-label={t.themeToggle}>
             <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <circle cx="12" cy="12" r="4"></circle>
               <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"></path>
@@ -225,10 +225,10 @@ const ldJson = JSON.stringify(ldPayload)
       <slot />
     </main>
 
-    {article && <nav class="article-toc" data-article-toc aria-label="文章目录"></nav>}
-    {article && <nav class="reading-progress" data-reading-progress aria-label="章节导航"></nav>}
+    {article && <nav class="article-toc" data-article-toc aria-label={t.tocAria}></nav>}
+    {article && <nav class="reading-progress" data-reading-progress aria-label={t.progressAria}></nav>}
 
-    <button class="to-top" type="button" data-to-top aria-label="返回顶部">
+    <button class="to-top" type="button" data-to-top aria-label={t.toTop}>
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
         <path d="M12 19V5M5 12l7-7 7 7"></path>
       </svg>
@@ -237,7 +237,7 @@ const ldJson = JSON.stringify(ldPayload)
     <footer class="site-footer">
       <p class="net-status">
         <span>AS4242422921 · FULL-MESH IBGP</span>
-        <span>4 节点 · FULL-MESH · BUILD {buildDate}</span>
+        <span>{t.nodes} · BUILD {buildDate}</span>
       </p>
       <div class="site-footer-row">
         <div class="site-footer-legal">
@@ -249,11 +249,11 @@ const ldJson = JSON.stringify(ldPayload)
             rel="noopener noreferrer"
           >皖ICP备2025089361号-1</a>
           <span class="site-uptime">
-            本站已运行 <time data-uptime datetime="2025-06-13T00:00:00+08:00">…</time>
+            {t.uptime} <time data-uptime datetime="2025-06-13T00:00:00+08:00">…</time>
           </span>
         </div>
-        <nav aria-label="页脚导航">
-          <a href="/about/">关于</a>
+        <nav aria-label={t.footerNavAria}>
+          <a href={t.aboutHref}>{t.about}</a>
           <a href="/rss.xml">RSS</a>
         </nav>
       </div>
@@ -297,7 +297,7 @@ const ldJson = JSON.stringify(ldPayload)
         const sync = () => {
           const expanded = details.open;
           toggle.setAttribute("aria-expanded", String(expanded));
-          toggle.setAttribute("aria-label", expanded ? "关闭导航菜单" : "打开导航菜单");
+          toggle.setAttribute("aria-label", expanded ? (toggle.dataset.labelClose || "Close navigation menu") : (toggle.dataset.labelOpen || "Open navigation menu"));
         };
         details.addEventListener("toggle", sync);
         sync();
