@@ -88,9 +88,17 @@ node scripts/finalize-manifest.js \
 begin_phase astro
 # Bounded fallback: if the full build fails and the error pins exactly one
 # English entry, isolate it and retry once. Anything else fails the candidate.
+# dist is cleaned before every attempt: astro does not empty it, and a
+# quarantined entry must not ship as stale output from a previous attempt.
+# The content-layer data store is cleared too: it keeps deleted markdown
+# alive and would resurrect quarantined entries.
+rm -rf astro/dist
+rm -f astro/node_modules/.astro/data-store.json
 if ! npm --prefix astro run build > .cache/astro-build.log 2>&1; then
   if node scripts/i18n-attribute-build-error.js .cache/astro-build.log; then
     echo "retrying astro build after isolating one en entry"
+    rm -rf astro/dist
+    rm -f astro/node_modules/.astro/data-store.json
     if ! npm --prefix astro run build > .cache/astro-build-retry.log 2>&1; then
       cat .cache/astro-build-retry.log >&2
       echo "astro build failed on retry after isolation" >&2
