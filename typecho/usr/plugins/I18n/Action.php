@@ -68,25 +68,27 @@ class I18n_Action extends Widget implements ActionInterface
 
         $db->query('START TRANSACTION', Db::WRITE, Db::UPDATE);
         try {
-            $heads = $db->query(
+            $headStmt = $db->query(
                 "SELECT * FROM {$p}i18n_translation_head
                  WHERE cid = {$cid} AND locale = {$q($locale)} FOR UPDATE",
                 Db::WRITE,
                 Db::SELECT
             );
-            if (!$heads) {
+            $head = $headStmt->fetch(\PDO::FETCH_ASSOC);
+            if (!$head) {
                 throw new \RuntimeException('head-missing');
             }
-            $versions = $db->query(
+            $versionStmt = $db->query(
                 "SELECT version_id, content_digest FROM {$p}i18n_translation_version
                  WHERE version_id = {$versionId} AND cid = {$cid} AND locale = {$q($locale)}",
                 Db::WRITE,
                 Db::SELECT
             );
-            if (!$versions) {
+            $version = $versionStmt->fetch(\PDO::FETCH_ASSOC);
+            if (!$version) {
                 throw new \RuntimeException('version-missing');
             }
-            if (!hash_equals($versions[0]['content_digest'], $digest)) {
+            if (!hash_equals($version['content_digest'], $digest)) {
                 throw new \RuntimeException('digest-mismatch');
             }
 
