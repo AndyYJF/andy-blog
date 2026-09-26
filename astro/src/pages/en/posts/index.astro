@@ -2,11 +2,11 @@
 import BaseLayout from "../../../layouts/BaseLayout.astro";
 import PostList from "../../../components/PostList.astro";
 import { getCollection } from "astro:content";
-import { sortPosts } from "../../../lib/posts";
+import { sortEnPosts } from "../../../lib/posts";
 import { ui } from "../../../i18n/ui";
 
 const t = ui("en");
-const posts = sortPosts(await getCollection("enPosts"));
+const posts = sortEnPosts(await getCollection("enPosts"));
 ---
 <BaseLayout
   title="Posts · AndyYan"
@@ -20,7 +20,7 @@ const posts = sortPosts(await getCollection("enPosts"));
   <PostList posts={posts.map((post) => ({
     title: post.data.title,
     canonicalPath: post.data.canonicalPath,
-    pubDate: post.data.pubDate,
+    pubDate: post.data.sourcePublishedAt,
     description: post.data.description,
     cover: post.data.cover,
     categories: post.data.categories,

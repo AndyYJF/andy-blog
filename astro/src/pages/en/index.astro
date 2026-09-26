@@ -3,11 +3,11 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 import PostList from "../../components/PostList.astro";
 import AndySignature from "../../components/AndySignature.astro";
 import { getCollection } from "astro:content";
-import { sortPosts } from "../../lib/posts";
+import { sortEnPosts } from "../../lib/posts";
 import { profileEn } from "../../data/profile";
 
 const all = await getCollection("enPosts");
-const latestPosts = sortPosts(all).slice(0, 3);
+const latestPosts = sortEnPosts(all).slice(0, 3);
 const description = "AndyYan's home page: networking experiments, self-hosted projects and technical writing.";
 ---
 <BaseLayout
@@ -59,7 +59,7 @@ const description = "AndyYan's home page: networking experiments, self-hosted pr
       <PostList posts={latestPosts.map((post) => ({
         title: post.data.title,
         canonicalPath: post.data.canonicalPath,
-        pubDate: post.data.pubDate,
+        pubDate: post.data.sourcePublishedAt,
         description: post.data.description,
         cover: post.data.cover,
         categories: post.data.categories,

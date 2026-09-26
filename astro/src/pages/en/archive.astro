@@ -1,13 +1,13 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { getCollection } from "astro:content";
-import { sortPosts } from "../../lib/posts";
+import { sortEnPosts } from "../../lib/posts";
 
-const posts = sortPosts(await getCollection("enPosts"));
+const posts = sortEnPosts(await getCollection("enPosts"));
 
 const byYear = new Map<number, typeof posts>();
 for (const post of posts) {
-  const year = post.data.pubDate.getUTCFullYear();
+  const year = post.data.sourcePublishedAt.getUTCFullYear();
   const list = byYear.get(year) ?? [];
   list.push(post);
   byYear.set(year, list);
@@ -30,8 +30,8 @@ const years = [...byYear.keys()].sort((a, b) => b - a);
       <ul class="archive-list">
         {(byYear.get(year) ?? []).map((post) => (
           <li>
-            <time datetime={post.data.pubDate.toISOString()}>
-              {post.data.pubDate.toISOString().slice(5, 10)}
+            <time datetime={post.data.sourcePublishedAt.toISOString()}>
+              {post.data.sourcePublishedAt.toISOString().slice(5, 10)}
             </time>
             <span class="archive-title">
               <a href={post.data.canonicalPath}>{post.data.title}</a>

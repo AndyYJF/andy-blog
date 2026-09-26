@@ -8,6 +8,16 @@ export function sortPosts(posts) {
   );
 }
 
+/** en entries: pubDate is the translation-approval time (RSS semantics);
+ *  display ordering follows the original zh publish date instead. */
+export function sortEnPosts(posts) {
+  return [...posts].sort(
+    (a, b) =>
+      b.data.sourcePublishedAt.valueOf() - a.data.sourcePublishedAt.valueOf() ||
+      b.data.legacyCid - a.data.legacyCid,
+  );
+}
+
 export function paginate(posts, pageSize = PAGE_SIZE) {
   const sorted = sortPosts(posts);
   const totalPages = Math.max(1, Math.ceil(sorted.length / pageSize));
