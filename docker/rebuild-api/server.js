@@ -295,6 +295,14 @@ export async function enqueue(rawBody, signatureHeader) {
     nonce,
     debounceMs: DEBOUNCE_MS,
   };
+  // Preserve the i18n outbox target (observability + later manifest matching).
+  if (payload.i18n && typeof payload.i18n === 'object') {
+    event.i18n = {
+      cid: Number(payload.i18n.cid) || 0,
+      locale: String(payload.i18n.locale || '').slice(0, 8),
+      versionId: Number(payload.i18n.versionId) || 0,
+    };
+  }
 
   if (await exists(PATHS.building)) {
     await writeFlag(PATHS.dirty, event);

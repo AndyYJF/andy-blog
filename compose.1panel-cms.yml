@@ -43,6 +43,34 @@ services:
     security_opt:
       - no-new-privileges:true
 
+  # i18n translation worker. Scoped DB user: SELECT on typecho_* contents,
+  # SELECT/INSERT/UPDATE on the i18n_* tables only. No public ports.
+  i18n-worker:
+    build:
+      context: .
+      dockerfile: docker/i18n-worker/Dockerfile
+    restart: unless-stopped
+    environment:
+      TZ: Asia/Shanghai
+      DB_HOST: ${TYPECHO_DB_HOST:?set Typecho database host}
+      DB_USER: ${TYPECHO_I18N_DB_USER:?set scoped i18n database user}
+      DB_PASSWORD: ${TYPECHO_I18N_DB_PASSWORD:?set scoped i18n database password}
+      DB_NAME: ${TYPECHO_DB_NAME:?set Typecho database name}
+      DB_PREFIX: ${TYPECHO_DB_PREFIX:-typecho_}
+      KIMI_BASE_URL: ${KIMI_BASE_URL:-https://api.moonshot.cn/v1}
+      KIMI_MODEL: ${KIMI_MODEL:?set Kimi model name}
+      KIMI_API_KEY_FILE: /run/secrets/kimi_api_key
+      WEBHOOK_SECRET_FILE: /run/secrets/webhook_secret
+    volumes:
+      - '${KIMI_API_KEY_FILE:?set kimi api key file}:/run/secrets/kimi_api_key:ro'
+      - '${REBUILD_SECRET_FILE:?set webhook secret file}:/run/secrets/webhook_secret:ro'
+    networks: [onepanel]
+    security_opt:
+      - no-new-privileges:true
+    depends_on:
+      rebuild-api:
+        condition: service_healthy
+
 networks:
   onepanel:
     external: true

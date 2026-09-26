@@ -1,0 +1,10 @@
+{
+  "terms": [
+    { "zh": "自建", "en": "self-hosted" },
+    { "zh": "边界网关协议", "en": "BGP" },
+    { "zh": "安讯", "en": "AndyYan's network" },
+    { "zh": "闲话", "en": "moments" },
+    { "zh": "友链", "en": "blogroll" },
+    { "zh": "最近在听", "en": "now listening" }
+  ]
+}

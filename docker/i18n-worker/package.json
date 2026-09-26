@@ -1,0 +1,8 @@
+{
+  "name": "i18n-worker",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "mysql2": "^3.23.2"
+  }
+}
