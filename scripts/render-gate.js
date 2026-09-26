@@ -1,19 +1,25 @@
 /**
- * Post-build gate.
+ * Post-build gate (manifest-driven).
  *
  * A mermaid diagram that fails to render (e.g. Playwright cannot launch a browser)
  * makes @beoe/rehype-mermaid drop the *entire* document without any build error,
  * so a page can silently ship with an empty body. This gate compares every source
  * document against its rendered output and fails loudly on mismatches.
+ *
+ * Since the i18n work, URLs are no longer guessed from directory names:
+ * sync-typecho writes astro/.cache/zh-manifest.json (every zh document's
+ * sourceFile → outputFile) and astro/.cache/i18n-selection.json (localized
+ * output identities, docs/i18n-p2-design-2026-09-26.md §5). Entries marked
+ * render-rejected must NOT have output — producing one means isolation broke.
  */
 import { readFileSync, existsSync } from 'node:fs';
-import { readdir } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const CONTENT = path.join(ROOT, 'astro', 'src', 'content');
-const DIST = path.join(ROOT, 'astro', 'dist');
+const ASTRO = path.join(ROOT, 'astro');
+const DIST = path.join(ASTRO, 'dist');
+const CACHE = path.join(ASTRO, '.cache');
 
 const MIN_BODY_CHARS = 40;
 // Markdown loses syntax characters on render, so compare against a generous fraction.
@@ -30,44 +36,34 @@ const articleBody = (html) => {
   return article[1].replace(/<header class="entry-header">[\s\S]*?<\/header>/, '');
 };
 
-const listMarkdown = async (dir) => {
-  const entries = await readdir(dir, { withFileTypes: true });
-  const files = [];
-  for (const entry of entries) {
-    const full = path.join(dir, entry.name);
-    if (entry.isDirectory()) files.push(...(await listMarkdown(full)));
-    else if (entry.name.endsWith('.md')) files.push(full);
-  }
-  return files;
-};
+const loadJson = (file) => JSON.parse(readFileSync(file, 'utf8'));
 
 const main = async () => {
   const failures = [];
-  const files = await listMarkdown(CONTENT);
+  const zhManifest = loadJson(path.join(CACHE, 'zh-manifest.json'));
+  const selection = loadJson(path.join(CACHE, 'i18n-selection.json'));
 
-  for (const file of files.sort()) {
-    const slug = path.basename(file, '.md');
-    const collection = path.basename(path.dirname(file));
-    const source = readFileSync(file, 'utf8');
+  /** Shared per-document checks. label identifies the doc in failure messages. */
+  const checkDoc = ({ label, sourceFile, outputFile }) => {
+    const sourceAbs = path.join(ASTRO, sourceFile);
+    if (!existsSync(sourceAbs)) {
+      failures.push(`${label}: 源文件缺失 ${sourceFile}`);
+      return;
+    }
+    const source = readFileSync(sourceAbs, 'utf8');
     const body = stripFrontmatter(source).replace(/\s+/g, ' ').trim();
 
-    const outDir =
-      collection === 'posts'
-        ? path.join(DIST, 'posts', slug)
-        : collection === 'moments'
-          ? path.join(DIST, 'moments', slug)
-          : path.join(DIST, slug);
-    const outFile = path.join(outDir, 'index.html');
-    if (!existsSync(outFile)) {
-      failures.push(`${collection}/${slug}: 未生成 ${path.relative(ROOT, outFile)}`);
-      continue;
+    const outAbs = path.join(DIST, outputFile);
+    if (!existsSync(outAbs)) {
+      failures.push(`${label}: 未生成 ${outputFile}`);
+      return;
     }
 
-    const html = readFileSync(outFile, 'utf8');
+    const html = readFileSync(outAbs, 'utf8');
     const rendered = articleBody(html);
     if (rendered === null) {
-      failures.push(`${collection}/${slug}: 输出缺少 <article>`);
-      continue;
+      failures.push(`${label}: 输出缺少 <article>`);
+      return;
     }
 
     const renderedText = rendered
@@ -77,7 +73,7 @@ const main = async () => {
       .trim();
     if (body.length >= MIN_BODY_CHARS && renderedText.length < body.length * MIN_RENDERED_RATIO) {
       failures.push(
-        `${collection}/${slug}: 正文 ${body.length} 字符，渲染后正文仅 ${renderedText.length} 字符（疑似整篇被丢弃）`,
+        `${label}: 正文 ${body.length} 字符，渲染后正文仅 ${renderedText.length} 字符（疑似整篇被丢弃）`,
       );
     }
 
@@ -86,16 +82,45 @@ const main = async () => {
     const rendered_diagrams = (rendered.match(/beoe-light/g) ?? []).length;
     if (diagrams !== rendered_diagrams) {
       failures.push(
-        `${collection}/${slug}: mermaid 图 ${diagrams} 张，产物中 ${rendered_diagrams} 张`,
+        `${label}: mermaid 图 ${diagrams} 张，产物中 ${rendered_diagrams} 张`,
       );
     }
     const beoeSrcs = [...rendered.matchAll(/src="(\/beoe\/[^"]+)"/g)].map((match) => match[1]);
     for (const src of beoeSrcs) {
       const file = path.join(DIST, src.replace(/^\//, ''));
       if (!existsSync(file)) {
-        failures.push(`${collection}/${slug}: mermaid 产物缺失 ${src}`);
+        failures.push(`${label}: mermaid 产物缺失 ${src}`);
       }
     }
+  };
+
+  let checked = 0;
+  for (const entry of zhManifest.entries) {
+    checkDoc({
+      label: `${entry.collection}/${entry.slug}`,
+      sourceFile: entry.sourceFile,
+      outputFile: entry.outputFile,
+    });
+    checked += 1;
+  }
+
+  let localizedChecked = 0;
+  for (const entry of selection.entries || []) {
+    if (entry.translationStatus === 'render-rejected') {
+      if (entry.outputFile && existsSync(path.join(DIST, entry.outputFile))) {
+        failures.push(
+          `${entry.entryKey}: render-rejected 条目却生成了 ${entry.outputFile}（隔离失效）`,
+        );
+      }
+      continue;
+    }
+    if (!entry.renderExpected) continue;
+    checkDoc({
+      label: entry.entryKey,
+      sourceFile: entry.sourceFile,
+      outputFile: entry.outputFile,
+    });
+    localizedChecked += 1;
   }
 
   const checkedFixture = readFileSync(
@@ -127,7 +152,9 @@ const main = async () => {
     process.exit(1);
   }
 
-  console.log(`渲染门禁通过：${files.length} 篇文档，正文与 mermaid 产物均完整。`);
+  console.log(
+    `渲染门禁通过：${checked} 篇中文文档 + ${localizedChecked} 条英文条目，正文与 mermaid 产物均完整。`,
+  );
 };
 
 await main();

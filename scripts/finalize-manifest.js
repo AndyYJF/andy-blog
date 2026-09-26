@@ -30,6 +30,20 @@ const routeMap = JSON.parse(fs.readFileSync(path.join(ROOT, 'data', 'route-map.j
 const legacy = JSON.parse(fs.readFileSync(path.join(ROOT, 'data', 'legacy-url-map.json'), 'utf8'));
 const lastmod = JSON.parse(fs.readFileSync(path.join(ROOT, 'data', 'lastmod.json'), 'utf8'));
 
+// Localized output identities selected by sync (docs/i18n-p2-design §5).
+// Absent file = pre-i18n environment; ship an empty list.
+let localizedEntries = [];
+let rendererFingerprint = null;
+try {
+  const selection = JSON.parse(
+    fs.readFileSync(path.join(ROOT, 'astro', '.cache', 'i18n-selection.json'), 'utf8'),
+  );
+  localizedEntries = selection.entries || [];
+  rendererFingerprint = selection.rendererFingerprint ?? null;
+} catch (e) {
+  if (e.code !== 'ENOENT') throw e;
+}
+
 const active = Object.entries(routeMap)
   .filter(([, v]) => v.state === 'active')
   .map(([cid, v]) => ({ cid: Number(cid), ...v }))
@@ -46,8 +60,11 @@ const manifest = {
     activeRoutes: active.length,
     legacyEntries: legacy.length,
     lastmodKeys: Object.keys(lastmod).length,
+    localizedEntries: localizedEntries.length,
   },
   activeCids: active.map((a) => a.cid),
+  localizedEntries,
+  rendererFingerprint,
 };
 
 const outDir = path.join(ROOT, '.cache');
