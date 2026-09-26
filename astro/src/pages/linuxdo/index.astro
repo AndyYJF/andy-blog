@@ -13,7 +13,7 @@ const configured = Boolean(siteKey);
   type="website"
   noindex={true}
 >
-  <article class="linuxdo-page" data-linuxdo-page data-article>
+  <article class="linuxdo-page prose" data-linuxdo-page data-article>
     <header class="linuxdo-intro">
       <p class="linuxdo-eyebrow">LINUXDO / 邀请</p>
       <h1 transition:name="page-title" transition:animate="none">领取邀请</h1>
@@ -137,6 +137,18 @@ const configured = Boolean(siteKey);
     letter-spacing: 0.13em;
   }
   .linuxdo-lead { margin: 1rem 0 0; color: var(--muted); font-size: 0.95rem; line-height: 1.7; }
+  /* Match .prose a (body text color + muted underline → accent on hover). */
+  .linuxdo-page :global(a) {
+    color: var(--text);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.18em;
+    text-decoration-color: color-mix(in srgb, var(--muted) 60%, transparent);
+    transition: text-decoration-color var(--t-fast) var(--ease);
+  }
+  .linuxdo-page :global(a:hover) {
+    text-decoration-color: var(--accent-text);
+  }
   .linuxdo-panel {
     margin-top: 2rem;
     padding-top: 1.25rem;
@@ -159,7 +171,6 @@ const configured = Boolean(siteKey);
   .linuxdo-claim-btn:not(:disabled):hover { border-color: var(--accent-text); color: var(--accent-text); }
   .linuxdo-status { margin: 0.85rem 0 0; color: var(--muted); font-size: 0.85rem; min-height: 1.4em; }
   .linuxdo-result { margin: 1rem 0 0; word-break: break-all; }
-  .linuxdo-result a { color: var(--accent-text); }
   .linuxdo-note { display: block; margin-top: 0.45rem; color: var(--muted); font-size: 0.8rem; }
   .cf-turnstile { margin-top: 0.25rem; }
 </style>
