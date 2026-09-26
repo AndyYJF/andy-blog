@@ -30,6 +30,8 @@ import {
   ensureRouteMap,
 } from './lib/route-allocate.js';
 import { momentDispositionForMissingPublic } from './lib/moment-sync-state.js';
+import { readI18nTables } from './lib/i18n-snapshot.js';
+import { selectI18nEntries, buildI18nMarkdown, publicSelectionEntry } from './lib/i18n-select.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..');
@@ -153,8 +155,9 @@ async function loadSnapshot(epoch) {
          FROM typecho_metas WHERE type IN ('category','tag')
          ORDER BY type, \`order\`, mid`,
       );
+      const i18n = await readI18nTables(db);
       await db.commit();
-      return { snapshotEpoch: epoch, contents, relations, fields, metas, source: 'mysql' };
+      return { snapshotEpoch: epoch, contents, relations, fields, metas, ...(i18n ? { i18n } : {}), source: 'mysql' };
     } catch (e) {
       try { await db.rollback(); } catch {}
       throw e;
@@ -383,9 +386,13 @@ async function main() {
   const postsDir = path.join(staging, 'posts');
   const pagesDir = path.join(staging, 'pages');
   const momentsDir = path.join(staging, 'moments');
+  const enPostsDir = path.join(staging, 'en-posts');
+  const enPagesDir = path.join(staging, 'en-pages');
   await fs.mkdir(postsDir, { recursive: true });
   await fs.mkdir(pagesDir, { recursive: true });
   await fs.mkdir(momentsDir, { recursive: true });
+  await fs.mkdir(enPostsDir, { recursive: true });
+  await fs.mkdir(enPagesDir, { recursive: true });
 
   const entries = [];
   const reports = {
@@ -471,6 +478,33 @@ async function main() {
       tagMids: rels.tags.map((t) => t.mid).sort((a, b) => a - b),
       contentSha256: sha256(md),
     });
+  }
+
+  // --- i18n: select approved English versions and generate en collections ---
+  const i18nSelection = selectI18nEntries(snapshot, pubs, epoch);
+  const localizedEntries = [];
+  for (const sel of i18nSelection) {
+    const route = routeMap[String(sel.sourceCid)];
+    if (!route || route.state !== 'active') {
+      if (sel.renderExpected) {
+        throw new Error(`i18n entry ${sel.entryKey} has no active zh route`);
+      }
+      continue;
+    }
+    if (!sel.version) {
+      localizedEntries.push(publicSelectionEntry(sel, route, null));
+      continue;
+    }
+    const zhItem = snapshotByCid.get(String(sel.sourceCid));
+    const rels = relationsFor(sel.sourceCid, snapshot.relations);
+    const cover = coverFor(sel.sourceCid, snapshot.fields);
+    const { frontmatter, body } = buildI18nMarkdown(sel, zhItem, route, rels, cover);
+    const dumped = yaml.dump(frontmatter, { lineWidth: -1, noRefs: true, sortKeys: false });
+    const enDir = sel.kind === 'post' ? enPostsDir : enPagesDir;
+    await atomicWriteText(path.join(enDir, `${route.routeId}.md`), `---\n${dumped}---\n\n${body}\n`);
+    localizedEntries.push(
+      publicSelectionEntry(sel, route, `src/content/en-${sel.kind === 'post' ? 'posts' : 'pages'}/${route.routeId}.md`),
+    );
   }
 
   if (!CONTENT_BACKUP_DIR) {
@@ -581,14 +615,31 @@ async function main() {
     snapshotEpoch: epoch,
     source: snapshot.source,
     entries: entries.sort((a, b) => a.cid - b.cid),
+    localizedEntries,
     sitemapLastmod,
     sitemapExclude,
   };
+
+  // Output-identity manifest for every zh document — render-gate stops
+  // guessing URLs from directory names and reads this instead.
+  const zhManifest = entries.map((e) => {
+    const collection = e.kind === 'post' ? 'posts' : e.kind === 'page' ? 'pages' : 'moments';
+    return {
+      collection,
+      slug: e.entryId,
+      sourceFile: `src/content/${collection}/${e.entryId}.md`,
+      canonicalPath: e.canonicalPath,
+      outputFile: `${e.canonicalPath.replace(/^\//, '')}index.html`,
+    };
+  });
 
   // Deterministic normalized digest (exclude run metadata)
   const normalized = {
     snapshotEpoch: epoch,
     entries: manifest.entries,
+    localized: localizedEntries.map((e) => [
+      e.entryKey, e.translationStatus, e.translationVersionId, e.contentDigest,
+    ]),
     sitemapLastmod: Object.fromEntries(Object.entries(sitemapLastmod).sort()),
     routeMapActive: Object.fromEntries(
       Object.entries(routeMap)
@@ -604,16 +655,20 @@ async function main() {
   const digest = sha256(JSON.stringify(normalized));
 
   if (CONTENT_BACKUP_DIR) {
-    if (!CONTENT_BACKUP_DIR.startsWith('/') || CONTENT_BACKUP_DIR.includes('\0')) {
+    if (!path.isAbsolute(CONTENT_BACKUP_DIR) || CONTENT_BACKUP_DIR.includes('\0')) {
       throw new Error('CONTENT_BACKUP_DIR must be an absolute path');
     }
     const finalPosts = path.join(CONTENT_BACKUP_DIR, 'posts');
     const finalPages = path.join(CONTENT_BACKUP_DIR, 'pages');
     const finalMoments = path.join(CONTENT_BACKUP_DIR, 'moments');
+    const finalEnPosts = path.join(CONTENT_BACKUP_DIR, 'en-posts');
+    const finalEnPages = path.join(CONTENT_BACKUP_DIR, 'en-pages');
     await fs.mkdir(CONTENT_BACKUP_DIR, { recursive: true });
     await clearGenerated(finalPosts);
     await clearGenerated(finalPages);
     await clearGenerated(finalMoments);
+    await clearGenerated(finalEnPosts);
+    await clearGenerated(finalEnPages);
     for (const name of await fs.readdir(postsDir)) {
       await moveFile(path.join(postsDir, name), path.join(finalPosts, name));
     }
@@ -623,10 +678,26 @@ async function main() {
     for (const name of await fs.readdir(momentsDir)) {
       await moveFile(path.join(momentsDir, name), path.join(finalMoments, name));
     }
+    for (const name of await fs.readdir(enPostsDir)) {
+      await moveFile(path.join(enPostsDir, name), path.join(finalEnPosts, name));
+    }
+    for (const name of await fs.readdir(enPagesDir)) {
+      await moveFile(path.join(enPagesDir, name), path.join(finalEnPages, name));
+    }
     await fs.rm(staging, { recursive: true, force: true });
   } else {
     await fs.mkdir(CACHE_DIR, { recursive: true });
     await atomicWriteJson(path.join(CACHE_DIR, 'manifest.json'), manifest);
+    await atomicWriteJson(path.join(CACHE_DIR, 'i18n-selection.json'), {
+      snapshotEpoch: epoch,
+      rendererFingerprint: null, // filled by scripts/prerender-en.js
+      locales: ['en'],
+      entries: localizedEntries,
+    });
+    await atomicWriteJson(path.join(CACHE_DIR, 'zh-manifest.json'), {
+      snapshotEpoch: epoch,
+      entries: zhManifest,
+    });
     await atomicWriteJson(path.join(CACHE_DIR, 'sync-digest.json'), { digest, snapshotEpoch: epoch });
     await atomicWriteJson(path.join(CACHE_DIR, 'sync-report.json'), reports);
     await atomicWriteJson(path.join(ROOT, 'data', 'lastmod.json'), Object.fromEntries(Object.entries(sitemapLastmod).sort()));
@@ -635,10 +706,14 @@ async function main() {
     const finalPosts = path.join(ASTRO, 'src', 'content', 'posts');
     const finalPages = path.join(ASTRO, 'src', 'content', 'pages');
     const finalMoments = path.join(ASTRO, 'src', 'content', 'moments');
+    const finalEnPosts = path.join(ASTRO, 'src', 'content', 'en-posts');
+    const finalEnPages = path.join(ASTRO, 'src', 'content', 'en-pages');
     await fs.mkdir(path.join(ASTRO, 'src', 'content'), { recursive: true });
     await clearGenerated(finalPosts);
     await clearGenerated(finalPages);
     await clearGenerated(finalMoments);
+    await clearGenerated(finalEnPosts);
+    await clearGenerated(finalEnPages);
     for (const name of await fs.readdir(postsDir)) {
       await moveFile(path.join(postsDir, name), path.join(finalPosts, name));
     }
@@ -647,6 +722,12 @@ async function main() {
     }
     for (const name of await fs.readdir(momentsDir)) {
       await moveFile(path.join(momentsDir, name), path.join(finalMoments, name));
+    }
+    for (const name of await fs.readdir(enPostsDir)) {
+      await moveFile(path.join(enPostsDir, name), path.join(finalEnPosts, name));
+    }
+    for (const name of await fs.readdir(enPagesDir)) {
+      await moveFile(path.join(enPagesDir, name), path.join(finalEnPages, name));
     }
     await fs.rm(staging, { recursive: true, force: true });
   }
@@ -667,6 +748,11 @@ async function main() {
       public: sqlCids.length,
       output: outCids.length,
       activeRoutes: activeCids.length,
+      i18n: Object.fromEntries(
+        ['current', 'outdated', 'missing', 'disabled', 'render-rejected']
+          .map((s) => [s, localizedEntries.filter((e) => e.translationStatus === s).length])
+          .filter(([, n]) => n > 0),
+      ),
     },
     sqlCids,
     outCids,

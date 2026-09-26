@@ -5,6 +5,7 @@
  */
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import { readI18nTables } from './lib/i18n-snapshot.js';
 
 function jsonSafeRow(row) {
   const out = {};
@@ -75,14 +76,26 @@ try {
      FROM typecho_metas WHERE type IN ('category','tag')
      ORDER BY type, \`order\`, mid`,
   );
+  const i18n = await readI18nTables(db);
   await db.commit();
 
   const snapshot = {
     snapshotEpoch: epoch,
+    schemaVersion: 2,
     contents: contents.map(jsonSafeRow),
     relations: relations.map(jsonSafeRow),
     fields: fields.map(jsonSafeRow),
     metas: metas.map(jsonSafeRow),
+    ...(i18n
+      ? {
+        i18n: {
+          sourceState: i18n.sourceState.map(jsonSafeRow),
+          heads: i18n.heads.map(jsonSafeRow),
+          versions: i18n.versions.map(jsonSafeRow),
+          ledger: i18n.ledger.map(jsonSafeRow),
+        },
+      }
+      : {}),
   };
   const dir = path.dirname(outPath);
   await fs.mkdir(dir, { recursive: true });
