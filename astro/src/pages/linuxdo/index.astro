@@ -25,6 +25,21 @@ const claimUrl = `${linuxdoPublic.apiOrigin}${linuxdoPublic.claimPath}`;
     <section class="linuxdo-panel" aria-labelledby="linuxdo-claim-title">
       <h2 id="linuxdo-claim-title">计算验证</h2>
       <p class="linuxdo-status" data-linuxdo-status role="status" aria-live="polite">正在准备验证…</p>
+
+      {/* 纯展示：读屏由上方 role=status 承担，这里 aria-hidden */}
+      <div class="linuxdo-pow" data-linuxdo-pow data-state="idle" aria-hidden="true">
+        <p class="pow-head">
+          <span class="pow-label">SHA-256</span>
+          <span class="pow-target">目标 <b data-pow-target>0000</b></span>
+        </p>
+        <div class="pow-digits" data-pow-digits>
+          {/* 数字位在模板里渲染，才能拿到 Astro 作用域属性；
+              运行时插入的节点不会带 data-astro-cid-*，样式会全部失效 */}
+          {Array.from({ length: 10 }).map(() => <span class="pow-rest">·</span>)}
+        </div>
+        <div class="pow-rail"><span class="pow-rail-fill"></span></div>
+      </div>
+
       <button type="button" class="linuxdo-claim-btn" data-linuxdo-claim disabled>
         获取邀请链接
       </button>
@@ -44,6 +59,9 @@ const claimUrl = `${linuxdoPublic.apiOrigin}${linuxdoPublic.claimPath}`;
     const result = root.querySelector("[data-linuxdo-result]");
     const link = root.querySelector("[data-linuxdo-link]");
     const note = root.querySelector("[data-linuxdo-note]");
+    const pow = root.querySelector("[data-linuxdo-pow]");
+    const powDigits = root.querySelector("[data-pow-digits]");
+    const powTarget = root.querySelector("[data-pow-target]");
 
     let solution = null;
 
@@ -60,6 +78,57 @@ const claimUrl = `${linuxdoPublic.apiOrigin}${linuxdoPublic.claimPath}`;
     };
 
     const meets = (hex, difficulty) => hex.startsWith("0".repeat(difficulty));
+
+    /* 展示层：只读映出求解过程，不参与判定 */
+    const POW_DIGITS = powDigits?.children.length || 10;
+    let difficulty = 4;
+    let paintSeq = 0;
+
+    const setPowState = (state) => {
+      if (pow) pow.dataset.state = state;
+    };
+
+    const renderDigits = (hex, solved) => {
+      if (!powDigits) return;
+      const cells = powDigits.children;
+      const shown = (hex || "").slice(0, POW_DIGITS).padEnd(POW_DIGITS, "·");
+      let zeros = 0;
+      while (zeros < shown.length && shown[zeros] === "0") zeros += 1;
+      const lit = Math.min(zeros, difficulty);
+      for (let i = 0; i < POW_DIGITS; i += 1) {
+        const cell = cells[i];
+        if (!cell) continue;
+        if (cell.textContent !== shown[i]) cell.textContent = shown[i];
+        const cls =
+          solved && i < difficulty ? "pow-hit" : i < lit ? "pow-zero" : "pow-rest";
+        if (cell.className !== cls) cell.className = cls;
+      }
+    };
+
+    const resetPow = () => {
+      paintSeq += 1;
+      setPowState("idle");
+      renderDigits("", false);
+    };
+
+    /* 求解循环每 200 次 nonce 回调一次；这里补算一次摘要用于显示。
+       展示摘要是异步的，用序号丢弃过期的回调，避免旧值覆盖新值。 */
+    const paintProgress = async (salt, nonce) => {
+      if (!powDigits) return;
+      const seq = ++paintSeq;
+      setPowState("running");
+      const hex = await sha256Hex(`${salt}:${nonce}`);
+      if (seq !== paintSeq) return;
+      renderDigits(hex, false);
+    };
+
+    const finishPow = async (salt, nonce) => {
+      const seq = ++paintSeq;
+      const hex = await sha256Hex(`${salt}:${nonce}`);
+      setPowState("solved");
+      if (seq !== paintSeq) return;
+      renderDigits(hex, true);
+    };
 
     const solvePow = async (salt, difficulty, onProgress) => {
       let nonce = 0;
@@ -80,6 +149,7 @@ const claimUrl = `${linuxdoPublic.apiOrigin}${linuxdoPublic.claimPath}`;
     const prepare = async () => {
       solution = null;
       if (btn) btn.disabled = true;
+      resetPow();
       setStatus("正在获取验证题…");
       const chRes = await fetch(challengeUrl, { headers: { Accept: "application/json" } });
       const ch = await chRes.json().catch(() => ({}));
@@ -89,13 +159,18 @@ const claimUrl = `${linuxdoPublic.apiOrigin}${linuxdoPublic.claimPath}`;
           rate_limited: "请求太频繁，请稍后再试。",
         };
         setStatus(map[ch?.error] || (chRes.status === 429 ? "请求太频繁，请稍后再试。" : "获取验证题失败，请刷新重试。"));
+        setPowState("error");
         return;
       }
+      difficulty = Number(ch.difficulty) || difficulty;
+      if (powTarget) powTarget.textContent = "0".repeat(difficulty);
       setStatus("正在计算…");
       const nonce = await solvePow(ch.salt, ch.difficulty, (n) => {
         setStatus(`正在计算…（${n.toLocaleString("zh-CN")}）`);
+        paintProgress(ch.salt, n);
       });
       solution = { id: ch.id, nonce };
+      await finishPow(ch.salt, nonce);
       setStatus("验证已完成，可以领取。");
       if (btn) btn.disabled = false;
     };
@@ -146,7 +221,10 @@ const claimUrl = `${linuxdoPublic.apiOrigin}${linuxdoPublic.claimPath}`;
       }
     });
 
-    prepare().catch(() => setStatus("初始化失败，请刷新页面。"));
+    prepare().catch(() => {
+      setStatus("初始化失败，请刷新页面。");
+      setPowState("error");
+    });
   }
 </script>
 
@@ -193,4 +271,98 @@ const claimUrl = `${linuxdoPublic.apiOrigin}${linuxdoPublic.claimPath}`;
   .linuxdo-status { margin: 0; color: var(--muted); font-size: 0.85rem; min-height: 1.4em; }
   .linuxdo-result { margin: 1rem 0 0; word-break: break-all; }
   .linuxdo-note { display: block; margin-top: 0.45rem; color: var(--muted); font-size: 0.8rem; }
+
+  /* ---- PoW 计算可视化：细线 + 等宽带 + 琥珀/绿状态色，与站点动效同语言 ---- */
+  .linuxdo-pow { margin-top: 0.9rem; }
+  .pow-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    margin: 0 0 0.45rem;
+    font: 0.6rem/1 var(--font-mono);
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+  .pow-target b {
+    font-weight: 400;
+    color: color-mix(in srgb, var(--accent-text) 75%, var(--muted));
+    letter-spacing: 0.14em;
+  }
+  .pow-digits {
+    display: flex;
+    gap: 0.22rem;
+    font: 0.78rem/1 var(--font-mono);
+    font-variant-numeric: tabular-nums;
+  }
+  .pow-digits span {
+    flex: 1 1 0;
+    min-width: 0;
+    padding: 0.24rem 0;
+    border-radius: var(--radius-panel);
+    text-align: center;
+    color: color-mix(in srgb, var(--muted) 50%, transparent);
+    background: color-mix(in srgb, var(--muted) 7%, transparent);
+    transition: color var(--t-fast) var(--ease), background-color var(--t-fast) var(--ease);
+  }
+  /* 前导零命中：琥珀点亮，是"接近目标"的即时反馈 */
+  .pow-digits .pow-zero {
+    color: var(--accent-text);
+    background: color-mix(in srgb, var(--accent) 16%, transparent);
+  }
+  /* 达到难度：转绿并锁定 */
+  .pow-digits .pow-hit {
+    color: var(--ok);
+    background: color-mix(in srgb, var(--ok) 16%, transparent);
+  }
+  [data-state="running"] .pow-digits .pow-zero { animation: pow-tick 0.6s var(--ease) 1; }
+  [data-state="solved"] .pow-digits { animation: pow-settle 380ms var(--ease) 1; }
+  @keyframes pow-tick {
+    0% { background: color-mix(in srgb, var(--accent) 45%, transparent); }
+  }
+  @keyframes pow-settle {
+    0% { transform: translateY(1px); opacity: 0.7; }
+    100% { transform: none; opacity: 1; }
+  }
+  .pow-rail {
+    position: relative;
+    height: 2px;
+    margin-top: 0.5rem;
+    overflow: hidden;
+    background: color-mix(in srgb, var(--muted) 22%, transparent);
+  }
+  /* 求解耗时不可预测，用不确定进度条，不假装百分比 */
+  .pow-rail-fill {
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 34%;
+    background: var(--accent-text);
+    opacity: 0;
+  }
+  [data-state="running"] .pow-rail-fill {
+    opacity: 0.85;
+    animation: pow-sweep 1.15s var(--ease) infinite;
+  }
+  [data-state="solved"] .pow-rail-fill {
+    width: 100%;
+    opacity: 1;
+    background: var(--ok);
+    transition: width 260ms var(--ease), background-color 260ms var(--ease);
+  }
+  @keyframes pow-sweep {
+    0% { transform: translateX(-110%); }
+    100% { transform: translateX(400%); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pow-rail-fill,
+    [data-state="running"] .pow-rail-fill,
+    [data-state="running"] .pow-digits .pow-zero,
+    [data-state="solved"] .pow-digits {
+      animation: none;
+    }
+    /* 无动画时保留静态可见的进行中提示 */
+    [data-state="running"] .pow-rail-fill { width: 100%; opacity: 0.6; }
+  }
 </style>
