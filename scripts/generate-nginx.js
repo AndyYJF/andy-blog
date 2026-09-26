@@ -40,7 +40,7 @@ const parseStatus = () => {
 // Pagefind compiles WASM in-page; Chrome requires 'wasm-unsafe-eval' when 'unsafe-eval' is absent.
 // worker-src covers pagefind-worker.js (falls back to script-src otherwise, but be explicit).
 const WWW_CSP =
-  "default-src 'self'; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' https://umami.andy-y.cn; worker-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https://umami.andy-y.cn https://ipwho.is; frame-src https://player.bilibili.com https://music.163.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'; upgrade-insecure-requests";
+  "default-src 'self'; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' https://umami.andy-y.cn https://challenges.cloudflare.com; worker-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https://umami.andy-y.cn https://ipwho.is https://challenges.cloudflare.com; frame-src https://player.bilibili.com https://music.163.com https://challenges.cloudflare.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'; upgrade-insecure-requests";
 
 const wwwSecurityHeaders = (indent = '  ') =>
   [
@@ -186,7 +186,10 @@ map "$waline_rl_ali:$waline_rl_cf:$waline_rl_xff" $waline_rl_key {
 }
 
 # Public Waline is no-store and always hits origin. ~1 req / 3s sustained.
-limit_req_zone $waline_rl_key zone=waline_api:10m rate=20r/m;`;
+limit_req_zone $waline_rl_key zone=waline_api:10m rate=20r/m;
+
+# LinuxDo invite claim: tighter than comments.
+limit_req_zone $waline_rl_key zone=linuxdo_claim:5m rate=5r/m;`;
 
   const http80 = `server {
   listen 80;
@@ -252,6 +255,21 @@ ${legacyActionSnippet(status)}
     proxy_read_timeout 30s;
     add_header Cache-Control "no-store" always;
   }
+
+  location = /linuxdo/claim {
+    limit_req zone=linuxdo_claim burst=3 nodelay;
+    limit_req_status 429;
+    proxy_pass http://127.0.0.1:8370;
+    proxy_http_version 1.1;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_set_header Connection "";
+    proxy_read_timeout 15s;
+    add_header Cache-Control "no-store" always;
+  }
+
   location = /ui { return 308 /ui/; }
   location ^~ /ui/ {
     proxy_pass http://waline:8360;

@@ -1,0 +1,9 @@
+{
+  "name": "andy-blog-linuxdo-invite",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test server.test.js",
+    "start": "node server.js"
+  }
+}

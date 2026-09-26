@@ -1,0 +1,165 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { linuxdoPublic } from "../../data/linuxdo-public";
+
+const siteKey = linuxdoPublic.turnstileSiteKey;
+const claimPath = linuxdoPublic.claimPath;
+const configured = Boolean(siteKey);
+---
+<BaseLayout
+  title="LinuxDo 邀请 · AndyYan"
+  description="通过人机验证后领取 LinuxDo 邀请链接。旧说明文仍保留在文章区。"
+  canonicalPath="/linuxdo/"
+  type="website"
+  noindex={true}
+>
+  <article class="linuxdo-page" data-linuxdo-page data-article>
+    <header class="linuxdo-intro">
+      <p class="linuxdo-eyebrow">LINUXDO / 邀请</p>
+      <h1 transition:name="page-title" transition:animate="none">领取邀请</h1>
+      <p class="linuxdo-lead">
+        完成下方验证后显示当前可用的邀请链接。说明与记录仍在
+        <a href="/posts/linuxdo/">原文章</a>。
+      </p>
+    </header>
+
+    <section class="linuxdo-panel" aria-labelledby="linuxdo-claim-title">
+      <h2 id="linuxdo-claim-title">人机验证</h2>
+      {!configured ? (
+        <p class="linuxdo-status" role="status">验证组件尚未配置，暂时无法领取。</p>
+      ) : (
+        <>
+          <div
+            class="cf-turnstile"
+            data-sitekey={siteKey}
+            data-theme="auto"
+            data-language="zh-cn"
+          ></div>
+          <button type="button" class="linuxdo-claim-btn" data-linuxdo-claim disabled>
+            获取邀请链接
+          </button>
+          <p class="linuxdo-status" data-linuxdo-status role="status" aria-live="polite"></p>
+          <p class="linuxdo-result" data-linuxdo-result hidden>
+            <a data-linuxdo-link href="#" rel="noopener noreferrer" target="_blank"></a>
+            <span data-linuxdo-note class="linuxdo-note" hidden></span>
+          </p>
+        </>
+      )}
+    </section>
+  </article>
+</BaseLayout>
+
+{configured && (
+  <script is:inline src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+)}
+
+{configured && (
+  <script define:vars={{ claimPath }}>
+    const root = document.querySelector("[data-linuxdo-page]");
+    if (root) {
+      const btn = root.querySelector("[data-linuxdo-claim]");
+      const status = root.querySelector("[data-linuxdo-status]");
+      const result = root.querySelector("[data-linuxdo-result]");
+      const link = root.querySelector("[data-linuxdo-link]");
+      const note = root.querySelector("[data-linuxdo-note]");
+
+      const setStatus = (text) => {
+        if (status) status.textContent = text || "";
+      };
+
+      const readToken = () => {
+        const input = root.querySelector('input[name="cf-turnstile-response"]');
+        return input && typeof input.value === "string" ? input.value.trim() : "";
+      };
+
+      const refreshEnabled = () => {
+        if (!btn) return;
+        btn.disabled = !readToken();
+      };
+
+      // Turnstile fills a hidden input; poll lightly until the widget is ready.
+      const timer = window.setInterval(refreshEnabled, 400);
+      window.setTimeout(() => window.clearInterval(timer), 120000);
+      refreshEnabled();
+
+      btn?.addEventListener("click", async () => {
+        const token = readToken();
+        if (!token) {
+          setStatus("请先完成验证。");
+          return;
+        }
+        btn.disabled = true;
+        setStatus("正在领取…");
+        result.hidden = true;
+        try {
+          const res = await fetch(claimPath, {
+            method: "POST",
+            headers: { "Content-Type": "application/json", Accept: "application/json" },
+            body: JSON.stringify({ turnstileToken: token }),
+          });
+          const data = await res.json().catch(() => ({}));
+          if (!res.ok || !data?.ok || typeof data.inviteUrl !== "string") {
+            const map = {
+              turnstile_failed: "验证未通过，请刷新后重试。",
+              not_configured: "服务端尚未配置邀请，请稍后再试。",
+              missing_token: "请先完成验证。",
+            };
+            setStatus(map[data?.error] || (res.status === 429 ? "请求太频繁，请稍后再试。" : "领取失败，请稍后再试。"));
+            btn.disabled = false;
+            return;
+          }
+          link.href = data.inviteUrl;
+          link.textContent = data.inviteUrl;
+          if (data.note) {
+            note.hidden = false;
+            note.textContent = data.note;
+          } else {
+            note.hidden = true;
+            note.textContent = "";
+          }
+          result.hidden = false;
+          setStatus("领取成功，请尽快使用。");
+        } catch {
+          setStatus("网络异常，请稍后再试。");
+          btn.disabled = false;
+        }
+      });
+    }
+  </script>
+)}
+
+<style>
+  .linuxdo-page { padding: 1rem 0 2.5rem; max-width: 40rem; }
+  .linuxdo-eyebrow {
+    margin: 0 0 1rem;
+    color: var(--accent-text);
+    font: 0.67rem/1.5 var(--font-mono);
+    letter-spacing: 0.13em;
+  }
+  .linuxdo-lead { margin: 1rem 0 0; color: var(--muted); font-size: 0.95rem; line-height: 1.7; }
+  .linuxdo-panel {
+    margin-top: 2rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--border);
+  }
+  .linuxdo-panel h2 { margin: 0 0 1rem; font-size: 1.05rem; }
+  .linuxdo-claim-btn {
+    display: inline-flex;
+    align-items: center;
+    margin-top: 1rem;
+    padding: 0.55rem 1rem;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background: var(--bg);
+    color: var(--text);
+    font: inherit;
+    cursor: pointer;
+  }
+  .linuxdo-claim-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  .linuxdo-claim-btn:not(:disabled):hover { border-color: var(--accent-text); color: var(--accent-text); }
+  .linuxdo-status { margin: 0.85rem 0 0; color: var(--muted); font-size: 0.85rem; min-height: 1.4em; }
+  .linuxdo-result { margin: 1rem 0 0; word-break: break-all; }
+  .linuxdo-result a { color: var(--accent-text); }
+  .linuxdo-note { display: block; margin-top: 0.45rem; color: var(--muted); font-size: 0.8rem; }
+  .cf-turnstile { margin-top: 0.25rem; }
+</style>

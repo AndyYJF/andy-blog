@@ -59,6 +59,7 @@ test('purge plan covers legacy/query/canonical URLs and is host-bound', () => {
   assert.ok(plan.urls.includes(`${CDN_PURGE_SITE}/moments/`));
   assert.ok(plan.urls.includes(`${CDN_PURGE_SITE}/moments/rss.xml`));
   assert.ok(plan.urls.includes(`${CDN_PURGE_SITE}/listening/`));
+  assert.ok(plan.urls.includes(`${CDN_PURGE_SITE}/linuxdo/`));
   assert.ok(plan.urls.includes(`${CDN_PURGE_SITE}/llms.txt`));
   assert.ok(plan.urls.includes(`${CDN_PURGE_SITE}/llms-full.txt`));
   assert.throws(() => verifyPurgePlan({ ...plan, urls: [...plan.urls, 'https://evil.example/'] }, RELEASE_ID));

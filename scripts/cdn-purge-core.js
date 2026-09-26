@@ -14,6 +14,7 @@ const FIXED_PATHS = [
   '/moments/',
   '/moments/rss.xml',
   '/listening/',
+  '/linuxdo/',
   '/sitemap-0.xml',
   '/sitemap-index.xml',
   // Pagefind entry + WASM/UI must be purged with CSP/MIME changes; otherwise

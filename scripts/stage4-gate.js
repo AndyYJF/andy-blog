@@ -270,6 +270,22 @@ if (fs.existsSync(listeningMd)) {
   }
 }
 
+const linuxdoHtmlPath = path.join(DIST, 'linuxdo', 'index.html');
+check(fs.existsSync(linuxdoHtmlPath), 'linuxdo claim page missing from dist');
+if (fs.existsSync(linuxdoHtmlPath)) {
+  const linuxdoHtml = fs.readFileSync(linuxdoHtmlPath, 'utf8');
+  check(
+    linuxdoHtml.includes('rel="canonical" href="https://www.andy-y.cn/linuxdo/"'),
+    'linuxdo canonical mismatch',
+  );
+  check(!/linux\.do\/invites\//i.test(linuxdoHtml), 'linuxdo page must not embed invite URLs in HTML');
+  check(
+    linuxdoHtml.includes('data-linuxdo-page') || linuxdoHtml.includes('LINUXDO'),
+    'linuxdo page missing claim shell',
+  );
+  check(linuxdoHtml.includes('noindex'), 'linuxdo page should be noindex');
+}
+
 if (failures.length) {
   console.error('Stage 4 gates failed:');
   for (const f of failures) console.error(' -', f);

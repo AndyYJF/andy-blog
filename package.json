@@ -26,6 +26,7 @@
     "lighthouse:local": "node scripts/lighthouse-gate.js",
     "cdn:probe": "node scripts/probe-dual-cdn.js",
     "cdn:purge:test": "node --test scripts/cdn-purge.test.js",
+    "linuxdo:invite:test": "node --test docker/linuxdo-invite/server.test.js",
     "cdn:aliyun:test": "node --test scripts/aliyun-cdn-release.test.js",
     "mapping:repair:test": "node --test scripts/mapping-repair.test.js",
     "friends:extract": "python scripts/extract-joe-friends.py",
