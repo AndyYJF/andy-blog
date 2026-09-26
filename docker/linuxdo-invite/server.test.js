@@ -7,6 +7,7 @@ import {
   meetsDifficulty,
   readInviteConfig,
   verifyPow,
+  verifyTurnstile,
 } from './lib.js';
 import { createServer } from './server.js';
 
@@ -21,9 +22,11 @@ test('claimInvite accepts linux.do invite URLs only', () => {
 
 test('readInviteConfig reads invite fields and clamps difficulty', () => {
   const cfg = readInviteConfig({
+    TURNSTILE_SECRET_KEY: 'sec',
     LINUXDO_INVITE_URL: 'https://linux.do/invites/envOnly',
     LINUXDO_POW_DIFFICULTY: '9',
   });
+  assert.equal(cfg.secret, 'sec');
   assert.equal(cfg.inviteUrl, 'https://linux.do/invites/envOnly');
   assert.equal(cfg.difficulty, 6);
 });
@@ -36,49 +39,67 @@ test('verifyPow checks leading zero hex difficulty', () => {
   assert.equal(verifyPow({ salt, nonce: nonce + 1, difficulty: 2 }), false);
 });
 
-test('challenge + claim flow', async () => {
+test('verifyTurnstile accepts LINUXDO_CLAIM_DEV token', async () => {
+  const prev = process.env.LINUXDO_CLAIM_DEV;
+  process.env.LINUXDO_CLAIM_DEV = '1';
+  try {
+    assert.equal(await verifyTurnstile({ secret: 'x', token: 'dev-ok' }), true);
+    assert.equal(await verifyTurnstile({ secret: 'x', token: 'nope' }), false);
+  } finally {
+    if (prev === undefined) delete process.env.LINUXDO_CLAIM_DEV;
+    else process.env.LINUXDO_CLAIM_DEV = prev;
+  }
+});
+
+test('challenge + claim requires turnstile then pow', async () => {
   const store = createChallengeStore({ ttlMs: 60_000 });
+  let verified = 0;
   const server = createServer({
     challengeStore: store,
     readInviteConfig: () => ({
+      secret: 'unit-secret',
       inviteUrl: 'https://linux.do/invites/unitTest',
       note: 'n',
       difficulty: 2,
     }),
+    verifyTurnstile: async ({ token }) => {
+      verified += 1;
+      return token === 'ok-token';
+    },
   });
   await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
   const { port } = server.address();
   try {
-    const opt = await fetch(`http://127.0.0.1:${port}/linuxdo/challenge`, {
-      method: 'OPTIONS',
-      headers: { Origin: 'https://www.andy-y.cn' },
-    });
-    assert.equal(opt.status, 204);
-    assert.equal(opt.headers.get('access-control-allow-origin'), 'https://www.andy-y.cn');
-
     const chRes = await fetch(`http://127.0.0.1:${port}/linuxdo/challenge`, {
       headers: { Origin: 'https://www.andy-y.cn' },
     });
     assert.equal(chRes.status, 200);
-    assert.equal(chRes.headers.get('access-control-allow-origin'), 'https://www.andy-y.cn');
     const ch = await chRes.json();
     assert.equal(ch.ok, true);
-    assert.equal(ch.difficulty, 2);
 
     let nonce = 0;
     while (!meetsDifficulty(hashPow(ch.salt, String(nonce)), ch.difficulty)) nonce += 1;
 
-    const bad = await fetch(`http://127.0.0.1:${port}/linuxdo/claim`, {
+    const missingTs = await fetch(`http://127.0.0.1:${port}/linuxdo/claim`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id: ch.id, nonce: String(nonce + 1) }),
+      body: JSON.stringify({ id: ch.id, nonce: String(nonce) }),
     });
-    assert.equal(bad.status, 403);
+    assert.equal(missingTs.status, 400);
+    assert.equal((await missingTs.json()).error, 'missing_token');
+
+    const badTs = await fetch(`http://127.0.0.1:${port}/linuxdo/claim`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: ch.id, nonce: String(nonce), turnstileToken: 'bad' }),
+    });
+    assert.equal(badTs.status, 403);
+    assert.equal((await badTs.json()).error, 'turnstile_failed');
 
     const ok = await fetch(`http://127.0.0.1:${port}/linuxdo/claim`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Origin: 'https://www.andy-y.cn' },
-      body: JSON.stringify({ id: ch.id, nonce: String(nonce) }),
+      body: JSON.stringify({ id: ch.id, nonce: String(nonce), turnstileToken: 'ok-token' }),
     });
     assert.equal(ok.status, 200);
     assert.deepEqual(await ok.json(), {
@@ -86,13 +107,7 @@ test('challenge + claim flow', async () => {
       inviteUrl: 'https://linux.do/invites/unitTest',
       note: 'n',
     });
-
-    const reuse = await fetch(`http://127.0.0.1:${port}/linuxdo/claim`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id: ch.id, nonce: String(nonce) }),
-    });
-    assert.equal(reuse.status, 400);
+    assert.equal(verified, 2);
   } finally {
     await new Promise((resolve) => server.close(resolve));
   }

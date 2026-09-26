@@ -21,7 +21,7 @@ Node 要求 `>= 22.12`。根目录 `package.json` 管同步、门禁、nginx、C
 - 已知 CID 的路由以 `data/route-map.json` 为准。同步脚本禁止给已有 CID 另造 `routeId`。新文章的路径来自 Typecho slug 或自定义字段 `astroPath`。
 - 页面 `trailingSlash: 'always'`。例外是无尾斜杠的端点：`/rss.xml`、`/moments/rss.xml`、`/llms.txt`、`/llms-full.txt`。这四个和 `/404` 不进 sitemap。
 - 正文里的 `#` 标题在构建期降成 `h2`。目录和阅读进度只认 `h2`。不要改回允许多个 `h1`。
-- Markdown 经 `rehype-raw` 之后必须过 `rehype-sanitize`。`:::cloud` 只允许 `http(s)` 或同源路径。`{netease}` / `:::netease` 最少只要歌曲 id（可写 `id="数字"`，或把网易云歌曲链接贴进 `id`）；`title` / `artist` / `cover` 可选，未填时构建期按 id 请求网易云补全（封面仅 `music.126.net` / `music.163.net`，失败用 SVG 唱片占位）。可选 `note` 听后感（最多 48 字，渲染为卡片级 `.netease-note`，ListeningPage 再收进听后感槽；无 note 时不显示听后感槽）。外链文案为「网易云收听」，站内 iframe 收在「站内播放」。网易云 iframe 依赖 nginx CSP `frame-src` 含 `https://music.163.com`（与 bilibili 并列）。`/linuxdo/` 静态页在站点；challenge/claim 走 off-box `https://build2.fei.cx/linuxdo/*`（自建 PoW，不依赖 Turnstile）。
+- Markdown 经 `rehype-raw` 之后必须过 `rehype-sanitize`。`:::cloud` 只允许 `http(s)` 或同源路径。`{netease}` / `:::netease` 最少只要歌曲 id（可写 `id="数字"`，或把网易云歌曲链接贴进 `id`）；`title` / `artist` / `cover` 可选，未填时构建期按 id 请求网易云补全（封面仅 `music.126.net` / `music.163.net`，失败用 SVG 唱片占位）。可选 `note` 听后感（最多 48 字，渲染为卡片级 `.netease-note`，ListeningPage 再收进听后感槽；无 note 时不显示听后感槽）。外链文案为「网易云收听」，站内 iframe 收在「站内播放」。网易云 iframe 依赖 nginx CSP `frame-src` 含 `https://music.163.com`（与 bilibili 并列）。`/linuxdo/` 静态页在站点；challenge/claim 走 off-box `https://build2.fei.cx/linuxdo/*`（Turnstile siteverify + 自建 PoW）。
 - 文章分享图用 Typecho 自定义字段 `thumb`（环境变量 `FIELD_COVER`，默认 `thumb`）。同步写成 frontmatter `cover`，文章页把它交给 `og:image`。没填缩略图才落到 `/og-default.png`。不要另做一套按篇生成的分享卡，除非用户明确改口。
 - `llms.txt` 和 `llms-full.txt` 只收录 `allowFeed === true` 的文章。闲话只在索引里留一个入口链接，不输出闲话正文。
 - 新增固定公开 URL 时，同时改三处：`scripts/cdn-purge-core.js` 的 `FIXED_PATHS`、`scripts/generate-cdn-preheat-plan.js` 的固定预热列表、`scripts/stage4-gate.js`。sitemap 过滤在 `astro/astro.config.mjs`。
@@ -43,7 +43,7 @@ Node 要求 `>= 22.12`。根目录 `package.json` 管同步、门禁、nginx、C
 | `astro/src/content.config.ts` | 三个集合的 schema |
 | `astro/src/layouts/BaseLayout.astro` | head、OG、JSON-LD、导航、主题 |
 | `astro/src/components/ListeningPage.astro` | `/listening/` 曲目目录壳（编号、听后感槽、站内播放互斥） |
-| `astro/src/pages/linuxdo/index.astro` | `/linuxdo/` 邀请领取页（静态壳在站点；PoW/发码 API 在 off-box `build2.fei.cx`） |
+| `astro/src/pages/linuxdo/index.astro` | `/linuxdo/` 邀请领取页（静态壳在站点；Turnstile + PoW/发码 API 在 off-box `build2.fei.cx`） |
 | `docker/linuxdo-invite/` + `compose.offbox-linuxdo.yml` | off-box 发码 API（8370 + Caddy），env 在构建机 `/etc/andy-blog/linuxdo-invite.env` |
 | `astro/src/data/profile.ts` | 首页人物与项目文案 |
 | `astro/src/lib/llms.ts` | `llms.txt` / `llms-full.txt` 的纯格式化 |
@@ -75,7 +75,7 @@ Node 要求 `>= 22.12`。根目录 `package.json` 管同步、门禁、nginx、C
 - `/moments/`、`/moments/[id]/`、`/moments/page/[n]/` 闲话。
 - `/archive/` 归档。`/archives` 与 `/archives/` 重定向到 `/archive/`。
 - `/category/[id]/`、`/tag/[id]/`。不可发现的分类不进 sitemap。
-- `/friends/` 友链。`/listening/` 最近在听：Typecho 独立页正文只放 `{netease}` 短代码，页面壳是 `ListeningPage.astro`；`data/route-map.json` 须预置该页真实 cid（本地 fixture 可用临时 cid）。`/linuxdo/` 邀请领取：Astro 固定页在站点；验证与发码走 off-box `https://build2.fei.cx/linuxdo/{challenge,claim}`（自建 PoW）；不进 sitemap，默认 noindex；旧说明文 `/posts/linuxdo/` 可保留并链过来。`/about/`、`/dn42/` 来自 pages 集合，走 `astro/src/pages/[...page].astro`。
+- `/friends/` 友链。`/listening/` 最近在听：Typecho 独立页正文只放 `{netease}` 短代码，页面壳是 `ListeningPage.astro`；`data/route-map.json` 须预置该页真实 cid（本地 fixture 可用临时 cid）。`/linuxdo/` 邀请领取：Astro 固定页在站点；验证与发码走 off-box `https://build2.fei.cx/linuxdo/{challenge,claim}`（Turnstile + 自建 PoW）；不进 sitemap，默认 noindex；旧说明文 `/posts/linuxdo/` 可保留并链过来。`/about/`、`/dn42/` 来自 pages 集合，走 `astro/src/pages/[...page].astro`。
 - `/rss.xml`、`/moments/rss.xml`。
 - `/llms.txt` 链接目录，`/llms-full.txt` 文章全文。`robots.txt` 用注释指向这两个 URL。
 - `/og-default.png` 全站兜底分享图，由 `scripts/generate-og-default.mjs` 用 Playwright 画 1200×630。

@@ -4,10 +4,12 @@ import { linuxdoPublic } from "../../data/linuxdo-public";
 
 const challengeUrl = `${linuxdoPublic.apiOrigin}${linuxdoPublic.challengePath}`;
 const claimUrl = `${linuxdoPublic.apiOrigin}${linuxdoPublic.claimPath}`;
+const siteKey = linuxdoPublic.turnstileSiteKey;
+const configured = Boolean(siteKey);
 ---
 <BaseLayout
   title="LinuxDo 邀请 · AndyYan"
-  description="完成本地计算验证后领取 LinuxDo 邀请链接。旧说明文仍保留在文章区。"
+  description="完成人机验证与本地计算后领取 LinuxDo 邀请链接。旧说明文仍保留在文章区。"
   canonicalPath="/linuxdo/"
   type="website"
   noindex={true}
@@ -17,216 +19,273 @@ const claimUrl = `${linuxdoPublic.apiOrigin}${linuxdoPublic.claimPath}`;
       <p class="linuxdo-eyebrow">LINUXDO / 邀请</p>
       <h1 transition:name="page-title" transition:animate="none">领取邀请</h1>
       <p class="linuxdo-lead">
-        浏览器完成本地计算验证后即可领取当前邀请链接。说明与记录仍在
+        先完成下方人机验证，同时浏览器会完成本地计算；两者都通过后即可领取。说明与记录仍在
         <a href="/posts/linuxdo/">原文章</a>。
       </p>
     </header>
 
     <section class="linuxdo-panel" aria-labelledby="linuxdo-claim-title">
-      <h2 id="linuxdo-claim-title">计算验证</h2>
-      <p class="linuxdo-status" data-linuxdo-status role="status" aria-live="polite">正在准备验证…</p>
+      <h2 id="linuxdo-claim-title">验证领取</h2>
+      {!configured ? (
+        <p class="linuxdo-status" role="status">验证组件尚未配置，暂时无法领取。</p>
+      ) : (
+        <>
+          <p class="linuxdo-status" data-linuxdo-status role="status" aria-live="polite">正在准备验证…</p>
 
-      {/* 纯展示：读屏由上方 role=status 承担，这里 aria-hidden */}
-      <div class="linuxdo-pow" data-linuxdo-pow data-state="idle" aria-hidden="true">
-        <p class="pow-head">
-          <span class="pow-label">SHA-256</span>
-          <span class="pow-target">目标 <b data-pow-target>0000</b></span>
-        </p>
-        <div class="pow-digits" data-pow-digits>
-          {/* 数字位在模板里渲染，才能拿到 Astro 作用域属性；
-              运行时插入的节点不会带 data-astro-cid-*，样式会全部失效 */}
-          {Array.from({ length: 10 }).map(() => <span class="pow-rest">·</span>)}
-        </div>
-        <div class="pow-rail"><span class="pow-rail-fill"></span></div>
-      </div>
+          <div class="linuxdo-pow" data-linuxdo-pow data-state="idle" aria-hidden="true">
+            <p class="pow-head">
+              <span class="pow-label">SHA-256</span>
+              <span class="pow-target">目标 <b data-pow-target>0000</b></span>
+            </p>
+            <div class="pow-digits" data-pow-digits>
+              {Array.from({ length: 10 }).map(() => <span class="pow-rest">·</span>)}
+            </div>
+            <div class="pow-rail"><span class="pow-rail-fill"></span></div>
+          </div>
 
-      <button type="button" class="linuxdo-claim-btn" data-linuxdo-claim disabled>
-        获取邀请链接
-      </button>
-      <p class="linuxdo-result" data-linuxdo-result hidden>
-        <a data-linuxdo-link href="#" rel="noopener noreferrer" target="_blank"></a>
-        <span data-linuxdo-note class="linuxdo-note" hidden></span>
-      </p>
+          <div
+            class="cf-turnstile linuxdo-turnstile"
+            data-sitekey={siteKey}
+            data-theme="auto"
+            data-language="zh-cn"
+          ></div>
+
+          <button type="button" class="linuxdo-claim-btn" data-linuxdo-claim disabled>
+            获取邀请链接
+          </button>
+          <p class="linuxdo-result" data-linuxdo-result hidden>
+            <a data-linuxdo-link href="#" rel="noopener noreferrer" target="_blank"></a>
+            <span data-linuxdo-note class="linuxdo-note" hidden></span>
+          </p>
+        </>
+      )}
     </section>
   </article>
 </BaseLayout>
 
-<script define:vars={{ challengeUrl, claimUrl }}>
-  const root = document.querySelector("[data-linuxdo-page]");
-  if (root) {
-    const btn = root.querySelector("[data-linuxdo-claim]");
-    const status = root.querySelector("[data-linuxdo-status]");
-    const result = root.querySelector("[data-linuxdo-result]");
-    const link = root.querySelector("[data-linuxdo-link]");
-    const note = root.querySelector("[data-linuxdo-note]");
-    const pow = root.querySelector("[data-linuxdo-pow]");
-    const powDigits = root.querySelector("[data-pow-digits]");
-    const powTarget = root.querySelector("[data-pow-target]");
+{configured && (
+  <script is:inline src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+)}
 
-    let solution = null;
+{configured && (
+  <script define:vars={{ challengeUrl, claimUrl }}>
+    const root = document.querySelector("[data-linuxdo-page]");
+    if (root) {
+      const btn = root.querySelector("[data-linuxdo-claim]");
+      const status = root.querySelector("[data-linuxdo-status]");
+      const result = root.querySelector("[data-linuxdo-result]");
+      const link = root.querySelector("[data-linuxdo-link]");
+      const note = root.querySelector("[data-linuxdo-note]");
+      const pow = root.querySelector("[data-linuxdo-pow]");
+      const powDigits = root.querySelector("[data-pow-digits]");
+      const powTarget = root.querySelector("[data-pow-target]");
 
-    const setStatus = (text) => {
-      if (status) status.textContent = text || "";
-    };
+      let solution = null;
+      let claiming = false;
 
-    const toHex = (buffer) =>
-      [...new Uint8Array(buffer)].map((b) => b.toString(16).padStart(2, "0")).join("");
+      const setStatus = (text) => {
+        if (status) status.textContent = text || "";
+      };
 
-    const sha256Hex = async (value) => {
-      const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(value));
-      return toHex(digest);
-    };
+      const readToken = () => {
+        const input = root.querySelector('input[name="cf-turnstile-response"]');
+        return input && typeof input.value === "string" ? input.value.trim() : "";
+      };
 
-    const meets = (hex, difficulty) => hex.startsWith("0".repeat(difficulty));
+      const refreshEnabled = () => {
+        if (!btn || claiming) return;
+        btn.disabled = !(solution && readToken());
+      };
 
-    /* 展示层：只读映出求解过程，不参与判定 */
-    const POW_DIGITS = powDigits?.children.length || 10;
-    let difficulty = 4;
-    let paintSeq = 0;
+      const toHex = (buffer) =>
+        [...new Uint8Array(buffer)].map((b) => b.toString(16).padStart(2, "0")).join("");
 
-    const setPowState = (state) => {
-      if (pow) pow.dataset.state = state;
-    };
+      const sha256Hex = async (value) => {
+        const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(value));
+        return toHex(digest);
+      };
 
-    const renderDigits = (hex, solved) => {
-      if (!powDigits) return;
-      const cells = powDigits.children;
-      const shown = (hex || "").slice(0, POW_DIGITS).padEnd(POW_DIGITS, "·");
-      let zeros = 0;
-      while (zeros < shown.length && shown[zeros] === "0") zeros += 1;
-      const lit = Math.min(zeros, difficulty);
-      for (let i = 0; i < POW_DIGITS; i += 1) {
-        const cell = cells[i];
-        if (!cell) continue;
-        if (cell.textContent !== shown[i]) cell.textContent = shown[i];
-        const cls =
-          solved && i < difficulty ? "pow-hit" : i < lit ? "pow-zero" : "pow-rest";
-        if (cell.className !== cls) cell.className = cls;
-      }
-    };
+      const meets = (hex, difficulty) => hex.startsWith("0".repeat(difficulty));
 
-    const resetPow = () => {
-      paintSeq += 1;
-      setPowState("idle");
-      renderDigits("", false);
-    };
+      const POW_DIGITS = powDigits?.children.length || 10;
+      let difficulty = 4;
+      let paintSeq = 0;
 
-    /* 求解循环每 200 次 nonce 回调一次；这里补算一次摘要用于显示。
-       展示摘要是异步的，用序号丢弃过期的回调，避免旧值覆盖新值。 */
-    const paintProgress = async (salt, nonce) => {
-      if (!powDigits) return;
-      const seq = ++paintSeq;
-      setPowState("running");
-      const hex = await sha256Hex(`${salt}:${nonce}`);
-      if (seq !== paintSeq) return;
-      renderDigits(hex, false);
-    };
+      const setPowState = (state) => {
+        if (pow) pow.dataset.state = state;
+      };
 
-    const finishPow = async (salt, nonce) => {
-      const seq = ++paintSeq;
-      const hex = await sha256Hex(`${salt}:${nonce}`);
-      setPowState("solved");
-      if (seq !== paintSeq) return;
-      renderDigits(hex, true);
-    };
-
-    const solvePow = async (salt, difficulty, onProgress) => {
-      let nonce = 0;
-      let lastPaint = 0;
-      while (nonce < 50_000_000) {
-        const hex = await sha256Hex(`${salt}:${nonce}`);
-        if (meets(hex, difficulty)) return String(nonce);
-        nonce += 1;
-        if (nonce - lastPaint >= 200) {
-          lastPaint = nonce;
-          onProgress?.(nonce);
-          await new Promise((r) => setTimeout(r, 0));
+      const renderDigits = (hex, solved) => {
+        if (!powDigits) return;
+        const cells = powDigits.children;
+        const shown = (hex || "").slice(0, POW_DIGITS).padEnd(POW_DIGITS, "·");
+        let zeros = 0;
+        while (zeros < shown.length && shown[zeros] === "0") zeros += 1;
+        const lit = Math.min(zeros, difficulty);
+        for (let i = 0; i < POW_DIGITS; i += 1) {
+          const cell = cells[i];
+          if (!cell) continue;
+          if (cell.textContent !== shown[i]) cell.textContent = shown[i];
+          const cls =
+            solved && i < difficulty ? "pow-hit" : i < lit ? "pow-zero" : "pow-rest";
+          if (cell.className !== cls) cell.className = cls;
         }
-      }
-      throw new Error("pow_timeout");
-    };
+      };
 
-    const prepare = async () => {
-      solution = null;
-      if (btn) btn.disabled = true;
-      resetPow();
-      setStatus("正在获取验证题…");
-      const chRes = await fetch(challengeUrl, { headers: { Accept: "application/json" } });
-      const ch = await chRes.json().catch(() => ({}));
-      if (!chRes.ok || !ch?.ok) {
-        const map = {
-          not_configured: "服务端尚未配置邀请，请稍后再试。",
-          rate_limited: "请求太频繁，请稍后再试。",
-        };
-        setStatus(map[ch?.error] || (chRes.status === 429 ? "请求太频繁，请稍后再试。" : "获取验证题失败，请刷新重试。"));
-        setPowState("error");
-        return;
-      }
-      difficulty = Number(ch.difficulty) || difficulty;
-      if (powTarget) powTarget.textContent = "0".repeat(difficulty);
-      setStatus("正在计算…");
-      const nonce = await solvePow(ch.salt, ch.difficulty, (n) => {
-        setStatus(`正在计算…（${n.toLocaleString("zh-CN")}）`);
-        paintProgress(ch.salt, n);
-      });
-      solution = { id: ch.id, nonce };
-      await finishPow(ch.salt, nonce);
-      setStatus("验证已完成，可以领取。");
-      if (btn) btn.disabled = false;
-    };
+      const resetPow = () => {
+        paintSeq += 1;
+        setPowState("idle");
+        renderDigits("", false);
+      };
 
-    btn?.addEventListener("click", async () => {
-      if (!solution) {
-        setStatus("请等待计算完成。");
-        return;
-      }
-      btn.disabled = true;
-      setStatus("正在领取…");
-      result.hidden = true;
-      try {
-        const res = await fetch(claimUrl, {
-          method: "POST",
-          headers: { "Content-Type": "application/json", Accept: "application/json" },
-          body: JSON.stringify(solution),
-        });
-        const data = await res.json().catch(() => ({}));
-        if (!res.ok || !data?.ok || typeof data.inviteUrl !== "string") {
+      const paintProgress = async (salt, nonce) => {
+        if (!powDigits) return;
+        const seq = ++paintSeq;
+        setPowState("running");
+        const hex = await sha256Hex(`${salt}:${nonce}`);
+        if (seq !== paintSeq) return;
+        renderDigits(hex, false);
+      };
+
+      const finishPow = async (salt, nonce) => {
+        const seq = ++paintSeq;
+        const hex = await sha256Hex(`${salt}:${nonce}`);
+        setPowState("solved");
+        if (seq !== paintSeq) return;
+        renderDigits(hex, true);
+      };
+
+      const solvePow = async (salt, difficulty, onProgress) => {
+        let nonce = 0;
+        let lastPaint = 0;
+        while (nonce < 50_000_000) {
+          const hex = await sha256Hex(`${salt}:${nonce}`);
+          if (meets(hex, difficulty)) return String(nonce);
+          nonce += 1;
+          if (nonce - lastPaint >= 200) {
+            lastPaint = nonce;
+            onProgress?.(nonce);
+            await new Promise((r) => setTimeout(r, 0));
+          }
+        }
+        throw new Error("pow_timeout");
+      };
+
+      const resetTurnstile = () => {
+        try {
+          window.turnstile?.reset?.();
+        } catch {
+          /* ignore */
+        }
+      };
+
+      const prepare = async () => {
+        solution = null;
+        claiming = false;
+        if (btn) btn.disabled = true;
+        resetPow();
+        setStatus("正在获取验证题…");
+        const chRes = await fetch(challengeUrl, { headers: { Accept: "application/json" } });
+        const ch = await chRes.json().catch(() => ({}));
+        if (!chRes.ok || !ch?.ok) {
           const map = {
             not_configured: "服务端尚未配置邀请，请稍后再试。",
-            pow_failed: "验证未通过，正在重新计算…",
-            challenge_missing: "验证已失效，正在重新计算…",
-            challenge_used: "验证已使用，正在重新计算…",
-            challenge_expired: "验证已过期，正在重新计算…",
-            missing_pow: "验证不完整，正在重新计算…",
+            rate_limited: "请求太频繁，请稍后再试。",
           };
-          setStatus(map[data?.error] || (res.status === 429 ? "请求太频繁，请稍后再试。" : "领取失败，正在重新计算…"));
-          await prepare();
+          setStatus(map[ch?.error] || (chRes.status === 429 ? "请求太频繁，请稍后再试。" : "获取验证题失败，请刷新重试。"));
+          setPowState("error");
           return;
         }
-        link.href = data.inviteUrl;
-        link.textContent = data.inviteUrl;
-        if (data.note) {
-          note.hidden = false;
-          note.textContent = data.note;
+        difficulty = Number(ch.difficulty) || difficulty;
+        if (powTarget) powTarget.textContent = "0".repeat(difficulty);
+        setStatus("正在计算…");
+        const nonce = await solvePow(ch.salt, ch.difficulty, (n) => {
+          setStatus(`正在计算…（${n.toLocaleString("zh-CN")}）`);
+          paintProgress(ch.salt, n);
+        });
+        solution = { id: ch.id, nonce };
+        await finishPow(ch.salt, nonce);
+        if (readToken()) {
+          setStatus("验证已完成，可以领取。");
         } else {
-          note.hidden = true;
-          note.textContent = "";
+          setStatus("计算已完成，请完成上方人机验证。");
         }
-        result.hidden = false;
-        setStatus("领取成功，请尽快使用。");
-        solution = null;
-      } catch {
-        setStatus("网络异常，正在重新准备…");
-        await prepare();
-      }
-    });
+        refreshEnabled();
+      };
 
-    prepare().catch(() => {
-      setStatus("初始化失败，请刷新页面。");
-      setPowState("error");
-    });
-  }
-</script>
+      const tokenTimer = window.setInterval(refreshEnabled, 400);
+      window.setTimeout(() => window.clearInterval(tokenTimer), 180000);
+
+      btn?.addEventListener("click", async () => {
+        const token = readToken();
+        if (!solution) {
+          setStatus("请等待计算完成。");
+          return;
+        }
+        if (!token) {
+          setStatus("请先完成人机验证。");
+          return;
+        }
+        claiming = true;
+        btn.disabled = true;
+        setStatus("正在领取…");
+        result.hidden = true;
+        try {
+          const res = await fetch(claimUrl, {
+            method: "POST",
+            headers: { "Content-Type": "application/json", Accept: "application/json" },
+            body: JSON.stringify({ ...solution, turnstileToken: token }),
+          });
+          const data = await res.json().catch(() => ({}));
+          if (!res.ok || !data?.ok || typeof data.inviteUrl !== "string") {
+            const map = {
+              not_configured: "服务端尚未配置邀请，请稍后再试。",
+              turnstile_failed: "人机验证未通过，请重试。",
+              missing_token: "请先完成人机验证。",
+              pow_failed: "计算验证未通过，正在重新计算…",
+              challenge_missing: "验证已失效，正在重新计算…",
+              challenge_used: "验证已使用，正在重新计算…",
+              challenge_expired: "验证已过期，正在重新计算…",
+              missing_pow: "验证不完整，正在重新计算…",
+            };
+            setStatus(map[data?.error] || (res.status === 429 ? "请求太频繁，请稍后再试。" : "领取失败，正在重新准备…"));
+            if (data?.error === "turnstile_failed" || data?.error === "missing_token") {
+              resetTurnstile();
+              claiming = false;
+              refreshEnabled();
+              return;
+            }
+            resetTurnstile();
+            await prepare();
+            return;
+          }
+          link.href = data.inviteUrl;
+          link.textContent = data.inviteUrl;
+          if (data.note) {
+            note.hidden = false;
+            note.textContent = data.note;
+          } else {
+            note.hidden = true;
+            note.textContent = "";
+          }
+          result.hidden = false;
+          setStatus("领取成功，请尽快使用。");
+          solution = null;
+          claiming = false;
+        } catch {
+          setStatus("网络异常，正在重新准备…");
+          resetTurnstile();
+          await prepare();
+        }
+      });
+
+      prepare().catch(() => {
+        setStatus("初始化失败，请刷新页面。");
+        setPowState("error");
+      });
+    }
+  </script>
+)}
 
 <style>
   .linuxdo-page { padding: 1rem 0 2.5rem; max-width: 40rem; }
@@ -254,6 +313,7 @@ const claimUrl = `${linuxdoPublic.apiOrigin}${linuxdoPublic.claimPath}`;
     border-top: 1px solid var(--border);
   }
   .linuxdo-panel h2 { margin: 0 0 1rem; font-size: 1.05rem; }
+  .linuxdo-turnstile { margin-top: 1rem; min-height: 65px; }
   .linuxdo-claim-btn {
     display: inline-flex;
     align-items: center;
@@ -272,7 +332,6 @@ const claimUrl = `${linuxdoPublic.apiOrigin}${linuxdoPublic.claimPath}`;
   .linuxdo-result { margin: 1rem 0 0; word-break: break-all; }
   .linuxdo-note { display: block; margin-top: 0.45rem; color: var(--muted); font-size: 0.8rem; }
 
-  /* ---- PoW 计算可视化：细线 + 等宽带 + 琥珀/绿状态色，与站点动效同语言 ---- */
   .linuxdo-pow { margin-top: 0.9rem; }
   .pow-head {
     display: flex;
@@ -306,12 +365,10 @@ const claimUrl = `${linuxdoPublic.apiOrigin}${linuxdoPublic.claimPath}`;
     background: color-mix(in srgb, var(--muted) 7%, transparent);
     transition: color var(--t-fast) var(--ease), background-color var(--t-fast) var(--ease);
   }
-  /* 前导零命中：琥珀点亮，是"接近目标"的即时反馈 */
   .pow-digits .pow-zero {
     color: var(--accent-text);
     background: color-mix(in srgb, var(--accent) 16%, transparent);
   }
-  /* 达到难度：转绿并锁定 */
   .pow-digits .pow-hit {
     color: var(--ok);
     background: color-mix(in srgb, var(--ok) 16%, transparent);
@@ -332,7 +389,6 @@ const claimUrl = `${linuxdoPublic.apiOrigin}${linuxdoPublic.claimPath}`;
     overflow: hidden;
     background: color-mix(in srgb, var(--muted) 22%, transparent);
   }
-  /* 求解耗时不可预测，用不确定进度条，不假装百分比 */
   .pow-rail-fill {
     position: absolute;
     inset: 0 auto 0 0;
@@ -362,7 +418,6 @@ const claimUrl = `${linuxdoPublic.apiOrigin}${linuxdoPublic.claimPath}`;
     [data-state="solved"] .pow-digits {
       animation: none;
     }
-    /* 无动画时保留静态可见的进行中提示 */
     [data-state="running"] .pow-rail-fill { width: 100%; opacity: 0.6; }
   }
 </style>

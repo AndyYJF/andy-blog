@@ -279,13 +279,14 @@ if (fs.existsSync(linuxdoHtmlPath)) {
     'linuxdo canonical mismatch',
   );
   check(!/linux\.do\/invites\//i.test(linuxdoHtml), 'linuxdo page must not embed invite URLs in HTML');
-  check(!/challenges\.cloudflare\.com|cf-turnstile|turnstile/i.test(linuxdoHtml), 'linuxdo page must not load Turnstile');
+  check(/challenges\.cloudflare\.com|cf-turnstile/i.test(linuxdoHtml), 'linuxdo page must load Turnstile');
   check(
     linuxdoHtml.includes('data-linuxdo-page') || linuxdoHtml.includes('LINUXDO'),
     'linuxdo page missing claim shell',
   );
   check(linuxdoHtml.includes('https://build2.fei.cx/linuxdo/challenge'), 'linuxdo page must call offbox challenge API');
   check(linuxdoHtml.includes('https://build2.fei.cx/linuxdo/claim'), 'linuxdo page must call offbox claim API');
+  check(linuxdoHtml.includes('turnstileToken') || linuxdoHtml.includes('cf-turnstile'), 'linuxdo claim must send Turnstile token');
   check(linuxdoHtml.includes('noindex'), 'linuxdo page should be noindex');
 }
 

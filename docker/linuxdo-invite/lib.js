@@ -30,14 +30,35 @@ export function readInviteConfig(env = process.env) {
     }
   }
 
+  const secret = (env.TURNSTILE_SECRET_KEY || fileEnv.TURNSTILE_SECRET_KEY || '').trim();
   const inviteUrl = (env.LINUXDO_INVITE_URL || fileEnv.LINUXDO_INVITE_URL || '').trim();
   const note = (env.LINUXDO_INVITE_NOTE || fileEnv.LINUXDO_INVITE_NOTE || '').trim();
   const difficulty = Number(env.LINUXDO_POW_DIFFICULTY || fileEnv.LINUXDO_POW_DIFFICULTY || 4);
   return {
+    secret,
     inviteUrl,
     note,
     difficulty: Number.isFinite(difficulty) ? Math.min(6, Math.max(3, Math.floor(difficulty))) : 4,
   };
+}
+
+export async function verifyTurnstile({ secret, token, ip, fetchImpl = fetch }) {
+  if (process.env.LINUXDO_CLAIM_DEV === '1' && token === 'dev-ok') return true;
+  if (!secret || !token) return false;
+
+  const body = new URLSearchParams();
+  body.set('secret', secret);
+  body.set('response', token);
+  if (ip) body.set('remoteip', ip);
+
+  const res = await fetchImpl('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body,
+  });
+  if (!res.ok) return false;
+  const data = await res.json();
+  return data?.success === true;
 }
 
 export function claimInvite(config) {

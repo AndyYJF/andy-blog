@@ -296,6 +296,7 @@ check(wwwHttp.includes('proxy_pass http://waline:8360'), 'www-cutover must defau
 check(wwwHttp.includes('limit_req_zone $waline_rl_key zone=waline_api'), 'www-cutover must rate-limit Waline API');
 check(wwwHttp.includes('limit_req zone=waline_api burst=20 nodelay'), 'www-cutover must apply waline_api zone on /api/');
 check(wwwHttp.includes('https://build2.fei.cx'), 'www-cutover CSP must allow offbox linuxdo API');
+check(wwwHttp.includes('https://challenges.cloudflare.com'), 'www-cutover CSP must allow Turnstile');
 check(!wwwHttp.includes('location = /linuxdo/claim'), 'www-cutover must not proxy linuxdo claim on site VPS');
 check(!/^  add_header X-Robots-Tag .*noindex/m.test(wwwHttp), 'www-cutover must not apply a server-wide production noindex');
 check(wwwHttp.includes('map $uri $legacy_target'), 'www-cutover missing legacy maps');
@@ -322,6 +323,7 @@ if (onePanelGen.status === 0) {
   check(adapted.includes('limit_req_zone $waline_rl_key zone=waline_api'), '1Panel www must rate-limit Waline API');
   check(adapted.includes('limit_req zone=waline_api burst=20 nodelay'), '1Panel www must apply waline_api zone on /api/');
   check(adapted.includes('https://build2.fei.cx'), '1Panel www CSP must allow offbox linuxdo API');
+  check(adapted.includes('https://challenges.cloudflare.com'), '1Panel www CSP must allow Turnstile');
   check(!adapted.includes('location = /linuxdo/claim'), '1Panel www must not proxy linuxdo claim on site VPS');
   check(adapted.includes('/www/sites/www.andy-y.cn/ssl/fullchain.pem'), '1Panel www cert path wrong');
   check(!adapted.includes('proxy_pass http://waline:8360'), '1Panel www retains Compose waline upstream');

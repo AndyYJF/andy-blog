@@ -1,7 +1,7 @@
 import http from 'node:http';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { readInviteConfig, claimInvite, createChallengeStore } from './lib.js';
+import { readInviteConfig, claimInvite, createChallengeStore, verifyTurnstile } from './lib.js';
 
 const PORT = Number(process.env.PORT || 8370);
 const HOST = process.env.HOST || '127.0.0.1';
@@ -93,6 +93,7 @@ export function createServer(deps = {}) {
   const claim = deps.claimInvite || claimInvite;
   const store = deps.challengeStore || createChallengeStore();
   const limiter = deps.rateLimit || createRateLimit();
+  const verify = deps.verifyTurnstile || verifyTurnstile;
 
   return http.createServer(async (req, res) => {
     try {
@@ -153,6 +154,12 @@ export function createServer(deps = {}) {
         return;
       }
 
+      const token = typeof parsed.turnstileToken === 'string' ? parsed.turnstileToken.trim() : '';
+      if (!token) {
+        send(req, res, 400, { ok: false, error: 'missing_token' });
+        return;
+      }
+
       const id = typeof parsed.id === 'string' ? parsed.id.trim() : '';
       const nonce = parsed.nonce;
       if (!id || nonce === undefined || nonce === null || nonce === '') {
@@ -161,8 +168,19 @@ export function createServer(deps = {}) {
       }
 
       const config = loadConfig();
-      if (!config.inviteUrl) {
+      if (!config.secret || !config.inviteUrl) {
         send(req, res, 503, { ok: false, error: 'not_configured' });
+        return;
+      }
+
+      const human = await verify({
+        secret: config.secret,
+        token,
+        ip,
+        fetchImpl: deps.fetchImpl,
+      });
+      if (!human) {
+        send(req, res, 403, { ok: false, error: 'turnstile_failed' });
         return;
       }
 
