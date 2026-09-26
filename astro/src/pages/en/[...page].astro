@@ -1,0 +1,45 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getCollection, render } from "astro:content";
+
+export async function getStaticPaths() {
+  const pages = await getCollection("enPages");
+  return pages.map((page) => {
+    // canonicalPath is /en/<segments>/ — drop the leading "en" for the route.
+    const segments = page.data.canonicalPath
+      .replace(/^\/en\/?|\/$/g, "")
+      .split("/");
+    return {
+      params: { page: segments.join("/") || undefined },
+      props: { page },
+    };
+  });
+}
+
+const { page } = Astro.props;
+const { Content, remarkPluginFrontmatter } = await render(page);
+const katex = remarkPluginFrontmatter.hasKatex === true;
+---
+<BaseLayout
+  title={`${page.data.title} · AndyYan`}
+  description={page.data.description}
+  canonicalPath={page.data.canonicalPath}
+  article
+  image={page.data.cover}
+  katex={katex}
+  lang="en"
+  noindex
+>
+  <article class="prose reading-prose" data-article>
+    <header class="entry-header">
+      <h1>{page.data.title}</h1>
+      {page.data.translationStatus === "outdated" && (
+        <p class="entry-meta">
+          This translation is based on an older revision of the original and
+          may be out of date.
+        </p>
+      )}
+    </header>
+    <Content />
+  </article>
+</BaseLayout>

@@ -1,0 +1,30 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import { getCollection } from "astro:content";
+import { dayKey } from "../../../lib/reading-meta";
+
+const posts = (await getCollection("enPosts")).sort(
+  (a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime(),
+);
+---
+<BaseLayout
+  title="English posts · AndyYan"
+  description="All English translations of AndyYan's blog posts."
+  canonicalPath="/en/posts/"
+  lang="en"
+  noindex
+>
+  <article class="prose" data-article>
+    <h1>English posts</h1>
+    <ul>
+      {posts.map((post) => (
+        <li>
+          <a href={post.data.canonicalPath}>{post.data.title}</a>
+          {" "}
+          <time datetime={post.data.pubDate.toISOString()}>{dayKey(post.data.pubDate)}</time>
+          {post.data.translationStatus === "outdated" && <span> (older revision)</span>}
+        </li>
+      ))}
+    </ul>
+  </article>
+</BaseLayout>

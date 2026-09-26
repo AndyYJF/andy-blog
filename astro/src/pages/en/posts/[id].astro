@@ -1,0 +1,53 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import { getCollection, render } from "astro:content";
+import { dayKey } from "../../../lib/reading-meta";
+
+export async function getStaticPaths() {
+  const posts = await getCollection("enPosts");
+  return posts.map((post) => ({
+    params: { id: post.id },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content, remarkPluginFrontmatter } = await render(post);
+const katex = remarkPluginFrontmatter.hasKatex === true;
+const outdated = post.data.translationStatus === "outdated";
+---
+<BaseLayout
+  title={`${post.data.title} · AndyYan`}
+  description={post.data.description}
+  canonicalPath={post.data.canonicalPath}
+  article
+  type="article"
+  image={post.data.cover}
+  pubDate={post.data.pubDate}
+  updatedDate={post.data.updatedDate}
+  katex={katex}
+  lang="en"
+  noindex
+>
+  <article class="prose reading-prose" data-article>
+    <header class="entry-header">
+      <h1>{post.data.title}</h1>
+      <p class="entry-meta">
+        <time datetime={post.data.translationAvailableAt.toISOString()}>
+          Translated {dayKey(post.data.translationAvailableAt)}
+        </time>
+        <span class="entry-meta-sep" aria-hidden="true">·</span>
+        <time datetime={post.data.sourcePublishedAt.toISOString()}>
+          Original published {dayKey(post.data.sourcePublishedAt)}
+        </time>
+      </p>
+      {outdated && (
+        <p class="entry-meta">
+          This translation is based on an older revision of the original
+          article and may be out of date.
+        </p>
+      )}
+    </header>
+    <Content />
+  </article>
+</BaseLayout>

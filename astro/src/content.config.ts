@@ -35,6 +35,16 @@ const commonSchema = z.object({
   sourceFormat: z.enum(['markdown', 'html']),
 });
 
+const i18nExtension = {
+  locale: z.literal('en'),
+  sourceCid: z.number().int().positive(),
+  sourceRevision: z.number().int().positive(),
+  sourcePublishedAt: z.coerce.date(),
+  translationVersionId: z.number().int().positive(),
+  translationStatus: z.enum(['current', 'outdated']),
+  translationAvailableAt: z.coerce.date(),
+};
+
 export const collections = {
   posts: defineCollection({
     loader: glob({ base: './src/content/posts', pattern: '**/*.md' }),
@@ -42,6 +52,18 @@ export const collections = {
       kind: z.literal('post'),
       description: z.string().min(24).max(180),
     }),
+  }),
+  enPosts: defineCollection({
+    loader: glob({ base: './src/content/en-posts', pattern: '**/*.md' }),
+    schema: commonSchema.extend({
+      kind: z.literal('post'),
+      description: z.string().min(24).max(180),
+      ...i18nExtension,
+    }),
+  }),
+  enPages: defineCollection({
+    loader: glob({ base: './src/content/en-pages', pattern: '**/*.md' }),
+    schema: commonSchema.extend({ kind: z.literal('page'), ...i18nExtension }),
   }),
   pages: defineCollection({
     loader: glob({ base: './src/content/pages', pattern: '**/*.md' }),
