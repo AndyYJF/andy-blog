@@ -97,7 +97,7 @@ const en: typeof zh = {
     { href: '/en/posts/', label: 'Posts' },
     { href: '/en/archive/', label: 'Archive' },
     { href: '/en/friends/', label: 'Friends' },
-    { href: '/dn42/', label: 'DN42' },
+    { href: '/en/dn42/', label: 'DN42' },
     { href: '/en/about/', label: 'About' },
   ],
 };
