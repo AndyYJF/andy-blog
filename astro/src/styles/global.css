@@ -3521,3 +3521,46 @@ html[data-theme="dark"] .bg-fx::after {
     gap: 0.3rem;
   }
 }
+
+/* 语言切换全屏擦除动画（.lang-switch 点击 → astro:page-load 滑出） */
+.lang-wipe {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg);
+  color: var(--accent-text);
+  transform: translateY(100%);
+  pointer-events: none;
+}
+.lang-wipe[data-in] {
+  transform: translateY(0);
+  transition: transform 0.32s var(--ease);
+}
+.lang-wipe[data-out] {
+  transform: translateY(-100%);
+  transition: transform 0.38s var(--ease) 0.05s;
+}
+.lang-wipe-label {
+  font-family: var(--font-mono);
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.35em;
+  text-indent: 0.35em;
+  opacity: 0;
+}
+.lang-wipe[data-in] .lang-wipe-label {
+  opacity: 1;
+  transition: opacity 0.25s ease 0.18s;
+}
+.lang-wipe[data-out] .lang-wipe-label {
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+@media (prefers-reduced-motion: reduce) {
+  .lang-wipe {
+    display: none;
+  }
+}
