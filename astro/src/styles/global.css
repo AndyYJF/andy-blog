@@ -378,17 +378,19 @@ html.theme-ripple::view-transition-new(root) {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  width: 2rem;
   height: 2rem;
-  padding: 0 0.55rem;
+  padding: 0;
   border: 1px solid var(--border);
   border-radius: var(--radius-control);
   color: var(--muted);
-  font-size: 0.78rem;
-  font-weight: 600;
-  letter-spacing: 0.02em;
   text-decoration: none;
   transition: color var(--t-state) var(--ease),
     border-color var(--t-state) var(--ease);
+}
+.lang-switch svg {
+  width: 1.05rem;
+  height: 1.05rem;
 }
 .lang-switch:hover {
   color: var(--accent-text);
