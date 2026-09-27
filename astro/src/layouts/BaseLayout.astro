@@ -641,35 +641,35 @@ const ldJson = JSON.stringify(ldPayload)
         return () => clearInterval(timer);
       }
 
-      /* 语言切换全屏擦除：点击 .lang-switch 时遮罩滑入盖住页面，
-         ClientRouter 换页后从新页顶部滑出。遮罩挂在 <html> 下，
-         body 被整体替换也不受影响。 */
-      if (!(window as unknown as { __andyLangWipe?: boolean }).__andyLangWipe) {
-        (window as unknown as { __andyLangWipe?: boolean }).__andyLangWipe = true;
-        const WIPE_ID = "lang-wipe-overlay";
-        const removeWipe = () => document.getElementById(WIPE_ID)?.remove();
+      /* 语言切换整页交叉淡化：点击 .lang-switch 后内容淡出，换页后淡入。
+         无遮罩层，不会盖住文字；body 加 class 即可，body 被整体替换后
+         新页从 lang-vt-enter 动画开始。 */
+      if (!(window as unknown as { __andyLangVt?: boolean }).__andyLangVt) {
+        (window as unknown as { __andyLangVt?: boolean }).__andyLangVt = true;
+        let enterPending = false;
+        let leaveTimer = 0;
         document.addEventListener("click", (event) => {
           const target = event.target;
           if (!(target instanceof Element)) return;
-          const link = target.closest("a.lang-switch");
-          if (!(link instanceof HTMLAnchorElement)) return;
+          if (!target.closest("a.lang-switch")) return;
           if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-          const toEn = (link.getAttribute("hreflang") ?? "").startsWith("en");
-          removeWipe();
-          const overlay = document.createElement("div");
-          overlay.id = WIPE_ID;
-          overlay.className = "lang-wipe";
-          overlay.innerHTML = `<span class="lang-wipe-label">${toEn ? "English" : "中文"}</span>`;
-          document.documentElement.appendChild(overlay);
-          requestAnimationFrame(() => overlay.setAttribute("data-in", ""));
-          // 兜底：换页失败或整页刷新也不会留下残留遮罩
-          setTimeout(removeWipe, 2000);
+          enterPending = true;
+          document.documentElement.classList.add("lang-vt-leaving");
+          // 导航失败时恢复，避免页面停在透明状态
+          window.clearTimeout(leaveTimer);
+          leaveTimer = window.setTimeout(() => {
+            document.documentElement.classList.remove("lang-vt-leaving");
+            enterPending = false;
+          }, 1500);
         });
         document.addEventListener("astro:page-load", () => {
-          const overlay = document.getElementById(WIPE_ID);
-          if (!overlay) return;
-          overlay.setAttribute("data-out", "");
-          setTimeout(removeWipe, 450);
+          if (!enterPending) return;
+          enterPending = false;
+          window.clearTimeout(leaveTimer);
+          const root = document.documentElement;
+          root.classList.remove("lang-vt-leaving");
+          root.classList.add("lang-vt-enter");
+          setTimeout(() => root.classList.remove("lang-vt-enter"), 450);
         });
       }
 
