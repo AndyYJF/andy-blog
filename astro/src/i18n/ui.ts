@@ -112,6 +112,7 @@ const en: typeof zh = {
     { href: '/en/archive/', label: 'Archive' },
     { href: '/en/friends/', label: 'Friends' },
     { href: '/en/dn42/', label: 'DN42' },
+    { href: '/en/listening/', label: 'Listening' },
     { href: '/en/about/', label: 'About' },
   ],
 };
