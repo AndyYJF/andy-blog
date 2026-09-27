@@ -1,16 +1,33 @@
 ---
-const nodes = [
-  { code: "LAX", city: "洛杉矶", x: 20, y: 24 },
-  { code: "FRA", city: "法兰克福", x: 236, y: 24 },
-  { code: "HKG", city: "香港", x: 20, y: 164 },
-  { code: "TYO", city: "东京", x: 236, y: 164 },
-];
+interface Props {
+  lang?: string;
+}
+const { lang = "zh-CN" } = Astro.props;
+const isEn = lang.startsWith("en");
+const nodes = isEn
+  ? [
+      { code: "LAX", city: "Los Angeles", x: 20, y: 24 },
+      { code: "FRA", city: "Frankfurt", x: 236, y: 24 },
+      { code: "HKG", city: "Hong Kong", x: 20, y: 164 },
+      { code: "TYO", city: "Tokyo", x: 236, y: 164 },
+    ]
+  : [
+      { code: "LAX", city: "洛杉矶", x: 20, y: 24 },
+      { code: "FRA", city: "法兰克福", x: 236, y: 24 },
+      { code: "HKG", city: "香港", x: 20, y: 164 },
+      { code: "TYO", city: "东京", x: 236, y: 164 },
+    ];
 const edges = [
   "M124 52 H236", "M72 80 V164", "M288 80 V164",
   "M124 192 H236", "M108 80 L252 164", "M252 80 L108 164",
 ];
+const href = isEn ? "/en/dn42/" : "/dn42/";
+const ariaLabel = isEn
+  ? "View AndyYan's four-node full-mesh DN42 network"
+  : "查看 AndyYan 的 DN42 四节点全互联网络";
+const footerNote = isEn ? "4 nodes · Full-mesh iBGP" : "4 节点 · Full-mesh iBGP";
 ---
-<a class="home-network" href="/dn42/" aria-label="查看 AndyYan 的 DN42 四节点全互联网络" data-home-network>
+<a class="home-network" href={href} aria-label={ariaLabel} data-home-network>
   <span class="network-heading"><span>DN42</span><span>NETWORK NOTES</span></span>
   <svg viewBox="0 0 360 244" aria-hidden="true" focusable="false">
     <g class="network-wires" fill="none">
@@ -35,7 +52,7 @@ const edges = [
     </g>
   </svg>
   <span class="network-footer">
-    <span><strong>AS4242422921</strong><small>4 节点 · Full-mesh iBGP</small></span>
+    <span><strong>AS4242422921</strong><small>{footerNote}</small></span>
     <span class="network-arrow" aria-hidden="true">↗</span>
   </span>
 </a>

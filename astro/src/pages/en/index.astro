@@ -2,6 +2,7 @@
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import PostList from "../../components/PostList.astro";
 import AndySignature from "../../components/AndySignature.astro";
+import HomeNetwork from "../../components/HomeNetwork.astro";
 import { getCollection } from "astro:content";
 import { sortEnPosts } from "../../lib/posts";
 import { profileEn } from "../../data/profile";
@@ -33,7 +34,7 @@ const description = "AndyYan's home page: networking experiments, self-hosted pr
           </a>
         </li>
         <li>
-          <a href="/dn42/">
+          <a href="/en/dn42/">
             <span>DN42 network</span>
             <small>ASN 4242422921</small>
           </a>
@@ -64,6 +65,8 @@ const description = "AndyYan's home page: networking experiments, self-hosted pr
         categories: post.data.categories,
       }))} emptyText="No translated posts yet" />
     </section>
+
+    <HomeNetwork lang="en" />
 
     <section id="projects" class="profile-section" aria-labelledby="projects-title">
       <header class="section-heading">

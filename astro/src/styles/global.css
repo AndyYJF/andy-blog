@@ -810,6 +810,7 @@ html[data-theme="dark"] .card-cover img {
   padding: 0;
 }
 .profile-links li {
+  display: grid;
   animation: links-enter var(--t-state) var(--ease) both;
 }
 .profile-links li:nth-child(2) {
