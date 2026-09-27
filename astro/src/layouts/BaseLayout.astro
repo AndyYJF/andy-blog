@@ -4,7 +4,7 @@ import ThemeInit from "../components/ThemeInit.astro";
 import SearchDialog from "../components/SearchDialog.astro";
 import PageEmblem from "../components/PageEmblem.astro";
 import { activeMetaOfType } from "../lib/meta-routes";
-import { ui, toUiLang } from "../i18n/ui";
+import { ui, toUiLang, categoryNameEn } from "../i18n/ui";
 import fs from "node:fs";
 import path from "node:path";
 import "../styles/global.css";
@@ -118,7 +118,7 @@ const catBarItems = activeMetaOfType("category").map(({ mid, meta }) => {
     const href = mid === 1 ? "/en/posts/" : `/en${meta.canonicalPath}`;
     return {
       href,
-      label: mid === 1 ? "All posts" : meta.name?.trim() || meta.sourceSlug,
+      label: mid === 1 ? "All posts" : categoryNameEn[mid] || meta.name?.trim() || meta.sourceSlug,
       active: mid === 1 ? isEnPostList : currentPath === href,
     };
   }
@@ -609,6 +609,7 @@ const ldJson = JSON.stringify(ldPayload)
         if (!el) return () => {};
         const epoch = new Date("2025-06-13T00:00:00+08:00").getTime();
         const pad = (n: number) => String(n).padStart(2, "0");
+        const isEn = document.documentElement.lang.startsWith("en");
         const render = () => {
           const diff = Math.max(0, Date.now() - epoch);
           const days = Math.floor(diff / 86400000);
@@ -616,8 +617,11 @@ const ldJson = JSON.stringify(ldPayload)
           const m = Math.floor(diff / 60000) % 60;
           const s = Math.floor(diff / 1000) % 60;
           const years = Math.floor(days / 365);
-          const dayPart = years > 0 ? `${years} 年 ${days % 365} 天` : `${days} 天`;
-          el.textContent = `${dayPart} ${h} 时 ${pad(m)} 分 ${pad(s)} 秒`;
+          el.textContent = isEn
+            ? (years > 0
+                ? `${years}y ${days % 365}d ${h}h ${pad(m)}m ${pad(s)}s`
+                : `${days}d ${h}h ${pad(m)}m ${pad(s)}s`)
+            : `${years > 0 ? `${years} 年 ${days % 365} 天` : `${days} 天`} ${h} 时 ${pad(m)} 分 ${pad(s)} 秒`;
         };
         render();
         const timer = setInterval(render, 1000);

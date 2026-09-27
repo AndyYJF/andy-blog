@@ -4,6 +4,20 @@
  */
 export type UiLang = 'zh' | 'en';
 
+
+// English display names for the secondary category bar (zh names stay
+// canonical in Typecho/meta-route-map; keyed by mid).
+export const categoryNameEn: Record<number, string> = {
+  6: 'NAS',
+  10: 'DN42',
+  11: 'Open Source',
+  12: 'AI',
+  13: 'Tuning',
+  14: 'Ops',
+  15: 'Security',
+  16: 'Astro',
+};
+
 export function toUiLang(lang?: string): UiLang {
   return lang && lang.startsWith('en') ? 'en' : 'zh';
 }

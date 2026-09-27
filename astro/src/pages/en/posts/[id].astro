@@ -13,6 +13,7 @@ import {
 import { ui } from "../../../i18n/ui";
 import { loadMetaRouteMap } from "../../../lib/meta-routes";
 import { categoryTone } from "../../../lib/category-tone";
+import { categoryNameEn } from "../../../i18n/ui";
 
 export async function getStaticPaths() {
   const posts = sortEnPosts(await getCollection("enPosts"));
@@ -75,9 +76,9 @@ const outdated = post.data.translationStatus === "outdated";
                   const tone = categoryTone(category.slug);
                   const href = catHref(category.mid);
                   return href ? (
-                    <a class:list={["cat", tone && "tone-"+tone]} href={href}>{category.name}</a>
+                    <a class:list={["cat", tone && "tone-"+tone]} href={href}>{categoryNameEn[category.mid] || category.name}</a>
                   ) : (
-                    <span class:list={["cat", tone && "tone-"+tone]}>{category.name}</span>
+                    <span class:list={["cat", tone && "tone-"+tone]}>{categoryNameEn[category.mid] || category.name}</span>
                   );
                 })()}
               </>

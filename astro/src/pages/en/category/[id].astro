@@ -4,6 +4,7 @@ import PostList from "../../../components/PostList.astro";
 import { getCollection } from "astro:content";
 import { activeMetaOfType } from "../../../lib/meta-routes";
 import { sortEnPosts } from "../../../lib/posts";
+import { categoryNameEn } from "../../../i18n/ui";
 
 export async function getStaticPaths() {
   return activeMetaOfType("category").map(({ mid, meta }) => ({
@@ -16,7 +17,7 @@ const { mid, meta } = Astro.props;
 const all = sortEnPosts(await getCollection("enPosts"));
 const posts = all.filter((p) => p.data.categories.some((c) => c.mid === mid));
 const titleName =
-  meta.name?.trim() ||
+  categoryNameEn[mid] || meta.name?.trim() ||
   posts[0]?.data.categories.find((c) => c.mid === mid)?.name ||
   meta.sourceSlug;
 ---
