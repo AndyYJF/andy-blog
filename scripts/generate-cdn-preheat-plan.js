@@ -33,15 +33,28 @@ export function collectPreheatUrls(siteDir) {
   if (!fs.existsSync(sitemap) || !fs.statSync(sitemap).isFile()) throw new Error(`missing sitemap: ${sitemap}`);
   const xml = fs.readFileSync(sitemap, 'utf8');
   const discovered = [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => decodeXml(match[1].trim()));
-  const fixed = ['/robots.txt', '/llms.txt', '/llms-full.txt', '/rss.xml', '/listening/', '/linuxdo/', '/sitemap-0.xml', '/sitemap-index.xml'].map((item) => new URL(item, CDN_PURGE_SITE).href);
+  const fixedCandidates = ['/robots.txt', '/llms.txt', '/llms-full.txt', '/rss.xml', '/en/rss.xml', '/listening/', '/en/listening/', '/linuxdo/', '/sitemap-0.xml', '/sitemap-index.xml'].map((item) => new URL(item, CDN_PURGE_SITE).href);
+  // fixed candidates may not exist in older/minimal site fixtures — keep only on-disk ones
+  const fixed = fixedCandidates.filter((value) => fs.existsSync(objectPath(siteDir, new URL(value).pathname)));
   const urls = [...new Set([...discovered, ...fixed])].sort();
-  for (const value of urls) {
+  // Aliyun daily preheat quota is small (tens); the full sitemap (80+ URLs)
+  // exceeded it and blocked the whole CDN submission on 2026-09-27. Preheat is
+  // best-effort warm-up: cap to a curated critical set, refresh still covers all.
+  const PREHEAT_CAP = 30;
+  const critical = new Set(fixed);
+  for (const p of ['/', '/posts/', '/archive/', '/friends/', '/about/', '/dn42/', '/en/', '/en/posts/', '/en/archive/', '/en/friends/', '/en/about/', '/en/dn42/']) {
+    const u = new URL(p, CDN_PURGE_SITE).href;
+    if (fs.existsSync(objectPath(siteDir, u === undefined ? p : new URL(u).pathname))) critical.add(u);
+  }
+  const capped = urls.filter((u) => critical.has(u)).concat(urls.filter((u) => !critical.has(u))).slice(0, PREHEAT_CAP);
+  const finalUrls = [...new Set(capped)].sort();
+  for (const value of finalUrls) {
     const url = new URL(value);
     if (url.origin !== CDN_PURGE_SITE || url.search || url.hash) throw new Error(`unsafe sitemap URL: ${value}`);
     const file = objectPath(siteDir, url.pathname);
     if (!fs.existsSync(file) || !fs.statSync(file).isFile()) throw new Error(`preheat object is missing from site output: ${url.pathname}`);
   }
-  return urls;
+  return finalUrls;
 }
 
 function main() {
