@@ -17,9 +17,11 @@ interface PostItem {
 interface Props {
   posts: PostItem[];
   emptyText?: string;
+  lang?: string;
 }
 
-const { posts, emptyText = "暂无文章" } = Astro.props;
+const { posts, emptyText = "暂无文章", lang = "zh-CN" } = Astro.props;
+const isEn = lang.startsWith("en");
 const metaRoutes = loadMetaRouteMap();
 ---
 {posts.length === 0 ? (
@@ -53,7 +55,8 @@ const metaRoutes = loadMetaRouteMap();
                 {displayCategories.map((category, index) => {
                   const tone = categoryTone(category.slug);
                   const route = metaRoutes[String(category.mid)];
-                  const href = route && route.state === "active" ? route.canonicalPath : undefined;
+                  const zhHref = route && route.state === "active" ? route.canonicalPath : undefined;
+                  const href = zhHref && isEn ? `/en${zhHref}` : zhHref;
                   return (
                     <>
                       {index > 0 && <span class="cat-sep" aria-hidden="true"> / </span>}

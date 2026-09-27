@@ -107,15 +107,27 @@ const isNavActive = (href: string) => {
   return currentPath === href;
 };
 
-// 二级分类导航条：仅文章列表/分页 + 分类页（详情页不显示，避免 sticky 顶栏占高）
-const catBarVisible = isPostList || currentPath.startsWith("/category/");
+// 二级分类导航条：文章列表/分页 + 分类页（详情页不显示，避免 sticky 顶栏占高）
+const isEnPostList = currentPath === "/en/posts/";
+const isEnCategory = currentPath.startsWith("/en/category/");
+const catBarVisible = isPostList || currentPath.startsWith("/category/") || isEnPostList || isEnCategory;
 
 // 顶栏下方的二级分类导航条；「所有文章」指向文章列表主页
-const catBarItems = activeMetaOfType("category").map(({ mid, meta }) => ({
-  href: mid === 1 ? "/posts/" : meta.canonicalPath,
-  label: meta.name?.trim() || meta.sourceSlug,
-  active: mid === 1 ? isPostList : currentPath === meta.canonicalPath,
-}));
+const catBarItems = activeMetaOfType("category").map(({ mid, meta }) => {
+  if (uiLang === "en") {
+    const href = mid === 1 ? "/en/posts/" : `/en${meta.canonicalPath}`;
+    return {
+      href,
+      label: mid === 1 ? "All posts" : meta.name?.trim() || meta.sourceSlug,
+      active: mid === 1 ? isEnPostList : currentPath === href,
+    };
+  }
+  return {
+    href: mid === 1 ? "/posts/" : meta.canonicalPath,
+    label: meta.name?.trim() || meta.sourceSlug,
+    active: mid === 1 ? isPostList : currentPath === meta.canonicalPath,
+  };
+});
 
 // 独立页的左侧页边动态徽章（文章页不渲染，保持清爽）
 const emblemPage = currentPath.startsWith("/posts/") || currentPath.startsWith("/en/posts/") || /^\/page\/\d+\/?$/.test(currentPath)
@@ -261,7 +273,7 @@ const ldJson = JSON.stringify(ldPayload)
         </nav>
       </div>
       {catBarVisible && (
-        <nav class="cat-bar" aria-label="分类导航">
+        <nav class="cat-bar" aria-label={uiLang === "en" ? "Category navigation" : "分类导航"}>
           <div class="cat-bar-inner">
             {catBarItems.map((item) => (
               <a href={item.href} aria-current={item.active ? "page" : undefined}>{item.label}</a>

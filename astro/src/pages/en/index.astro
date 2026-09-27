@@ -56,7 +56,7 @@ const description = "AndyYan's home page: networking experiments, self-hosted pr
         </div>
         <a class="section-more" href="/en/posts/">All posts<span aria-hidden="true"> →</span></a>
       </header>
-      <PostList posts={latestPosts.map((post) => ({
+      <PostList lang="en" posts={latestPosts.map((post) => ({
         title: post.data.title,
         canonicalPath: post.data.canonicalPath,
         pubDate: post.data.sourcePublishedAt,

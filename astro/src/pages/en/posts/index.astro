@@ -16,7 +16,7 @@ const posts = sortEnPosts(await getCollection("enPosts"));
 >
   <h1 transition:name="page-title" transition:animate="none">Posts</h1>
   <p class="muted">Technical notes, deployment walkthroughs and postmortems, translated from Chinese</p>
-  <PostList posts={posts.map((post) => ({
+  <PostList lang="en" posts={posts.map((post) => ({
     title: post.data.title,
     canonicalPath: post.data.canonicalPath,
     pubDate: post.data.sourcePublishedAt,

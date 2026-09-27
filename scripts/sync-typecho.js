@@ -553,6 +553,31 @@ async function main() {
   }
   if (sitemapLastmod['/about/']) sitemapLastmod['/en/about/'] = sitemapLastmod['/about/'];
   if (sitemapLastmod['/friends/']) sitemapLastmod['/en/friends/'] = sitemapLastmod['/friends/'];
+  // en category pages: lastmod = latest member translation availability.
+  if (enLastmods.length) {
+    const enIsoByCid = new Map();
+    for (const le of localizedEntries) {
+      if (le.renderExpected && le.kind === 'post' && le.translationAvailableAt != null) {
+        enIsoByCid.set(le.sourceCid, isoFromUnix(le.translationAvailableAt));
+      }
+    }
+    const enCatLastmod = {};
+    for (const e of entries) {
+      if (e.kind !== 'post') continue;
+      const iso = enIsoByCid.get(e.cid);
+      if (!iso) continue;
+      for (const mid of e.categoryMids || []) {
+        const meta = metaMap[String(mid)];
+        if (!meta || meta.state !== 'active' || meta.type !== 'category') continue;
+        if (!enCatLastmod[meta.canonicalPath] || enCatLastmod[meta.canonicalPath] < iso) {
+          enCatLastmod[meta.canonicalPath] = iso;
+        }
+      }
+    }
+    for (const [zhPath, iso] of Object.entries(enCatLastmod)) {
+      sitemapLastmod[`/en${zhPath}`] = iso;
+    }
+  }
   // list pages — each list canonical uses max(updatedDate) of its members
   const PAGE_SIZE = 10;
   const postEntries = entries

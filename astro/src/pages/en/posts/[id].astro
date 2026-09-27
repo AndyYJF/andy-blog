@@ -11,6 +11,8 @@ import {
   showUpdatedDate,
 } from "../../../lib/reading-meta";
 import { ui } from "../../../i18n/ui";
+import { loadMetaRouteMap } from "../../../lib/meta-routes";
+import { categoryTone } from "../../../lib/category-tone";
 
 export async function getStaticPaths() {
   const posts = sortEnPosts(await getCollection("enPosts"));
@@ -24,8 +26,13 @@ const t = ui("en");
 const { post, posts } = Astro.props;
 const { Content, remarkPluginFrontmatter } = await render(post);
 const katex = remarkPluginFrontmatter.hasKatex === true;
-// en entries have no en category pages (P3 decision): zh names, no links.
+// en category pages exist (P4): link to /en/category/<slug>/ with zh names.
 const displayCategories = post.data.categories.filter((category) => category.mid !== 1);
+const metaRoutes = loadMetaRouteMap();
+const catHref = (mid) => {
+  const route = metaRoutes[String(mid)];
+  return route && route.state === "active" ? "/en" + route.canonicalPath : undefined;
+};
 const { prev, next } = adjacentPosts(posts, post.id);
 const neighborIds = new Set([prev?.id, next?.id]);
 const related = relatedPosts(posts.filter((item) => !neighborIds.has(item.id)), post, 3);
@@ -64,7 +71,15 @@ const outdated = post.data.translationStatus === "outdated";
             {displayCategories.map((category, index) => (
               <>
                 {index > 0 && <span class="cat-sep"> / </span>}
-                <span class="cat">{category.name}</span>
+                {(() => {
+                  const tone = categoryTone(category.slug);
+                  const href = catHref(category.mid);
+                  return href ? (
+                    <a class:list={["cat", tone && "tone-"+tone]} href={href}>{category.name}</a>
+                  ) : (
+                    <span class:list={["cat", tone && "tone-"+tone]}>{category.name}</span>
+                  );
+                })()}
               </>
             ))}
           </p>
