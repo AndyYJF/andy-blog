@@ -5,6 +5,8 @@ import SearchDialog from "../components/SearchDialog.astro";
 import PageEmblem from "../components/PageEmblem.astro";
 import { activeMetaOfType } from "../lib/meta-routes";
 import { ui, toUiLang } from "../i18n/ui";
+import fs from "node:fs";
+import path from "node:path";
 import "../styles/global.css";
 
 interface Props {
@@ -44,6 +46,46 @@ const metaDescription = description ?? t.description;
 const site = Astro.site ?? new URL("https://www.andy-y.cn");
 const canonical = new URL(canonicalPath, site).href;
 const ogImage = new URL(image || "/og-default.png", site).href;
+
+// hreflang + language switcher: zh↔en path pairs. Dynamic pairs come from
+// the i18n selection written by sync-typecho.js (astro/.cache); static
+// routes pair structurally. Missing file (pre-i18n env) → zh-only behavior.
+const staticLangPairs: Record<string, string> = {
+  "/": "/en/",
+  "/posts/": "/en/posts/",
+  "/archive/": "/en/archive/",
+  "/friends/": "/en/friends/",
+  "/about/": "/en/about/",
+};
+const langPairs: Record<string, string> = { ...staticLangPairs };
+// import.meta.url is unreliable under Vite bundling; try it, then cwd.
+const selectionCandidates = [
+  new URL("../../.cache/i18n-selection.json", import.meta.url),
+  path.resolve(process.cwd(), ".cache/i18n-selection.json"),
+];
+for (const candidate of selectionCandidates) {
+  try {
+    const selection = JSON.parse(fs.readFileSync(candidate, "utf8"));
+    for (const entry of selection.entries || []) {
+      if (entry?.renderExpected && typeof entry.canonicalPath === "string" && entry.canonicalPath.startsWith("/en/")) {
+        langPairs[entry.canonicalPath.slice(3)] = entry.canonicalPath;
+      }
+    }
+    break;
+  } catch {
+    /* try next candidate */
+  }
+}
+const currentUrlPath = Astro.url.pathname;
+const normalizedPath = currentUrlPath.endsWith("/") ? currentUrlPath : `${currentUrlPath}/`;
+const isEnPath = normalizedPath === "/en/" || normalizedPath.startsWith("/en/");
+// en pages always have a zh counterpart (structural or source content);
+// zh pages link en only when the pair actually exists.
+const zhCounterpart = isEnPath ? (normalizedPath === "/en/" ? "/" : normalizedPath.slice(3)) : normalizedPath;
+const enCounterpart = isEnPath ? normalizedPath : langPairs[normalizedPath];
+const langSwitchPath = isEnPath ? zhCounterpart : (enCounterpart ?? "/en/");
+const langSwitchLabel = isEnPath ? "中文" : "EN";
+const rssPath = uiLang === "en" ? "/en/rss.xml" : "/rss.xml";
 const year = new Date().getFullYear();
 const buildDate = new Date().toISOString().slice(0, 10);
 const currentPath = Astro.url.pathname;
@@ -125,7 +167,14 @@ const ldJson = JSON.stringify(ldPayload)
     <meta name="description" content={metaDescription} />
     {noindex && <meta name="robots" content="noindex, follow" />}
     <link rel="canonical" href={canonical} />
-    <link rel="alternate" type="application/rss+xml" title="AndyYan Blog RSS" href={new URL("/rss.xml", site).href} />
+    {enCounterpart && (
+      <>
+        <link rel="alternate" hreflang="zh-CN" href={new URL(zhCounterpart, site).href} />
+        <link rel="alternate" hreflang="en" href={new URL(enCounterpart, site).href} />
+        <link rel="alternate" hreflang="x-default" href={new URL(zhCounterpart, site).href} />
+      </>
+    )}
+    <link rel="alternate" type="application/rss+xml" title="AndyYan Blog RSS" href={new URL(rssPath, site).href} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/site.webmanifest" />
@@ -199,6 +248,7 @@ const ldJson = JSON.stringify(ldPayload)
             </div>
           </details>
           {uiLang === "zh" && <SearchDialog />}
+          <a class="lang-switch" href={langSwitchPath} hreflang={isEnPath ? "zh-CN" : "en"} aria-label={isEnPath ? "切换到中文" : "Switch to English"}>{langSwitchLabel}</a>
           <button class="theme-toggle" type="button" data-theme-toggle aria-pressed="false" aria-label={t.themeToggle}>
             <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <circle cx="12" cy="12" r="4"></circle>

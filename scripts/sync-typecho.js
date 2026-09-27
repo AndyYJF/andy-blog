@@ -535,6 +535,24 @@ async function main() {
   for (const e of entries) {
     sitemapLastmod[e.canonicalPath] = e.updatedDate;
   }
+  // en entries: lastmod = translation availability time (matches en feed
+  // pubDate semantics); updated on each new approved translation.
+  const enLastmods = [];
+  for (const le of localizedEntries) {
+    if (le.renderExpected && le.translationAvailableAt != null) {
+      const iso = isoFromUnix(le.translationAvailableAt);
+      sitemapLastmod[le.canonicalPath] = iso;
+      if (le.kind === 'post') enLastmods.push(iso);
+    }
+  }
+  if (enLastmods.length) {
+    const maxEn = enLastmods.sort().at(-1);
+    sitemapLastmod['/en/'] = maxEn;
+    sitemapLastmod['/en/posts/'] = maxEn;
+    sitemapLastmod['/en/archive/'] = maxEn;
+  }
+  if (sitemapLastmod['/about/']) sitemapLastmod['/en/about/'] = sitemapLastmod['/about/'];
+  if (sitemapLastmod['/friends/']) sitemapLastmod['/en/friends/'] = sitemapLastmod['/friends/'];
   // list pages — each list canonical uses max(updatedDate) of its members
   const PAGE_SIZE = 10;
   const postEntries = entries

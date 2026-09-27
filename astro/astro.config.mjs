@@ -67,12 +67,11 @@ export default defineConfig({
       filter: (page) => {
         const pathname = new URL(page).pathname;
         if (pathname === '/rss.xml') return false;
+        if (pathname === '/en/rss.xml') return false;
         if (pathname === '/moments/rss.xml') return false;
         if (pathname === '/llms.txt' || pathname === '/llms-full.txt') return false;
         if (pathname === '/404.html' || pathname === '/404/') return false;
         if (pathname === '/linuxdo/' || pathname === '/linuxdo') return false;
-        // P2: English pages are noindex and excluded from discovery until P4.
-        if (pathname === '/en/' || pathname.startsWith('/en/')) return false;
         if (sitemapExclude.has(pathname)) return false;
         return true;
       },

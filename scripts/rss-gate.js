@@ -78,3 +78,37 @@ console.log(
     2,
   ),
 );
+
+// English feed (P4): structural check. Exists whenever the selection has
+// render-expected entries; every item carries exactly one guid with the
+// stable zh-guid#en suffix and a pubDate (translationAvailableAt).
+const EN_BUILT = path.join(ROOT, 'astro', 'dist', 'en', 'rss.xml');
+const EN_SELECTION = path.join(ROOT, 'astro', '.cache', 'i18n-selection.json');
+let enExpected = 0;
+if (fs.existsSync(EN_SELECTION)) {
+  const selection = JSON.parse(fs.readFileSync(EN_SELECTION, 'utf8'));
+  enExpected = (selection.entries || []).filter(
+    (entry) => entry?.renderExpected && entry.kind === 'post',
+  ).length;
+}
+if (enExpected > 0) {
+  if (!fs.existsSync(EN_BUILT)) {
+    console.error(`en selection expects ${enExpected} render-expected posts but dist/en/rss.xml is missing`);
+    process.exit(1);
+  }
+  const enBuilt = fs.readFileSync(EN_BUILT, 'utf8');
+  const enItems = [...enBuilt.matchAll(/<item>([\s\S]*?)<\/item>/g)].map((m) => m[1]);
+  if (enItems.length !== Math.min(enExpected, 10)) {
+    console.error(`en RSS has ${enItems.length} items, expected ${Math.min(enExpected, 10)}`);
+    process.exit(1);
+  }
+  const enBad = enItems.filter((item) => {
+    const guids = [...item.matchAll(/<guid\b[^>]*>([^<]*)<\/guid>/g)].map((m) => m[1]);
+    return guids.length !== 1 || !guids[0].endsWith('#en') || !/<pubDate>[^<]+<\/pubDate>/.test(item);
+  });
+  if (enBad.length) {
+    console.error(`en RSS has ${enBad.length} items with bad guid/pubDate`);
+    process.exit(1);
+  }
+  console.log(JSON.stringify({ ok: true, enCount: enItems.length }, null, 2));
+}
