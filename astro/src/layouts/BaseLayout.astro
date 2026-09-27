@@ -392,8 +392,15 @@ const ldJson = JSON.stringify(ldPayload)
           // 每个章节预提取预览内容：标题 + 前三条条目；
           // 无列表型内容的章节（如 CONTACT）退化为直接文本/链接
           const previewData = secs.map((sec) => {
-            const title =
-              sec.querySelector("h1, h2")?.textContent?.trim() ?? "";
+            // h1 may contain an inline module script (AndySignature) —
+            // textContent would include the JS source. Clone and strip.
+            const headingEl = sec.querySelector("h1, h2");
+            const title = (() => {
+              if (!headingEl) return "";
+              const clone = headingEl.cloneNode(true) as HTMLElement;
+              clone.querySelectorAll("script, style").forEach((node) => node.remove());
+              return clone.textContent?.trim() ?? "";
+            })();
             let entries = Array.from(
               sec.querySelectorAll("h3, .post-card a, li a"),
             )

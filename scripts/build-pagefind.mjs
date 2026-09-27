@@ -18,7 +18,10 @@ import { fileURLToPath } from 'node:url';
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const DIST = path.join(ROOT, 'astro', 'dist');
 const EN_DIR = path.join(DIST, 'en');
-const STASH = path.join(os.tmpdir(), `andy-en-stash-${process.pid}`);
+// Stash lives inside astro/.cache: os.tmpdir() can be a different device
+// (EXDEV on rename) in the builder container.
+const CACHE = path.join(ROOT, 'astro', '.cache');
+const STASH = path.join(CACHE, `en-stash-${process.pid}`);
 const EN_TMP = path.join(os.tmpdir(), `andy-en-site-${process.pid}`);
 
 function pagefind(args) {
@@ -42,6 +45,7 @@ const hasEn = fs.existsSync(EN_DIR);
 let stashed = false;
 try {
   if (hasEn) {
+    fs.mkdirSync(CACHE, { recursive: true });
     fs.rmSync(STASH, { recursive: true, force: true });
     fs.renameSync(EN_DIR, STASH);
     stashed = true;
