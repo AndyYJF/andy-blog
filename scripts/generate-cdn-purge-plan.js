@@ -102,7 +102,7 @@ export function collectPagefindPaths({
 }
 
 /**
- * Walk a built site dir for /en/**/index.html URL paths so withdrawn
+ * Walk a built site dir for en-page index.html URL paths so withdrawn
  * translations (gone from the current selection) still get purged.
  */
 export function listEnPagePathsFromSite(siteDir) {
