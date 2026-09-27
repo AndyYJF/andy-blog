@@ -23,7 +23,7 @@ categories:
 tags: []
 sourceFormat: markdown
 description: 本文隐去了真实主机名、域名与 IP，但保留了完整的攻击 payload 与处置命令，方便复现与自查。
-cover: https://tc.andy-y.cn/i/2026/07/02/6a460345cf5a5.png
+cover: https://tc.andy-y.cn/i/2026/08/14/6a7f231b335a8.png
 ---
 
 > 本文隐去了真实主机名、域名与 IP，但保留了完整的攻击 payload 与处置命令，方便复现与自查。

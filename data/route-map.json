@@ -64,19 +64,6 @@
     ],
     "state": "active"
   },
-  "112": {
-    "kind": "page",
-    "routeId": "listening",
-    "canonicalPath": "/listening/",
-    "sourceSlug": "listening",
-    "feedGuid": "https://www.andy-y.cn/index.php/listening.html",
-    "commentKey": "/listening/",
-    "legacyPaths": [
-      "/index.php/listening.html",
-      "/listening.html"
-    ],
-    "state": "active"
-  },
   "30": {
     "kind": "post",
     "routeId": "grafana-bird-status",
@@ -207,6 +194,144 @@
     ],
     "state": "active"
   },
+  "87": {
+    "kind": "post",
+    "routeId": "astro",
+    "canonicalPath": "/posts/astro/",
+    "sourceSlug": "87",
+    "feedGuid": "urn:andy-y:post:87",
+    "commentKey": "/posts/astro/",
+    "legacyPaths": [
+      "/index.php/archives/87/",
+      "/archives/87/"
+    ],
+    "state": "active"
+  },
+  "90": {
+    "kind": "post",
+    "routeId": "pi",
+    "canonicalPath": "/posts/pi/",
+    "sourceSlug": "90",
+    "feedGuid": "urn:andy-y:post:90",
+    "commentKey": "/posts/pi/",
+    "legacyPaths": [
+      "/index.php/archives/90/",
+      "/archives/90/"
+    ],
+    "state": "active"
+  },
+  "99": {
+    "kind": "moment",
+    "routeId": "99",
+    "canonicalPath": "/moments/99/",
+    "sourceSlug": "99",
+    "feedGuid": "urn:andy-y:moment:99",
+    "commentKey": "/moments/99/",
+    "legacyPaths": [],
+    "state": "active"
+  },
+  "101": {
+    "kind": "moment",
+    "routeId": "101",
+    "canonicalPath": "/moments/101/",
+    "sourceSlug": "101",
+    "feedGuid": "urn:andy-y:moment:101",
+    "commentKey": "/moments/101/",
+    "legacyPaths": [],
+    "state": "active"
+  },
+  "102": {
+    "kind": "moment",
+    "routeId": "102",
+    "canonicalPath": "/moments/102/",
+    "sourceSlug": "102",
+    "feedGuid": "urn:andy-y:moment:102",
+    "commentKey": "/moments/102/",
+    "legacyPaths": [],
+    "state": "active"
+  },
+  "103": {
+    "kind": "moment",
+    "routeId": "103",
+    "canonicalPath": "/moments/103/",
+    "sourceSlug": "103",
+    "feedGuid": "urn:andy-y:moment:103",
+    "commentKey": "/moments/103/",
+    "legacyPaths": [],
+    "state": "active"
+  },
+  "104": {
+    "kind": "post",
+    "routeId": "campus-ipv6-notes",
+    "canonicalPath": "/posts/campus-ipv6-notes/",
+    "sourceSlug": "campus-ipv6-notes",
+    "feedGuid": "urn:andy-y:post:104",
+    "commentKey": "/posts/campus-ipv6-notes/",
+    "legacyPaths": [
+      "/index.php/archives/104/",
+      "/archives/104/"
+    ],
+    "state": "active"
+  },
+  "105": {
+    "kind": "post",
+    "routeId": "typesafejev",
+    "canonicalPath": "/posts/typesafejev/",
+    "sourceSlug": "105",
+    "feedGuid": "urn:andy-y:post:105",
+    "commentKey": "/posts/typesafejev/",
+    "legacyPaths": [
+      "/index.php/archives/105/",
+      "/archives/105/"
+    ],
+    "state": "active"
+  },
+  "107": {
+    "kind": "post",
+    "routeId": "linuxdo",
+    "canonicalPath": "/posts/linuxdo/",
+    "sourceSlug": "107",
+    "feedGuid": "urn:andy-y:post:107",
+    "commentKey": "/posts/linuxdo/",
+    "legacyPaths": [
+      "/index.php/archives/107/",
+      "/archives/107/"
+    ],
+    "state": "active"
+  },
+  "111": {
+    "kind": "moment",
+    "routeId": "111",
+    "canonicalPath": "/moments/111/",
+    "sourceSlug": "111",
+    "feedGuid": "urn:andy-y:moment:111",
+    "commentKey": "/moments/111/",
+    "legacyPaths": [],
+    "state": "active"
+  },
+  "112": {
+    "kind": "page",
+    "routeId": "listening",
+    "canonicalPath": "/listening/",
+    "sourceSlug": "listening",
+    "feedGuid": "https://www.andy-y.cn/index.php/listening.html",
+    "commentKey": "/listening/",
+    "legacyPaths": [
+      "/index.php/listening.html",
+      "/listening.html"
+    ],
+    "state": "active"
+  },
+  "121": {
+    "kind": "moment",
+    "routeId": "121",
+    "canonicalPath": "/moments/121/",
+    "sourceSlug": "121",
+    "feedGuid": "urn:andy-y:moment:121",
+    "commentKey": "/moments/121/",
+    "legacyPaths": [],
+    "state": "active"
+  },
   "9001": {
     "kind": "moment",
     "routeId": "9001",
@@ -215,7 +340,8 @@
     "feedGuid": "urn:andy-y:moment:9001",
     "commentKey": "/moments/9001/",
     "legacyPaths": [],
-    "state": "active"
+    "state": "tombstone",
+    "disposition": "gone"
   },
   "9002": {
     "kind": "moment",
@@ -225,7 +351,8 @@
     "feedGuid": "urn:andy-y:moment:9002",
     "commentKey": "/moments/9002/",
     "legacyPaths": [],
-    "state": "active"
+    "state": "tombstone",
+    "disposition": "gone"
   },
   "9003": {
     "kind": "moment",
@@ -235,6 +362,7 @@
     "feedGuid": "urn:andy-y:moment:9003",
     "commentKey": "/moments/9003/",
     "legacyPaths": [],
-    "state": "active"
+    "state": "tombstone",
+    "disposition": "gone"
   }
 }

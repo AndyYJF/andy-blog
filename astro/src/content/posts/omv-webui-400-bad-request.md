@@ -23,7 +23,7 @@ categories:
 tags: []
 sourceFormat: markdown
 description: 今天在登陆OMV（Open Media Vault）的时候显示400 - Bad Request，但是我的密码都是自动填充的，不可能出错，而且我没有改过密码，折腾一段时间之后终于找到解决方法。
-cover: https://tc.andy-y.cn/i/2026/06/11/6a2aaff942c29.png
+cover: https://tc.andy-y.cn/i/2026/08/14/6a7f22fc39304.png
 ---
 
 # 前言#

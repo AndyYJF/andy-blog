@@ -10,7 +10,7 @@
       "/category/default/"
     ],
     "state": "active",
-    "count": 11,
+    "count": 16,
     "discoverable": false
   },
   "2": {
@@ -122,7 +122,7 @@
       "/category/opensource/"
     ],
     "state": "active",
-    "count": 5,
+    "count": 7,
     "discoverable": true
   },
   "12": {
@@ -136,7 +136,7 @@
       "/category/AI/"
     ],
     "state": "active",
-    "count": 4,
+    "count": 7,
     "discoverable": true
   },
   "13": {
@@ -150,7 +150,7 @@
       "/category/refine/"
     ],
     "state": "active",
-    "count": 4,
+    "count": 8,
     "discoverable": true
   },
   "14": {
@@ -164,7 +164,7 @@
       "/category/mnt/"
     ],
     "state": "active",
-    "count": 4,
+    "count": 5,
     "discoverable": true
   },
   "15": {
@@ -176,6 +176,20 @@
     "legacyPaths": [
       "/index.php/category/cyber_safety/",
       "/category/cyber_safety/"
+    ],
+    "state": "active",
+    "count": 1,
+    "discoverable": true
+  },
+  "16": {
+    "type": "category",
+    "routeId": "astro",
+    "canonicalPath": "/category/astro/",
+    "name": "Astro",
+    "sourceSlug": "Astro",
+    "legacyPaths": [
+      "/index.php/category/Astro/",
+      "/category/Astro/"
     ],
     "state": "active",
     "count": 1,

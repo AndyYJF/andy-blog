@@ -1,15 +1,16 @@
 ---
 slug: maibot-astrbot-napcat
 kind: post
-title: MaiBot+AstrBot+Napcat分离部署，实用、稳定且拟人化的QQBot部署方案
+locale: en
+title: 'Split Deployment of MaiBot + AstrBot + NapCat: A Practical, Stable, and Anthropomorphic QQ Bot Deployment Scheme'
 legacyCid: 13
-canonicalPath: /posts/maibot-astrbot-napcat/
+canonicalPath: /en/posts/maibot-astrbot-napcat/
 commentKey: /posts/maibot-astrbot-napcat/
-feedGuid: https://www.andy-y.cn/index.php/archives/13/
+feedGuid: https://www.andy-y.cn/index.php/archives/13/#en
 allowComment: true
 allowFeed: true
-pubDate: '2026-01-23T08:02:00.000Z'
-updatedDate: '2026-07-02T07:35:11.000Z'
+pubDate: '2026-09-26T15:30:38.000Z'
+updatedDate: '2026-09-26T15:30:38.000Z'
 categories:
   - mid: 1
     name: 所有文章
@@ -25,12 +26,18 @@ categories:
     slug: mnt
 tags: []
 sourceFormat: markdown
-description: 最近一直在捣鼓QQ机器人，目前后端比较有名的就是AstrBot和 MaiBot 项目，其中AstrBot注重功能性（有多样化的插件服务）而MaiBot注重LLMs聊天与拟人化，遂想要同时给我的机器人接入两个项目，而由于TX的风控，部署在云服务器上的NapCat容易被下号，而由于网络环境问题，MaiB…
+sourceCid: 13
+sourceRevision: 1
+sourcePublishedAt: '2026-01-23T08:02:00.000Z'
+translationVersionId: 3
+translationStatus: current
+translationAvailableAt: '2026-09-26T15:30:38.000Z'
+description: This post introduces a split deployment architecture combining MaiBot, AstrBot, and NapCat. Deploying NapCat and AstrBot on a home NAS while hosting MaiBot on a public cloud server circumvents risk controls and ensures seamless access to overseas LLM APIs.
 cover: https://tc.andy-y.cn/i/2026/08/14/6a7f22ff35219.png
 ---
 
-# 灵感来源#
-最近一直在捣鼓QQ机器人，目前后端比较有名的就是[AstrBot](https://astrbot.app/)和 [MaiBot](https://docs.mai-mai.org/) 项目，其中AstrBot注重功能性（有多样化的插件服务）而MaiBot注重LLMs聊天与拟人化，遂想要同时给我的机器人接入两个项目，而由于TX的风控，部署在云服务器上的NapCat容易被下号，而由于网络环境问题，MaiBot最好运行在海外服务器上（可以方便的访问Gemini等AI的api），故想到了将AstrBot与NapCat部署在家里NAS上，MaiBot部署在公网服务器上的思路，拓扑图如下：
+# Inspiration #
+Recently, I have been tinkering with QQ bots. Currently, the most prominent backend projects are [AstrBot](https://astrbot.app/) and [MaiBot](https://docs.mai-mai.org/). AstrBot emphasizes functionality (offering diverse plugin services), while MaiBot focuses on LLM chat and anthropomorphic behavior. Consequently, I wanted to connect my bot to both projects simultaneously. However, due to Tencent's risk controls, NapCat deployed on a cloud server is prone to account bans; meanwhile, due to network environment constraints, MaiBot is best run on an overseas server (allowing easy access to APIs of AIs like Gemini). Therefore, I came up with the idea of deploying AstrBot and NapCat on a home NAS while deploying MaiBot on a public cloud server. The topology diagram is as follows:
 ```mermaid
 graph LR
     subgraph NAS
@@ -50,50 +57,50 @@ graph LR
 :::
 
 
-# 部署#
-## 前期准备##
- - [x] 一台公网服务器（最好2c2g及以上配置）
- - [x] 一台家宽网络下的Linux服务器
- - [x] docker环境
-## 开始部署##
-- 首先进入家里云ssh
+# Deployment #
+## Prerequisites ##
+ - [x] A public cloud server (preferably 2C2G or higher)
+ - [x] A Linux server on residential broadband
+ - [x] Docker environment
+## Begin Deployment ##
+- First, SSH into your home cloud/NAS:
 ```bash
 mkdir astrbot
 cd astrbot
 wget https://raw.githubusercontent.com/NapNeko/NapCat-Docker/main/compose/astrbot.yml
 sudo docker compose -f astrbot.yml up -d
 ```
-完成
-- 然后进入公网服务器
+Done.
+- Next, access the public cloud server:
 
 
 :::alert{type="info"}
 该部分以下内容大多直接来自官方文档
 :::
 
-## 一、准备麦麦部署环境
+## 1. Preparing the MaiBot Deployment Environment
 
-### 1.1 创建项目目录
+### 1.1 Create Project Directory
 
 ```bash
 mkdir -p maim-bot/docker-config/{mmc,adapters} && cd maim-bot
 ```
 
-### 1.2 获取 Docker 编排文件
+### 1.2 Download Docker Compose File
 
 ```bash
 wget https://raw.githubusercontent.com/Mai-with-u/MaiBot/main/docker-compose.yml
 ```
 
-> 备用下载方式  
-> 若 GitHub 直连不稳定，可使用镜像源：
+> Alternative download method  
+> If the direct GitHub connection is unstable, you can use a mirror source:
 >
 > ```bash
 > wget https://fastly.jsdelivr.net/gh/Mai-with-u/MaiBot@main/docker-compose.yml
 > ```
 
-### 1.3删除其中的NapCat容器并取消注释`adapter`的端口映射
-使用`vim docker-compose.yml`编辑，编辑完成后如下:
+### 1.3 Delete the NapCat Container and Uncomment the Port Mapping for `adapter`
+Edit using `vim docker-compose.yml`. Once edited, it should look as follows:
 ```toml
 services:
   adapters:
@@ -173,9 +180,9 @@ networks:
     driver: bridge
 
 ```
-## 二、麦麦环境配置
+## 2. MaiBot Environment Configuration
 
-### 2.1 准备配置文件模板
+### 2.1 Prepare Configuration File Templates
 
 ```bash
 # 获取核心组件配置模板
@@ -183,20 +190,20 @@ wget https://raw.githubusercontent.com/MaiM-with-u/MaiBot/main/template/template
 # 若 GitHub 直连不稳定，可使用镜像源：https://fastly.jsdelivr.net/gh/Mai-with-u/MaiBot@main/template/template.env
 ```
 
-获取 `adapter` 的 `config.toml`:
+Fetch `adapter`'s `config.toml`:
 
 ```bash
 wget https://github.com/MaiM-with-u/MaiBot-Napcat-Adapter/raw/refs/heads/main/template/template_config.toml      -O docker-config/adapters/config.toml
 # 若 GitHub 直连不稳定，可使用镜像源：https://fastly.jsdelivr.net/gh/Mai-with-u/MaiBot-Napcat-Adapter@main/template/template_config.toml
 ```
 
-> 配置文件里的服务名如不可用可替换为容器名  
-> * `MaiBot_Server` 配置可替换成 `maim-bot-core`  
-> * `napcat` ws 客户端可替换成 `ws://maim-bot-adapters:8095`
+> If service names in the configuration file are unavailable, you can replace them with container names  
+> * The `MaiBot_Server` setting can be replaced with `maim-bot-core`  
+> * The `napcat` WS client can be replaced with `ws://maim-bot-adapters:8095`
 
-### 2.2 预留文件
+### 2.2 Pre-create File
 
-这个文件是 MaiBot 运行统计报告。
+This file is for MaiBot's runtime statistics report.
 
 `MacOS/Linux`:
 
@@ -210,20 +217,20 @@ mkdir -p data/MaiMBot && touch ./data/MaiMBot/maibot_statistics.html
 mkdir data\MaiMBot && type nul > .\data\MaiMBot\maibot_statistics.html
 ```
 
-### 2.3 修改相关配置
+### 2.3 Modify Related Configurations
 
 ```bash
 vim docker-config/mmc/.env
 ```
 
-需修改以下关键参数:
+The following key parameters need to be modified:
 
 ```ini
 # 网络监听配置
 HOST=0.0.0.0
 ```
 
-修改适配器配置文件:
+Modify adapter configuration file:
 
 ```bash
 vim docker-config/adapters/config.toml
@@ -241,7 +248,7 @@ host = "core"
 port = 8000
 ```
 
-### 2.3 取消注释 docker-compose.yml 的 EULA
+### 2.3 Uncomment EULA in docker-compose.yml
 
 ```bash
 vim docker-compose.yml
@@ -250,7 +257,7 @@ vim docker-compose.yml
 - PRIVACY_AGREE=42dddb3cbe2b784b45a2781407b298a1 # 同意 Privacy
 ```
 
-### 2.4 数据库管理工具
+### 2.4 Database Management Tool
 
 ```yaml
 #sqlite-web:
@@ -281,7 +288,7 @@ chat2db:
     - maim_bot
 ```
 
-### 2.5 目录结构
+### 2.5 Directory Structure
 
 ```
 .
@@ -298,15 +305,15 @@ chat2db:
 
 ---
 
-## 三、初始化容器环境
+## 3. Initialize Container Environment
 
-### 3.1 首次启动容器生成剩余配置文件
+### 3.1 Start Containers for the First Time to Generate Remaining Configuration Files
 
 ```bash
 docker compose up -d && sleep 15 && docker compose down
 ```
 
-### 3.2 调整麦麦配置
+### 3.2 Adjust MaiBot Configuration
 
 ```bash
 vim docker-config/mmc/bot_config.toml
@@ -315,15 +322,15 @@ vim docker-config/mmc/model_config.toml
 
 ---
 
-## 四、启动麦麦
+## 4. Start MaiBot
 
-### 4.1 启动所有组件
+### 4.1 Start All Components
 
 ```bash
 docker compose up -d
 ```
 
-### 4.2 验证服务状态
+### 4.2 Verify Service Status
 
 ```bash
 docker compose ps
@@ -331,18 +338,18 @@ docker compose ps
 
 ---
 
-## 配置NapCat
-Napcat 配置入口: http://公网服务器IP:6099  
-- 网络配置使用websocket客户端，url为ws://<你的公网服务器ip>:8095 tocken和你之前在adapter中的tocken一致，启用：
+## Configure NapCat
+NapCat configuration portal: http://公网服务器IP:6099  
+- For network configuration, use a WebSocket client with the URL ws://<你的公网服务器ip>:8095, set token identical to the token you previously configured in adapter, and enable it:
  ![NapCat-1](https://tc.andy-y.cn/i/2026/01/23/697328f72c599.png)
-大功告成！
+All done!
 
 ---
-# 参考文档：
+# References:
 
-1. [使用 Docker 部署 AstrBot](https://docs.astrbot.app/deploy/astrbot/docker.html)
+1. [Deploy AstrBot Using Docker](https://docs.astrbot.app/deploy/astrbot/docker.html)
 
-2. [使用 Docker 部署 MaiBot](https://docs.mai-mai.org/manual/deployment/mmc_deploy_docker.html)
+2. [Deploy MaiBot Using Docker](https://docs.mai-mai.org/manual/deployment/mmc_deploy_docker.html)
 
 
 

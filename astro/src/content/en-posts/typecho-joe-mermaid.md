@@ -1,15 +1,16 @@
 ---
 slug: typecho-joe-mermaid
 kind: post
-title: Typecho + JOE 主题下 Mermaid 渲染的解决方案
+locale: en
+title: A Solution for Mermaid Rendering Under Typecho + JOE Theme
 legacyCid: 47
-canonicalPath: /posts/typecho-joe-mermaid/
+canonicalPath: /en/posts/typecho-joe-mermaid/
 commentKey: /posts/typecho-joe-mermaid/
-feedGuid: https://www.andy-y.cn/index.php/archives/47/
+feedGuid: https://www.andy-y.cn/index.php/archives/47/#en
 allowComment: false
 allowFeed: true
-pubDate: '2026-04-05T12:04:00.000Z'
-updatedDate: '2026-07-02T07:34:00.000Z'
+pubDate: '2026-09-26T15:11:46.000Z'
+updatedDate: '2026-09-26T15:11:46.000Z'
 categories:
   - mid: 1
     name: 所有文章
@@ -22,51 +23,57 @@ categories:
     slug: refine
 tags: []
 sourceFormat: markdown
-description: 在 Typecho 中使用 Mermaid 一直不算难，但一旦换成 JOE 主题，问题就开始变得复杂：
+sourceCid: 47
+sourceRevision: 1
+sourcePublishedAt: '2026-04-05T12:04:00.000Z'
+translationVersionId: 21
+translationStatus: current
+translationAvailableAt: '2026-09-26T15:11:46.000Z'
+description: This article presents a robust solution for rendering Mermaid diagrams in Typecho with the JOE theme. By bypassing backend HTML regex replacement and handling rendering entirely on the frontend, it reliably resolves conflicts with custom code highlighting and PJAX page navigation.
 cover: https://tc.andy-y.cn/i/2026/08/14/6a7f231013080.png
 ---
 
-阅前须知：由于博主现在 **并没有太多自己写代码甚至脚本的能力** ，本篇文章在我和AI共同解决了这个问题之后 **直接由AI生成** ，若你对此感到反感，可以现在 **关闭该帖** （ ~~我是废物~~ ）
+Note before reading: As the author currently **does not have much ability to write code or even scripts**, this article was **generated directly by AI** after AI and I solved this issue together. If you find this off-putting, you can **close this post** right now (~~I'm useless~~)
 
-## 一、问题背景
+## 1. Problem Background
 
-在 Typecho 中使用 Mermaid 一直不算难，但一旦换成 JOE 主题，问题就开始变得复杂：
+Using Mermaid in Typecho has never been particularly difficult, but once switched to the JOE theme, things start to get complicated:
 
-* 写好的 ` ```mermaid ` 代码块被当成普通代码高亮
-* 插件明明启用了，但图表不渲染
-* 翻页（PJAX）后 Mermaid 直接失效
+* Written ` ```mermaid ` code blocks are treated as normal code and highlighted
+* The plugin is clearly enabled, but charts do not render
+* After page navigation (PJAX), Mermaid breaks completely
 
-我一开始也尝试用常规方案（正则替换 HTML），结果发现：
+At first, I also tried conventional approaches (regex replacement of HTML), only to find:
 
-👉 **根本不稳定**
+👉 **It is completely unstable**
 
 ---
 
-## 二、问题的本质
+## 2. Essence of the Problem
 
-JOE 主题做了很多“增强”，包括：
+The JOE theme introduces many "enhancements," including:
 
-* 自定义代码高亮（Prism / Highlight.js）
-* 改写 Markdown 输出结构
-* 使用 PJAX（局部刷新页面）
+* Custom syntax highlighting (Prism / Highlight.js)
+* Rewriting Markdown output structure
+* Using PJAX (partial page updates)
 
-这导致一个核心问题：
+This leads to a core problem:
 
-> **你在后端生成的 HTML，很可能在前端被再次修改甚至覆盖**
+> **The HTML you generate on the backend is very likely modified or even overwritten again on the frontend**
 
-例如你期望的是：
+For example, what you expect is:
 
 ```html
 <pre><code class="language-mermaid"></code></pre>
 ```
 
-但实际可能变成：
+But in reality it might turn into:
 
 ```html
 <pre class="language-mermaid"></pre>
 ```
 
-甚至：
+Or even:
 
 ```html
 <div class="joe_code">
@@ -74,37 +81,37 @@ JOE 主题做了很多“增强”，包括：
 </div>
 ```
 
-👉 **结构不稳定 → 正则必炸**
+👉 **Unstable structure → regex will inevitably fail**
 
 ---
 
-## 三、传统方案为什么不行？
+## 3. Why Do Traditional Approaches Fail?
 
-常见插件思路：
+Common plugin logic:
 
 ```text
 Markdown → HTML → 正则替换 → <pre class="mermaid">
 ```
 
-问题在于：
+The problem lies in:
 
-* 依赖 HTML 结构（不可靠）
-* 容易被主题覆盖
-* PJAX 后不会重新执行
+* Relying on HTML structure (unreliable)
+* Easily overwritten by themes
+* Does not re-execute after PJAX
 
-结论：
+Conclusion:
 
-> **后端改 HTML，在 JOE 这种强主题下是错误方向**
+> **Modifying HTML on the backend is the wrong direction under an aggressive theme like JOE**
 
 ---
 
-## 四、最终解决方案：前端接管
+## 4. The Final Solution: Frontend Takeover
 
-我最后采用的是：
+What I ended up adopting:
 
-> ✅ **完全绕过后端，前端动态解析 Mermaid**
+> ✅ **Completely bypass the backend and dynamically parse Mermaid on the frontend**
 
-核心流程：
+Core workflow:
 
 ```text
 页面加载
@@ -118,9 +125,9 @@ Markdown → HTML → 正则替换 → <pre class="mermaid">
 
 ---
 
-## 五、核心实现解析
+## 5. Core Implementation Breakdown
 
-### 1. 扫描代码块
+### 1. Scanning Code Blocks
 
 ```js
 const blocks = document.querySelectorAll(
@@ -128,9 +135,9 @@ const blocks = document.querySelectorAll(
 );
 ```
 
-为什么这样写？
+Why write it this way?
 
-👉 兼容两种结构：
+👉 Compatible with both structures:
 
 ```html
 <pre><code class="language-mermaid"></code></pre>
@@ -142,17 +149,17 @@ const blocks = document.querySelectorAll(
 
 ---
 
-### 2. 提取原始代码
+### 2. Extracting Raw Code
 
 ```js
 let code = codeBlock.textContent;
 ```
 
-👉 直接拿文本，不依赖 HTML 结构
+👉 Get the text directly without relying on HTML structure
 
 ---
 
-### 3. 重建 DOM
+### 3. Rebuilding the DOM
 
 ```js
 const container = document.createElement('div');
@@ -165,7 +172,7 @@ mermaidDiv.textContent = code;
 container.appendChild(mermaidDiv);
 ```
 
-最终结构：
+Final structure:
 
 ```html
 <div class="mermaid-container">
@@ -175,20 +182,20 @@ container.appendChild(mermaidDiv);
 
 ---
 
-### 4. 替换原代码块
+### 4. Replacing the Original Code Block
 
 ```js
 pre.replaceWith(container);
 ```
 
-👉 关键点：
+👉 Key points:
 
-* 删除原代码高亮 DOM
-* 避免主题再次干扰
+* Delete the original syntax highlighting DOM
+* Prevent further interference from the theme
 
 ---
 
-### 5. 渲染 Mermaid
+### 5. Rendering Mermaid
 
 ```js
 mermaid.initialize({
@@ -199,38 +206,38 @@ mermaid.initialize({
 mermaid.init(undefined, document.querySelectorAll('.mermaid'));
 ```
 
-为什么不用自动加载？
+Why not use autoloading?
 
-👉 因为 DOM 是动态生成的
+👉 Because the DOM is dynamically generated
 
 ---
 
-### 6. 防止重复渲染
+### 6. Preventing Duplicate Rendering
 
 ```js
 if (codeBlock.dataset.mermaidDone) return;
 ```
 
-👉 防止：
+👉 Prevents:
 
-* PJAX 重复执行
-* 多次渲染报错
+* Duplicate execution on PJAX
+* Errors caused by multiple renders
 
 ---
 
-### 7. 适配 PJAX（关键）
+### 7. Adapting to PJAX (Crucial)
 
 ```js
 document.addEventListener('pjax:complete', run);
 ```
 
-👉 没有这行：
+👉 Without this line:
 
-❌ 翻页后 Mermaid 全部失效
+❌ Mermaid fails completely after page navigation
 
 ---
 
-## 六、主题适配（暗黑模式）
+## 6. Theme Adaptation (Dark Mode)
 
 ```js
 function getTheme() {
@@ -241,73 +248,73 @@ function getTheme() {
 }
 ```
 
-👉 自动跟随主题切换
+👉 Automatically follows theme switching
 
 ---
 
-## 七、为什么这个方案最稳？
+## 7. Why Is This Solution the Most Robust?
 
-对比一下：
+Comparison:
 
-| 方案             | 稳定性 | 原因       |
+| Solution | Stability | Reason |
 | -------------- | --- | -------- |
-| 后端正则替换         | ❌   | 依赖 HTML  |
-| 修改 Markdown 解析 | ❌   | 被主题覆盖    |
-| 前端接管（本方案）      | ✅   | 直接操作 DOM |
+| Backend regex replacement | ❌ | Relies on HTML |
+| Modifying Markdown parsing | ❌ | Overwritten by theme |
+| Frontend takeover (this solution) | ✅ | Directly manipulates DOM |
 
 ---
 
-## 八、核心设计思想
+## 8. Core Design Philosophy
 
-这次优化本质上是一次“架构调整”：
+This optimization is essentially an "architectural adjustment":
 
-### 1️⃣ 不和主题抢控制权
+### 1️⃣ Don't fight the theme for control
 
-JOE 已经接管了渲染链：
+JOE has already taken over the rendering pipeline:
 
-👉 你再插手，只会冲突
+👉 If you intervene further, it will only conflict
 
 ---
 
-### 2️⃣ 前端才是最终执行层
+### 2️⃣ The frontend is the final execution layer
 
-只要页面上存在：
+As long as the page contains:
 
 ```html
 language-mermaid
 ```
 
-👉 就一定能识别
+👉 It can definitely be recognized
 
 ---
 
-### 3️⃣ 幂等设计
+### 3️⃣ Idempotent Design
 
 ```js
 data-mermaidDone
 ```
 
-👉 保证多次执行不会出问题
+👉 Guarantees multiple executions will not cause issues
 
 ---
 
-## 九、最终效果
+## 9. Final Results
 
-* ✅ 支持所有 Mermaid 图
-* ✅ 支持 PJAX
-* ✅ 不受代码高亮影响
-* ✅ 自动暗黑模式
-* ✅ 主题无关（通用）
-
----
-
-## 十、一句话总结
-
-> 与其试图修补被主题打乱的 HTML，不如直接绕过它，在前端重建渲染链。
+* ✅ Supports all Mermaid diagrams
+* ✅ Supports PJAX
+* ✅ Unaffected by code highlighting
+* ✅ Automatic dark mode
+* ✅ Theme-agnostic (universal)
 
 ---
 
-## 十一、源码附上
+## 10. One-Sentence Summary
+
+> Instead of trying to patch HTML mangled by the theme, bypass it entirely and rebuild the rendering pipeline on the frontend.
+
+---
+
+## 11. Attached Source Code
 
 
 
@@ -480,15 +487,12 @@ HTML;
 
 
 
-## 十二、使用方法：
-把这个文件放到：
+## 12. Instructions:
+Place this file at:
 ```bash
 /usr/plugins/Mermaid/Plugin.php
 ```
-进入 Typecho 后台： `控制台 → 插件 → 启用 Mermaid`
-写文章时使用 Mermaid就直接在 Markdown 里写：
+Go to Typecho Admin: `控制台 → 插件 → 启用 Mermaid`
+When writing an article, to use Mermaid simply write directly in Markdown:
 ![](https://tc.andy-y.cn/i/2026/04/05/69d24faf4bde7.png)
-发布后就会自动渲染成图。
-
-
-
+Once published, it will automatically render into a diagram.

@@ -20,7 +20,7 @@ categories:
 tags: []
 sourceFormat: markdown
 description: 大家可能会遇到lz4格式的压缩包（多见于防止用户 手贱 在线解压的网盘资源），这时安卓可以使用ZArchiver方便的解压，但是ios就不行了，这里分享一个基于iSH的解压教程。
-cover: https://tc.andy-y.cn/i/2026/06/11/6a2aaea533d2f.png
+cover: https://tc.andy-y.cn/i/2026/08/14/6a7f2305e0f16.png
 ---
 
 ## 前言

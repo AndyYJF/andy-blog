@@ -20,7 +20,7 @@ categories:
 tags: []
 sourceFormat: markdown
 description: 之前就一直想玩StableDiffusion奈何没有合适的显卡。高考完终于买了个5080的笔电想着是时候开玩了
-cover: https://tc.andy-y.cn/i/2026/06/20/6a36482f7505b.png
+cover: https://tc.andy-y.cn/i/2026/08/14/6a7f2319480b4.png
 ---
 
 # 前言

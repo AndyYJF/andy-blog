@@ -1,15 +1,16 @@
 ---
 slug: blog-cover-origin
 kind: post
-title: 博客封面是怎么来的？
+locale: en
+title: Where Did the Blog Covers Come From?
 legacyCid: 61
-canonicalPath: /posts/blog-cover-origin/
+canonicalPath: /en/posts/blog-cover-origin/
 commentKey: /posts/blog-cover-origin/
-feedGuid: https://www.andy-y.cn/index.php/archives/61/
+feedGuid: https://www.andy-y.cn/index.php/archives/61/#en
 allowComment: true
 allowFeed: true
-pubDate: '2026-06-11T13:08:00.000Z'
-updatedDate: '2026-08-14T12:07:33.000Z'
+pubDate: '2026-09-26T15:30:39.000Z'
+updatedDate: '2026-09-26T15:30:39.000Z'
 categories:
   - mid: 1
     name: 所有文章
@@ -19,13 +20,19 @@ categories:
     slug: AI
 tags: []
 sourceFormat: markdown
-description: 这个博客上的封面是怎么来的？ 其实是用 GPT-Image-2生成的 随手让它写了个prompt可以保持创作风格：
+sourceCid: 61
+sourceRevision: 1
+sourcePublishedAt: '2026-06-11T13:08:00.000Z'
+translationVersionId: 7
+translationStatus: current
+translationAvailableAt: '2026-09-26T15:30:39.000Z'
+description: A brief explanation of how the blog's cover images were generated using GPT-Image-2, along with the prompt used to maintain a consistent style.
 cover: https://tc.andy-y.cn/i/2026/08/14/6a7f2317385af.png
 ---
 
-这个博客上的封面是怎么来的？
-其实是用 **GPT-Image-2**生成的
-随手让它写了个prompt可以保持创作风格：
+Where did the covers on this blog come from?
+They were actually generated using **GPT-Image-2**.
+I casually had it write a prompt to maintain a consistent creative style:
 ```txt
 我会给你一篇技术博客原文，请你根据文章内容生成一张博客封面图。
 要求：
