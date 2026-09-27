@@ -4,7 +4,46 @@
  *
  * First click opens <dialog>; CSS/JS load only then. Mount Promise is cached.
  * ClientRouter may strip head CSS on swap — reopen re-injects if needed.
+ * lang="en" searches the /en/-only index at /en/pagefind (dual-index build).
  */
+interface Props {
+  lang?: string;
+}
+const { lang = "zh-CN" } = Astro.props;
+const isEn = lang.startsWith("en");
+const strings = isEn
+  ? {
+      open: "Search posts",
+      title: "Site search",
+      subtitle: "Search translated posts by title or body",
+      close: "Close",
+      loading: "Loading search…",
+      failed: "Search failed to load. Close and retry.",
+      escHint: "close",
+      kHint: "open search",
+      placeholder: "Search posts…",
+      clear: "Clear",
+      loadMore: "Load more",
+      zero: "No results for [SEARCH_TERM]",
+      many: "[COUNT] results",
+      one: "1 result",
+    }
+  : {
+      open: "搜索文章",
+      title: "站内搜索",
+      subtitle: "按标题或正文关键词查找",
+      close: "关闭",
+      loading: "正在加载搜索…",
+      failed: "搜索加载失败，关闭后重试",
+      escHint: "关闭",
+      kHint: "打开搜索",
+      placeholder: "搜索文章…",
+      clear: "清除",
+      loadMore: "加载更多",
+      zero: "没有找到「[SEARCH_TERM]」",
+      many: "[COUNT] 条结果",
+      one: "1 条结果",
+    };
 ---
 <button
   type="button"
@@ -12,7 +51,7 @@
   data-search-open
   aria-haspopup="dialog"
   aria-controls="site-search"
-  aria-label="搜索文章"
+  aria-label={strings.open}
 >
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
     <circle cx="11" cy="11" r="7"></circle>
@@ -20,19 +59,19 @@
   </svg>
 </button>
 
-<dialog id="site-search" class="search-dialog" data-search-dialog aria-labelledby="site-search-title">
+<dialog id="site-search" class="search-dialog" data-search-dialog data-search-lang={isEn ? "en" : "zh"} aria-labelledby="site-search-title">
   <div class="search-dialog-chrome">
     <div class="search-dialog-heading">
-      <strong id="site-search-title">站内搜索</strong>
-      <p>按标题或正文关键词查找</p>
+      <strong id="site-search-title">{strings.title}</strong>
+      <p>{strings.subtitle}</p>
     </div>
-    <button type="button" class="search-close" data-search-close aria-label="关闭搜索">关闭</button>
+    <button type="button" class="search-close" data-search-close aria-label={strings.close}>{strings.close}</button>
   </div>
   <div id="pagefind-container" data-pagefind-root></div>
   <p class="search-hint muted" data-search-status role="status" hidden></p>
   <div class="search-dialog-footer" aria-hidden="true">
-    <span><kbd>Esc</kbd> 关闭</span>
-    <span><kbd>Ctrl / ⌘ K</kbd> 打开搜索</span>
+    <span><kbd>Esc</kbd> {strings.escHint}</span>
+    <span><kbd>Ctrl / ⌘ K</kbd> {strings.kHint}</span>
   </div>
 </dialog>
 
@@ -47,6 +86,36 @@
         ui: { destroy?: () => void } | null;
       };
     }
+  }
+
+  const SEARCH_STRINGS = {
+    zh: {
+      loading: '正在加载搜索…',
+      failed: '搜索加载失败，关闭后重试',
+      placeholder: '搜索文章…',
+      clear: '清除',
+      loadMore: '加载更多',
+      searchLabel: '站内搜索',
+      zero: '没有找到「[SEARCH_TERM]」',
+      many: '[COUNT] 条结果',
+      one: '1 条结果',
+    },
+    en: {
+      loading: 'Loading search…',
+      failed: 'Search failed to load. Close and retry.',
+      placeholder: 'Search posts…',
+      clear: 'Clear',
+      loadMore: 'Load more',
+      searchLabel: 'Site search',
+      zero: 'No results for [SEARCH_TERM]',
+      many: '[COUNT] results',
+      one: '1 result',
+    },
+  };
+
+  function currentLang() {
+    const dialog = document.querySelector('[data-search-dialog]');
+    return dialog instanceof HTMLElement && dialog.dataset.searchLang === 'en' ? 'en' : 'zh';
   }
 
   const state = (window.__andySearch ??= {
@@ -98,26 +167,28 @@
     const root = document.querySelector('[data-pagefind-root]');
     if (!root || !window.PagefindUI) return;
     root.replaceChildren();
-    // Index is built with `--force-language zh` (see package.json). Remaining
-    // unknown PagefindUI keys are forwarded as pagefindOptions, so pass
-    // `language` at the top level. Keep showSubResults off: nested hits inflate
-    // height on mobile and make "N 条结果" look like only the first row rendered.
+    // Dual index: zh at /pagefind (en pages stashed during indexing), en at
+    // /en/pagefind (en-only). The UI bundle itself is language-agnostic and
+    // always loaded from the zh asset path, which exists on every release.
+    const lang = currentLang();
+    const strings = SEARCH_STRINGS[lang];
     state.ui = new window.PagefindUI({
       element: '[data-pagefind-root]',
+      bundlePath: lang === 'en' ? '/en/pagefind/' : '/pagefind/',
       showImages: false,
       showSubResults: false,
       excerptLength: 20,
       pageSize: 8,
-      language: 'zh',
+      language: lang,
       translations: {
-        language: 'zh',
-        placeholder: '搜索文章…',
-        clear_search: '清除',
-        load_more: '加载更多',
-        search_label: '站内搜索',
-        zero_results: '没有找到「[SEARCH_TERM]」',
-        many_results: '[COUNT] 条结果',
-        one_result: '1 条结果',
+        language: lang,
+        placeholder: strings.placeholder,
+        clear_search: strings.clear,
+        load_more: strings.loadMore,
+        search_label: strings.searchLabel,
+        zero_results: strings.zero,
+        many_results: strings.many,
+        one_result: strings.one,
       },
     });
     state.mounted = true;
@@ -132,9 +203,10 @@
       dialog.showModal();
     }
 
+    const strings = SEARCH_STRINGS[currentLang()];
     if (status) {
       status.hidden = false;
-      status.textContent = '正在加载搜索…';
+      status.textContent = strings.loading;
     }
     try {
       ensureCss();
@@ -149,7 +221,7 @@
       state.ui = null;
       if (status) {
         status.hidden = false;
-        status.textContent = '搜索加载失败，关闭后重试';
+        status.textContent = strings.failed;
       }
     }
   }

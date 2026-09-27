@@ -259,7 +259,7 @@ const ldJson = JSON.stringify(ldPayload)
               ))}
             </div>
           </details>
-          {uiLang === "zh" && <SearchDialog />}
+          <SearchDialog lang={uiLang === "en" ? "en" : "zh-CN"} />
           <a class="lang-switch" href={langSwitchPath} hreflang={isEnPath ? "zh-CN" : "en"} aria-label={isEnPath ? "切换到中文" : "Switch to English"}>{langSwitchLabel}</a>
           <button class="theme-toggle" type="button" data-theme-toggle aria-pressed="false" aria-label={t.themeToggle}>
             <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">

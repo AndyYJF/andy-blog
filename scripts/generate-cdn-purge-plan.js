@@ -25,10 +25,12 @@ export function listMomentPagePathsFromSite(siteDir) {
   return paths;
 }
 
-/** Walk release site/pagefind into URL paths (index + fragments included). */
+/** Walk release site/pagefind (and en/pagefind) into URL paths (index + fragments included). */
 export function listPagefindPathsFromSite(siteDir) {
-  const root = path.join(siteDir, 'pagefind');
-  if (!fs.existsSync(root)) return [];
+  const roots = [
+    { dir: path.join(siteDir, 'pagefind'), urlBase: '/pagefind' },
+    { dir: path.join(siteDir, 'en', 'pagefind'), urlBase: '/en/pagefind' },
+  ];
   const paths = [];
   const walk = (dir, urlBase) => {
     for (const name of fs.readdirSync(dir, { withFileTypes: true })) {
@@ -38,7 +40,9 @@ export function listPagefindPathsFromSite(siteDir) {
       else paths.push(url);
     }
   };
-  walk(root, '/pagefind');
+  for (const { dir, urlBase } of roots) {
+    if (fs.existsSync(dir)) walk(dir, urlBase);
+  }
   return paths.sort();
 }
 
