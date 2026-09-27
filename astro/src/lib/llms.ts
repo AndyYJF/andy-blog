@@ -43,14 +43,14 @@ function sortedPosts(posts: LlmsPost[]): LlmsPost[] {
   });
 }
 
-export function renderLlmsIndex(site: URL | string, posts: LlmsPost[]): string {
+export function renderLlmsIndex(site: URL | string, posts: LlmsPost[], opts: { summary?: string; authority?: string } = {}): string {
   const origin = new URL(site);
   const lines = [
     `# ${SITE_TITLE}`,
     "",
-    `> ${SITE_SUMMARY}`,
+    `> ${opts.summary ?? SITE_SUMMARY}`,
     "",
-    "权威地址是 https://www.andy-y.cn/。评论依赖浏览器加载，不包含在这份目录里。",
+    opts.authority ?? "权威地址是 https://www.andy-y.cn/。评论依赖浏览器加载，不包含在这份目录里。",
     "",
     "## 入口",
     "",

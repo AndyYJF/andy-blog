@@ -102,11 +102,35 @@ export function collectPagefindPaths({
 }
 
 /**
- * /en/ URLs: static routes plus every render-expected translated entry from
- * the i18n selection written by sync-typecho.js (astro/.cache). Missing
- * selection file means a pre-i18n environment — return just the statics.
+ * Walk a built site dir for /en/**/index.html URL paths so withdrawn
+ * translations (gone from the current selection) still get purged.
  */
-export function collectEnPaths({ root = ROOT } = {}) {
+export function listEnPagePathsFromSite(siteDir) {
+  const root = path.join(siteDir, 'en');
+  if (!fs.existsSync(root)) return [];
+  const paths = [];
+  const walk = (dir, urlBase) => {
+    for (const name of fs.readdirSync(dir, { withFileTypes: true })) {
+      const next = path.join(dir, name.name);
+      if (name.isDirectory()) walk(next, `${urlBase}${name.name}/`);
+      else if (name.name === 'index.html') paths.push(urlBase);
+    }
+  };
+  walk(root, '/en/');
+  return paths.sort();
+}
+
+/**
+ * /en/ URLs: static routes plus every render-expected translated entry from
+ * the i18n selection written by sync-typecho.js (astro/.cache), unioned
+ * with /en/ pages present in the previous live site (withdrawal purges).
+ * Missing selection file means a pre-i18n environment — statics + walk only.
+ */
+export function collectEnPaths({
+  root = ROOT,
+  wwwRoot = process.env.WWW_ROOT || '',
+  previousSiteDir = '',
+} = {}) {
   const paths = new Set(['/en/', '/en/posts/', '/en/archive/', '/en/friends/', '/en/about/']);
   const selectionPath = path.join(root, 'astro', '.cache', 'i18n-selection.json');
   if (fs.existsSync(selectionPath)) {
@@ -114,6 +138,16 @@ export function collectEnPaths({ root = ROOT } = {}) {
     for (const entry of selection.entries || []) {
       if (entry?.renderExpected && entry.canonicalPath) paths.add(entry.canonicalPath);
     }
+  }
+  const dirs = [];
+  if (previousSiteDir) dirs.push(previousSiteDir);
+  if (wwwRoot) {
+    dirs.push(path.join(wwwRoot, 'current', 'site'));
+    dirs.push(path.join(wwwRoot, 'previous', 'site'));
+  }
+  for (const dir of dirs) {
+    if (!dir || !fs.existsSync(dir)) continue;
+    for (const p of listEnPagePathsFromSite(dir)) paths.add(p);
   }
   return [...paths].sort();
 }

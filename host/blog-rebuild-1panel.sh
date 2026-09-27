@@ -410,6 +410,18 @@ fi
 progress_phase switch
 "$COMPOSE_DIR/host/switch-release-1panel.sh" "$RELEASE_ID"
 printf '%s\n' "$RELEASE_ID" >"$STATE_DIR/last-success-release"
+
+# i18n publish receipt (§10): mark outbox events live + advance the ledger.
+# Non-fatal: a missed observation is backfilled on the next release.
+if [[ -n "${I18N_OBSERVE_MYSQL_CONTAINER:-}" && -n "${I18N_OBSERVE_DB:-}" ]]; then
+  if ! node "$COMPOSE_DIR/scripts/i18n-observe-live.js" \
+      --release-dir "$WWW_ROOT/releases/$RELEASE_ID" \
+      --prefix "${I18N_OBSERVE_PREFIX:-typecho_}" \
+    | docker exec -i "$I18N_OBSERVE_MYSQL_CONTAINER" \
+      sh -c 'mysql -uroot -p"$MYSQL_ROOT_PASSWORD" "$0"' "$I18N_OBSERVE_DB"; then
+    echo "warning: i18n observe-live failed for $RELEASE_ID (will backfill next release)" >&2
+  fi
+fi
 if [[ "$ENQUEUE_CDN" == "1" ]]; then
   progress_phase cdn
   CDN_QUEUE_TEMP="$CDN_RUNTIME/.pending-$RELEASE_ID"
