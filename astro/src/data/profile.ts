@@ -56,7 +56,7 @@ export const profileEn = {
       title: "AndyYan's DN42 Network",
       description:
         "ASN 4242422921 — four nodes across Los Angeles, Frankfurt, Hong Kong and Tokyo.",
-      href: "/dn42/",
+      href: "/en/dn42/",
       linkLabel: "View network info",
     },
     {
