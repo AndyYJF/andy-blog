@@ -106,12 +106,18 @@ class I18n_Plugin implements PluginInterface
         $db = Db::get();
         $prefix = $db->getPrefix();
         try {
+            // Hash the FINAL written values from the $contents array, not the
+            // widget properties: Edit.php:282 prepends the '<!--markdown-->'
+            // marker to $contents['text'] before publish()/save(), so widget
+            // values lack it. The worker hashes the stored contents row —
+            // hashing widget values here made every plugin-created job hash
+            // mismatch and supersede (2026-10-01, cid 142/107).
             $cid = (int) $edit->cid;
-            $title = (string) $edit->title;
-            $text = (string) $edit->text;
-            $status = (string) $edit->status;
-            $type = (string) $edit->type;
-            $password = (string) ($edit->password ?? '');
+            $title = (string) ($contents['title'] ?? $edit->title);
+            $text = (string) ($contents['text'] ?? $edit->text);
+            $status = (string) ($contents['status'] ?? $edit->status);
+            $type = (string) ($contents['type'] ?? $edit->type);
+            $password = (string) ($contents['password'] ?? ($edit->password ?? ''));
             $hash = hash('sha256', $title . "\0" . $text);
             $q = ['I18n_Plugin', 'sqlStr'];
 
