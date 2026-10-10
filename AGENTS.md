@@ -14,7 +14,7 @@ Node 要求 `>= 22.12`。根目录 `package.json` 管同步、门禁、nginx、C
 
 ## 自研 CMS 后续规划
 
-规划入口：[docs/cms/README.md](docs/cms/README.md)。完整方案与 Agent 执行计划 v2 已归档，**尚未实施**；当前 Typecho 内容源、同步和发布说明继续有效。文档中的 `cms/`、统一来源导出器、通用发布队列和回迁工具是目标，不是现有功能。只有用户明确要求实施该迁移时，才按两份 v2 的阶段推进；生产授权仍遵守下方规则。
+规划入口：[docs/cms/README.md](docs/cms/README.md)。完整方案与 Agent 执行计划 v2 已归档。P0 的快照契约、旧 fixture 升级和对拍工具已在仓库，进度见 [docs/cms/progress.md](docs/cms/progress.md)。当前 Typecho 内容源、同步和发布说明继续有效。`cms/` 应用、统一来源导出器、通用发布队列和回迁工具仍是目标，不是现有功能。生产授权仍遵守下方规则。
 
 ## 必须遵守
 
@@ -59,7 +59,7 @@ Node 要求 `>= 22.12`。根目录 `package.json` 管同步、门禁、nginx、C
 | `docker/` | rebuild-api、Waline |
 | `nginx/` | 生成出的 `release-http.conf` |
 | `docs/` | 阶段基线、方案、runbook |
-| [`docs/cms/`](docs/cms/README.md) | 自研 CMS 完整方案与 Agent 执行计划 v2（尚未实施） |
+| [`docs/cms/`](docs/cms/README.md) | 自研 CMS 方案 v2；P0 契约与对拍已开始，应用尚未替换 Typecho |
 | `audit/` | 2026-08-26 安全审计与前端复审 |
 
 ## 内容模型

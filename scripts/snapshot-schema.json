@@ -1,0 +1,56 @@
+{
+  "kind": "build-snapshot",
+  "schemaVersion": 2,
+  "definedFrom": [
+    "scripts/export-typecho-snapshot.js",
+    "scripts/lib/i18n-snapshot.js"
+  ],
+  "topLevelRequired": ["snapshotEpoch", "schemaVersion", "contents", "relations", "fields", "metas"],
+  "topLevelOptional": ["i18n"],
+  "contentTypes": ["post", "page", "post_draft"],
+  "contents": {
+    "primaryKey": ["cid"],
+    "columns": ["cid", "type", "title", "slug", "text", "created", "modified", "allowComment", "allowFeed", "order", "template", "password", "status"],
+    "orderBy": ["cid"]
+  },
+  "relations": {
+    "primaryKey": ["cid", "mid"],
+    "columns": ["cid", "mid", "name", "slug", "type", "order"],
+    "orderBy": ["cid", "type", "order", "mid"],
+    "note": "Exporter joins meta name/slug/type/order. It does not filter by content type, so a cid may be absent from contents."
+  },
+  "fields": {
+    "primaryKey": ["cid", "name"],
+    "columns": ["cid", "name", "type", "str_value", "int_value", "float_value"],
+    "orderBy": ["cid", "name"],
+    "note": "All field rows are exported. The five editor controls are not a storage whitelist."
+  },
+  "metas": {
+    "primaryKey": ["mid"],
+    "columns": ["mid", "name", "slug", "type", "description", "count", "order"],
+    "types": ["category", "tag"],
+    "orderBy": ["type", "order", "mid"]
+  },
+  "i18n": {
+    "required": ["sourceState", "heads", "versions", "ledger"],
+    "omittedTables": ["i18n_translation_job", "i18n_publish_outbox", "i18n_migrations"],
+    "sourceState": {
+      "primaryKey": ["cid"],
+      "columns": ["cid", "source_revision", "source_hash", "visibility", "content_type", "saved_at"]
+    },
+    "heads": {
+      "primaryKey": ["cid", "locale"],
+      "columns": ["cid", "locale", "translation_revision", "draft_version_id", "approved_version_id", "publication_state", "equivalence_state", "updated_at"]
+    },
+    "versions": {
+      "primaryKey": ["version_id"],
+      "columns": ["version_id", "cid", "locale", "translation_revision", "title", "summary", "body", "source_revision", "source_hash", "content_digest", "glossary_version", "author", "proofread_at", "proofreader", "render_verdict", "render_fingerprint", "verified_at", "created_at"],
+      "membership": "approved_version_id only. draft_version_id may be missing from versions."
+    },
+    "ledger": {
+      "primaryKey": ["cid", "locale"],
+      "columns": ["cid", "locale", "translation_available_at", "first_published_at", "last_live_version_id", "last_live_release", "updated_at"]
+    }
+  },
+  "charColumnsMayBeStringOrNumber": ["allowComment", "allowFeed"]
+}

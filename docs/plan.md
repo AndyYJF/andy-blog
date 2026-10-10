@@ -7,7 +7,7 @@
 
 ## 后续 CMS 规划入口（2026-10-11）
 
-本文保留 2026-07-31 静态站重构规划的历史范围。后续替换 Typecho 写入端的方案见 [自研 CMS 文档索引](cms/README.md)、[完整方案 v2](cms/design-v2-2026-10-10.md)与 [Agent 执行计划 v2](cms/agent-plan-v2-2026-10-10.md)，目前尚未实施。现行行为以仓库代码和根 `AGENTS.md` 为准；本节不重置历史阶段，也不授权生产迁移。
+本文保留 2026-07-31 静态站重构规划的历史范围。后续替换 Typecho 写入端的方案见 [自研 CMS 文档索引](cms/README.md)、[完整方案 v2](cms/design-v2-2026-10-10.md)与 [Agent 执行计划 v2](cms/agent-plan-v2-2026-10-10.md)。P0 契约进度见 [cms/progress.md](cms/progress.md)。现行行为以仓库代码和根 `AGENTS.md` 为准；本节不重置历史阶段，也不授权生产迁移。
 
 ---
 

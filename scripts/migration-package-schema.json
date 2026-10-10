@@ -1,0 +1,110 @@
+{
+  "kind": "migration-package",
+  "migrationPackageVersion": 1,
+  "tableSchema": "typecho-1.2.1 install/Mysql.sql plus scripts/i18n-migrate.js version 1",
+  "excludedTables": ["typecho_users", "typecho_options", "typecho_comments"],
+  "excludedReason": "Users and options can hold passwords, sessions, and plugin secrets. Comments stay on Waline. Secrets are deployment config, not package rows.",
+  "recognizedContentTypes": ["post", "page", "post_draft", "page_draft", "attachment"],
+  "files": {
+    "manifest.json": "package identity, counts, primary-key ranges, payload hashes, extra column names",
+    "checksums.sha256": "sha256 of every other payload file, sorted paths, two spaces",
+    "tables/contents.json": "full contents rows, all types",
+    "tables/metas.json": "full metas rows, including parent",
+    "tables/relationships.json": "raw cid/mid pairs only",
+    "tables/fields.json": "name/type/str_value/int_value/float_value",
+    "tables/i18n_source_state.json": "all rows",
+    "tables/i18n_translation_head.json": "all rows, including draft pointers",
+    "tables/i18n_translation_version.json": "all versions, including history and drafts",
+    "tables/i18n_translation_job.json": "all queue rows",
+    "tables/i18n_publish_outbox.json": "translation outbox only, not the future cms publish outbox",
+    "tables/i18n_publication_ledger.json": "all rows",
+    "tables/i18n_migrations.json": "applied migration versions",
+    "attachments/rows.json": "attachment contents subset; must match contents rows of type attachment",
+    "uploads/manifest.json": "old upload path, byte length, sha256",
+    "uploads/files/**": "blob bytes named by the manifest path"
+  },
+  "tables": {
+    "contents": {
+      "file": "tables/contents.json",
+      "primaryKey": ["cid"],
+      "columns": ["cid", "title", "slug", "created", "modified", "text", "order", "authorId", "template", "type", "status", "password", "commentsNum", "allowComment", "allowPing", "allowFeed", "parent"]
+    },
+    "metas": {
+      "file": "tables/metas.json",
+      "primaryKey": ["mid"],
+      "columns": ["mid", "name", "slug", "type", "description", "count", "order", "parent"]
+    },
+    "relationships": {
+      "file": "tables/relationships.json",
+      "primaryKey": ["cid", "mid"],
+      "columns": ["cid", "mid"]
+    },
+    "fields": {
+      "file": "tables/fields.json",
+      "primaryKey": ["cid", "name"],
+      "columns": ["cid", "name", "type", "str_value", "int_value", "float_value"]
+    },
+    "i18n_source_state": {
+      "file": "tables/i18n_source_state.json",
+      "primaryKey": ["cid"],
+      "columns": ["cid", "source_revision", "source_hash", "visibility", "content_type", "saved_at"]
+    },
+    "i18n_translation_head": {
+      "file": "tables/i18n_translation_head.json",
+      "primaryKey": ["cid", "locale"],
+      "columns": ["cid", "locale", "translation_revision", "draft_version_id", "approved_version_id", "publication_state", "equivalence_state", "updated_at"]
+    },
+    "i18n_translation_version": {
+      "file": "tables/i18n_translation_version.json",
+      "primaryKey": ["version_id"],
+      "columns": ["version_id", "cid", "locale", "translation_revision", "title", "summary", "body", "source_revision", "source_hash", "content_digest", "glossary_version", "author", "proofread_at", "proofreader", "render_verdict", "render_fingerprint", "verified_at", "created_at"]
+    },
+    "i18n_translation_job": {
+      "file": "tables/i18n_translation_job.json",
+      "primaryKey": ["job_id"],
+      "columns": ["job_id", "idem_key", "cid", "locale", "status", "expected_source_revision", "expected_source_hash", "expected_translation_revision", "lease_owner", "lease_until", "attempts", "max_attempts", "next_run_at", "last_error", "created_at", "updated_at"]
+    },
+    "i18n_publish_outbox": {
+      "file": "tables/i18n_publish_outbox.json",
+      "primaryKey": ["event_id"],
+      "columns": ["event_id", "idem_key", "cid", "locale", "version_id", "status", "attempts", "next_retry_at", "release_id", "observed_at", "last_error", "created_at", "updated_at"]
+    },
+    "i18n_publication_ledger": {
+      "file": "tables/i18n_publication_ledger.json",
+      "primaryKey": ["cid", "locale"],
+      "columns": ["cid", "locale", "translation_available_at", "first_published_at", "last_live_version_id", "last_live_release", "updated_at"]
+    },
+    "i18n_migrations": {
+      "file": "tables/i18n_migrations.json",
+      "primaryKey": ["version"],
+      "columns": ["version", "applied_at"]
+    }
+  },
+  "referenceRules": [
+    "relationships.cid and fields.cid must exist in contents",
+    "relationships.mid must exist in metas",
+    "non-null draft_version_id and approved_version_id must exist in versions",
+    "version, job, outbox, and ledger cids must exist in contents",
+    "outbox.version_id and non-null ledger.last_live_version_id must exist in versions",
+    "version.content_digest must equal contentDigest(title, summary ?? '', body)",
+    "source_state.source_hash must equal sourceHash(contents.title, contents.text)",
+    "unknown contents.type values fail; they are not dropped"
+  ],
+  "controlledRuntimeDifferences": [
+    {
+      "table": "i18n_translation_job",
+      "field": "status",
+      "allowedPairs": [["leased", "queued"]]
+    },
+    {
+      "table": "i18n_translation_job",
+      "field": "lease_owner",
+      "clearOnly": true
+    },
+    {
+      "table": "i18n_translation_job",
+      "field": "lease_until",
+      "clearOnly": true
+    }
+  ]
+}
