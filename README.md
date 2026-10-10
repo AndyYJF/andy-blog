@@ -36,6 +36,10 @@ post saved ──► I18n plugin (tx: source_state + job)
 
 Design / verification docs: `docs/i18n-plan-v2-2026-09-26.md` (P0–P5), `docs/i18n-p1-design-2026-09-26.md`, `docs/i18n-p2-design-2026-09-26.md`, `docs/i18n-final-report-2026-09-27.md`, withdrawal runbook `docs/i18n-withdrawal-runbook.md`.
 
+### CMS migration plan (not implemented)
+
+The proposed replacement for Typecho is documented in [docs/cms/](./docs/cms/README.md): [design v2](./docs/cms/design-v2-2026-10-10.md) and [Agent implementation plan v2](./docs/cms/agent-plan-v2-2026-10-10.md). Typecho remains the current authoring system. The plan separates build snapshots from complete private migration packages and includes source switching, durable publish requests, and rehearsed data rollback. It does not authorize production changes.
+
 ### Architecture
 
 ```
@@ -66,6 +70,7 @@ Off-box SSH is configured only on the VPS (`/etc/andy-blog/offbox-builder.env`, 
 | `nginx/` | Generated `release-http.conf` (do not hand-edit; use `generate-nginx.js`) |
 | `data/` | Route graph, legacy URL map, lastmod |
 | `docs/` | Phase baselines, plans, authorized runbooks; README screenshots in `docs/readme-assets/` |
+| [`docs/cms/`](./docs/cms/README.md) | Proposed CMS design and Agent plan v2 (not implemented) |
 | `audit/` | 2026-08-26 security / frontend audit reports |
 
 ### Local development
@@ -155,6 +160,10 @@ Remaining Medium / Low findings and remediations follow the audit reports.
 ```
 
 设计与验证文档：`docs/i18n-plan-v2-2026-09-26.md`（P0–P5）、`docs/i18n-p1-design-2026-09-26.md`、`docs/i18n-p2-design-2026-09-26.md`、最终报告 `docs/i18n-final-report-2026-09-27.md`、撤回手册 `docs/i18n-withdrawal-runbook.md`。
+
+### 自研 CMS 后续规划（尚未实施）
+
+文档入口见 [docs/cms/](./docs/cms/README.md)，包括[完整方案 v2](./docs/cms/design-v2-2026-10-10.md)和 [Agent 执行计划 v2](./docs/cms/agent-plan-v2-2026-10-10.md)。当前仍在 Typecho 写作与审批。v2 区分构建快照和完整私有迁移包，补齐来源接入、可靠发布入队与数据回滚演练；方案文档不代表生产实施授权。
 
 ### 架构
 
