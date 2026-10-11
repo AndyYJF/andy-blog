@@ -92,9 +92,9 @@ docs/cms/
 | --- | --- |
 | `normalize-legacy-snapshot.js in.json out.json` | 明确识别旧版本、升级为 v2，另出差异报告；只接受 snapshot-*.json，不扫所有 JSON |
 | `validate-snapshot.js file.json` | v2 结构及关联检查；失败非零；不修改输入 |
-| `validate-migration-package.js package-dir` | manifest/checksum/schema/引用/全表完整性；失败非零 |
+| `validate-migration-package.js package-dir` | manifest/checksum/schema/引用/全表完整性、自增序列元数据及保留身份边界；失败非零 |
 | `compare-snapshots.js a.json b.json` | 按真实主键逐字段比较；报告重复主键、缺行、值/类型差异；非零表示不同 |
-| `compare-migration-state.js a-dir b-dir` | 完整兼容数据对拍；只允许已记录的受控 lease 等运行字段差异 |
+| `compare-migration-state.js a-dir b-dir` | 完整兼容数据对拍；只允许已记录的受控 lease 等运行字段差异及有逐表上界依据的序列提升；序列下降失败 |
 | `compare-dist.js a-dir b-dir` | 默认完整文件 sha256/缺失比较；若用精确归一化清单，必须显示规则和原始差异 |
 | `export-content-snapshot.js` | env 指定来源、独立连接/只读账户、SNAPSHOT_EPOCH/EXPORT_SNAPSHOT_JSON；默认 typecho |
 | 两个 migration exporter | CLI/env 指定受限目标目录，一致性读取，原子完成 manifest，不复用公开快照当完整包 |
@@ -106,7 +106,7 @@ docs/cms/
 ## 4. P0：库存、契约与对拍基线
 
 1. 固定本地代码修订、lockfile、Node、Astro/adapter 兼容组合；记录用户未提交改动，不为建立基线而丢弃它们。
-2. 写 inventory 和两类 schema。构建契约字段按真实导出器定义；migration 包补完整行/列和 i18n 六表全部数据，引用校验区分两类契约。构建 snapshot 的 draft head 指针不要求必须出现在 approved-only versions，私有包则要求有效引用。
+2. 写 inventory 和两类 schema。构建契约字段按真实导出器定义；migration 包补完整行/列和 i18n 六表全部数据，引用校验区分两类契约。构建 snapshot 的 draft head 指针不要求必须出现在 approved-only versions，私有包则要求有效引用。为每张自增表定义精确十进制源 next ID、采集时点/方式及身份域；保留 ID inventory 包括 route/meta 墓碑、i18n/变更记录引用及其表间映射。源序列不能按现存 max(id) 推算；序列元数据不假定属于事务快照，影子读取单列时点/校验，最终值在冻结后采集。
 3. 原旧 fixture 保持。显式 adapter 对两份 snapshot 生成 v2：添加版本、记录 attachment 等过滤的原因/行数；这只是构建输入升级，原始行仍保留在原 fixture/私有包，不能当完整迁移已通过。预 i18n 样本允许无 i18n，当前 i18n 来源另用有数据的样本覆盖。
 4. 新建脱敏样本：源文草稿/私密/密码/撤回、Moments、未知字段/附件；译文 approved/draft/history/disabled/outdated、ledger、pending/accepted/leased/failed 等状态。加入重复主键、错类型、悬空私有指针及被改动正文的反例。
 5. 对拍工具必须能发现故意改动，不只比较自己。Markdown 用 CONTENT_BACKUP_DIR，两个独立输出目录串行运行，并固定同一 route/meta 基线；该模式仍可能共享 staging/cache，不能认为设置输出目录就隔离整个工作树。
@@ -134,7 +134,7 @@ docs/cms/
 
 创建 cms 兼容表、修订、change_log、import_runs、两个 outbox、认证/审计/media 表。迁移 DDL 使用独立账号；每一步有版本和失败重跑规则，不假定 MySQL DDL 可随大事务回滚。
 
-完整包导入保留全部 ID、text 和历史字段。bootstrap/mirror 导入幂等，主键集合对账删除旧镜像内容/关系/字段，拒绝运行于已启用 CMS 写入的镜像库。AUTO_INCREMENT 大于所有现存/保留 ID；import_runs 未完成时禁止提供半包数据。大包先 staging，完成校验后受控切换。
+完整包导入保留全部 ID、text 和历史字段。bootstrap/mirror 导入幂等，主键集合对账删除旧镜像内容/关系/字段，拒绝运行于已启用 CMS 写入的镜像库。各表 next ID 下界取 max(包内源 next ID，目标切换前 next ID，最终行最大 ID + 1，该身份域历史保留 ID 最大值 + 1)，序列只升不降。staging 替换前捕获目标已消耗序列，校验包内序列/保留身份映射后应用；重跑或影子替换不下调，不用 max(现存行) + 1 代替源序列。import_runs 未完成时禁止提供半包数据。大包先 staging，完成校验后受控切换。
 
 HTML/附件/额外列按库存映射兼容保留；没有明确映射的类型报出阻塞项，不能静默跳过。迁移期不调用编辑器序列化重写原文。
 
@@ -162,39 +162,40 @@ Lsky 先核对部署接口，再实现认证上传、大小/像素/帧数/时间
 
 ### 6.4 回迁及验收
 
-实现 `export-cms-migration.js` 与 `restore-cms-to-typecho.js`；回迁默认 dry-run，拒绝不一致/错误目标。回迁兼容内容、字段、关系、附件关联、完整 i18n、ID 和 AUTO_INCREMENT；删除必须对账。CMS-only 修订/认证/审计/media 等保存在私有 CMS 包，不能丢弃或宣称旧后台可访问。
+实现 `export-cms-migration.js` 与 `restore-cms-to-typecho.js`；回迁默认 dry-run，拒绝不一致/错误目标。回迁兼容内容、字段、关系、附件关联、完整 i18n、ID 和按 §6.1 只升不降的 AUTO_INCREMENT（包含回迁目标已有高水位）；删除必须对账。CMS-only 修订/认证/审计/media 等保存在私有 CMS 包，不能丢弃或宣称旧后台可访问。
 
 消费者停机和最终包处理中 leased→queued/清 lease 是显式运行字段差异，不重算业务 hash/revision。回迁未完成通用 outbox 合并为一次受控重建，保留事件直至请求处理有证据。
 
 验收需覆盖：
 
-- 同一完整包导入→导出，兼容数据全表一致、draft/approved 指针有效、队列未丢；允许运行字段差异逐条列出。
+- 同一完整包导入→导出，兼容数据全表一致、draft/approved 指针有效、队列未丢；允许运行字段差异及按高水位规则提升的序列逐表列出，不得下调或忽略序列差异。
 - 从同一冻结包派生 Typecho/CMS 构建快照；逐字段、Markdown、路由/selection manifest、dist 一致。
 - 原 worker 在 CMS 兼容表上处理任务，hash 相同，陈旧任务/CAS/禁用与 Moments 例外正确。
 - 公开变更与队列原子，草稿不触发；故障重试不会漏构建请求。
 - 安全关键路径有真实应用证据，mock provider 与真实 provider 清楚区分。
 - CMS 接入→新增一篇、修改/删除旧文、改分类/字段、更新译文→冻结→回迁隔离 Typecho→再导出/构建；数据/路由一致且无删除复活。
-- 来源/worker/观察/备份成组切换及切回；Typecho 默认分支可用。
+- 删除最大 ID（包括已进入 route/meta 墓碑的身份），源 next ID 高于现存 max(id) + 1；在禁止编辑的镜像库验证 bootstrap/mirror 失败重跑及连续 staging 替换不降低序列。另在切换后的 CMS 新增→冻结→回迁→Typecho 再次新增，验证两端已消耗序列均保留且历史身份不复用。
+- 来源/worker/观察/备份成组切换及切回；切换和回滚开始时已有 off-box 构建、pending/dirty 或失败重试，验证静默后旧任务不能发布/回写，新来源重新导出处理遗留请求且无请求丢失；Typecho 默认分支可用。
 
 只有这些与本次功能相关的验证需要新增；不创建仅重复实现的测试或无关审计清单。
 
 ## 7. P3：影子流程与生产准备
 
-1. 实现 shadow sync：源只读完整导出→校验→镜像导入→删除对账，携带包标识、行数、检查点与完成标记。影子库拒绝编辑/审批，worker/两个 outbox 消费者/上传写入禁用。
+1. 实现 shadow sync：源只读完整导出→校验→镜像导入→删除对账，携带包标识、行数、检查点与完成标记。影子库拒绝编辑/审批，worker/两个 outbox 消费者/上传写入禁用；验证源序列元数据并保留镜像目标的已消耗序列，staging 替换不下调。
 2. 实现 shadow build：正式构建对应冻结输入与 CMS 镜像使用同一 epoch/代码/路由基线；影子在独立工作副本构建，不写生产路由或触发 release/CDN。
 3. 差异按私有状态→构建 snapshot→Markdown→manifest→dist 排查；默认不忽略文件。需要易变字段归一化时明确精确路径/原因/规则并保留原差异，内容变化不能被抹掉。
 4. 本地连续模拟增改删、草稿发布/撤回、译文审批与任务状态；验证失败包恢复和删除对账，不能只用两份无 i18n fixture 走一次流程。
-5. 写切换/回滚/备份/下线 runbook，包含环境占位、角色权限、容器卷、只读 rootfs、secret、源配置切换、旧上传映射、证书/OpenResty、失败恢复和核验命令。
+5. 写切换/回滚/备份/下线 runbook，包含环境占位、角色权限、容器卷、只读 rootfs、secret、源配置切换、旧上传映射、证书/OpenResty、失败恢复和核验命令；切换/回滚共用停止新调度、等待或安全中止在途构建、核验无旧发布/回写、队列来源对账及重新导出后恢复调度的步骤，不能只记录在途任务。
 6. 生产 shadow 启用需授权；建议观察 7–14 天且覆盖真实变更。所有“不一致”“待 provider”“用户待试用”如实记录，不能把本地验证写成生产已验证。
 
 ## 8. P4：生产切换（默认只准备）
 
 runbook 必须逐步包括：
 
-1. 明确维护窗口、冻结全部 Typecho 内容/审批写入口、定时任务和队列消费者，记录在途任务；备份旧库/配置/上传清单。
-2. 一致性导出最终私有包→完成 CMS 导入→lease 受控处理→校准 ID→核验完整数据、构建和路由。
+1. 明确维护窗口、冻结全部 Typecho 内容/审批写入口、定时任务及消费者，阻止新手动重建并暂停 `blog-rebuild-1panel.path`。等待已有 `blog-rebuild-1panel.service` 完整结束（含切 release/观察回写），或安全中止并确认 off-box 子任务不能继续发布/回写；只记录任务或检查 building 文件不算静默。对 pending/dirty/current-job、失败重试、冻结快照及候选产物标记来源并留存对账，禁止旧快照/产物在切源后重试发布。确认无旧来源发布/回写后备份旧库/配置/上传清单。
+2. 静默状态下导出最终私有包及源序列→完成 CMS 导入→lease 受控处理→按 §6.1 校准序列（不下调）→核验完整数据、构建和路由。
 3. CMS 初始化/权限、导出和两种备份验证；成组切 CMS 来源、worker 库/前缀、观察配置。
-4. Typecho 仍停写，CMS 成为唯一写端，才启动 CMS worker/通用消费者。
+4. Typecho 仍停写，核验新进程实际读取成组切换后的配置、遗留请求已对账并将在新来源重新导出；CMS 成为唯一写端后才启动 CMS worker/通用消费者并恢复 path 调度。
 5. 授权触发构建，沿现有发布过程确认 checksum、release、公网正文和相关 i18n；CDN 的接收与边缘验证分别记录。
 6. 任一步失败冻结写入，执行已演练数据回滚或静态 release 回滚；明确两者区别，不恢复旧库就宣称数据回滚成功。
 
@@ -204,7 +205,7 @@ runbook 必须逐步包括：
 
 至少观察 14 天且覆盖一次内容变更、一次译文审批和一次私有库恢复验证；缺活动则延长。监控保存错误/冲突、队列滞留、worker 异常、导出/备份失败和发布差异，使用已有通知渠道；新增发送渠道或测试消息需按用户授权处理。
 
-回滚：停 CMS 与任务→保存最终 CMS 包/两库备份→隔离 Typecho 恢复副本验证→停写旧库受控回迁→核验→切回来源/worker/观察→恢复 Typecho→授权重建。未完成通用发布事件保留到受控重建处理。数据不兼容则维持冻结并恢复已验证备份，不带错继续。
+回滚：停 CMS 写入与任务→执行 §8 第 1 步的发布控制面静默和队列来源对账（包括停止新调度及在途构建处理）→保存冻结后的最终 CMS 包/源序列及两库备份→隔离 Typecho 恢复副本验证→停写旧库按 §6.1 高水位规则受控回迁→核验→成组切回来源/worker/观察并确认新进程配置和新来源重试输入→恢复 Typecho 写入及消费者/path 调度→授权重建。未完成通用发布事件保留到受控重建处理。数据不兼容则维持冻结并恢复已验证备份，不带错继续。
 
 回滚窗口保留旧库、容器镜像、插件/补丁配置与 uploads。下线须另获授权且已有可恢复归档；保留 MySQL 服务、Waline 及旧 `/usr/uploads/` 静态文件。不能顺手删除仍有调用方的脚本/插件或假定所有旧 URL 都已迁移。
 
