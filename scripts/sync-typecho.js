@@ -36,8 +36,18 @@ import { selectI18nEntries, buildI18nMarkdown, publicSelectionEntry } from './li
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..');
 const ASTRO = path.join(ROOT, 'astro');
-const ROUTE_MAP_PATH = path.join(ROOT, 'data', 'route-map.json');
-const META_ROUTE_MAP_PATH = path.join(ROOT, 'data', 'meta-route-map.json');
+
+function optionalDataFile(envName, fallbackName) {
+  const raw = process.env[envName];
+  if (!raw) return path.join(ROOT, 'data', fallbackName);
+  if (!path.isAbsolute(raw) || raw.includes('..')) {
+    throw new Error(`${envName} must be an absolute path without ..`);
+  }
+  return raw;
+}
+
+const ROUTE_MAP_PATH = optionalDataFile('ROUTE_MAP_PATH', 'route-map.json');
+const META_ROUTE_MAP_PATH = optionalDataFile('META_ROUTE_MAP_PATH', 'meta-route-map.json');
 const CACHE_DIR = path.join(ASTRO, '.cache');
 const FIELD_COVER = process.env.FIELD_COVER || 'thumb';
 const FIELD_PATH = process.env.FIELD_ASTRO_PATH || FIELD_ASTRO_PATH;
@@ -118,6 +128,9 @@ async function loadSnapshot(epoch) {
     || path.join(ROOT, 'docs', 'baselines', 'fixtures', `snapshot-${epoch}.json`);
 
   if (process.env.DB_HOST) {
+    if (process.env.CONTENT_SOURCE === 'cms') {
+      throw new Error('cms sync refuses a live database read');
+    }
     const mysql = await import('mysql2/promise');
     const db = await mysql.createConnection({
       host: process.env.DB_HOST,
@@ -728,6 +741,23 @@ async function main() {
     for (const name of await fs.readdir(enPagesDir)) {
       await moveFile(path.join(enPagesDir, name), path.join(finalEnPages, name));
     }
+    const manifestDir = path.join(CONTENT_BACKUP_DIR, 'manifests');
+    await atomicWriteJson(path.join(manifestDir, 'i18n-selection.json'), {
+      snapshotEpoch: epoch,
+      rendererFingerprint: null,
+      locales: ['en'],
+      entries: localizedEntries,
+    });
+    await atomicWriteJson(path.join(manifestDir, 'zh-manifest.json'), {
+      snapshotEpoch: epoch,
+      entries: zhManifest,
+    });
+    await atomicWriteJson(path.join(manifestDir, 'route-map.json'), routeMap);
+    await atomicWriteJson(path.join(manifestDir, 'meta-route-map.json'), metaMap);
+    await atomicWriteJson(
+      path.join(manifestDir, 'lastmod.json'),
+      Object.fromEntries(Object.entries(sitemapLastmod).sort()),
+    );
     await fs.rm(staging, { recursive: true, force: true });
   } else {
     await fs.mkdir(CACHE_DIR, { recursive: true });

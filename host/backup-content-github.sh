@@ -31,6 +31,8 @@ fi
 command -v git >/dev/null
 command -v docker >/dev/null
 test -f "$COMPOSE_DIR/scripts/export-typecho-snapshot.js"
+test -f "$COMPOSE_DIR/scripts/lib/content-source.js"
+test -f "$COMPOSE_DIR/scripts/lib/i18n-snapshot.js"
 test -f "$COMPOSE_DIR/scripts/sync-typecho.js"
 test -f "$SSH_KEY"
 
@@ -60,13 +62,21 @@ printf '%s\n' 'services:' '  builder:' '    mem_limit: 512m' '    memswap_limit:
 chown admin:admin "$EXPORT_OVERRIDE" 2>/dev/null || true
 
 cd "$COMPOSE_DIR"
+# shellcheck disable=SC1091
+source "$COMPOSE_DIR/host/content-source-env.sh"
+content_source_resolve
+source_env=()
+export_mounts=()
+content_source_fill_docker_env source_env
+content_source_export_mounts export_mounts
 set +e
 docker compose -f "$COMPOSE_FILE" -f "$EXPORT_OVERRIDE" run --rm --no-TTY --no-deps \
   -e "SNAPSHOT_EPOCH=$SNAPSHOT_EPOCH" \
   -e "EXPORT_SNAPSHOT_JSON=/runtime/build/content-backup/snapshot-export.json" \
   -e NODE_OPTIONS=--max-old-space-size=256 \
-  -v "$COMPOSE_DIR/scripts/export-typecho-snapshot.js:/app/scripts/export-typecho-snapshot.js:ro" \
-  builder node /app/scripts/export-typecho-snapshot.js </dev/null
+  "${source_env[@]}" \
+  "${export_mounts[@]}" \
+  builder node "/app/scripts/$(content_source_snapshot_script)" </dev/null
 EXPORT_RC=$?
 set -e
 rm -f "$EXPORT_OVERRIDE"
@@ -79,12 +89,18 @@ chown admin:admin "$SNAPSHOT_JSON" 2>/dev/null || true
 chmod a+r "$COMPOSE_DIR/data/route-map.json" "$COMPOSE_DIR/data/meta-route-map.json" 2>/dev/null || true
 
 # Run sync inside the builder image (has js-yaml etc.); keep production data read-only.
+sync_env=()
+if [[ "$CONTENT_SOURCE_USE_CMS_DB" == "1" ]]; then
+  content_source_blank_db_env sync_env
+  sync_env+=(-e FIXTURE_PATH=/runtime/build/content-backup/snapshot-export.json)
+fi
 set +e
 docker compose -f "$COMPOSE_FILE" run --rm --no-TTY --no-deps \
   -e "SNAPSHOT_EPOCH=$SNAPSHOT_EPOCH" \
   -e "FIXTURE_PATH=/runtime/build/content-backup/snapshot-export.json" \
   -e "CONTENT_BACKUP_DIR=/mirror" \
   -e NODE_OPTIONS=--max-old-space-size=512 \
+  "${sync_env[@]}" \
   -v "$COMPOSE_DIR/scripts:/app/scripts:ro" \
   -v "$COMPOSE_DIR/data:/app/data:ro" \
   -v "$MIRROR_DIR:/mirror" \

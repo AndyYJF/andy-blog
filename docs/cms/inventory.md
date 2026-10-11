@@ -23,7 +23,7 @@ relations 是关系主键加上 meta 的 `name/slug/type/order`，SQL 没有按�
 
 i18n 四块是 `sourceState`、`heads`、`versions`、`ledger`。versions 只含 `approved_version_id` 指向的行。`draft_version_id` 可以不在 versions 里。任务表、译文 outbox 和 `i18n_migrations` 不进构建快照。
 
-`jsonSafeRow` 对 bigint 使用 `Number()`，超出安全整数时会静默舍入。方案要求此时报错。本阶段没有改导出器，避免改变现有失败行为；新快照校验会拒绝非安全整数主键。
+`jsonSafeRow` 和私有包导出遇到超出安全整数的 bigint 会报错，不再用 `Number()` 舍入。导出连接对 `BIGINT` 使用同一检查，超限时错误里保留原来的十进制数字。普通范围内的整数仍写成 JSON number。
 
 ## 两份旧 fixture
 
@@ -44,6 +44,6 @@ i18n 四块是 `sourceState`、`heads`、`versions`、`ledger`。versions 只含
 
 完整 contents 使用 Typecho 1.2.1 的 17 列，并保留 `page_draft`、`attachment` 以及其他显式列入 `recognizedContentTypes` 的类型。未识别类型是错误，不能删掉。metas 保留 `parent`。relationships 只存 `cid/mid`。i18n 六张业务表加 `i18n_migrations` 都要全行；draft 和 approved 指针必须能落到 versions。
 
-不打包 `typecho_users`、`typecho_options`、`typecho_comments`。前两张可能含密码、会话和插件密钥；评论在 Waline。生产上若还有额外列，导出时要记入 manifest 的 `extraColumns` 并原样保留。这次没有读生产，所以还不知道有没有额外列。
+不打包 `typecho_users`、`typecho_options`、`typecho_comments`。前两张可能含密码、会话和插件密钥；评论在 Waline。生产上若还有额外列，导出会把列名写入 manifest 的 `extraColumns`，并把主键和原值写入 `extra-columns.json`。导入和回迁看到这些列名会停住，不会把值丢掉后继续。这次仍然没有读生产库。
 
 附件元数据来自 `type=attachment` 的 contents 行，并另写 `attachments/rows.json`。旧上传文件只记录路径、长度和 sha256。脱敏样本里的 `usr/uploads/sample.txt` 是假文件。

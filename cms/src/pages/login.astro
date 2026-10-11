@@ -1,0 +1,46 @@
+---
+---
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <title>登录</title>
+  </head>
+  <body>
+    <main>
+      <h1>登录</h1>
+      <p id="status">使用本机 passkey。这里没有浏览器登录的完成记录。</p>
+      <p id="notices">正在读取本地恢复通知。</p>
+      <p>
+        <button id="login" type="button">登录</button>
+        <button id="logout" type="button">退出</button>
+      </p>
+      <p>
+        <label>初始化 secret <input id="secret" type="password" autocomplete="off" /></label>
+        <button id="register" type="button">初始化</button>
+      </p>
+      <p><a href="/">返回</a></p>
+    </main>
+    <script>
+      import { loadNotices, startLogin, startLogout, startRegister } from '../editor/login.js';
+      loadNotices().catch(() => {
+        document.getElementById('notices').textContent = '恢复通知没有读到。没有发邮件。';
+      });
+      document.getElementById('login').addEventListener('click', () => {
+        startLogin().catch(() => {
+          document.getElementById('status').textContent = '登录没有完成';
+        });
+      });
+      document.getElementById('logout').addEventListener('click', () => {
+        startLogout().catch(() => {
+          document.getElementById('status').textContent = '退出没有完成';
+        });
+      });
+      document.getElementById('register').addEventListener('click', () => {
+        startRegister().catch(() => {
+          document.getElementById('status').textContent = '初始化没有完成';
+        });
+      });
+    </script>
+  </body>
+</html>

@@ -19,7 +19,17 @@ for (const value of [certDir, authFile]) {
   if (!path.posix.isAbsolute(value)) throw new Error('cert-dir and auth-file must be absolute POSIX paths');
 }
 
-const config = `server {
+const config = `map $request_method $cms_write_key {
+  default "";
+  POST $binary_remote_addr;
+  PUT $binary_remote_addr;
+  PATCH $binary_remote_addr;
+  DELETE $binary_remote_addr;
+}
+
+limit_req_zone $cms_write_key zone=cms_write:1m rate=4r/s;
+
+server {
   listen 80;
   server_name ${domain};
   return 302 https://${domain}$request_uri;
@@ -34,6 +44,8 @@ server {
 
   add_header X-Robots-Tag "noindex, nofollow, noarchive" always;
   add_header Cache-Control "private, no-store" always;
+  # CSP is sent by the CMS app. Do not add the www Content-Security-Policy here.
+  # www frame-ancestors 'none' would block the preview iframe.
   auth_basic "Andy Blog CMS";
   auth_basic_user_file ${authFile};
 
@@ -41,6 +53,8 @@ server {
   location ~ ^/(?:config\\.inc\\.php|install\\.php|upgrade\\.php)(?:/|$) { return 404; }
 
   location / {
+    limit_req zone=cms_write burst=20 nodelay;
+    limit_req_status 429;
     proxy_pass http://${upstream};
     proxy_http_version 1.1;
     proxy_set_header Host $host;

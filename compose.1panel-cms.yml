@@ -32,6 +32,7 @@ services:
         SOURCE_REVISION: ${BUILDER_SOURCE_REVISION:-unknown}
     environment:
       TZ: Asia/Shanghai
+      CONTENT_SOURCE: ${CONTENT_SOURCE:-typecho}
       DB_HOST: ${TYPECHO_DB_HOST:?set Typecho database host}
       DB_USER: ${TYPECHO_RO_DB_USER:?set read-only Typecho database user}
       DB_PASSWORD: ${TYPECHO_RO_DB_PASSWORD:?set read-only Typecho database password}
@@ -52,6 +53,7 @@ services:
     restart: unless-stopped
     environment:
       TZ: Asia/Shanghai
+      CONTENT_SOURCE: ${CONTENT_SOURCE:-typecho}
       DB_HOST: ${TYPECHO_DB_HOST:?set Typecho database host}
       DB_USER: ${TYPECHO_I18N_DB_USER:?set scoped i18n database user}
       DB_PASSWORD: ${TYPECHO_I18N_DB_PASSWORD:?set scoped i18n database password}

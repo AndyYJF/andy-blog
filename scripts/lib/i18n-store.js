@@ -5,6 +5,7 @@
  * approved pointer (approval lives in the Typecho plugin Action).
  */
 import crypto from 'node:crypto';
+import { assertCmsWritable } from '../../cms/src/lib/shadow-guard.js';
 
 export const JOB = {
   QUEUED: 'queued', LEASED: 'leased', DONE: 'done',
@@ -50,6 +51,7 @@ export async function reapExpiredLeases(db, p) {
  * Returns the claimed job row, or null when nothing is due.
  */
 export async function claimJob(db, p, owner, leaseSeconds = 120) {
+  await assertCmsWritable(db);
   const conn = await db.getConnection();
   try {
     await conn.beginTransaction();
@@ -200,7 +202,11 @@ export async function compensateTranslation(db, p, locales = ['en']) {
   const [rows] = await db.query(
     `SELECT s.cid, s.source_revision, s.source_hash
      FROM ${p}i18n_source_state s
-     WHERE s.visibility = 'publish' AND s.content_type IN ('post','page')`,
+     WHERE s.visibility = 'publish' AND s.content_type IN ('post','page')
+       AND NOT EXISTS (
+         SELECT 1 FROM ${p}fields f
+         WHERE f.cid = s.cid AND f.name = 'content_kind' AND TRIM(f.str_value) = 'moment'
+       )`,
   );
   let enqueued = 0;
   for (const row of rows) {
@@ -240,7 +246,11 @@ export async function compensatePublish(db, p) {
   const [rows] = await db.query(
     `SELECT h.cid, h.locale, h.approved_version_id
      FROM ${p}i18n_translation_head h
-     WHERE h.approved_version_id IS NOT NULL AND h.publication_state = 'enabled'`,
+     WHERE h.approved_version_id IS NOT NULL AND h.publication_state = 'enabled'
+       AND NOT EXISTS (
+         SELECT 1 FROM ${p}fields f
+         WHERE f.cid = h.cid AND f.name = 'content_kind' AND TRIM(f.str_value) = 'moment'
+       )`,
   );
   let created = 0;
   for (const row of rows) {

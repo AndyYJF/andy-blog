@@ -16,6 +16,7 @@
  */
 import fs from 'node:fs';
 import path from 'node:path';
+import { assertWorkerSource } from './lib/content-source-launch.js';
 
 const args = process.argv.slice(2);
 const valueFor = (name, fallback) => {
@@ -24,7 +25,18 @@ const valueFor = (name, fallback) => {
 };
 
 const releaseDir = valueFor('--release-dir', '');
-const prefix = valueFor('--prefix', 'typecho_');
+let group;
+try {
+  group = assertWorkerSource();
+} catch (err) {
+  console.error(err instanceof Error ? err.message : 'bad content source');
+  process.exit(64);
+}
+const prefix = args.includes('--prefix') ? valueFor('--prefix', '') : group.prefix;
+if (prefix !== group.prefix) {
+  console.error(`--prefix ${prefix} does not match content source ${group.source}`);
+  process.exit(64);
+}
 
 if (!releaseDir || !path.isAbsolute(releaseDir)) {
   console.error('--release-dir must be an absolute path');

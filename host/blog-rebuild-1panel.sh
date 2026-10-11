@@ -230,8 +230,13 @@ fi
 consume_pending
 
 cd "$COMPOSE_DIR"
+# shellcheck disable=SC1091
+source "$COMPOSE_DIR/host/content-source-env.sh"
+content_source_resolve
 if [[ ! -f "$JOB_FILE" ]]; then
-  EPOCH="$(docker compose -f "$COMPOSE_FILE" run --rm --no-TTY builder node /app/scripts/read-db-epoch.js </dev/null)"
+  epoch_env=()
+  content_source_fill_docker_env epoch_env
+  EPOCH="$(docker compose -f "$COMPOSE_FILE" run --rm --no-TTY "${epoch_env[@]}" builder node /app/scripts/read-db-epoch.js </dev/null)"
   [[ "$EPOCH" =~ ^[0-9]{10}$ ]] || exit 65
   printf '%s\n' "{\"snapshotEpoch\":\"$EPOCH\",\"redirectStatus\":$REDIRECT_STATUS,\"commentWriteMode\":\"enabled\",\"createdAt\":\"$(date -u +%Y-%m-%dT%H:%M:%SZ)\"}" >"$JOB_FILE"
 fi
@@ -246,6 +251,45 @@ clear_building() {
 }
 
 build_via_vps_overlay() {
+  if [[ "$CONTENT_SOURCE_USE_CMS_DB" == "1" ]]; then
+    progress_phase snapshot
+    local snapshot_json="$RUNTIME/snapshot-export.json"
+    local export_override="$RUNTIME/compose.export-mem.yml"
+    local -a source_env=() export_mounts=() blank_env=()
+    rm -f "$snapshot_json"
+    content_source_fill_docker_env source_env
+    content_source_export_mounts export_mounts
+    content_source_blank_db_env blank_env
+    printf '%s\n' 'services:' '  builder:' '    mem_limit: 512m' '    memswap_limit: 512m' >"$export_override"
+    set +e
+    docker compose -f "$COMPOSE_FILE" -f "$export_override" run --rm --no-TTY --no-deps \
+      -e "SNAPSHOT_EPOCH=$SNAPSHOT_EPOCH" \
+      -e "EXPORT_SNAPSHOT_JSON=/runtime/build/snapshot-export.json" \
+      -e NODE_OPTIONS=--max-old-space-size=256 \
+      "${source_env[@]}" \
+      "${export_mounts[@]}" \
+      builder node "/app/scripts/$(content_source_snapshot_script)" </dev/null
+    local export_rc=$?
+    set -e
+    rm -f "$export_override"
+    [[ $export_rc -eq 0 ]] || exit "$export_rc"
+    test -s "$snapshot_json"
+    chmod 0600 "$snapshot_json"
+    progress_phase astro
+    set +e
+    RELEASE_ID="$(docker compose -f "$COMPOSE_FILE" run --rm --no-TTY \
+      -e "SNAPSHOT_EPOCH=$SNAPSHOT_EPOCH" -e "REDIRECT_STATUS=$REDIRECT_STATUS" -e COMMENT_WRITE_MODE=enabled \
+      -e WWW_ROOT=/var/www/andy-y.cn \
+      -e FIXTURE_PATH=/runtime/build/snapshot-export.json \
+      "${blank_env[@]}" \
+      builder bash /app/scripts/build-release.sh </dev/null 2> >(progress_pipe))"
+    RC=$?
+    set -e
+    rm -f "$snapshot_json"
+    [[ $RC -eq 0 ]] || exit "$RC"
+    RELEASE_ID="$(printf '%s' "$RELEASE_ID" | tr -d '\r' | grep -E '^[0-9]{8}T[0-9]{6}Z-[0-9a-f]{8}$' | tail -n1)"
+    return 0
+  fi
   progress_phase astro
   set +e
   RELEASE_ID="$(docker compose -f "$COMPOSE_FILE" run --rm --no-TTY \
@@ -270,6 +314,8 @@ build_via_offbox() {
   fi
   test -f "$COMPOSE_DIR/host/offbox-remote-build.sh" || { echo "offbox-remote-build.sh missing from control tree" >&2; exit 65; }
   test -f "$COMPOSE_DIR/scripts/export-typecho-snapshot.js" || { echo "export-typecho-snapshot.js missing from control tree" >&2; exit 65; }
+  test -f "$COMPOSE_DIR/scripts/lib/content-source.js" || { echo "content-source.js missing from control tree" >&2; exit 65; }
+  test -f "$COMPOSE_DIR/scripts/lib/i18n-snapshot.js" || { echo "i18n-snapshot.js missing from control tree" >&2; exit 65; }
   offbox_prepare_ssh || exit $?
 
   if ! offbox_ssh 'printf offbox-ok'; then
@@ -286,15 +332,23 @@ build_via_offbox() {
   SNAPSHOT_JSON="$RUNTIME/snapshot-export.json"
   EXPORT_OVERRIDE="$RUNTIME/compose.export-mem.yml"
   progress_phase snapshot
-  chmod a+r "$COMPOSE_DIR/scripts/export-typecho-snapshot.js"
+  chmod a+r "$COMPOSE_DIR/scripts/export-typecho-snapshot.js" \
+    "$COMPOSE_DIR/scripts/export-content-snapshot.js" \
+    "$COMPOSE_DIR/scripts/lib/content-source.js" \
+    "$COMPOSE_DIR/scripts/lib/content-source-launch.js" \
+    "$COMPOSE_DIR/scripts/lib/i18n-snapshot.js"
+  local -a source_env=() export_mounts=()
+  content_source_fill_docker_env source_env
+  content_source_export_mounts export_mounts
   printf '%s\n' 'services:' '  builder:' '    mem_limit: 512m' '    memswap_limit: 512m' >"$EXPORT_OVERRIDE"
   set +e
   docker compose -f "$COMPOSE_FILE" -f "$EXPORT_OVERRIDE" run --rm --no-TTY --no-deps \
     -e "SNAPSHOT_EPOCH=$SNAPSHOT_EPOCH" \
     -e "EXPORT_SNAPSHOT_JSON=/runtime/build/snapshot-export.json" \
     -e NODE_OPTIONS=--max-old-space-size=256 \
-    -v "$COMPOSE_DIR/scripts/export-typecho-snapshot.js:/app/scripts/export-typecho-snapshot.js:ro" \
-    builder node /app/scripts/export-typecho-snapshot.js </dev/null
+    "${source_env[@]}" \
+    "${export_mounts[@]}" \
+    builder node "/app/scripts/$(content_source_snapshot_script)" </dev/null
   EXPORT_RC=$?
   set -e
   rm -f "$EXPORT_OVERRIDE"
@@ -416,7 +470,7 @@ printf '%s\n' "$RELEASE_ID" >"$STATE_DIR/last-success-release"
 if [[ -n "${I18N_OBSERVE_MYSQL_CONTAINER:-}" && -n "${I18N_OBSERVE_DB:-}" ]]; then
   if ! node "$COMPOSE_DIR/scripts/i18n-observe-live.js" \
       --release-dir "$WWW_ROOT/releases/$RELEASE_ID" \
-      --prefix "${I18N_OBSERVE_PREFIX:-typecho_}" \
+      --prefix "$CONTENT_SOURCE_OBSERVE_PREFIX" \
     | docker exec -i "$I18N_OBSERVE_MYSQL_CONTAINER" \
       sh -c 'mysql -uroot -p"$MYSQL_ROOT_PASSWORD" "$0"' "$I18N_OBSERVE_DB"; then
     echo "warning: i18n observe-live failed for $RELEASE_ID (will backfill next release)" >&2

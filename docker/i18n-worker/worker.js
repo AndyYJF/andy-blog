@@ -13,6 +13,7 @@ import crypto from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { assertWorkerSource } from '../../scripts/lib/content-source-launch.js';
 import {
   claimJob, compensatePublish, compensateTranslation, dueOutboxEvents,
   failJob, markOutboxAccepted, markOutboxRetry, reapExpiredLeases,
@@ -32,7 +33,13 @@ for (const key of required) {
   }
 }
 
-const PREFIX = env('DB_PREFIX', 'typecho_');
+let PREFIX;
+try {
+  ({ prefix: PREFIX } = assertWorkerSource());
+} catch (err) {
+  console.error(err instanceof Error ? err.message : 'bad content source');
+  process.exit(64);
+}
 const INSTANCE = env('WORKER_INSTANCE_ID', `worker-${process.pid}-${crypto.randomBytes(3).toString('hex')}`);
 const POLL_MS = Number(env('WORKER_POLL_MS', '15000'));
 // Bodies above this fail fast instead of burning tokens on truncated output.

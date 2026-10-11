@@ -5,18 +5,8 @@
  */
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import { readI18nTables } from './lib/i18n-snapshot.js';
-
-function jsonSafeRow(row) {
-  const out = {};
-  for (const [key, value] of Object.entries(row)) {
-    if (typeof value === 'bigint') out[key] = Number(value);
-    else if (Buffer.isBuffer(value)) out[key] = value.toString('utf8');
-    else if (value instanceof Date) out[key] = Math.floor(value.getTime() / 1000);
-    else out[key] = value ?? null;
-  }
-  return out;
-}
+import { readBuildSnapshot, resolveContentSource } from './lib/content-source.js';
+import { safeIntegerTypeCast } from './lib/json-safe.js';
 
 const epochRaw = process.env.SNAPSHOT_EPOCH;
 const outPath = process.env.EXPORT_SNAPSHOT_JSON;
@@ -45,6 +35,7 @@ const db = await mysql.createConnection({
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
   charset: 'utf8mb4',
+  typeCast: safeIntegerTypeCast,
 });
 
 try {
@@ -54,49 +45,9 @@ try {
   if (!Number.isSafeInteger(epoch) || epoch > clock.dbNow) {
     throw new Error('invalid/future SNAPSHOT_EPOCH');
   }
-  const [contents] = await db.query(
-    `SELECT cid, type, title, slug, text, created, modified,
-            allowComment, allowFeed, \`order\`, template, password, status
-     FROM typecho_contents
-     WHERE type IN ('post','page','post_draft')
-     ORDER BY cid`,
-  );
-  const [relations] = await db.query(
-    `SELECT r.cid, m.mid, m.name, m.slug, m.type, m.\`order\`
-     FROM typecho_relationships r
-     JOIN typecho_metas m ON m.mid=r.mid
-     ORDER BY r.cid, m.type, m.\`order\`, m.mid`,
-  );
-  const [fields] = await db.query(
-    `SELECT cid, name, type, str_value, int_value, float_value
-     FROM typecho_fields ORDER BY cid, name`,
-  );
-  const [metas] = await db.query(
-    `SELECT mid, name, slug, type, description, count, \`order\`
-     FROM typecho_metas WHERE type IN ('category','tag')
-     ORDER BY type, \`order\`, mid`,
-  );
-  const i18n = await readI18nTables(db);
+  const source = resolveContentSource();
+  const snapshot = await readBuildSnapshot(db, { source, epoch });
   await db.commit();
-
-  const snapshot = {
-    snapshotEpoch: epoch,
-    schemaVersion: 2,
-    contents: contents.map(jsonSafeRow),
-    relations: relations.map(jsonSafeRow),
-    fields: fields.map(jsonSafeRow),
-    metas: metas.map(jsonSafeRow),
-    ...(i18n
-      ? {
-        i18n: {
-          sourceState: i18n.sourceState.map(jsonSafeRow),
-          heads: i18n.heads.map(jsonSafeRow),
-          versions: i18n.versions.map(jsonSafeRow),
-          ledger: i18n.ledger.map(jsonSafeRow),
-        },
-      }
-      : {}),
-  };
   const dir = path.dirname(outPath);
   await fs.mkdir(dir, { recursive: true });
   const tmp = path.join(dir, `.${path.basename(outPath)}.${process.pid}.tmp`);

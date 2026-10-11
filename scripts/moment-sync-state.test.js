@@ -14,9 +14,12 @@ import { ensureMomentRouteMap, FIELD_CONTENT_KIND } from './lib/route-allocate.j
 
 test('snapshot SQL includes post_draft for disposition', () => {
   const exportSrc = fs.readFileSync(new URL('./export-typecho-snapshot.js', import.meta.url), 'utf8');
+  const sourceSrc = fs.readFileSync(new URL('./lib/content-source.js', import.meta.url), 'utf8');
   const syncSrc = fs.readFileSync(new URL('./sync-typecho.js', import.meta.url), 'utf8');
-  assert.match(exportSrc, /post_draft/);
+  assert.match(sourceSrc, /post_draft/);
+  assert.match(exportSrc, /readBuildSnapshot/);
   assert.match(syncSrc, /post_draft/);
+  assert.match(syncSrc, /cms sync refuses a live database read/);
   assert.deepEqual(SNAPSHOT_CONTENT_TYPES, ['post', 'page', 'post_draft']);
   assert.match(SNAPSHOT_CONTENT_TYPES_SQL, /post_draft/);
 });

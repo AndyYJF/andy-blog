@@ -1,0 +1,52 @@
+---
+import { formatCount } from "../lib/reading-meta";
+
+const {
+  title,
+  displayCategories,
+  pubDate,
+  publishedDay,
+  minutes,
+  characters,
+  updated,
+  updatedDate,
+  updatedDay,
+} = Astro.props;
+---
+<header class="entry-header">
+  <div transition:name="page-title" transition:animate="none">
+    {displayCategories.length > 0 && (
+      <p class="entry-kicker" aria-label="文章分类">
+        {displayCategories.map((category, index) => (
+          <>
+            {index > 0 && <span class="cat-sep"> / </span>}
+            {category.href ? (
+              <a
+                class:list={["cat", category.tone && `tone-${category.tone}`]}
+                href={category.href}
+              >{category.name}</a>
+            ) : (
+              <span
+                class:list={["cat", category.tone && `tone-${category.tone}`]}
+              >{category.name}</span>
+            )}
+          </>
+        ))}
+      </p>
+    )}
+    <h1>{title}</h1>
+  </div>
+  <p class="entry-meta">
+    <time datetime={pubDate.toISOString()}>{publishedDay}</time>
+    <span class="entry-meta-sep" aria-hidden="true">·</span>
+    <span>预计 {minutes} 分钟</span>
+    <span class="entry-meta-sep" aria-hidden="true">·</span>
+    <span>{formatCount(characters)} 字</span>
+    {updated && (
+      <>
+        <span class="entry-meta-sep" aria-hidden="true">·</span>
+        <time datetime={updatedDate.toISOString()}>更新于 {updatedDay}</time>
+      </>
+    )}
+  </p>
+</header>

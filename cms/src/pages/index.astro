@@ -1,0 +1,21 @@
+---
+---
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <title>本地 CMS 原型</title>
+  </head>
+  <body>
+    <main>
+      <h1>本地 CMS 原型</h1>
+      <p>只监听 127.0.0.1。保存要先登录。不能对生产库打开。</p>
+      <p id="notices"></p>
+      <p><a href="/login/">登录</a> <a href="/edit/1/">打开示例文稿</a></p>
+    </main>
+    <script>
+      import { showAuthNotices } from '../editor/notices.js';
+      showAuthNotices().catch(() => {});
+    </script>
+  </body>
+</html>

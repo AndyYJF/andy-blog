@@ -16,8 +16,8 @@
 
 本版的关键约束：原文及 Typecho 兼容列名导入；构建快照与完整私有迁移包分开；通用发布 outbox 与译文 outbox 分开；正式构建与内容备份使用一致来源；P2 实现并演练回迁；互动预览与正式构建预览分开。
 
-当前写入链仍是：[快照导出](../../scripts/export-typecho-snapshot.js)、[同步](../../scripts/sync-typecho.js)、[i18n store](../../scripts/lib/i18n-store.js)、[i18n 快照](../../scripts/lib/i18n-snapshot.js)、[构建入口](../../host/blog-rebuild-1panel.sh)、[内容备份](../../host/backup-content-github.sh)。P0 新增的是契约和对拍脚本，见 [contracts.md](contracts.md)。`cms/` 应用、统一来源导出器和回迁脚本还没有。
+当前写入链仍是：[快照导出](../../scripts/export-typecho-snapshot.js)、[同步](../../scripts/sync-typecho.js)、[i18n store](../../scripts/lib/i18n-store.js)、[i18n 快照](../../scripts/lib/i18n-snapshot.js)、[构建入口](../../host/blog-rebuild-1panel.sh)、[内容备份](../../host/backup-content-github.sh)。默认 `CONTENT_SOURCE` 仍是 Typecho。设成 `cms` 时，导出、worker 前缀和观察前缀必须一起改，失败不会改去读 Typecho。见 [progress.md](progress.md)。
 
 关联文档：[项目 README](../../README.md)、[原静态站重构规划](../plan.md)、[既有 i18n 方案](../i18n-plan-v2-2026-09-26.md)、[i18n 最终报告](../i18n-final-report-2026-09-27.md)、[译文撤回手册](../i18n-withdrawal-runbook.md)。历史规划、报告和现有运维手册保持各自的原有范围；CMS v2 不把历史完成项改写成新 CMS 的完成证据。
 
-inventory、contracts 和 progress 记录已经落地的证据。切换、回滚和退役 runbook 仍待后一阶段；生产接入、切换与下线按当次用户授权执行。
+inventory、contracts 和 progress 记录已经落地的证据。[切换](runbook-cutover.md)、[回滚](runbook-rollback.md)、[备份](runbook-backup.md) 和 [下线](runbook-retire.md) 只写占位步骤。生产接入、切换与下线按当次用户授权执行，这些手册本身不是授权。

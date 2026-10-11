@@ -1,0 +1,22 @@
+# Local CMS prototype database. Not a production service.
+# Bind is loopback only. The password is a local development value.
+name: andy-blog-cms-dev
+
+services:
+  mysql:
+    image: mysql:8.4
+    environment:
+      MYSQL_ROOT_PASSWORD: cms-dev-root
+      MYSQL_DATABASE: cms
+      MYSQL_USER: cms
+      MYSQL_PASSWORD: cms-dev
+    ports:
+      - '127.0.0.1:3307:3306'
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_bin
+    volumes:
+      - cms-dev-mysql:/var/lib/mysql
+
+volumes:
+  cms-dev-mysql:

@@ -375,6 +375,13 @@ export function writeMigrationPackage(dir, tables, extras) {
   fsSync.mkdirSync(path.join(dir, 'attachments'), { recursive: true });
   fsSync.writeFileSync(path.join(dir, 'attachments', 'rows.json'), attachmentBody);
   hashes['attachments/rows.json'] = sha256(attachmentBody);
+  const extraColumns = extras.extraColumns || {};
+  const hasExtra = Object.values(extraColumns).some((columns) => Array.isArray(columns) && columns.length);
+  if (hasExtra) {
+    const extraBody = `${JSON.stringify(extras.extraColumnRows || {})}\n`;
+    fsSync.writeFileSync(path.join(dir, 'extra-columns.json'), extraBody);
+    hashes['extra-columns.json'] = sha256(extraBody);
+  }
 
   fsSync.mkdirSync(path.join(dir, 'uploads', 'files'), { recursive: true });
   for (const file of extras.uploads) {
@@ -447,6 +454,31 @@ export function validateMigrationPackage(dir) {
     return [`manifest.json unreadable: ${error instanceof Error ? error.message : error}`];
   }
   if (manifest.migrationPackageVersion !== 1) errors.push('migrationPackageVersion must be 1');
+  const listedExtras = Object.entries(manifest.extraColumns || {}).filter(([, columns]) => Array.isArray(columns) && columns.length);
+  if (listedExtras.length) {
+    let stored = null;
+    try {
+      stored = readPackageJson(dir, 'extra-columns.json');
+    } catch {
+      errors.push('missing extra-columns.json');
+    }
+    if (stored) {
+      for (const [table, columns] of listedExtras) {
+        const rows = stored[table];
+        if (!Array.isArray(rows)) {
+          errors.push(`extra-columns.json missing ${table}`);
+          continue;
+        }
+        rows.forEach((row, index) => {
+          for (const column of columns) {
+            if (!Object.prototype.hasOwnProperty.call(row, column)) {
+              errors.push(`extra column ${table}[${index}].${column} is missing`);
+            }
+          }
+        });
+      }
+    }
+  }
   const tables = {};
   for (const [name, spec] of Object.entries(migrationSchema.tables)) {
     let rows;

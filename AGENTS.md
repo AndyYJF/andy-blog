@@ -14,7 +14,7 @@ Node 要求 `>= 22.12`。根目录 `package.json` 管同步、门禁、nginx、C
 
 ## 自研 CMS 后续规划
 
-规划入口：[docs/cms/README.md](docs/cms/README.md)。完整方案与 Agent 执行计划 v2 已归档。P0 的快照契约、旧 fixture 升级和对拍工具已在仓库，进度见 [docs/cms/progress.md](docs/cms/progress.md)。当前 Typecho 内容源、同步和发布说明继续有效。`cms/` 应用、统一来源导出器、通用发布队列和回迁工具仍是目标，不是现有功能。生产授权仍遵守下方规则。
+规划入口：[docs/cms/README.md](docs/cms/README.md)。完整方案与 Agent 执行计划 v2 已归档。P0 契约、本地 CMS 原型、通用发布队列、隔离库上的导入和回迁，以及 `CONTENT_SOURCE` 导出开关已在仓库。进度见 [docs/cms/progress.md](docs/cms/progress.md)。默认构建和内容备份仍读 Typecho。生产授权仍遵守下方规则。
 
 ## 必须遵守
 

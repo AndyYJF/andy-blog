@@ -7,14 +7,20 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { contentHasMermaid } from './lib/content-has-mermaid.js';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const src = path.join(ROOT, 'astro', 'public', 'beoe');
 const dest = path.join(ROOT, 'astro', 'dist', 'beoe');
 
 if (!fs.existsSync(src)) {
-  console.error('astro/public/beoe missing after mermaid render');
-  process.exit(65);
+  const content = path.join(ROOT, 'astro', 'src', 'content');
+  if (contentHasMermaid(content)) {
+    console.error('astro/public/beoe missing after mermaid render');
+    process.exit(65);
+  }
+  process.stdout.write(`${JSON.stringify({ ok: true, copied: 0 })}\n`);
+  process.exit(0);
 }
 
 fs.mkdirSync(path.dirname(dest), { recursive: true });

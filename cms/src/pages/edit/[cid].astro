@@ -1,0 +1,47 @@
+---
+const { cid } = Astro.params;
+const id = Number(cid);
+if (!Number.isSafeInteger(id) || id <= 0) {
+  return new Response('bad cid', { status: 400 });
+}
+const nonce = Astro.locals.cspNonce || '';
+---
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <title>编辑 {id}</title>
+    <style>
+      body { margin: 24px; font: 16px/1.5 sans-serif; }
+      #editor { min-height: 240px; border: 1px solid #ccc; }
+      .cm-joe { background: color-mix(in srgb, CanvasText 8%, transparent); }
+      iframe { width: 100%; min-height: 280px; border: 1px solid #ccc; }
+      .warning { color: #8a3b00; }
+    </style>
+  </head>
+  <body data-cid={id}>
+    <p><a href="/">返回</a> <a href="/login/">登录</a></p>
+    <p id="status">正在读取</p>
+    <p><a id="build-status" href="https://build2.fei.cx/">现有构建状态页</a>。这个链接不读取发布清单，也不对应某一条修订。</p>
+    <label>标题 <input id="title" /></label>
+    <p>
+      <button id="source" type="button">源码模式</button>
+      <button id="save" type="button">保存</button>
+    </p>
+    <p id="newline" class="warning" hidden>
+      这篇正文混用了换行。不修改就保存会保留原字节。真要改字，需要勾选下面，把换行规范成 LF。
+    </p>
+    <label id="normalize-label" hidden>
+      <input id="normalize" type="checkbox" />
+      把混合换行规范成 LF
+    </label>
+    <div id="editor"></div>
+    <iframe id="preview" title="预览" sandbox="allow-scripts" src="/preview-frame/"></iframe>
+    <meta name="cms-csp-nonce" content={nonce} />
+    <script>
+      import { mountEditor } from '../../editor/mount.js';
+      const nonce = document.querySelector('meta[name="cms-csp-nonce"]')?.getAttribute('content') || '';
+      mountEditor({ cid: Number(document.body.dataset.cid), nonce });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,22 @@
+{
+  "name": "andy-blog-cms",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "dev": "astro dev --host 127.0.0.1 --port 4322",
+    "preview": "astro preview --host 127.0.0.1 --port 4322"
+  },
+  "dependencies": {
+    "@astrojs/node": "11.1.7",
+    "@codemirror/commands": "^6.8.1",
+    "@codemirror/state": "^6.5.2",
+    "@codemirror/view": "^6.38.1",
+    "@simplewebauthn/server": "14.0.3",
+    "astro": "7.3.8",
+    "mysql2": "^3.23.2",
+    "sharp": "0.34.4"
+  }
+}
